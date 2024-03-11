@@ -1,6 +1,3 @@
 public class Prova {
-    System.out.println("prova");
-//okok
-    system.out.println("22");
-    //bkhgk
+    // ho cancellato tutto perchè non va
 }
