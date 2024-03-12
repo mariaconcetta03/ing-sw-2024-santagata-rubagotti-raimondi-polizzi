@@ -8,8 +8,6 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println("sono conce");
-        System.out.println( "Codex Naturalis! Prova Andre 2. Sono Francesco con Andrea" );
-        System.out.println ("ciao");
+        System.out.println("sono Andre");
     }
 }
