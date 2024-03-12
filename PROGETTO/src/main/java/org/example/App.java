@@ -8,6 +8,6 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Codex Naturalis! Ciao" );
+        System.out.println( "Codex Naturalis! Ciaoo" );
     }
 }
