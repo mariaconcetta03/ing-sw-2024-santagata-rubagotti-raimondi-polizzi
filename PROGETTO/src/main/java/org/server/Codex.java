@@ -74,9 +74,17 @@ public class Codex {
         }
 
     }
-    public void disconnectPlayer(){
-
+    public void disconnectPlayer(String nickname){
+        Player tmp=new Player();
+        for(int i=0;i<allPlayers.size();i++){
+            if(nickname.equals(allPlayers.get(i).getNickname())){
+                tmp=allPlayers.get(i);
+                break;
+            }
+        }
+        allPlayers.remove(tmp);
     }
+
     public boolean isNicknameAvailable(String nickname){
         Player temp=null;
         for(int i=0; i<allPlayers.size();i++){
