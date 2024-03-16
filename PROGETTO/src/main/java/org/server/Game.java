@@ -1,15 +1,17 @@
 package org.server;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Game {
+    private int id;
     private List<Player> players;
     private List<Board> boards;
 
 
     // in the first position of the list "boards", there will be the board of
     // the player in the first position of the list "players"
-    public enum GameState {
+    private enum GameState {
         STARTED,
         ENDED,
         WAITING_FOR_START
@@ -18,6 +20,8 @@ public class Game {
     private Player currentPlayer;
     private Deck resourceDeck;
     private Deck goldDeck;
+    private Deck baseDeck;
+    private Deck objectiveDeck;
     private int resourceCard1;
     private int resourceCard2;
     private int goldCard1;
@@ -26,25 +30,96 @@ public class Game {
     private int objectiveCard2;
     private List<Chat> chats;
 
-    public Game (List<Player> players, List<Board> boards, Deck resourceDeck, Deck goldDeck, int resourceCard1, int resourceCard2, int goldCard1, int goldCard2, int objectiveCard1, int objectiveCard2) {
+    public Game (List<Player> players, int id, Deck resourceDeck, Deck goldDeck, Deck baseDeck, Deck objectiveDeck) {
+        this.id = id;
         this.players = players;
-        this.boards = boards;
+        this.boards = null;
         this.chats = new ArrayList<>();
         this.state = GameState.WAITING_FOR_START;
         this.currentPlayer = null;
         this.resourceDeck = resourceDeck;
         this.goldDeck = goldDeck;
-        this.resourceCard1 = resourceCard1;
-        this.resourceCard2 = resourceCard2;
-        this.goldCard1 = goldCard1;
-        this.goldCard2 = goldCard2;
-        this.objectiveCard1 = objectiveCard1;
-        this.objectiveCard2 = objectiveCard2;
+        this.baseDeck = baseDeck;
+        this.objectiveDeck = objectiveDeck;
+        this.resourceCard1 = 0;
+        this.resourceCard2 = 0;
+        this.goldCard1 = 0;
+        this.goldCard2 = 0;
+        this.objectiveCard1 = 0;
+        this.objectiveCard2 = 0;
     }
 
     public void startGame () {
+        // setting the state of the game to STARTED
         this.state = GameState.STARTED;
+
+        // creating a board for each player in the game
+        int numPlayers = players.size();
+        this.boards = new ArrayList<>();
+        for (int i=0; i<numPlayers; i++) {
+            this.boards.add(new Board());
+        }
+
+        // shuffling the resource deck and giving 2 cards to the market
+        this.resourceDeck.shuffleDeck();
+        this.resourceCard1 = this.resourceDeck.getFirstCard();
+        this.resourceCard2 = this.resourceDeck.getFirstCard();
+
+        // shuffling the gold deck and giving 2 cards to the market
+        this.goldDeck.shuffleDeck();
+        this.goldCard1 = this.goldDeck.getFirstCard();
+        this.goldCard2 = this.goldDeck.getFirstCard();
+
+        // each player draws a starter card (base card)
+        for (int i=0; i<this.players.size(); i++) {
+            this.players.get(i).drawCard(this.baseDeck.getFirstCard());
+        }
+
+        // setting the colour of the pawn of the players
+        for (int i=0; i<this.players.size(); i++) {
+            if(i==0) {
+                this.players.get(i).setColor(Pawn.RED);
+            } else if (i==1) {
+                this.players.get(i).setColor(Pawn.BLUE);
+            } else if (i==2) {
+                this.players.get(i).setColor(Pawn.GREEN);
+            } else if (i==3) {
+                this.players.get(i).setColor(Pawn.YELLOW);
+            }
+        }
+
+        // shuffling the objective deck and giving 2 cards to the market as common objective
+        this.objectiveDeck.shuffleDeck();
+        this.objectiveCard1 = this.objectiveDeck.getFirstCard();
+        this.objectiveCard2 = this.objectiveDeck.getFirstCard();
+
+        // giving each player 2 objective cards, he will decide which one to choose
+        for (int i=0; i<this.players.size(); i++) {
+            this.players.get(i).chooseObjectiveCard (this.objectiveDeck.getFirstCard(), this.objectiveDeck.getFirstCard());
+        }
+
+        // setting the game-order of the players
+        Random random = new Random();
+        int randomFirstPlayer = random.nextInt(4); // sorting a random number between 0 and 3
+        this.players.get(randomFirstPlayer).setPriority(true); // he is the first player
+        this.currentPlayer = this.players.get(randomFirstPlayer); // he is the first player and the current player
+        this.players.get(randomFirstPlayer).setPlayOrder(1); // the game-order positions start from 1. Example: 1,2,3,4
+
+        int not_assigned = 0;
+        int order = 2;
+        for (int i=randomFirstPlayer; i<this.players.size(); i++) { //assigning the game-order position to the players that follow the first player in the list
+            this.players.get(i).setPlayOrder(order); // the game-order positions start from 1. Example: 1,2,3,4
+            order++;
+        }
+        for (int i = 0; not_assigned!=0 && i<this.players.size(); i++) { //assigning the game-order position to the players that comes before the first player in the list
+            this.players.get(i).setPlayOrder(order);
+            order++;
+            not_assigned--;
+        }
     }
+
+
+
 
     public void endGame () {
         state = GameState.ENDED;
@@ -147,6 +222,30 @@ public class Game {
 
     public GameState getState() {
         return this.state;
+    }
+
+    public Deck getBaseDeck() {
+        return baseDeck;
+    }
+
+    public Deck getObjectiveDeckDeck() {
+        return objectiveDeck;
+    }
+
+    public void resetGoldCard1 () {
+        this.goldCard1 = this.goldDeck.getFirstCard();
+    }
+
+    public void resetGoldCard2 () {
+        this.goldCard2 = this.goldDeck.getFirstCard();
+    }
+
+    public void resetResourceCard1 () {
+        this.resourceCard1 = this.resourceDeck.getFirstCard();
+    }
+
+    public void resetResourceCard2 () {
+        this.resourceCard2 = this.resourceDeck.getFirstCard();
     }
 
 }
