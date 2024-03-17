@@ -2,10 +2,12 @@ package org.server;
 import java.util.*;
 
 public class Codex {
+    //we can use an int code to unically identify games (not a string as previously said)
+    private static int GameID=0;
     private Codex(){}
     private static final Codex instance= new Codex();
     public List<Player> allPlayers;
-    public List<Game> allGames;
+    public Map<Integer, Game> allGames;
 
     //is the cards Map necessary? maybe use Json but didn't understand a lot
     //I created a card LIST because the id attribute is already part of the Card object so
@@ -20,15 +22,25 @@ public class Codex {
     //that is also the one deciding how many players the game will have (2-3-4)
     public void startLobby(Player creator){
         Game newGame= new Game();
+        //setting the game ID
+        newGame.setID(GameID);
+        GameID++;
+        //deciding the numbers of players
         System.out.println("How many players to play this game? ");
         int nPlayers= sc.nextInt();
         //mi serve un setter per settare il numero di giocatori
         newGame.setPlayers(nPlayers);
-
-
+        //set the game state as waiting for start
+        newGame.setGameState(Game.GameState.WAITING_FOR_START);
+        //adding the creator as the first player in the new game
+        newGame.getPlayers().add(creator);
     }
-    public void endLobby(){
 
+    //a lobby ends if we have a winner or if a player disconnects
+    //deciding the winner is duty of the Game class
+    //
+    public void endLobby(int id){
+        allGames.remove(id);
     }
     public void connectPlayer() {
         Player newPlayer = new Player();
@@ -60,7 +72,7 @@ public class Codex {
         if(decision.equals("1")){
             startLobby(newPlayer);
         }else{
-            Game tmp;
+            Game tmp= new Game();
             for(int i=0; i<allGames.size();i++){
                 if(allGames.get(i).getCode().equals(decision)){
                     tmp=allGames.get(i);
