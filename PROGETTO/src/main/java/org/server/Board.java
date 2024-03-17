@@ -17,7 +17,7 @@ public class Board {
     private Map<Coordinates, Playable_Card.ResourceType> externalResourcesPositions;
     private Map<Playable_Card.ResourceType, Integer> numberOfExternalAndCentralResources;
     public void addPlayablePlusUnplayablePositions(Integer id){ //una volta che tramite controller il giocatore sceglie il posto (viene inizializzato attributo position)
-        Playable_Card c=Codex.getInstance().getCardById(id);
+        Playable_Card c=(Playable_Card)Codex.getInstance().getCardById(id);
         if(c.getOrientation()) {
             if (c.get_front_up_right().equals(Playable_Card.ResourceType.ABSENT)) {
                 unPlayablePositions.add(c.getPosition().findUpRight());
