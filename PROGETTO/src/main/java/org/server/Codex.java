@@ -3,7 +3,7 @@ import java.util.*;
 
 public class Codex {
     //we can use an int code to unically identify games (not a string as previously said)
-    private static int GameID=0;
+    private static int GameID=1;
     private Codex(){}
     private static final Codex instance= new Codex();
     public List<Player> allPlayers;
@@ -23,7 +23,7 @@ public class Codex {
     public void startLobby(Player creator){
         Game newGame= new Game();
         //setting the game ID
-        newGame.setID(GameID);
+        newGame.setId(GameID);
         GameID++;
         //deciding the numbers of players
         System.out.println("How many players to play this game? ");
@@ -68,13 +68,13 @@ public class Codex {
         //hp the user gives me good answer, not stupid ones (we could later implement a check-system)
         System.out.println("Type 0 if you want to create a new game or the code of an already started" +
                 "game if you want to join it: ");
-        String decision=sc.nextLine();
-        if(decision.equals("1")){
+        int decision=sc.nextInt();
+        if(decision==0){
             startLobby(newPlayer);
         }else{
             Game tmp= new Game();
             for(int i=0; i<allGames.size();i++){
-                if(allGames.get(i).getCode().equals(decision)){
+                if(allGames.get(i).getId()==decision){
                     tmp=allGames.get(i);
                     break;
                 }
