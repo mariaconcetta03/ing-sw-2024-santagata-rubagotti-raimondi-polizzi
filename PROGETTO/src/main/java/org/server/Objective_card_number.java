@@ -49,12 +49,3 @@ public class Objective_card_number extends Objective_Card {
     }
 
 }
-
-
-
-
-
-
-
-
-
