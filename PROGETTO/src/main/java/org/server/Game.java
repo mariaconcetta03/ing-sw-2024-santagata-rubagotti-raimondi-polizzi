@@ -8,7 +8,6 @@ public class Game {
     private List<Player> players;
     private List<Board> boards;
 
-
     // in the first position of the list "boards", there will be the board of
     // the player in the first position of the list "players"
     private enum GameState {
@@ -246,6 +245,14 @@ public class Game {
 
     public void resetResourceCard2 () {
         this.resourceCard2 = this.resourceDeck.getFirstCard();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
 }
