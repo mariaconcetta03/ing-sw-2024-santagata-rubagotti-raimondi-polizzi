@@ -3,7 +3,7 @@ package org.server;
 public class Playable_Card extends Card {
     private int points;
     private boolean orientation; //true if it's the upper side
-    private enum ResourceType {
+    public enum ResourceType {
         FUNGI,
         NATURE,
         INSECT,
