@@ -21,6 +21,8 @@ public class Codex {
     //I believe that method startLobby() should get as a parameter the first player joining
     //that is also the one deciding how many players the game will have (2-3-4)
     public void startLobby(Player creator){
+        //I have to give the decks as parameters
+        //Id has to be given to Game by the constructor Game(player creator, int id, let's see for the decks)
         Game newGame= new Game();
         //setting the game ID
         newGame.setId(GameID);
@@ -29,10 +31,11 @@ public class Codex {
         System.out.println("How many players to play this game? ");
         int nPlayers= sc.nextInt();
         //mi serve un setter per settare il numero di giocatori
-        newGame.setPlayers(nPlayers);
+        newGame.setNPlayers(nPlayers);
         //set the game state as waiting for start
         newGame.setGameState(Game.GameState.WAITING_FOR_START);
         //adding the creator as the first player in the new game
+        //I will add the creator by the
         newGame.getPlayers().add(creator);
     }
 
@@ -80,6 +83,7 @@ public class Codex {
                 }
             }
             //mi serve un getter da Game per la lista Players
+            //Andrea will create a method to add players
             tmp.getPlayers().add(newPlayer);
             //it will be duty of the Game object to understand if the lobby is full and so
             // change its state to STARTED
