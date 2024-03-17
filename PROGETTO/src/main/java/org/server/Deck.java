@@ -13,7 +13,7 @@ public class Deck {
     }
 
     public int getFirstCard() {
-        return cards.pop().getId();
+        return cards.pop();
     }
 
     public boolean isFinished() {
