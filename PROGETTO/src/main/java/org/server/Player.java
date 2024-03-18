@@ -21,13 +21,16 @@ public class Player {
     private String nickname;
     private boolean Orientation;
     private int points;
+    private int gameId;
     private int playOrder;
-    private int[] playerDeck;
-    private boolean isFirst;
+    private int[] playerDeck; //each player has a deck of 3 cards
+    private boolean isFirst; // you can see if a player is the first one
+    private boolean association; // verify if a game is associated with a specific player
     private Pawn color;
-    private Card personalObjective;
+    private Card personalObjective; // set a personal objective chosen by a player
     private PlayerState state;
     private Game game;
+
 
     public Player() {
         this.points = 0;
@@ -36,6 +39,8 @@ public class Player {
         this.state = PlayerState.IS_WAITING;
         this.playOrder = 0;
         this.playerDeck = new int[]{0, 0, 0};
+        this.association = false;
+        this.gameId = 0;
     }
 
     //SETTERS
@@ -47,7 +52,11 @@ public class Player {
         this.color = color;
     }
 
-    public void setPriority(boolean isFirst) {
+    public void setGame(Game game){
+        this.game = game;
+    }
+
+    public void setIsFirst(boolean isFirst) {
         this.isFirst = isFirst;
     }
 
@@ -81,7 +90,16 @@ public class Player {
     }
 
     //OTHER METHODS
+  /*  public Game playerGame(){ // associates a Player to a specific game
+        this.game = Codex.getInstance().setGameAssociation(nickname);
+        return game;
+    }
+        CHECK IF IT'S CORRECT
+    */
+
     public void drawCard(int cardId) {
+
+    if(association) {
 
         int resourceCard1 = game.getResourceCard1(); //market
         int resourceCard2 = game.getResourceCard2(); //market
@@ -106,6 +124,7 @@ public class Player {
             game.resetResourceCard2();
 
         }
+    }
         // where id card == 0, the new card is placed
         for (int i = 0; i < 3; i++) {
             if (playerDeck[i] == 0) {
@@ -115,11 +134,21 @@ public class Player {
 
     }
 
+    public boolean checkPlayerGame(int gameId) { //makes a check if gameid is equal to player's gameid
+        if(gameId == game.getId()){
+            association = true;
+        }
+        return association;
+    }
+
     public int playCard(int cardId, Coordinates position, boolean orientation) {
 
         Playable_Card tmp = (Playable_Card) Codex.getInstance().getCardById(cardId);
         tmp.setPosition(position);
         tmp.setOrientation(orientation);
+
+        //I'll add a method for giving coordinates to the board
+        //board.placeCard(cardId);
 
         for (int i = 0; i < 3; i++) {
             if (playerDeck[i] == cardId) {
