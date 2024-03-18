@@ -4,31 +4,37 @@ import java.util.List;
 import java.util.Random;
 
 public class Game {
-    private int id;
-    private int nPlayers;
-    private List<Player> players;
-    private List<Board> boards;
-
-    // in the first position of the list "boards", there will be the board of
-    // the player in the first position of the list "players"
+    private int id; // each Game has a different id
+    private int nPlayers; // number of players in this game. It's decided by the lobby-creator
+    private List<Player> players; // all the players in the game
+    private List<Board> boards; /* each player has his own board. The player and the boards are linked thanks to their
+                                   position: for example the player in the 2nd position, has the board in the 2nd position,
+                                   in the first position of the list "boards", there will be the board of the player
+                                   in the first position of the list "players" */
     public enum GameState {
         STARTED,
         ENDED,
         WAITING_FOR_START
     }
     private GameState state;
-    private Player currentPlayer;
-    private Deck resourceDeck;
-    private Deck goldDeck;
-    private Deck baseDeck;
-    private Deck objectiveDeck;
+    private Player currentPlayer; // player who needs to play at this moment (it's his turn)
+    private Deck resourceDeck; // contains all the resource cards
+    private Deck goldDeck; // contains all the gold cards
+    private Deck baseDeck; // contains all the base cards, which are the cards that players use to start the game
+    private Deck objectiveDeck; // contains all the objective cards
+
+    /* these ones are the 4 cards which are at the table center: players can see them and can decide to draw from the
+       deck, or to draw one of these cards */
     private int resourceCard1;
     private int resourceCard2;
     private int goldCard1;
     private int goldCard2;
+
+    // this 2 cards represent the 2 common goals (objectives)
     private int objectiveCard1;
     private int objectiveCard2;
-    private List<Chat> chats;
+
+    private List<Chat> chats; // contains all the chats started during the game
 
     public Game (Player player, int id, Deck resourceDeck, Deck goldDeck, Deck baseDeck, Deck objectiveDeck) {
         this.id = id;
@@ -50,6 +56,7 @@ public class Game {
         this.objectiveCard2 = 0;
     }
 
+    // only the first player is added to the list by the constructor, the others will be added thanks to this function
     public void addPlayer (Player p) {
         this.players.add(p);
     }
@@ -111,13 +118,16 @@ public class Game {
         this.currentPlayer = this.players.get(randomFirstPlayer); // he is the first player and the current player
         this.players.get(randomFirstPlayer).setPlayOrder(1); // the game-order positions start from 1. Example: 1,2,3,4
 
-        int not_assigned = 0;
+        int not_assigned = 4;
         int order = 2;
-        for (int i=randomFirstPlayer; i<this.players.size(); i++) { //assigning the game-order position to the players that follow the first player in the list
+        for (int i=randomFirstPlayer; i<this.players.size(); i++) { //assigning the game-order position to the players
+            // that follow the first player in the list
             this.players.get(i).setPlayOrder(order); // the game-order positions start from 1. Example: 1,2,3,4
             order++;
+            not_assigned--;
         }
-        for (int i = 0; not_assigned!=0 && i<this.players.size(); i++) { //assigning the game-order position to the players that comes before the first player in the list
+        for (int i = 0; not_assigned!=0 && i<this.players.size(); i++) { //assigning the game-order position to the
+            // players that comes before the first player in the list
             this.players.get(i).setPlayOrder(order);
             order++;
             not_assigned--;
@@ -125,12 +135,11 @@ public class Game {
     }
 
 
-
-
     public void endGame () {
         state = GameState.ENDED;
     }
 
+    // returns the player with the higher number of points
     public Player winner () {
         Player winner = this.players.get(0);
         for (int i=0; i<this.players.size(); i++) { //looking for the player with the higher points
@@ -141,6 +150,7 @@ public class Game {
     return winner;
     }
 
+    // adds a new chat to the List chat in this game. P1 and P2 are the 2 players the chat is composed by
     public void startChat (Player p1, Player p2) {
         int index = this.chats.size();
         // choosing the id of my new chat: starting from 0, then 1,2,3,...
@@ -153,6 +163,7 @@ public class Game {
         chats.add(newChat);
     }
 
+    // adds a new chat to the List chat in this game. The new chat is composed by all the players in this game
     public void startGeneralChat() {
         int index = this.chats.size();
         // choosing the id of my new chat: starting from 0, then 1,2,3,...
@@ -162,6 +173,7 @@ public class Game {
         chats.add(newChat);
     }
 
+    // returns the player who will need to play soon, at the next round
     public Player nextRound() {
         boolean trovato = false;
         int numPlayers = this.players.size();
@@ -186,6 +198,7 @@ public class Game {
         return null;
     }
 
+    // returns the board of the player p
     public Board getBoard (Player p) {
         int i=0;
         while (i<this.players.size() && !p.equals(this.players.get(i))) {
