@@ -1,8 +1,8 @@
 package org.server;
 
 public class Playable_Card extends Card {
-    private int points;
-    private boolean orientation; //true if it's the upper side
+    private int points; // points the card gives when it's placed
+    private boolean orientation; // true if it's the upper side
     public enum ResourceType {
         FUNGI,
         NATURE,
@@ -18,6 +18,8 @@ public class Playable_Card extends Card {
         NO_RESOURCE,
         ABSENT
     }
+
+    // these variables contains the type of resource present in a specific corner of the card
     private ResourceType front_up_right;
     private ResourceType front_up_left;
     private ResourceType front_down_right;

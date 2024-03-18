@@ -2,7 +2,8 @@ package org.server;
 import java.util.Map;
 
 public class Objective_card_number extends Objective_Card {
-    private Map<Playable_Card.ResourceType, Integer> resources;
+    private Map<Playable_Card.ResourceType, Integer> resources; // each resource is associated with an int, which
+                                                                // indicates the number of resources needed by the obj card
     public Objective_card_number (int points, Map<Playable_Card.ResourceType, Integer> resources) {
         super (points);
         this.resources = resources;
@@ -17,8 +18,8 @@ public class Objective_card_number extends Objective_Card {
         JAR
     }
 
-
-    public int checkResourcesNumber( Map<Playable_Card.ResourceType, Integer> symbols){
+    // this function returns the number of points collected thanks to the achievement of this objective
+    public int checkResourcesNumber( Map<Playable_Card.ResourceType, Integer> symbols) {
         int [] counting; //keeping track of the points
         counting = new int[] {0,0,0,0,0,0,0}; //initializing 7 int cells to 0 (each one represents a resource)
         int i = 0;
