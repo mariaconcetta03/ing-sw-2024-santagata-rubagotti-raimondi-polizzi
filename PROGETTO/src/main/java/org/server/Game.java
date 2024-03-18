@@ -5,12 +5,13 @@ import java.util.Random;
 
 public class Game {
     private int id;
+    private int nPlayers;
     private List<Player> players;
     private List<Board> boards;
 
     // in the first position of the list "boards", there will be the board of
     // the player in the first position of the list "players"
-    private enum GameState {
+    public enum GameState {
         STARTED,
         ENDED,
         WAITING_FOR_START
@@ -29,9 +30,10 @@ public class Game {
     private int objectiveCard2;
     private List<Chat> chats;
 
-    public Game (List<Player> players, int id, Deck resourceDeck, Deck goldDeck, Deck baseDeck, Deck objectiveDeck) {
+    public Game (Player player, int id, Deck resourceDeck, Deck goldDeck, Deck baseDeck, Deck objectiveDeck) {
         this.id = id;
-        this.players = players;
+        this.players = new ArrayList<>();
+        this.players.add(player);
         this.boards = null;
         this.chats = new ArrayList<>();
         this.state = GameState.WAITING_FOR_START;
@@ -48,9 +50,13 @@ public class Game {
         this.objectiveCard2 = 0;
     }
 
+    public void addPlayer (Player p) {
+        this.players.add(p);
+    }
+
     public void startGame () {
         // setting the state of the game to STARTED
-        this.state = GameState.STARTED;
+        // this.state = GameState.STARTED; done in Codex
 
         // creating a board for each player in the game
         int numPlayers = players.size();
@@ -69,8 +75,9 @@ public class Game {
         this.goldCard1 = this.goldDeck.getFirstCard();
         this.goldCard2 = this.goldDeck.getFirstCard();
 
-        // each player draws a starter card (base card)
+        // shuffling the base deck and each player draws a starter card (base card)
         for (int i=0; i<this.players.size(); i++) {
+            this.baseDeck.shuffleDeck();
             this.players.get(i).drawCard(this.baseDeck.getFirstCard());
         }
 
@@ -99,7 +106,7 @@ public class Game {
 
         // setting the game-order of the players
         Random random = new Random();
-        int randomFirstPlayer = random.nextInt(4); // sorting a random number between 0 and 3
+        int randomFirstPlayer = random.nextInt(nPlayers); // sorting a random number between 0 and nPlayers -1
         this.players.get(randomFirstPlayer).setPriority(true); // he is the first player
         this.currentPlayer = this.players.get(randomFirstPlayer); // he is the first player and the current player
         this.players.get(randomFirstPlayer).setPlayOrder(1); // the game-order positions start from 1. Example: 1,2,3,4
@@ -176,6 +183,7 @@ public class Game {
                 }
             }
         }
+        return null;
     }
 
     public Board getBoard (Player p) {
@@ -223,6 +231,10 @@ public class Game {
         return this.state;
     }
 
+    public void setState (GameState state) {
+        this.state = state;
+    }
+
     public Deck getBaseDeck() {
         return baseDeck;
     }
@@ -253,6 +265,18 @@ public class Game {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getnPlayers() {
+        return nPlayers;
+    }
+
+    public void setnPlayers(int nPlayers) {
+        this.nPlayers = nPlayers;
+    }
+
+    public List<Player> getPlayers () {
+        return this.players;
     }
 
 }
