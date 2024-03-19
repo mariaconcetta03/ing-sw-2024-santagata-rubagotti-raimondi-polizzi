@@ -3,5 +3,5 @@ package org.server;
 import java.util.List;
 
 public interface Strategy {
-    void findPattern(List<Coordinates> cardsWithTheSameColor,Color c);
+    void findPattern(Color c,List<Integer> cardsWithTheSameColor);
 }
