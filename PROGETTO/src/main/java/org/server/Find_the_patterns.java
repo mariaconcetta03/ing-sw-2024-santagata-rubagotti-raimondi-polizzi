@@ -2,6 +2,7 @@ package org.server;
 
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 public class Objective_Card_pattern {
     private Coordinates currentPosition;
@@ -9,6 +10,7 @@ public class Objective_Card_pattern {
     private Objective_Card objectiveCardSelected;
     private Set<Objective_Card> playerObjectiveCards;
     private Board board;
+    private List<Integer> listOfPlayedCards;
 
     public void setObjectiveCard(Objective_Card objectiveCardSelected) {
         this.objectiveCardSelected = objectiveCardSelected;
@@ -29,33 +31,21 @@ public class Objective_Card_pattern {
         }
         for(Color c : cardsDividedByColor.keySet()){
             if(!(cardsDividedByColor.get(c).isEmpty())){
-                List<Coordinates> cardsWithTheSameColor= selectCardsWithTheSameColor(c);
                 for(Objective_Card d:cardsDividedByColor.get(c)){
+                    List<Integer> cardsWithTheSameColor=listOfPlayedCards.stream().filter(Integer t->t.getCardById().getColor().equals(c)).collect(Collectors.toList());
                     if(d.getType().equals(ObjectiveCardPatternType.L_PATTERN)){
                         Strategy strategy=new Lstrategy; //in base al colore setto la simmetria del pattern che mi interessa
-                        strategy.findPattern(cardsWithTheSameColor,c); //conta anche i punti e va a modificare gli attributi di Objective_card
+                        strategy.findPattern(c,cardsWithTheSameColor); //conta anche i punti e va a modificare gli attributi di Objective_card
                     }else if(d.getType().equals(ObjectiveCardPatternType.DIAGONAL_PATTERN)){
                         Strategy strategy=new DiagonalStrategy();
-                        strategy.findPattern(cardsWithTheSameColor,c);
+                        strategy.findPattern(c,cardsWithTheSameColor);
                     }
                 }
             }
         }
     }
-    public  List<Coordinates> selectCardsWithTheSameColor(Color color){
-        Map<Integer,Map<Integer,Integer>> localVariable=this.board.getTable();
-        List<Coordinates> cardsWithTheSameColor=new ArrayList<>();
-        for(Integer x : localVariable.keySet()){
-            for (Integer y : localVariable.get(x).keySet()) {
-                if (localVariable.get(x).get(y).getCardById().getColor == color) {
-                    Coordinates xy = new Coordinates();
-                    xy.setX(x);
-                    xy.setY(y);
-                    cardsWithTheSameColor.add(xy);
-                }
-            }
-        }
-        return cardsWithTheSameColor;
+    public void createAListOfPlayedCards(int table[][]){
+
     }
 
 
@@ -85,5 +75,10 @@ public class Objective_Card_pattern {
 
     public void setBoard(Board board) {
         this.board = board;
+    }
+
+
+    public List<Integer> getListOfPlayedCards() {
+        return listOfPlayedCards;
     }
 }

@@ -7,14 +7,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Lstrategy implements Strategy{
-    void findPattern(List<Coordinates> cardsWithTheSameColor, Color c){
-        Set<Integer> setX= new HashSet<>();
-        setX= cardsWithTheSameColor.stream().map(Coordinates::getX).collect(Collectors.toSet());
-        Map<Integer, Map<Integer,Integer>> localVariable= getTable();
-        Set<Integer> restrictedXKeys= localVariable.keySet().stream().filter(n->setX.contains(n)).collect(Collectors.toSet());
-        for(Integer key:restrictedXKeys){
+    void findPattern(Color c,List<Integer> cardsWithTheSameColor){
+        //dopo aver identificato il pattern da cercare in base ai colori dominanti
+        //cerco le carte che sono una sopra l'altra
+        List<Integer> cardsWithTheSameColorAndOneAboveTheOther=cardsWithTheSameColor.stream().reduce()
 
-        }
     }
 
 }
