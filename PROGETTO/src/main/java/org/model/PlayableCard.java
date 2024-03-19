@@ -1,6 +1,6 @@
-package org.server;
+package org.model;
 
-public class Playable_Card extends Card {
+public class PlayableCard extends Card {
     private int points; // points the card gives when it's placed
     private boolean orientation; // true if it's the upper side
     public enum ResourceType {
@@ -8,10 +8,6 @@ public class Playable_Card extends Card {
         NATURE,
         INSECT,
         ANIMAL,
-        NATURE_FUNGI,
-        ANIMAL_INSECT,
-        ANIMAL_INSECT_NATURE,
-        NATURE_ANIMAL_FUNGI,
         PARCHMENT,
         FEATHER,
         JAR,
@@ -24,11 +20,7 @@ public class Playable_Card extends Card {
     private ResourceType front_up_left;
     private ResourceType front_down_right;
     private ResourceType front_down_left;
-    private ResourceType back_up_right;
-    private ResourceType back_up_left;
-    private ResourceType back_down_right;
-    private ResourceType back_down_left;
-    private ResourceType back_center;
+    private ResourceType cardType;
     private Coordinates position;
 
 
@@ -58,26 +50,6 @@ public class Playable_Card extends Card {
 
     public ResourceType get_front_down_left() {
         return front_down_left;
-    }
-
-    public ResourceType get_back_up_right() {
-        return back_up_right;
-    }
-
-    public ResourceType get_back_up_left() {
-        return back_up_left;
-    }
-
-    public ResourceType get_back_down_right() {
-        return back_down_right;
-    }
-
-    public ResourceType get_back_down_left() {
-        return back_down_left;
-    }
-
-    public ResourceType get_back_center() {
-        return back_center;
     }
 
     public Coordinates getPosition() {

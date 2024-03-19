@@ -1,6 +1,4 @@
-package org.server;
-import java.util.*;
-
+package org.model;
 
 
 public class Player {
@@ -19,6 +17,7 @@ public class Player {
     }
 
     private String nickname;
+    private Board board;
     private boolean Orientation;
     private int points;
     private int gameId;
@@ -137,7 +136,7 @@ public class Player {
 
     public int playCard(int cardId, Coordinates position, boolean orientation) {
 
-        Playable_Card tmp = (Playable_Card) Codex.getInstance().getCardById(cardId);
+        PlayableCard tmp = (PlayableCard) Codex.getInstance().getCardById(cardId);
         tmp.setPosition(position);      // we'll check if it's ok
         tmp.setOrientation(orientation);
        // if(!baseCard) {
@@ -156,7 +155,7 @@ public class Player {
     //check: if base card,then choose the orientation
     public boolean decideBaseCardOrientation(boolean orientation, int cardId) {
         if (cardId >= 81 && cardId <= 86) {
-            Playable_Card tmp = (Playable_Card) Codex.getInstance().getCardById(cardId);
+            PlayableCard tmp = (PlayableCard) Codex.getInstance().getCardById(cardId);
             tmp.setOrientation(orientation);
         }
         return orientation;

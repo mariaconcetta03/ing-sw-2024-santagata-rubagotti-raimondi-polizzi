@@ -1,4 +1,4 @@
-package org.server;
+package org.model;
 
 public class Coordinates {
     private int x;

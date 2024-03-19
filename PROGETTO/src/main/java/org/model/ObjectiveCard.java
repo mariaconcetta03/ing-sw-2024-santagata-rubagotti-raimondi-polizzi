@@ -1,11 +1,11 @@
-package org.server;
+package org.model;
 
-public class Objective_Card extends Card {
+public class ObjectiveCard extends Card {
         private int cardPoints; // points the card gives when the player achieves the goal
         private int pointsToPlayer; // points to add to the player (for example if the objective is achieved more times)
                                     // example: the card gives you 2 points for each couple of NATURE. If p1 has
                                     // 5 natures, then pointsToPlayer will be 4 (2 x 2)
-        public Objective_Card (int points) {
+        public ObjectiveCard(int points) {
             this.cardPoints = points;
         }
 
