@@ -89,14 +89,6 @@ public class Player {
         return this.playOrder;
     }
 
-    //OTHER METHODS
-  /*  public Game playerGame(){ // associates a Player to a specific game
-        this.game = Codex.getInstance().setGameAssociation(nickname);
-        return game;
-    }
-        CHECK IF IT'S CORRECT
-    */
-
     public void drawCard(int cardId) {
 
     if(association) {
@@ -144,12 +136,12 @@ public class Player {
     public int playCard(int cardId, Coordinates position, boolean orientation) {
 
         Playable_Card tmp = (Playable_Card) Codex.getInstance().getCardById(cardId);
-        tmp.setPosition(position);
+        tmp.setPosition(position);      // we'll check if it's ok
         tmp.setOrientation(orientation);
-
-        //I'll add a method for giving coordinates to the board
-        //board.placeCard(cardId);
-
+       // if(!baseCard) {
+            //I'll add a method for giving coordinates to the board
+            //board.placeCard(cardId, position);
+        // }
         for (int i = 0; i < 3; i++) {
             if (playerDeck[i] == cardId) {
                 playerDeck[i] = 0;      // value 0 in playerDeck, as no id will be = 0
