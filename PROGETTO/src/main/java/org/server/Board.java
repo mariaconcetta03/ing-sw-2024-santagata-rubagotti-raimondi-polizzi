@@ -10,6 +10,7 @@ public class Board {
     private Set<Coordinates> unPlayablePositions;
     private int boardDimensions;
     private Player owner;
+    private int numResources[];
 
     //this will actually be the board of each player
     private int Table[][];
@@ -20,6 +21,7 @@ public class Board {
         this.boardDimensions= 1+2*(numCarte+nPlayers-1/nPlayers);
         this.Table= new int[boardDimensions][boardDimensions];
         this.owner=owner;
+        numResources= new int[7];
     }
     public void placeCard(int cardId, Coordinates posizione){
         Table[posizione.getX()][posizione.getY()]=cardId;
