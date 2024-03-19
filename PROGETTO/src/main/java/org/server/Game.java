@@ -91,13 +91,13 @@ public class Game {
         // setting the colour of the pawn of the players
         for (int i=0; i<this.players.size(); i++) {
             if(i==0) {
-                this.players.get(i).setColor(Pawn.RED);
+                this.players.get(i).setColor(Player.Pawn.RED);
             } else if (i==1) {
-                this.players.get(i).setColor(Pawn.BLUE);
+                this.players.get(i).setColor(Player.Pawn.BLUE);
             } else if (i==2) {
-                this.players.get(i).setColor(Pawn.GREEN);
+                this.players.get(i).setColor(Player.Pawn.GREEN);
             } else if (i==3) {
-                this.players.get(i).setColor(Pawn.YELLOW);
+                this.players.get(i).setColor(Player.Pawn.YELLOW);
             }
         }
 
@@ -114,7 +114,7 @@ public class Game {
         // setting the game-order of the players
         Random random = new Random();
         int randomFirstPlayer = random.nextInt(nPlayers); // sorting a random number between 0 and nPlayers -1
-        this.players.get(randomFirstPlayer).setPriority(true); // he is the first player
+        this.players.get(randomFirstPlayer).setIsFirst(true); // he is the first player
         this.currentPlayer = this.players.get(randomFirstPlayer); // he is the first player and the current player
         this.players.get(randomFirstPlayer).setPlayOrder(1); // the game-order positions start from 1. Example: 1,2,3,4
 
@@ -131,6 +131,17 @@ public class Game {
             this.players.get(i).setPlayOrder(order);
             order++;
             not_assigned--;
+        }
+    }
+
+
+    // after the player has played on the board the base card, this function is invoked
+    // this function gives to the player 2 resource cards + 1 base card
+    public void giveInitialCards () {
+        for (int i=0; i<nPlayers; i++) {
+            players.get(i).drawCard(resourceDeck.getFirstCard()); // resource card #1
+            players.get(i).drawCard(resourceDeck.getFirstCard()); // resource card #2
+            players.get(i).drawCard(goldDeck.getFirstCard()); // gold card #1
         }
     }
 
