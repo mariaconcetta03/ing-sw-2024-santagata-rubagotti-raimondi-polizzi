@@ -108,7 +108,7 @@ public class Game {
 
         // giving each player 2 objective cards, he will decide which one to choose
         for (int i=0; i<this.players.size(); i++) {
-            this.players.get(i).chooseObjectiveCard (this.objectiveDeck.getFirstCard(), this.objectiveDeck.getFirstCard());
+            this.players.get(i).obtainObjectiveCards (this.objectiveDeck.getFirstCard(), this.objectiveDeck.getFirstCard());
         }
 
         // setting the game-order of the players

@@ -28,6 +28,7 @@ public class Player {
     private boolean association; // verify if a game is associated with a specific player
     private Pawn color;
     private Card personalObjective; // set a personal objective chosen by a player
+    private Card personalObjectiveRejected; // personal Objective rejected by the player
     private PlayerState state;
     private Game game;
 
@@ -65,8 +66,8 @@ public class Player {
     }
 
 
-    public void setObjectiveCard(int cardId) {
-        this.personalObjective = Codex.getInstance().getCardById(cardId);
+    public void setObjectiveCard(Card card) {
+        this.personalObjective = card; //chosen objective card by command line by player
     }
 
     //GETTER
@@ -159,6 +160,13 @@ public class Player {
             tmp.setOrientation(orientation);
         }
         return orientation;
+    }
+
+    // the two objective cards are given to the player. He will need to choose one of these.
+    // the chosen one will remain in "personalObjective", while the other will remain in "personalObjectiveRejected"
+    public void obtainObjectiveCards (Card card1, Card card2) {
+        this.personalObjective = card1;
+        this.personalObjectiveRejected = card2;
     }
 
 }
