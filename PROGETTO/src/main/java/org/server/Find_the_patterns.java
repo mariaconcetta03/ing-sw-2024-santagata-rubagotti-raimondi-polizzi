@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-public class Objective_Card_pattern {
+public class Find_the_patterns {
     private Coordinates currentPosition;
     private Strategy chosenStrategy;
     private Objective_Card objectiveCardSelected;
