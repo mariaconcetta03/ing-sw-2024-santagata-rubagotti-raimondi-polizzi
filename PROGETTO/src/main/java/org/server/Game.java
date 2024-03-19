@@ -69,7 +69,7 @@ public class Game {
         int numPlayers = players.size();
         this.boards = new ArrayList<>();
         for (int i=0; i<numPlayers; i++) {
-            this.boards.add(new Board());
+            this.boards.add(new Board(players.get(i),numPlayers));
         }
 
         // shuffling the resource deck and giving 2 cards to the market
