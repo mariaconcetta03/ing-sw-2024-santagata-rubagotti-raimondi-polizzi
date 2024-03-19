@@ -64,6 +64,7 @@ public class Player {
         this.nickname = nickname;
     }
 
+
     public void setObjectiveCard(int cardId) {
         this.personalObjective = Codex.getInstance().getCardById(cardId);
     }
