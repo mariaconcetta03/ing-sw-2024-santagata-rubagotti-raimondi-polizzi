@@ -7,9 +7,9 @@ public class Deck {
         cards = new Stack<>();
     }
     public Deck goldDeck(){
-
         return goldDeck();
     }
+
     public void shuffleDeck() { // the deck is shuffled: all the cards will have a random order
                                 // after this function has been called
         Collections.shuffle(cards);
