@@ -63,7 +63,7 @@ public class Game {
     /**
      * only the first player is added to the list by the constructor, the others will be added thanks to this function
      * @param p
-     * @throws InvalidDnDOperationException
+     * @throws ArrayIndexOutOfBoundsException
      */
     public void addPlayer (Player p) throws ArrayIndexOutOfBoundsException {
         if (players.size() < nPlayers) {
@@ -108,14 +108,14 @@ public class Game {
                 this.players.get(i).setColor(colors.get(0));
                 colors.remove(this.players.get(i).getChosenColor());
             } else if (i==1) {
-                this.players.get(i).getAvailableColors(colors);
-                colors.remove(this.players.get(i).getChosenColour());
+                this.players.get(i).setColor(colors);
+                colors.remove(this.players.get(i).getChosenColor());
             } else if (i==2) {
                 this.players.get(i).getAvailableColors(colors);
-                colors.remove(this.players.get(i).getChosenColour());
+                colors.remove(this.players.get(i).getChosenColor());
             } else if (i==3) {
                 this.players.get(i).getAvailableColors(colors);
-                colors.remove(this.players.get(i).getChosenColour());
+                colors.remove(this.players.get(i).getChosenColor());
             }
         }
 
