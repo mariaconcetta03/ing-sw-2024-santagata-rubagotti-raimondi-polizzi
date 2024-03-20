@@ -6,6 +6,7 @@ import java.util.*;
  * This class represents a message in a Chat
  */
 
+
 public class Message {
     private String message; // in the string it's represented the text of the message
     private Player sender; // who sent the message

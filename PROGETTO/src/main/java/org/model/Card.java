@@ -1,8 +1,9 @@
 package org.model;
 
-public class Card {
+public abstract class Card {
     private int id; // each card has a different ID
-    public int getId(){
+
+    public int getId() {
         return id;
     }
 }

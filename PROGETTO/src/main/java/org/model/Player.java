@@ -1,14 +1,9 @@
 package org.model;
 
 
-public class Player {
+import java.util.List;
 
-    public enum Pawn {
-        RED,
-        BLUE,
-        GREEN,
-        YELLOW
-    }
+public class Player {
 
     public enum PlayerState {
         IS_PLAYING,
@@ -20,27 +15,26 @@ public class Player {
     private Board board;
     private boolean Orientation;
     private int points;
-    private int gameId;
+    private Game game;
     private int playOrder;
-    private int[] playerDeck; //each player has a deck of 3 cards
+    private PlayableCard[] playerDeck; //each player has a deck of 3 cards
     private boolean isFirst; // you can see if a player is the first one
     private boolean association; // verify if a game is associated with a specific player
-    private Pawn color;
+    private Pawn colour;
     private Card personalObjective; // set a personal objective chosen by a player
     private Card personalObjectiveRejected; // personal Objective rejected by the player
     private PlayerState state;
-    private Game game;
 
 
-    public Player() {
+    public Player(Game game) {
         this.points = 0;
         this.isFirst = false;
         this.personalObjective = null;
         this.state = PlayerState.IS_WAITING;
         this.playOrder = 0;
-        this.playerDeck = new int[]{0, 0, 0};
+        this.playerDeck = new PlayableCard[] {null, null, null};
         this.association = false;
-        this.gameId = 0;
+        this.game = game;
     }
 
     //SETTERS
@@ -48,8 +42,8 @@ public class Player {
         this.playOrder = playOrder;
     }
 
-    public void setColor(Pawn color) {
-        this.color = color;
+    public void setColor (Pawn colour) {
+        this.colour = colour;
     }
 
     public void setGame(Game game){
@@ -79,7 +73,7 @@ public class Player {
     }
 
     public Pawn getColor() {
-        return this.color;
+        return this.colour;
     }
 
     public int getPoints() {
@@ -90,41 +84,51 @@ public class Player {
         return this.playOrder;
     }
 
-    public void drawCard(int cardId) {
-
-    if(association) {
-
-        int resourceCard1 = game.getResourceCard1(); //market
-        int resourceCard2 = game.getResourceCard2(); //market
-        int goldCard1 = game.getGoldCard1(); //market
-        int goldCard2 = game.getGoldCard2(); //market
-
-        //checking card type then calling reset methods from game to set up market area
-        if (cardId == goldCard1) {
-            //setting new id of goldCard1 in market
-            game.resetGoldCard1();
-
-        } else if (cardId == goldCard2) {
-            //setting new id of goldCard2 in market
-            game.resetGoldCard2();
-
-        } else if (cardId == resourceCard1) {
-            //setting new id of resource in market
-            game.resetResourceCard1();
-
-        } else if (cardId == resourceCard2) {
-            //setter di gold
-            game.resetResourceCard2();
-
-        }
+    public Pawn getChosenColour () {
+        return colour;
     }
-        // where id card == 0, the new card is placed
-        for (int i = 0; i < 3; i++) {
-            if (playerDeck[i] == 0) {
-                playerDeck[i] = cardId;
+
+    public List<Pawn> getAvailableColors (List<Pawn> colors) {
+
+        return colors;
+    }
+
+    //OTHER METHODS
+    public void drawCard(PlayableCard card) {
+
+        if(association) {
+
+            PlayableCard resourceCard1 = game.getResourceCard1(); //market
+            PlayableCard resourceCard2 = game.getResourceCard2(); //market
+            PlayableCard goldCard1 = game.getGoldCard1(); //market
+            PlayableCard goldCard2 = game.getGoldCard2(); //market
+
+            //checking card type then calling reset methods from game to set up market area
+            if (card == goldCard1) {
+                //setting new card of goldCard1 in market
+                game.resetGoldCard1();
+
+            } else if (card == goldCard2) {
+                //setting new card of goldCard2 in market
+                game.resetGoldCard2();
+
+            } else if (card == resourceCard1) {
+                //setting new card of resource in market
+                game.resetResourceCard1();
+
+            } else if (card == resourceCard2) {
+                //setting new card of resource in market
+                game.resetResourceCard2();
+
+            }
+
+            // where card is null, the new card is placed
+            for (int i = 0; i < 3; i++) {
+                if (playerDeck[i] == null) {
+                    playerDeck[i] = card;
+                }
             }
         }
-
     }
 
     public boolean checkPlayerGame(int gameId) { //makes a check if gameid is equal to player's gameid
@@ -134,29 +138,26 @@ public class Player {
         return association;
     }
 
-    public int playCard(int cardId, Coordinates position, boolean orientation) {
+    public PlayableCard playCard(PlayableCard card, Coordinates position, boolean orientation) {
+        card.setPosition(position);      // we'll check if it's ok
+        card.setOrientation(orientation);
 
-        PlayableCard tmp = (PlayableCard) Codex.getInstance().getCardById(cardId);
-        tmp.setPosition(position);      // we'll check if it's ok
-        tmp.setOrientation(orientation);
-       // if(!baseCard) {
-            //I'll add a method for giving coordinates to the board
-            //board.placeCard(cardId, position);
-        // }
+        // I'll add a method for giving coordinates to the board
+        board.placeCard(card, position);
+
         for (int i = 0; i < 3; i++) {
-            if (playerDeck[i] == cardId) {
-                playerDeck[i] = 0;      // value 0 in playerDeck, as no id will be = 0
+            if (playerDeck[i].equals(card)) {
+                playerDeck[i] = null;      // value 0 in playerDeck, as no id will be = 0
             }
         }
-        return cardId;
+        return card;
     }
 
 
     //check: if base card,then choose the orientation
-    public boolean decideBaseCardOrientation(boolean orientation, int cardId) {
-        if (cardId >= 81 && cardId <= 86) {
-            PlayableCard tmp = (PlayableCard) Codex.getInstance().getCardById(cardId);
-            tmp.setOrientation(orientation);
+    public boolean decideBaseCardOrientation(boolean orientation, BaseCard card) {
+        if (card.getId() >= 81 && card.getId() <= 86) {
+            card.setOrientation(orientation);
         }
         return orientation;
     }
@@ -167,5 +168,10 @@ public class Player {
         this.personalObjective = card1;
         this.personalObjectiveRejected = card2;
     }
+
+
+
+
+
 
 }
