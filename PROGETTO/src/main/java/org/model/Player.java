@@ -20,12 +20,15 @@ public class Player {
     private PlayableCard[] playerDeck; //each player has a deck of 3 cards
     private boolean isFirst; // you can see if a player is the first one
     private boolean association; // verify if a game is associated with a specific player
-    private Pawn colour;
+    private Pawn color;
     private Card personalObjective; // set a personal objective chosen by a player
     private Card personalObjectiveRejected; // personal Objective rejected by the player
     private PlayerState state;
 
-
+    /**
+     * Class constructor
+     * @param game is the game in which the player is
+     */
     public Player(Game game) {
         this.points = 0;
         this.isFirst = false;
@@ -37,63 +40,100 @@ public class Player {
         this.game = game;
     }
 
-    //SETTERS
-    public void setPlayOrder(int playOrder) { //Playorder starts from 1!!
+    /**
+     * Setter
+     * @param playOrder
+     */
+    public void setPlayOrder(int playOrder) {
         this.playOrder = playOrder;
     }
 
-    public void setColor (Pawn colour) {
-        this.colour = colour;
+    /**
+     * Setter
+     * @param color
+     */
+    public void setColor (Pawn color) {
+        this.color = color;
     }
 
+    /**
+     * Setter
+     * @param game
+     */
     public void setGame(Game game){
         this.game = game;
     }
 
+    /**
+     * Setter
+     * @param isFirst
+     */
     public void setIsFirst(boolean isFirst) {
         this.isFirst = isFirst;
     }
 
+    /**
+     * Setter
+     * @param nickname
+     */
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 
-
+    /**
+     * Setter
+     * @param card
+     */
     public void setObjectiveCard(Card card) {
         this.personalObjective = card; //chosen objective card by command line by player
     }
 
-    //GETTER
+    /**
+     * Getter
+     * @return isFirst
+     */
     public boolean isFirst() {
         return this.isFirst;
     }
 
+    /**
+     * Getter
+     * @return nickname
+     */
     public String getNickname() {
         return this.nickname;
     }
-
-    public Pawn getColor() {
-        return this.colour;
-    }
-
+    /**
+     * Getter
+     * @return points
+     */
     public int getPoints() {
         return this.points;
     }
 
+    /**
+     * Getter
+     * @return playOrder
+     */
     public int getPlayOrder() {
         return this.playOrder;
     }
 
-    public Pawn getChosenColour () {
-        return colour;
+    /**
+     * Getter
+     * @return color
+     */
+    public Pawn getChosenColor () {
+        return color;
     }
 
-    public List<Pawn> getAvailableColors (List<Pawn> colors) {
 
-        return colors;
-    }
-
-    //OTHER METHODS
+    /**
+     * draws a card and if there's an association between game and player then
+     * modifies the market if it has been used
+     * introduces another card in the player's deck
+     * @param card
+     */
     public void drawCard(PlayableCard card) {
 
         if(association) {
@@ -131,6 +171,11 @@ public class Player {
         }
     }
 
+    /**
+     * check if there is an association between game and player
+     * @param gameId
+     * @return association
+     */
     public boolean checkPlayerGame(int gameId) { //makes a check if gameid is equal to player's gameid
         if(gameId == game.getId()){
             association = true;
@@ -138,6 +183,13 @@ public class Player {
         return association;
     }
 
+    /**
+     * plays a card and removes one from player's deck
+     * @param card
+     * @param position
+     * @param orientation
+     * @return card
+     */
     public PlayableCard playCard(PlayableCard card, Coordinates position, boolean orientation) {
         card.setOrientation(orientation);
 
@@ -153,7 +205,12 @@ public class Player {
     }
 
 
-    //check: if base card,then choose the orientation
+    /**
+     * check: if base card,then choose the orientation
+     * @param orientation
+     * @param card
+     * @return
+     */
     public boolean decideBaseCardOrientation(boolean orientation, BaseCard card) {
         if (card.getId() >= 81 && card.getId() <= 86) {
             card.setOrientation(orientation);
@@ -161,16 +218,16 @@ public class Player {
         return orientation;
     }
 
-    // the two objective cards are given to the player. He will need to choose one of these.
-    // the chosen one will remain in "personalObjective", while the other will remain in "personalObjectiveRejected"
+    /**
+     * the two objective cards are given to the player. He will need to choose one of these.
+     * the chosen one will remain in "personalObjective", while the other will remain in "personalObjectiveRejected"
+     * @param card1
+     * @param card2
+     */
     public void obtainObjectiveCards (Card card1, Card card2) {
         this.personalObjective = card1;
         this.personalObjectiveRejected = card2;
     }
-
-
-
-
 
 
 }
