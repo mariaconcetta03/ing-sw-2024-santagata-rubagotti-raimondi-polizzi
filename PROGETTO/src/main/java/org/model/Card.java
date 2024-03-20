@@ -1,4 +1,4 @@
-package org.server;
+package org.model;
 
 public class Card {
     private int id; // each card has a different ID

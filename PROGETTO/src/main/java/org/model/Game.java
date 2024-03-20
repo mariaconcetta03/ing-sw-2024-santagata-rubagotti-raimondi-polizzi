@@ -1,16 +1,15 @@
-package org.server;
+package org.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * This class represents the instance of a single game started by the Server
+ */
 public class Game {
     private int id; // each Game has a different id
     private int nPlayers; // number of players in this game. It's decided by the lobby-creator
     private List<Player> players; // all the players in the game
-    private List<Board> boards; /* each player has his own board. The player and the boards are linked thanks to their
-                                   position: for example the player in the 2nd position, has the board in the 2nd position,
-                                   in the first position of the list "boards", there will be the board of the player
-                                   in the first position of the list "players" */
     public enum GameState {
         STARTED,
         ENDED,
@@ -146,6 +145,9 @@ public class Game {
     }
 
 
+    /**
+     * This method ends the game
+     */
     public void endGame () {
         state = GameState.ENDED;
     }

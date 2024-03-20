@@ -1,19 +1,21 @@
-package org.server;
+package org.model;
 import java.util.*;
 
 public class Deck {
-    private Stack<Integer> cards; // contains all the cards in this deck
-
+    private Stack<Card> cards; // contains all the cards in this deck
     public Deck() {
         cards = new Stack<>();
     }
+    public Deck goldDeck(){
 
+        return goldDeck();
+    }
     public void shuffleDeck() { // the deck is shuffled: all the cards will have a random order
                                 // after this function has been called
         Collections.shuffle(cards);
     }
 
-    public int getFirstCard() { // returns the first card on the deck, for example when the player needs to pick it up
+    public Card getFirstCard() { // returns the first card on the deck, for example when the player needs to pick it up
         return cards.pop();
     }
 
