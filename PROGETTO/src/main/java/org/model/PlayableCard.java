@@ -3,6 +3,31 @@ package org.model;
 public class PlayableCard extends Card {
     private int points; // points the card gives when it's placed
     private boolean orientation; // true if it's the upper side
+
+    public ResourceType getCardType() {
+        return cardType;
+    }
+
+    public void setCardType(ResourceType cardType) {
+        this.cardType = cardType;
+    }
+
+    public void setFront_down_right(ResourceType front_down_right) {
+        this.front_down_right = front_down_right;
+    }
+
+    public void setFront_up_left(ResourceType front_up_left) {
+        this.front_up_left = front_up_left;
+    }
+
+    public void setFront_up_right(ResourceType front_up_right) {
+        this.front_up_right = front_up_right;
+    }
+
+    public void setFront_down_left(ResourceType front_down_left) {
+        this.front_down_left = front_down_left;
+    }
+
     public enum ResourceType {
         FUNGI,
         NATURE,
@@ -55,7 +80,6 @@ public class PlayableCard extends Card {
     public Coordinates getPosition() {
         return position;
     }
-
     public void setPosition(Coordinates position) {
         this.position = position;
     }

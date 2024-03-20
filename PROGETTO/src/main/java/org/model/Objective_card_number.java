@@ -15,7 +15,8 @@ public class Objective_card_number extends ObjectiveCard {
         INSECT,
         ANIMAL,
         FEATHER,
-        JAR
+        JAR,
+        PARCHMENT
     }
 
     // this function returns the number of points collected thanks to the achievement of this objective

@@ -3,6 +3,7 @@ import java.awt.dnd.InvalidDnDOperationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 /**
  * This class represents the instance of a single game started by the Server
@@ -34,6 +35,7 @@ public class Game {
     // this 2 cards represent the 2 common goals (objectives)
     private ObjectiveCard objectiveCard1;
     private ObjectiveCard objectiveCard2;
+    private Scanner sc= new Scanner(System.in);
 
     private List<Chat> chats; // contains all the chats started during the game
 
@@ -93,6 +95,7 @@ public class Game {
             this.players.get(i).drawCard(this.baseDeck.getFirstCard());
         }
 
+        //rivedere completamente
         // setting the colour of the pawn of the players
         for (int i=0; i<this.players.size(); i++) {
             List <Pawn> colors = new ArrayList<>();
@@ -100,9 +103,10 @@ public class Game {
             colors.add(Pawn.BLUE);
             colors.add(Pawn.YELLOW);
             colors.add(Pawn.GREEN);
+            Scanner sc;
             if(i==0) {
-                this.players.get(i).getAvailableColors(colors);
-                colors.remove(this.players.get(i).getChosenColour());
+                this.players.get(i).setColor(colors.get(0));
+                colors.remove(this.players.get(i).getChosenColor());
             } else if (i==1) {
                 this.players.get(i).getAvailableColors(colors);
                 colors.remove(this.players.get(i).getChosenColour());

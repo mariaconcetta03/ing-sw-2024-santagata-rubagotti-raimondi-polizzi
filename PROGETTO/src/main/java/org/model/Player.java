@@ -139,7 +139,6 @@ public class Player {
     }
 
     public PlayableCard playCard(PlayableCard card, Coordinates position, boolean orientation) {
-        card.setPosition(position);      // we'll check if it's ok
         card.setOrientation(orientation);
 
         // I'll add a method for giving coordinates to the board
