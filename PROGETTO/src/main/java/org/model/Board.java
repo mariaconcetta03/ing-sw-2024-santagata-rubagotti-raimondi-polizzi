@@ -38,8 +38,8 @@ public class Board {
         numResources.put(PlayableCard.ResourceType.ABSENT,0);
     }
     //metodo setboard che inizializza la board, non posso prendere nPlayers come parametro
-    public void placeBaseCard(){
-
+    public void placeBaseCard(BaseCard card){
+        //da fare ma il prototipo è questo
     }
 
     /**
