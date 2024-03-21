@@ -13,7 +13,6 @@ public class Player {
 
     private String nickname;
     private Board board;
-    private boolean Orientation;
     private int points;
     private Game game;
     private int playOrder;
@@ -229,5 +228,20 @@ public class Player {
         this.personalObjectiveRejected = card2;
     }
 
+    /**
+     * Setter method
+     * @param board
+     */
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    /**
+     * Getter method
+     * @return
+     */
+    public Board getBoard () {
+        return this.board;
+    }
 
 }
