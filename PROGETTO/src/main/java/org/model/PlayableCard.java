@@ -1,8 +1,50 @@
 package org.model;
+import java.util.*;
 
 public class PlayableCard extends Card {
-    private int points; // points the card gives when it's placed
-    private boolean orientation; // true if it's the upper side
+    /**
+      * we have to add these attributes to PlayableCard because when
+      * the Player wants to place a Card, if this is a GoldCard there are
+      * some Resources needed (a certain number of one type and a certain
+      * number of another type)
+      */
+
+    private int points;
+    /**
+     *  points the card gives when it's placed (the minimun number)
+     * (these are the visible points on the card)
+     * here are not counted the other points that can be added (such as
+     * when we have a card that adds points for each visible jar in the table)
+    */
+    private boolean orientation; //true if it's the upper side
+    private boolean coverAngleToReceivePoints;
+    /**
+     *
+     * true if covered angles give extra points (when a card is placed we count
+     * always at least a covered angle)
+     */
+    private boolean haveJarToReceivePoints;
+    /**
+     * true if other jars give extra points. If you check the cards that we can have
+     * you'll notice that every card that has this option has also one jar (we can
+     * say the same thing for the following two attributes) that means that this
+     * kind of card gives always at least the points (only one for what I can see)
+     * associated with one jar
+    */
+    private boolean haveFeatherToReceivePoints; //read the comment above
+    private boolean haveScrollToReceivePoints; //read the comment above
+    private boolean neededResourcesBoolean;
+    /**
+     * always true when we are talking about a GoldCard because in this case there
+     * are always resources needed
+    */
+    private Map<ResourceType, Integer> neededResources;
+    /**
+     * this structure would be used only when the above attribute is true. The
+     * key is the type of the resource, the value is the number of that type needed
+    */
+
+
 
     public ResourceType getCardType() {
         return cardType;
@@ -32,12 +74,60 @@ public class PlayableCard extends Card {
         this.points = points;
     }
 
+    public Map<ResourceType, Integer> getNeededResources() {
+        return neededResources;
+    }
+
+    public void setNeededResources(Map<ResourceType, Integer> neededResources) {
+        this.neededResources = neededResources;
+    }
+
+    public boolean isNeededResourcesBoolean() {
+        return neededResourcesBoolean;
+    }
+
+    public void setNeededResourcesBoolean(boolean neededResourcesBoolean) {
+        this.neededResourcesBoolean = neededResourcesBoolean;
+    }
+
+    public boolean isScrollToReceivePoints() {
+        return haveScrollToReceivePoints;
+    }
+
+    public void setScrollToReceivePoints(boolean haveScrollToReceivePoints) {
+        this.haveScrollToReceivePoints = haveScrollToReceivePoints;
+    }
+
+    public boolean isFeatherToReceivePoints() {
+        return haveFeatherToReceivePoints;
+    }
+
+    public void setFeatherToReceivePoints(boolean haveFeatherToReceivePoints) {
+        this.haveFeatherToReceivePoints = haveFeatherToReceivePoints;
+    }
+
+    public boolean isJarToReceivePoints() {
+        return haveJarToReceivePoints;
+    }
+
+    public void setJarToReceivePoints(boolean haveJarToReceivePoints) {
+        this.haveJarToReceivePoints = haveJarToReceivePoints;
+    }
+
+    public boolean isCoverAngleToReceivePoints() {
+        return coverAngleToReceivePoints;
+    }
+
+    public void setCoverAngleToReceivePoints(boolean coverAngleToReceivePoints) {
+        this.coverAngleToReceivePoints = coverAngleToReceivePoints;
+    }
+
     public enum ResourceType {
         FUNGI,
         NATURE,
         INSECT,
         ANIMAL,
-        PARCHMENT,
+        SCROLL,
         FEATHER,
         JAR,
         NO_RESOURCE,
@@ -87,5 +177,5 @@ public class PlayableCard extends Card {
     public void setPosition(Coordinates position) {
         this.position = position;
     }
-
+    
 }

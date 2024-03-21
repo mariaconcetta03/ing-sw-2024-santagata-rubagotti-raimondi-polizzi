@@ -5,6 +5,8 @@ import java.util.List;
 
 public class Player {
 
+    private ObjectiveCard card1;
+
     public enum PlayerState {
         IS_PLAYING,
         IS_WAITING,
@@ -12,16 +14,18 @@ public class Player {
     }
 
     private String nickname;
-    private Board board;
+    private Board board; //we have a board for each player
     private int points;
     private Game game;
     //private int playOrder;
     private PlayableCard[] playerDeck; //each player has a deck of 3 cards
     private boolean isFirst; // you can see if a player is the first one
-    //private boolean association; // verify if a game is associated with a specific player
     private Pawn color;
+    /**
+     * that's the color that the card has and it's chosen between the colors
+     * listed in the Enumeration Pawn
+    */
     private Card personalObjective; // set a personal objective chosen by a player
-    //private Card personalObjectiveRejected; // personal Objective rejected by the player
     private PlayerState state;
 
     /**
@@ -30,6 +34,8 @@ public class Player {
      * @param game is the game in which the player is
      */
     public Player(Game game) {
+        this.nickname = null;
+        this.board = null;
         this.points = 0;
         this.isFirst = false;
         this.personalObjective = null;
@@ -40,21 +46,26 @@ public class Player {
         this.game = game;
     }
 
+    /**
+     * Constructor method
+     * this method would be called in the case the player is created
+     * before a Game instance is located
+     */
     public Player() {
         this.nickname = null;
         this.board = null;
-        this.points = points;
-        this.game = game;
-        this.playerDeck = playerDeck;
-        this.isFirst = isFirst;
-        this.color = color;
-        this.personalObjective = personalObjective;
-        this.state = state;
+        this.points = 0;
+        this.game = null;
+        this.playerDeck = null;
+        this.isFirst = false;
+        this.color = null;
+        this.personalObjective = null;
+        this.state = null;
     }
 
 
     /**
-     * Setter
+     * Setter method
      *
      * @param color
      */
@@ -63,7 +74,7 @@ public class Player {
     }
 
     /**
-     * Setter
+     * Setter method
      *
      * @param game
      */
@@ -72,7 +83,7 @@ public class Player {
     }
 
     /**
-     * Setter
+     * Setter method
      *
      * @param isFirst
      */
@@ -81,7 +92,7 @@ public class Player {
     }
 
     /**
-     * Setter
+     * Setter method
      *
      * @param nickname
      */
@@ -90,16 +101,32 @@ public class Player {
     }
 
     /**
-     * Setter
+     * Setter method
      *
-     * @param card
+     * @param card is the personal objective chosen by the player
      */
     public void setPersonalObjective(Card card) {
         this.personalObjective = card; //chosen objective card by command line by player
     }
 
     /**
-     * Getter
+     * Setter method
+     *
+     * @param board
+     */
+    public void setBoard(Board board) {
+        this.board = board;
+    }
+
+    /** Setter method [called by the controller]
+     * @param card personal objective chosen by the player
+     */
+    public void setPersonalObjective (ObjectiveCard card) {
+        this.personalObjective = card;
+    }
+    
+    /**
+     * Getter method
      *
      * @return isFirst
      */
@@ -108,7 +135,7 @@ public class Player {
     }
 
     /**
-     * Getter
+     * Getter method
      *
      * @return nickname
      */
@@ -117,7 +144,7 @@ public class Player {
     }
 
     /**
-     * Getter
+     * Getter method
      *
      * @return points
      */
@@ -126,12 +153,21 @@ public class Player {
     }
 
     /**
-     * Getter
+     * Getter method
      *
      * @return color
      */
     public Pawn getChosenColor() {
         return color;
+    }
+
+    /**
+     * Getter method
+     *
+     * @return board
+     */
+    public Board getBoard() {
+        return this.board;
     }
 
 
@@ -140,7 +176,6 @@ public class Player {
      * modifies the market if it has been used
      * introduces another card in the player's deck
      *
-     * @param card
      */
     public void drawCard(PlayableCard card) {
 
@@ -183,11 +218,14 @@ public class Player {
      * @param position
      * @param orientation
      */
-    public void playCard(PlayableCard card, Coordinates position, boolean orientation) {
+    public void playCard(PlayableCard card, Coordinates position, boolean orientation) throws IllegalArgumentException {
+
         card.setOrientation(orientation);
 
         // I'll add a method for giving coordinates to the board
-        board.placeCard(card, position);
+        if (!board.placeCard(card, position)){
+            throw new IllegalArgumentException();
+        }
 
         for (int i = 0; i < 3; i++) {
             if (playerDeck[i].equals(card)) {
@@ -198,47 +236,26 @@ public class Player {
 
 
     /**
-     * check: if base card,then choose the orientation
+     * if base card set orientation and place base card
      *
      * @param orientation
      * @param card
      * @return
      */
-    public boolean decideBaseCardOrientation(boolean orientation, BaseCard card) {
-        if (card.getId() >= 81 && card.getId() <= 86) {
-            card.setOrientation(orientation);
-        }
-        return orientation;
+    public void playBaseCard (boolean orientation, PlayableCard card) {
+        board.placeBaseCard(card);
+        card.setOrientation(orientation);
     }
 
-    /**
-     * the two objective cards are given to the player. He will need to choose one of these.
-     * the chosen one will remain in "personalObjective", while the other will remain in "personalObjectiveRejected"
-     *
-     * @param card1
-     * @param card2
-     */
-    public void obtainObjectiveCards(Card card1, Card card2) {
-        this.personalObjective = card1;
-        this.personalObjectiveRejected = card2;
-    }
+
 
     /**
-     * Setter method
-     *
-     * @param board
+     * This function adds the points to the player
+     * @param points points to add to the player
      */
-    public void setBoard(Board board) {
-        this.board = board;
+    public void addPoints (int points) {
+        this.points = this.points + points;
     }
 
-    /**
-     * Getter method
-     *
-     * @return
-     */
-    public Board getBoard() {
-        return this.board;
-    }
 }
 
