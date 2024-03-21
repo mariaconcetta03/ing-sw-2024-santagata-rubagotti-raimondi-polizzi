@@ -145,16 +145,16 @@ public class Board {
      */
     public int cardPoints (PlayableCard card, int coveredAngles){
         int points = card.getPoints(); // if the card gives you points in any case
-            if(card.isCoverAngleToReceivePoints()) {
-                points = coveredAngles * card.getPoints();
-            } else if (card.isJarToReceivePoints()){
-                points = card.getPoints() * numResources.get(PlayableCard.ResourceType.JAR);
-            } else if (card.isFeatherToReceivePoints()){
-                points = card.getPoints() * numResources.get(PlayableCard.ResourceType.FEATHER);
-            } else if (card.isScrollToReceivePoints()) {
-                points = card.getPoints() * numResources.get(PlayableCard.ResourceType.SCROLL);
-            }
-            return points;
+        if(card.isCoverAngleToReceivePoints()) {
+            points = coveredAngles * card.getPoints();
+        } else if (card.isJarToReceivePoints()){
+            points = card.getPoints() * numResources.get(PlayableCard.ResourceType.JAR);
+        } else if (card.isFeatherToReceivePoints()){
+            points = card.getPoints() * numResources.get(PlayableCard.ResourceType.FEATHER);
+        } else if (card.isScrollToReceivePoints()) {
+            points = card.getPoints() * numResources.get(PlayableCard.ResourceType.SCROLL);
+        }
+        return points;
     }
 
     /**
@@ -237,3 +237,4 @@ public class Board {
         }
     }
 }
+//

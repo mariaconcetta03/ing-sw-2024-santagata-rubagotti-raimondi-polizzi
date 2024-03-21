@@ -6,7 +6,7 @@ public class PlayableCard extends Card {
       * we have to add these attributes to PlayableCard because when
       * the Player wants to place a Card, if this is a GoldCard there are
       * some Resources needed (a certain number of one type and a certain
-      * number of another type)
+      * number of another type) //
       */
 
     private int points;

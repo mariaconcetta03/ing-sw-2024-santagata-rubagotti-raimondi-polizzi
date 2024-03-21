@@ -188,8 +188,8 @@ public class Player {
         if (card == goldCard1) {
             //setting new card of goldCard1 in market
             game.resetGoldCard1();
-
-        } else if (card == goldCard2) {
+ 
+        } else if (card == goldCard2) { //
             //setting new card of goldCard2 in market
             game.resetGoldCard2();
 
