@@ -28,6 +28,10 @@ public class PlayableCard extends Card {
         this.front_down_left = front_down_left;
     }
 
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
     public enum ResourceType {
         FUNGI,
         NATURE,

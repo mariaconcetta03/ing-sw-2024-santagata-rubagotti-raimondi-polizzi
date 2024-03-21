@@ -37,6 +37,10 @@ public class Board {
         numResources.put(PlayableCard.ResourceType.NO_RESOURCE,0);
         numResources.put(PlayableCard.ResourceType.ABSENT,0);
     }
+    //metodo setboard che inizializza la board, non posso prendere nPlayers come parametro
+    public void placeBaseCard(){
+
+    }
 
     /**
      * Places a card in the table and updates playable/unplayable positions
@@ -104,6 +108,7 @@ public class Board {
             throw new IllegalArgumentException();
         }
     }
+
 
     /**
      * Adding all the positions where the angle is ABSENT (players can't use that angle)
