@@ -42,7 +42,7 @@ public class PlayableCard extends Card {
     /**
      * this structure would be used only when the above attribute is true. The
      * key is the type of the resource, the value is the number of that type needed
-    */
+     */
 
 
 

@@ -162,7 +162,7 @@ public class Board {
      * @param card is the card you have placed now
      * @return boolean value
      */
-    private boolean enoughResources (PlayableCard card) { // CONTROLLARE SE SI PUò USARE per pattern
+    private boolean enoughResources  (PlayableCard card) { // CONTROLLARE SE SI PUò USARE per pattern
         if (card.isNeededResourcesBoolean()) {
             for (PlayableCard.ResourceType t: numResources.keySet()){
                 if (numResources.get(t) < card.getNeededResources().get(t)) {
