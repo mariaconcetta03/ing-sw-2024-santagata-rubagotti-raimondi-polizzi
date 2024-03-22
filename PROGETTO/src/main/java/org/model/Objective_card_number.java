@@ -1,4 +1,5 @@
 package org.model;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.util.Map;
 
 /**
@@ -7,7 +8,7 @@ import java.util.Map;
 
 public class Objective_card_number extends ObjectiveCard {
     private Map<PlayableCard.ResourceType, Integer> resources; // each resource is associated with an int, which
-                                                                // indicates the number of resources needed by the objective card
+    // indicates the number of resources needed by the objective card
 
     private enum CountingType {
         FUNGI,
@@ -24,50 +25,36 @@ public class Objective_card_number extends ObjectiveCard {
 
     /**
      * Class constructor
-     * @param points the points the card gives to the player if he has achieved the objective
+     *
+     * @param points    the points the card gives to the player if he has achieved the objective
      * @param resources a Map of the resources needed for the extra points
      */
-    public Objective_card_number (int points, Map<PlayableCard.ResourceType, Integer> resources) {
-        super (points);
+    public Objective_card_number(int points, Map<PlayableCard.ResourceType, Integer> resources) {
+        super(points);
         this.resources = resources;
     }
 
 
 
 
+
     /**
      * This method returns the number of points collected thanks to the achievement of this objective
-     * @param symbols all the resources, collected in a Map, which the player has on his own board
-     * @return the number of total extra points collected y the player thanks to the achievement of the objective
+     *
+     * @param symbolsOnBoard all the resources, collected in a Map, which the player has on his own board
+     * @return the number of total extra points collected by the player thanks to the achievement of the objective
      */
-    public int checkResourcesNumber(Map<PlayableCard.ResourceType, Integer> symbols) {
-        int [] counting; // keeping track of how many times the objective is respected for each resource
-        counting = new int[] {0,0,0,0,0,0,0}; //initializing 7 int cells to 0 (each one represents a resource)
-        int i = 0;
-        int pointsCollected = 0;
+    public int checkResourcesNumber (Map<PlayableCard.ResourceType, Integer> symbolsOnBoard) {
+        int minResources = Integer.MAX_VALUE;
 
-        for (Map.Entry<PlayableCard.ResourceType, Integer> copy: resources.entrySet()) {
-            // Map.Entry automatically obtains key-value pairs and then iterates over these pairs
-            counting[i] = symbols.get(copy.getKey()) / resources.get(copy.getKey());
-            i++;
-        }
-
-        for (int k=0; k<7; k++) { //checking how many times the player has achieved the Objective
-
-                pointsCollected = counting[k];
-
-            for(int j=i++; j<7; j++ ){
-                if(counting[k] < pointsCollected){
-                    pointsCollected = counting[j];
+        for (PlayableCard.ResourceType t : resources.keySet()) {
+            if (resources.get(t) != 0) { // se l'obiettivo non richiede nulla --> non controllo!
+                if (symbolsOnBoard.get(t) / resources.get(t) < minResources) {
+                    minResources = symbolsOnBoard.get(t) / resources.get(t);
                 }
             }
-
-            if (counting[k] != 0 && counting[k] < pointsCollected) {
-                pointsCollected = counting[k];
-            }
         }
-
-        return pointsCollected;
+        return minResources * this.getCardPoints();
     }
 
 }
