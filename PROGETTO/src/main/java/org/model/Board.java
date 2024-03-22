@@ -42,6 +42,7 @@ public class Board {
 
     /**
      * This method places the first base card for a player in the middle of the table (dimension/2)
+     * and adds resources
      * @param card is the base card you want to place
      */
     public void placeBaseCard(PlayableCard card){
@@ -49,13 +50,29 @@ public class Board {
 
         //adding the new card resources
         if(card.getOrientation()) {
-            numResources.put(card.get_front_down_left(), numResources.get(card.get_front_down_left())+1);
-            numResources.put(card.get_front_down_right(), numResources.get(card.get_front_down_right())+1);
-            numResources.put(card.get_front_up_left(), numResources.get(card.get_front_up_left())+1);
-            numResources.put(card.get_front_up_right(), numResources.get(card.get_front_up_right())+1);
-        } else {
-            //adds the back resource if played on the back side
-            numResources.put(card.getCardType(),numResources.get(card.getCardType())+1);
+            numResources.put(card.get_front_down_left(), numResources.get(card.get_front_down_left()) + 1);
+            numResources.put(card.get_front_down_right(), numResources.get(card.get_front_down_right()) + 1);
+            numResources.put(card.get_front_up_left(), numResources.get(card.get_front_up_left()) + 1);
+            numResources.put(card.get_front_up_right(), numResources.get(card.get_front_up_right()) + 1);
+        }
+        if(!card.getOrientation()){
+            //adds the back resources if played on the back side
+            if (card.getCentralResources().contains(PlayableCard.ResourceType.FUNGI)) {
+                numResources.put(PlayableCard.ResourceType.FUNGI,numResources.get(PlayableCard.ResourceType.FUNGI)+1);
+            }
+            if (card.getCentralResources().contains(PlayableCard.ResourceType.INSECT)) {
+                numResources.put(PlayableCard.ResourceType.INSECT,numResources.get(PlayableCard.ResourceType.INSECT)+1);
+            }
+            if (card.getCentralResources().contains(PlayableCard.ResourceType.ANIMAL)) {
+                numResources.put(PlayableCard.ResourceType.ANIMAL,numResources.get(PlayableCard.ResourceType.ANIMAL)+1);
+            }
+            if (card.getCentralResources().contains(PlayableCard.ResourceType.NATURE)) {
+                numResources.put(PlayableCard.ResourceType.NATURE,numResources.get(PlayableCard.ResourceType.NATURE)+1);
+            }
+            numResources.put(card.get_back_down_left(), numResources.get(card.get_back_down_left()) + 1);
+            numResources.put(card.get_back_down_right(), numResources.get(card.get_back_down_right()) + 1);
+            numResources.put(card.get_back_up_left(), numResources.get(card.get_back_up_left()) + 1);
+            numResources.put(card.get_back_up_right(), numResources.get(card.get_back_up_right()) + 1);
         }
         updateUnplayablePositions(card);
         updatePlayablePositions(card);
@@ -69,7 +86,7 @@ public class Board {
      * throws an exception if the player can't play the card there
      */
     //we have to add the requirements in the gold cards
-    public boolean placeCard(PlayableCard card, Coordinates position) {
+    public boolean placeCard(PlayableCard card, Coordinates position) { //FRA DEVE RIVEDERE! ATTENZIONE A COPRIRE ANGOLI DELLA BASE CARD ANCHE NEL DIETRO !!!!!!!!!!!!!!
         int coveredAngles = 0;
         if (playablePositions.contains(position) && enoughResources(card)) {
             //all the angles of the adjacent cards we could cover with the one we are placing
