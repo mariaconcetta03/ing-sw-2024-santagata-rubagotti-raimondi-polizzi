@@ -10,6 +10,32 @@ public class PlayableCard extends Card {
       */
 
     private int points;
+
+
+    public enum ResourceType {
+        FUNGI,
+        NATURE,
+        INSECT,
+        ANIMAL,
+        SCROLL,
+        FEATHER,
+        JAR,
+        NO_RESOURCE,
+        ABSENT
+    }
+
+    // these variables contains the type of resource present in a specific corner of the card
+    private ResourceType front_up_right;
+    private ResourceType front_up_left;
+    private ResourceType front_down_right;
+    private ResourceType front_down_left;
+    private ResourceType back_up_right;
+    private ResourceType back_up_left;
+    private ResourceType back_down_right;
+    private ResourceType back_down_left;
+    private ResourceType cardType;
+    private Coordinates position;
+
     /**
      *  points the card gives when it's placed (the minimun number)
      * (these are the visible points on the card)
@@ -43,13 +69,9 @@ public class PlayableCard extends Card {
      * this structure would be used only when the above attribute is true. The
      * key is the type of the resource, the value is the number of that type needed
      */
+    private List<ResourceType> centralResources;
 
-
-
-    public ResourceType getCardType() {
-        return cardType;
-    }
-
+    ///SETTER
     public void setCardType(ResourceType cardType) {
         this.cardType = cardType;
     }
@@ -74,74 +96,69 @@ public class PlayableCard extends Card {
         this.points = points;
     }
 
-    public Map<ResourceType, Integer> getNeededResources() {
-        return neededResources;
-    }
-
     public void setNeededResources(Map<ResourceType, Integer> neededResources) {
         this.neededResources = neededResources;
+    }
+
+    public void setNeededResourcesBoolean(boolean neededResourcesBoolean) {
+            this.neededResourcesBoolean = neededResourcesBoolean;
+    }
+
+    public void setScrollToReceivePoints(boolean haveScrollToReceivePoints) {
+           this.haveScrollToReceivePoints = haveScrollToReceivePoints;
+    }
+
+    public void setFeatherToReceivePoints(boolean haveFeatherToReceivePoints) {
+            this.haveFeatherToReceivePoints = haveFeatherToReceivePoints;
+    }
+
+    public void setJarToReceivePoints(boolean haveJarToReceivePoints) {
+            this.haveJarToReceivePoints = haveJarToReceivePoints;
+    }
+
+    public void setCoverAngleToReceivePoints(boolean coverAngleToReceivePoints) {
+            this.coverAngleToReceivePoints = coverAngleToReceivePoints;
+    }
+
+    public void setOrientation(boolean orientation) {
+             this.orientation = orientation;
+    }
+
+    public void setPosition(Coordinates position) {
+             this.position = position;
+    }
+
+    //GETTER
+    public Map<ResourceType, Integer> getNeededResources() {
+           return neededResources;
+    }
+    public ResourceType getCardType() {
+            return cardType;
     }
 
     public boolean isNeededResourcesBoolean() {
         return neededResourcesBoolean;
     }
 
-    public void setNeededResourcesBoolean(boolean neededResourcesBoolean) {
-        this.neededResourcesBoolean = neededResourcesBoolean;
-    }
-
     public boolean isScrollToReceivePoints() {
         return haveScrollToReceivePoints;
-    }
-
-    public void setScrollToReceivePoints(boolean haveScrollToReceivePoints) {
-        this.haveScrollToReceivePoints = haveScrollToReceivePoints;
     }
 
     public boolean isFeatherToReceivePoints() {
         return haveFeatherToReceivePoints;
     }
 
-    public void setFeatherToReceivePoints(boolean haveFeatherToReceivePoints) {
-        this.haveFeatherToReceivePoints = haveFeatherToReceivePoints;
-    }
-
     public boolean isJarToReceivePoints() {
         return haveJarToReceivePoints;
-    }
-
-    public void setJarToReceivePoints(boolean haveJarToReceivePoints) {
-        this.haveJarToReceivePoints = haveJarToReceivePoints;
     }
 
     public boolean isCoverAngleToReceivePoints() {
         return coverAngleToReceivePoints;
     }
 
-    public void setCoverAngleToReceivePoints(boolean coverAngleToReceivePoints) {
-        this.coverAngleToReceivePoints = coverAngleToReceivePoints;
+    public List<ResourceType> getCentralResources() {
+        return centralResources;
     }
-
-    public enum ResourceType {
-        FUNGI,
-        NATURE,
-        INSECT,
-        ANIMAL,
-        SCROLL,
-        FEATHER,
-        JAR,
-        NO_RESOURCE,
-        ABSENT
-    }
-
-    // these variables contains the type of resource present in a specific corner of the card
-    private ResourceType front_up_right;
-    private ResourceType front_up_left;
-    private ResourceType front_down_right;
-    private ResourceType front_down_left;
-    private ResourceType cardType;
-    private Coordinates position;
-
 
     public int getPoints() {
         return points;
@@ -149,10 +166,6 @@ public class PlayableCard extends Card {
 
     public boolean getOrientation() {
         return orientation;
-    }
-
-    public void setOrientation(boolean orientation) {
-        this.orientation = orientation;
     }
 
     public ResourceType get_front_up_right() {
@@ -171,11 +184,24 @@ public class PlayableCard extends Card {
         return front_down_left;
     }
 
+    public ResourceType get_back_up_right() {
+        return back_up_right;
+    }
+
+    public ResourceType get_back_up_left() {
+        return back_up_left;
+    }
+
+    public ResourceType get_back_down_right() {
+        return back_down_right;
+    }
+
+    public ResourceType get_back_down_left() {
+        return back_down_left;
+    }
+
     public Coordinates getPosition() {
         return position;
     }
-    public void setPosition(Coordinates position) {
-        this.position = position;
-    }
-    
+
 }

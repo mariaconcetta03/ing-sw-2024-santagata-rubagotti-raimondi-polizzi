@@ -8,6 +8,8 @@ import java.util.Scanner;
 /**
  * This class represents the instance of a single game started by the Server
  */
+
+
 public class Game {
     private int id; // each Game has a different id
     private int nPlayers; // number of players in this game. It's decided by the lobby-creator
@@ -25,18 +27,34 @@ public class Game {
     private Deck baseDeck; // contains all the base cards, which are the cards that players use to start the game
     private ObjectiveCard[] objectiveDeck; // contains all the objective cards
 
-    /* these ones are the 4 cards which are at the table center: players can see them and can decide to draw from the
+    /** these ones are the 4 cards which are at the table center: players can see them and can decide to draw from the
        deck, or to draw one of these cards */
     private PlayableCard resourceCard1;
     private PlayableCard resourceCard2;
     private PlayableCard goldCard1;
     private PlayableCard goldCard2;
 
-    // this 2 cards represent the 2 common goals (objectives)
+    /**
+     *  this 2 cards represent the 2 common goals (objectives)
+     */
     private ObjectiveCard objectiveCard1;
     private ObjectiveCard objectiveCard2;
+
     private List<Chat> chats; // contains all the chats started during the game
 
+
+
+
+
+    /**
+     * Class constructor
+     * @param player is the first player who connected to the server
+     * @param id each game has a different id
+     * @param resourceDeck all the resource cards
+     * @param goldDeck all the gold cards
+     * @param baseDeck all the base cards
+     * @param objectiveDeck all the objective cards
+     */
     public Game (Player player, int id, Deck resourceDeck, Deck goldDeck, Deck baseDeck, ObjectiveCard[] objectiveDeck) {
         this.id = id;
         this.players = new ArrayList<>();
@@ -58,16 +76,23 @@ public class Game {
 
 
 
+
+
+
     /**
-     * only the first player is added to the list by the constructor, the others will be added thanks to this function
-     * @param p
-     * @throws ArrayIndexOutOfBoundsException
+     * Only the first player is added to the list by the constructor, the others will be added thanks to this function
+     * @param p a player that has to be added
+     * @throws ArrayIndexOutOfBoundsException if max number of player is reached
      */
     public void addPlayer (Player p) throws ArrayIndexOutOfBoundsException {
         if (players.size() < nPlayers) {
             this.players.add(p);
         } else throw new ArrayIndexOutOfBoundsException();
     }
+
+
+
+
 
 
     /**
@@ -129,6 +154,7 @@ public class Game {
                 this.players.get(i).setColor(Pawn.GREEN);
             } else throw new IllegalArgumentException();
         }
+
         sc.close();
 
         // giving 2 cards to the market as common objective
@@ -182,6 +208,12 @@ public class Game {
         this.players = newOrder; // setting the new order
     }
 
+
+
+
+
+
+
     /**
      * after the player has played on the board the base card, this function is invoked
      * this function gives to the player 2 resource cards + 1 base card
@@ -195,6 +227,11 @@ public class Game {
     }
 
 
+
+
+
+
+
     /**
      * This method ends the game
      */
@@ -202,8 +239,13 @@ public class Game {
         state = GameState.ENDED;
     }
 
+
+
+
+
+
     /**
-     * returns the player with the higher number of points
+     * This method returns the player with the higher number of points
      * @return winner
      */
     public Player winner () {
@@ -213,14 +255,18 @@ public class Game {
                 winner = this.players.get(i);
             }
         }
-    return winner;
+        return winner;
     }
 
 
+
+
+
+
     /**
-     * adds a new chat to the List chat in this game. P1 and P2 are the 2 players the chat is composed by
-     * @param p1
-     * @param p2
+     * This method adds a new chat to the List chat in this game. P1 and P2 are the 2 players the chat is composed by
+     * @param p1 first player in the chat
+     * @param p2 second player in the chat
      */
     public void startChat (Player p1, Player p2) {
         int index = this.chats.size();
@@ -235,8 +281,12 @@ public class Game {
     }
 
 
+
+
+
+
     /**
-     * adds a new chat to the List chat in this game. The new chat is composed by all the players in this game
+     * This method adds a new chat to the List chat in this game. The new chat is composed by all the players in this game
      */
     public void startGeneralChat() {
         int index = this.chats.size();
@@ -248,8 +298,14 @@ public class Game {
     }
 
 
+
+
+
+
     /**
-     * returns the player who will need to play soon, at the next round
+     *  The first player of the list, after this method is invoked, is the one who will need to play soon, at the next round.
+     *  The order of the whole list is modified
+     *  @return the next player is who will play soon
      */
     public Player nextRound() {
         this.players.add(this.players.get(0));
@@ -258,54 +314,15 @@ public class Game {
         return this.currentPlayer;
     }
 
-    public PlayableCard getGoldCard1() {
-        return this.goldCard1;
-    }
 
-    public PlayableCard getGoldCard2() {
-        return this.goldCard2;
-    }
 
-    public ObjectiveCard getObjectiveCard1() {
-        return this.objectiveCard1;
-    }
 
-    public ObjectiveCard getObjectiveCard2() {
-        return this.objectiveCard2;
-    }
 
-    public PlayableCard getResourceCard1() {
-        return this.resourceCard1;
-    }
 
-    public PlayableCard getResourceCard2() {
-        return this.resourceCard2;
-    }
-
-    public Deck getResourceDeck() {
-        return this.resourceDeck;
-    }
-
-    public Deck getGoldDeck() {
-        return this.goldDeck;
-    }
-
-    public GameState getState() {
-        return this.state;
-    }
-
-    public void setState (GameState state) {
-        this.state = state;
-    }
-
-    public Deck getBaseDeck() {
-        return baseDeck;
-    }
-
-    public ObjectiveCard[] getObjectiveDeckDeck() {
-        return objectiveDeck;
-    }
-
+    /**
+     * These 4 methods are useful to replace a card in the market.
+     * The market is formed by 2 gold cards and 2 resource cards, which the player can pick up during the game
+     */
     public void resetGoldCard1 () {
         this.goldCard1 = this.goldDeck.getFirstCard();
     }
@@ -322,24 +339,176 @@ public class Game {
         this.resourceCard2 = this.resourceDeck.getFirstCard();
     }
 
+
+
+
+    /**
+     * Getter method
+     * @return goldCard1 in the market
+     */
+    public PlayableCard getGoldCard1() {
+        return this.goldCard1;
+    }
+
+
+
+    /**
+     * Getter method
+     * @return goldCard2 in the market
+     */
+    public PlayableCard getGoldCard2() {
+        return this.goldCard2;
+    }
+
+
+
+    /**
+     * Getter method
+     * @return objectiveCard1 is one of the common objective
+     */
+    public ObjectiveCard getObjectiveCard1() {
+        return this.objectiveCard1;
+    }
+
+
+
+    /**
+     * Getter method
+     * @return objectiveCard2 is one of the common objective
+     */
+    public ObjectiveCard getObjectiveCard2() {
+        return this.objectiveCard2;
+    }
+
+
+
+    /**
+     * Getter method
+     * @return resourceCard1 in the market
+     */
+    public PlayableCard getResourceCard1() {
+        return this.resourceCard1;
+    }
+
+
+
+    /**
+     * Getter method
+     * @return resourceCard2 in the market
+     */
+    public PlayableCard getResourceCard2() {
+        return this.resourceCard2;
+    }
+
+
+
+    /**
+     * Getter method
+     * @return resourceDeck of the game
+     */
+    public Deck getResourceDeck() {
+        return this.resourceDeck;
+    }
+
+
+
+    /**
+     * Getter method
+     * @return goldDeck of the game
+     */
+    public Deck getGoldDeck() {
+        return this.goldDeck;
+    }
+
+
+
+    /**
+     * Getter method
+     * @return state of the game (for example if it's ended)
+     */
+    public GameState getState() {
+        return this.state;
+    }
+
+
+
+    /**
+     * Getter method
+     * @return baseDeck of the game
+     */
+    public Deck getBaseDeck() {
+        return baseDeck;
+    }
+
+
+
+    /**
+     * Getter method
+     * @return objectiveDeck of the game
+     */
+    public ObjectiveCard[] getObjectiveDeckDeck() {
+        return objectiveDeck;
+    }
+
+
+
+    /**
+     * Getter method
+     * @return players are the ones who are playing
+     */
+    public List<Player> getPlayers () {
+        return this.players;
+    }
+
+
+
+    /**
+     * Getter method
+     * @return id of the game
+     */
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
+
+    /**
+     * Getter method
+     * @return nPlayers is the number of the players
+     */
     public int getnPlayers() {
         return nPlayers;
     }
 
+
+
+    /**
+     * Setter method
+     * @param id of the game
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param nPlayers is the number of the players
+     */
     public void setnPlayers(int nPlayers) {
         this.nPlayers = nPlayers;
     }
 
-    public List<Player> getPlayers () {
-        return this.players;
+
+
+    /**
+     * Setter method
+     * @param state of the game
+     */
+    public void setState (GameState state) {
+        this.state = state;
     }
+
 
 }

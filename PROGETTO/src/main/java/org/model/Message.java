@@ -14,6 +14,8 @@ public class Message {
     private Timestamp timestamp; // it also works as an ID for the message, combined with his sender
                                  // a sender can't send 2 messages at the same time!
 
+
+
     /**
      * Class contructor
      * @param message
@@ -28,6 +30,8 @@ public class Message {
         this.timestamp = timestamp;
     }
 
+
+
     /**
      * Getter method
      * @return the message String
@@ -35,6 +39,9 @@ public class Message {
     public String getMessage() { // returns the text of the message as a String object
         return this.message;
     }
+
+
+
 
     /**
      * Getter method
@@ -44,6 +51,9 @@ public class Message {
         return this.sender;
     }
 
+
+
+
     /**
      * Getter method
      * @return a list containing the receivers of the message
@@ -52,6 +62,9 @@ public class Message {
         return this.receiver;
     }
 
+
+
+
     /**
      * Getter method
      * @return the timestamp of the message
@@ -59,4 +72,5 @@ public class Message {
     public Timestamp getTimestamp() {
         return this.timestamp;
     }
+
 }

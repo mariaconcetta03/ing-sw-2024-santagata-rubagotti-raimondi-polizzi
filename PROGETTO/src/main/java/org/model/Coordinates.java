@@ -1,13 +1,28 @@
 package org.model;
 
+/**
+ * This class represents a couple of coordinates: (x,y)
+ */
+
+
+
 public class Coordinates {
     private int x;
     private int y;
 
+
+
+    /**
+     * Class constructor
+     * @param x coordinate x
+     * @param y coordinate y
+     */
     Coordinates(int x, int y) {
         this.x = x;
         this.y = y;
     }
+
+
 
     /**
      * Getter method
@@ -17,6 +32,8 @@ public class Coordinates {
         return x;
     }
 
+
+
     /**
      * Getter method
      * @return y
@@ -24,6 +41,8 @@ public class Coordinates {
     public int getY() {
         return y;
     }
+
+
 
     /**
      * Setter method
@@ -33,6 +52,8 @@ public class Coordinates {
         this.x = x;
     }
 
+
+
     /**
      * Setter method
      * @param y
@@ -41,8 +62,10 @@ public class Coordinates {
         this.y = y;
     }
 
+
+
     /**
-     * these 4 functions return the coordinates which surround the current Coordinate object
+     * These 4 functions return the coordinates which surround the current Coordinate object
      * @return Coordinates(x,y)
      */
     public Coordinates findUpRight() {

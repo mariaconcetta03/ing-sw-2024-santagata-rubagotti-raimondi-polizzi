@@ -5,10 +5,14 @@ import java.util.List;
 /**
  * This class represents a chat instance of the Game
  */
+
+
 public class Chat {
     private List<Player> users; //these are the players which can communicate in the chat
     private List<Message> messages; // all the messages which have been sent in this chat
     private int id; // every chat has a different ID
+
+
 
     /**
      * Class contructor
@@ -21,6 +25,8 @@ public class Chat {
         this.messages = new ArrayList<>();
     }
 
+
+
     /**
      * This method add a new message to the chat ("sending" it)
      * @param mess
@@ -28,6 +34,8 @@ public class Chat {
     public void sendMessage (Message mess) {
         this.messages.add(mess);
     }
+
+
 
     /**
      * This method returns all the messages received by a player
@@ -44,6 +52,8 @@ public class Chat {
         return messageReceived;
     }
 
+
+
     /**
      * Getter method
      * @return the entire list of messages
@@ -52,6 +62,8 @@ public class Chat {
         return this.messages;
     }
 
+
+
     /**
      * Getter method
      * @return the list of players partecipating in the Chat
@@ -59,6 +71,8 @@ public class Chat {
     public List<Player> getUsers() {
         return this.users;
     }
+
+
 
     /**
      * Getter method

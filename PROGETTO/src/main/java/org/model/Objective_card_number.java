@@ -1,13 +1,13 @@
 package org.model;
 import java.util.Map;
 
+/**
+ * This class represents all the Objective cards which needs a group of resources on the board to collect extra points
+ */
+
 public class Objective_card_number extends ObjectiveCard {
     private Map<PlayableCard.ResourceType, Integer> resources; // each resource is associated with an int, which
                                                                 // indicates the number of resources needed by the objective card
-    public Objective_card_number (int points, Map<PlayableCard.ResourceType, Integer> resources) {
-        super (points);
-        this.resources = resources;
-    }
 
     private enum CountingType {
         FUNGI,
@@ -19,13 +19,29 @@ public class Objective_card_number extends ObjectiveCard {
         PARCHMENT
     }
 
+
+
+
     /**
-     * this function returns the number of points collected thanks to the achievement of this objective
-     * @param symbols
-     * @return pointsCollected
+     * Class constructor
+     * @param points the points the card gives to the player if he has achieved the objective
+     * @param resources a Map of the resources needed for the extra points
      */
-    public int checkResourcesNumber( Map<PlayableCard.ResourceType, Integer> symbols ) {
-        int [] counting; //keeping track of the points
+    public Objective_card_number (int points, Map<PlayableCard.ResourceType, Integer> resources) {
+        super (points);
+        this.resources = resources;
+    }
+
+
+
+
+    /**
+     * This method returns the number of points collected thanks to the achievement of this objective
+     * @param symbols all the resources, collected in a Map, which the player has on his own board
+     * @return the number of total extra points collected y the player thanks to the achievement of the objective
+     */
+    public int checkResourcesNumber(Map<PlayableCard.ResourceType, Integer> symbols) {
+        int [] counting; // keeping track of how many times the objective is respected for each resource
         counting = new int[] {0,0,0,0,0,0,0}; //initializing 7 int cells to 0 (each one represents a resource)
         int i = 0;
         int pointsCollected = 0;
@@ -45,11 +61,6 @@ public class Objective_card_number extends ObjectiveCard {
                     pointsCollected = counting[j];
                 }
             }
-
-           /* if(counting[k] < pointsCollected && counting[k] != 0 ){
-                pointsCollected = counting[k]; // lascerei solo questo invece del for e del resto
-            } */
-
 
             if (counting[k] != 0 && counting[k] < pointsCollected) {
                 pointsCollected = counting[k];
