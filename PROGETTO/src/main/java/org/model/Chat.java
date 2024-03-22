@@ -29,7 +29,7 @@ public class Chat {
 
     /**
      * This method add a new message to the chat ("sending" it)
-     * @param mess
+     * @param mess It's the message sent by the player
      */
     public void sendMessage (Message mess) {
         this.messages.add(mess);
@@ -66,7 +66,7 @@ public class Chat {
 
     /**
      * Getter method
-     * @return the list of players partecipating in the Chat
+     * @return the list of players using the Chat
      */
     public List<Player> getUsers() {
         return this.users;
