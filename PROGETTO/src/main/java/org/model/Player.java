@@ -17,7 +17,6 @@ public class Player {
     private Board board; //we have a board for each player
     private int points;
     private Game game;
-    //private int playOrder;
     private PlayableCard[] playerDeck; //each player has a deck of 3 cards
     private boolean isFirst; // you can see if a player is the first one
     private Pawn color;
@@ -40,9 +39,7 @@ public class Player {
         this.isFirst = false;
         this.personalObjective = null;
         this.state = PlayerState.IS_WAITING;
-        //this.playOrder = 0;
         this.playerDeck = new PlayableCard[]{null, null, null};
-        //this.association = false;
         this.game = game;
     }
 
@@ -123,6 +120,17 @@ public class Player {
      */
     public void setPersonalObjective (ObjectiveCard card) {
         this.personalObjective = card;
+    }
+
+    /**
+     * This method receives the two random Objective cards from the Game class, and passes them
+     * to the view, so that the player can choose a card or the other, and then use the method
+     * "setPersonalObjective" to set the chosen objective
+     * @param card1 first random objective card
+     * @param card2 second random objective card
+     */
+    public void obtainObjectiveCards (ObjectiveCard card1, ObjectiveCard card2) {
+        passToView (card1, card2);
     }
     
     /**

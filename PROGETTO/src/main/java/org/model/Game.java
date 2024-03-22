@@ -35,8 +35,6 @@ public class Game {
     // this 2 cards represent the 2 common goals (objectives)
     private ObjectiveCard objectiveCard1;
     private ObjectiveCard objectiveCard2;
-    private Scanner sc= new Scanner(System.in);
-
     private List<Chat> chats; // contains all the chats started during the game
 
     public Game (Player player, int id, Deck resourceDeck, Deck goldDeck, Deck baseDeck, ObjectiveCard[] objectiveDeck) {
@@ -72,6 +70,16 @@ public class Game {
     }
 
 
+    /**
+     * This method sets the state of the game to STARTED,
+     * it shuffles the resource deck and the gold one, giving for each type of deck 2 cards to the market,
+     * then it shuffles the base deck and each player draws a starter card (base card)
+     * the method lets the players decide the color of their pawn, the order of choosing is the order in which the player connected to the server
+     * it gives 2 cards to the market as common objective
+     * it gives each player 2 objective cards, he will decide which one to choose
+     * it sets the game-order of the players
+     * @throws IllegalArgumentException if players are less than 2 or more than 4
+     */
     public void startGame () throws IllegalArgumentException {
         if((players.size()<2)||(players.size()>4)){
             throw new IllegalArgumentException("Incorrect number of players");}
@@ -95,29 +103,33 @@ public class Game {
             this.players.get(i).drawCard(this.baseDeck.getFirstCard());
         }
 
-        //rivedere completamente
-        // setting the colour of the pawn of the players
+        // letting the players decide the color of their pawn
+        // the order of choosing is the order in which the player connected to the server
+        List <Pawn> colors = new ArrayList<>();
+        colors.add(Pawn.RED);
+        colors.add(Pawn.BLUE);
+        colors.add(Pawn.YELLOW);
+        colors.add(Pawn.GREEN);
+        Scanner sc = new Scanner(System.in);
+        String chosenColour;
+
         for (int i=0; i<this.players.size(); i++) {
-            List <Pawn> colors = new ArrayList<>();
-            colors.add(Pawn.RED);
-            colors.add(Pawn.BLUE);
-            colors.add(Pawn.YELLOW);
-            colors.add(Pawn.GREEN);
-            Scanner sc;
-            if(i==0) {
-                this.players.get(i).setColor(colors.get(0));
-                colors.remove(this.players.get(i).getChosenColor());
-            } else if (i==1) {
-                this.players.get(i).setColor(colors);
-                colors.remove(this.players.get(i).getChosenColor());
-            } else if (i==2) {
-                this.players.get(i).getAvailableColors(colors);
-                colors.remove(this.players.get(i).getChosenColor());
-            } else if (i==3) {
-                this.players.get(i).getAvailableColors(colors);
-                colors.remove(this.players.get(i).getChosenColor());
-            }
+            chosenColour = sc.nextLine();
+            if (chosenColour.equals("RED") && colors.contains(Pawn.RED)) {
+                colors.remove(Pawn.RED);
+                this.players.get(i).setColor(Pawn.RED);
+            } else if (chosenColour.equals("BLUE") && colors.contains(Pawn.BLUE)) {
+                colors.remove(Pawn.BLUE);
+                this.players.get(i).setColor(Pawn.BLUE);
+            } else if (chosenColour.equals("YELLOW") && colors.contains(Pawn.YELLOW)) {
+                colors.remove(Pawn.YELLOW);
+                this.players.get(i).setColor(Pawn.YELLOW);
+            } else if (chosenColour.equals("GREEN") && colors.contains(Pawn.GREEN)) {
+                colors.remove(Pawn.GREEN);
+                this.players.get(i).setColor(Pawn.GREEN);
+            } else throw new IllegalArgumentException();
         }
+        sc.close();
 
         // giving 2 cards to the market as common objective
         List<Integer> usedIndexes = new ArrayList<>();
@@ -150,25 +162,24 @@ public class Game {
 
         // setting the game-order of the players
         Random random = new Random();
+        List<Player> newOrder = new ArrayList<>();
         int randomFirstPlayer = random.nextInt(nPlayers); // sorting a random number between 0 and nPlayers -1
         this.players.get(randomFirstPlayer).setIsFirst(true); // he is the first player
         this.currentPlayer = this.players.get(randomFirstPlayer); // he is the first player and the current player
-        this.players.get(randomFirstPlayer).setPlayOrder(1); // the game-order positions start from 1. Example: 1,2,3,4
+        newOrder.add(this.players.get(randomFirstPlayer)); // the game-order positions start from 1. Example: 1,2,3,4
 
-        int not_assigned = 4;
-        int order = 2;
+        int not_assigned = 3;
         for (int i=randomFirstPlayer; i<this.players.size(); i++) { //assigning the game-order position to the players
             // that follow the first player in the list
-            this.players.get(i).setPlayOrder(order); // the game-order positions start from 1. Example: 1,2,3,4
-            order++;
+            newOrder.add(this.players.get(i)); // the game-order positions start from 1. Example: 1,2,3,4
             not_assigned--;
         }
         for (int i = 0; not_assigned!=0 && i<this.players.size(); i++) { //assigning the game-order position to the
             // players that comes before the first player in the list
-            this.players.get(i).setPlayOrder(order);
-            order++;
+            newOrder.add(this.players.get(i)); // the game-order positions start from 1. Example: 1,2,3,4
             not_assigned--;
         }
+        this.players = newOrder; // setting the new order
     }
 
     /**
@@ -241,27 +252,10 @@ public class Game {
      * returns the player who will need to play soon, at the next round
      */
     public Player nextRound() {
-        boolean trovato = false;
-        int numPlayers = this.players.size();
-
-        //if current player is the last player
-        if (this.currentPlayer.getPlayOrder() == numPlayers) {
-            for (int i = 0; i < this.players.size() && !trovato; i++) {
-                if (this.players.get(i).isFirst()) { //i need to return the first player
-                    trovato = true;
-                    return this.players.get(i);
-                }
-            }
-        }
-        else { //if current player is not the last player
-            for (int i=0; i<this.players.size() && !trovato; i++) {
-                if (this.currentPlayer.getPlayOrder()+1 == this.players.get(i).getPlayOrder()){ //i need to return the next player
-                    trovato = true;
-                    return this.players.get(i);
-                }
-            }
-        }
-        return null;
+        this.players.add(this.players.get(0));
+        this.players.remove(0);
+        this.currentPlayer = this.players.get(0);
+        return this.currentPlayer;
     }
 
     public PlayableCard getGoldCard1() {
