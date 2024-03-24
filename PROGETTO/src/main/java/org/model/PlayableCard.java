@@ -33,7 +33,6 @@ public class PlayableCard extends Card {
     private ResourceType back_up_left;
     private ResourceType back_down_right;
     private ResourceType back_down_left;
-    private ResourceType cardType;
     private Coordinates position;
 
     /**
