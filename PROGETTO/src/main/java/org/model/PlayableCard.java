@@ -15,13 +15,15 @@ public class PlayableCard extends Card {
 
     // these variables contains the type of resource present in a specific corner of the card
     private AngleType front_up_right;
-    private ResourceType front_up_left;
-    private ResourceType front_down_right;
-    private ResourceType front_down_left;
-    private ResourceType back_up_right;
-    private ResourceType back_up_left;
-    private ResourceType back_down_right;
-    private ResourceType back_down_left;
+    private AngleType front_up_left;
+    private AngleType front_down_right;
+    private AngleType front_down_left;
+    private AngleType back_up_right;
+    private AngleType back_up_left;
+    private AngleType back_down_right;
+    private AngleType back_down_left;
+    private List<AngleType> centralResources;
+
     private Coordinates position;
 
     /**
@@ -52,31 +54,30 @@ public class PlayableCard extends Card {
      * always true when we are talking about a GoldCard because in this case there
      * are always resources needed
     */
-    private Map<ResourceType, Integer> neededResources;
+    private Map<CentralType, Integer> neededResources;
     /**
      * this structure would be used only when the above attribute is true. The
      * key is the type of the resource, the value is the number of that type needed
      */
-    private List<ResourceType> centralResources;
 
     ///SETTER
-    public void setCardType(ResourceType cardType) {
-        this.cardType = cardType;
+    public void setCentralResources (List<AngleType> centralResources) {
+        this.centralResources = centralResources;
     }
 
-    public void setFront_down_right(ResourceType front_down_right) {
+    public void setFront_down_right(AngleType front_down_right) {
         this.front_down_right = front_down_right;
     }
 
-    public void setFront_up_left(ResourceType front_up_left) {
+    public void setFront_up_left(AngleType front_up_left) {
         this.front_up_left = front_up_left;
     }
 
-    public void setFront_up_right(ResourceType front_up_right) {
+    public void setFront_up_right(AngleType front_up_right) {
         this.front_up_right = front_up_right;
     }
 
-    public void setFront_down_left(ResourceType front_down_left) {
+    public void setFront_down_left(AngleType front_down_left) {
         this.front_down_left = front_down_left;
     }
 
@@ -84,7 +85,7 @@ public class PlayableCard extends Card {
         this.points = points;
     }
 
-    public void setNeededResources(Map<ResourceType, Integer> neededResources) {
+    public void setNeededResources(Map<CentralType, Integer> neededResources) {
         this.neededResources = neededResources;
     }
 
@@ -117,7 +118,7 @@ public class PlayableCard extends Card {
     }
 
     //GETTER
-    public Map<ResourceType, Integer> getNeededResources() {
+    public Map<CentralType, Integer> getNeededResources() {
            return neededResources;
     }
 
@@ -153,35 +154,35 @@ public class PlayableCard extends Card {
         return orientation;
     }
 
-    public ResourceType get_front_up_right() {
+    public AngleType get_front_up_right() {
         return front_up_right;
     }
 
-    public ResourceType get_front_up_left() {
+    public AngleType get_front_up_left() {
         return front_up_left;
     }
 
-    public ResourceType get_front_down_right() {
+    public AngleType get_front_down_right() {
         return front_down_right;
     }
 
-    public ResourceType get_front_down_left() {
+    public AngleType get_front_down_left() {
         return front_down_left;
     }
 
-    public ResourceType get_back_up_right() {
+    public AngleType get_back_up_right() {
         return back_up_right;
     }
 
-    public ResourceType get_back_up_left() {
+    public AngleType get_back_up_left() {
         return back_up_left;
     }
 
-    public ResourceType get_back_down_right() {
+    public AngleType get_back_down_right() {
         return back_down_right;
     }
 
-    public ResourceType get_back_down_left() {
+    public AngleType get_back_down_left() {
         return back_down_left;
     }
 
