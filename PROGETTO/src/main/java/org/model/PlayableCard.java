@@ -142,7 +142,7 @@ public class PlayableCard extends Card {
         return coverAngleToReceivePoints;
     }
 
-    public List<CentralType> getCentralResources() {
+    public List<AngleType> getCentralResources() {
         return centralResources;
     }
 
