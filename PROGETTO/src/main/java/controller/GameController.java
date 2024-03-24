@@ -5,6 +5,8 @@ import org.model.PlayableCard;
 import org.model.Player;
 
 import java.util.*;
+
+
 public class GameController {
     private Game game;
 
@@ -27,6 +29,9 @@ public class GameController {
         Player p1 = game.getPlayers().get(0);
         try {
             p1.playCard(selectedCard, position, orientation);
+            if((game.getState()!=Game.GameState.ENDING)&&(p1.getPoints()>20)){
+                game.setState(Game.GameState.ENDING);
+            }
             return true;
         }catch(IllegalArgumentException e){
             return false;
@@ -40,6 +45,9 @@ public class GameController {
     public void drawCard(PlayableCard selectedCard){
         Player currentPlayer= game.getPlayers().get(0);
         currentPlayer.drawCard(selectedCard);
+        if((game.getState()!=Game.GameState.ENDING)&&((game.getResourceDeck().isFinished())&&(game.getGoldDeck().isFinished()))){
+            game.setState(Game.GameState.ENDING);
+        }
     }
 
     /**
@@ -48,6 +56,7 @@ public class GameController {
     public void nextPhase(){
 
     }
+
 
     /**
      *
