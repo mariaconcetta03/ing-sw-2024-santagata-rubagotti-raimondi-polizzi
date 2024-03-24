@@ -7,93 +7,93 @@ public class Board {
     private Set<Coordinates> playablePositions;
     private Set<Coordinates> unPlayablePositions;
     private int boardDimensions;
-    private Map<PlayableCard.ResourceType, Integer> numResources;
+    private Map<AngleType, Integer> numResources;
 
-    //this will actually be the board of each player
+    //this will be the board of each player
     private PlayableCard table[][];
     private Player player;
 
     //constructor of Board that takes the number of player that are playing the game
-    public Board(int nPlayers, Player player){
+    public Board(Player player){
         //to round up the result
-        this.boardDimensions = 1+2*(numCarte+nPlayers-1/nPlayers);
+        this.boardDimensions = 0;
         this.playablePositions = new HashSet<>();
         this.unPlayablePositions = new HashSet<>();
-        this.table = new PlayableCard [boardDimensions][boardDimensions];
+        this.table = null;
         this.player = player;
+        //initialisation of the resource Map
+        numResources = new HashMap<>();
+        numResources.put(AngleType.FUNGI,0);
+        numResources.put(AngleType.INSECT,0);
+        numResources.put(AngleType.ANIMAL,0);
+        numResources.put(AngleType.NATURE,0);
+        numResources.put(AngleType.JAR,0);
+        numResources.put(AngleType.SCROLL,0);
+        numResources.put(AngleType.FEATHER,0);
+        //these 2 should not be counted but we will have to because of our algorithm
+        numResources.put(AngleType.NO_RESOURCE,0);
+        numResources.put(AngleType.ABSENT,0);
+    }
+
+    /**
+     * This method creates and initialises the table of the specific Player, after the number of players is set
+     * @param nPlayers is the number of players that are playing the Game
+     */
+    public void setBoard(int nPlayers){
+        this.boardDimensions=1+2*(numCarte+nPlayers-1/nPlayers);
+        this.table = new PlayableCard [boardDimensions][boardDimensions];
         for(int i = 0; i < boardDimensions; i++){
             for(int j = 0; i < boardDimensions; j++){
                 table[i][j] = null;
             }
         }
-        //initialisation of the resource Map
-        numResources = new HashMap<>();
-        numResources.put(PlayableCard.ResourceType.FUNGI,0);
-        numResources.put(PlayableCard.ResourceType.INSECT,0);
-        numResources.put(PlayableCard.ResourceType.ANIMAL,0);
-        numResources.put(PlayableCard.ResourceType.NATURE,0);
-        numResources.put(PlayableCard.ResourceType.JAR,0);
-        numResources.put(PlayableCard.ResourceType.SCROLL,0);
-        numResources.put(PlayableCard.ResourceType.FEATHER,0);
-        //these 2 should not be counted but we will have to because of our algorithm
-        numResources.put(PlayableCard.ResourceType.NO_RESOURCE,0);
-        numResources.put(PlayableCard.ResourceType.ABSENT,0);
     }
 
     /**
-     * This method places the first base card for a player in the middle of the table (dimension/2)
-     * and adds resources
-     * @param card is the base card you want to place
+     * This method places the first card for a player in the middle of the table (boardDimension/2) and adds related resources
+     * @param baseCard is the base card the Player has placed
      */
-    public void placeBaseCard(PlayableCard card){
-        this.table[boardDimensions/2][boardDimensions/2] = card;
+    public void placeBaseCard(PlayableCard baseCard){
+        this.table[boardDimensions/2][boardDimensions/2] = baseCard;
 
         //adding the new card resources
-        if(card.getOrientation()) {
-            numResources.put(card.get_front_down_left(), numResources.get(card.get_front_down_left()) + 1);
-            numResources.put(card.get_front_down_right(), numResources.get(card.get_front_down_right()) + 1);
-            numResources.put(card.get_front_up_left(), numResources.get(card.get_front_up_left()) + 1);
-            numResources.put(card.get_front_up_right(), numResources.get(card.get_front_up_right()) + 1);
+        //if played on the front (only 4 angles)
+
+        if(baseCard.getOrientation()) {
+            numResources.put(baseCard.get_front_down_left(), numResources.get(baseCard.get_front_down_left()) + 1);
+            numResources.put(baseCard.get_front_down_right(), numResources.get(baseCard.get_front_down_right()) + 1);
+            numResources.put(baseCard.get_front_up_left(), numResources.get(baseCard.get_front_up_left()) + 1);
+            numResources.put(baseCard.get_front_up_right(), numResources.get(baseCard.get_front_up_right()) + 1);
+        }else{
+            //if played on the back side (4 angles and central resources
+
+            for(AngleType t : baseCard.getCentralResources()){
+                numResources.put(t, numResources.get(t)+1);
+            }
+            numResources.put(baseCard.get_back_down_left(), numResources.get(baseCard.get_back_down_left()) + 1);
+            numResources.put(baseCard.get_back_down_right(), numResources.get(baseCard.get_back_down_right()) + 1);
+            numResources.put(baseCard.get_back_up_left(), numResources.get(baseCard.get_back_up_left()) + 1);
+            numResources.put(baseCard.get_back_up_right(), numResources.get(baseCard.get_back_up_right()) + 1);
         }
-        if(!card.getOrientation()){
-            //adds the back resources if played on the back side
-            if (card.getCentralResources().contains(PlayableCard.ResourceType.FUNGI)) {
-                numResources.put(PlayableCard.ResourceType.FUNGI,numResources.get(PlayableCard.ResourceType.FUNGI)+1);
-            }
-            if (card.getCentralResources().contains(PlayableCard.ResourceType.INSECT)) {
-                numResources.put(PlayableCard.ResourceType.INSECT,numResources.get(PlayableCard.ResourceType.INSECT)+1);
-            }
-            if (card.getCentralResources().contains(PlayableCard.ResourceType.ANIMAL)) {
-                numResources.put(PlayableCard.ResourceType.ANIMAL,numResources.get(PlayableCard.ResourceType.ANIMAL)+1);
-            }
-            if (card.getCentralResources().contains(PlayableCard.ResourceType.NATURE)) {
-                numResources.put(PlayableCard.ResourceType.NATURE,numResources.get(PlayableCard.ResourceType.NATURE)+1);
-            }
-            numResources.put(card.get_back_down_left(), numResources.get(card.get_back_down_left()) + 1);
-            numResources.put(card.get_back_down_right(), numResources.get(card.get_back_down_right()) + 1);
-            numResources.put(card.get_back_up_left(), numResources.get(card.get_back_up_left()) + 1);
-            numResources.put(card.get_back_up_right(), numResources.get(card.get_back_up_right()) + 1);
-        }
-        updateUnplayablePositions(card);
-        updatePlayablePositions(card);
+        updateUnplayablePositions(baseCard);
+        updatePlayablePositions(baseCard);
     }
 
     /**
      * Places a card in the table and updates playable/unplayable positions
-     * @param card
-     * @param position
+     * @param card is the card (gold/resource) the Player wants to play
+     * @param position is the place where the Player wants to play the card
      * @return true if the card can be placed, false if the card can't be placed in that position
-     * throws an exception if the player can't play the card there
      */
     //we have to add the requirements in the gold cards
-    public boolean placeCard(PlayableCard card, Coordinates position) { //FRA DEVE RIVEDERE! ATTENZIONE A COPRIRE ANGOLI DELLA BASE CARD ANCHE NEL DIETRO !!!!!!!!!!!!!!
+    public boolean placeCard(PlayableCard card, Coordinates position) {
         int coveredAngles = 0;
         if (playablePositions.contains(position) && enoughResources(card)) {
             //all the angles of the adjacent cards we could cover with the one we are placing
-            PlayableCard.ResourceType upLeft=null;
-            PlayableCard.ResourceType upRight=null;
-            PlayableCard.ResourceType downLeft=null;
-            PlayableCard.ResourceType downRight=null;
+            AngleType upLeft=null;
+            AngleType upRight=null;
+            AngleType downLeft=null;
+            AngleType downRight=null;
 
             //inserting the card
             card.setPosition(position);
@@ -108,22 +108,44 @@ public class Board {
 
             }else{
                 //adds the back resource if played on the back side
-                numResources.put(card.getCardType(),numResources.get(card.getCardType())+1);
+                numResources.put(card.getCentralResources().get(0),numResources.get(card.getCentralResources().get(0))+1);
             }
 
-            //checks adjacent card's angles we might be covering with the new card
+            PlayableCard temp;
+            //checks adjacent card's angles we might be covering with the new card (checking also the side where
+            //the card temp we are checking is played)
             if(table[position.getX()-1][position.getY()+1]!=null) {
-                upLeft = table[position.getX() - 1][position.getY() + 1].get_front_down_right();
+                temp = table[position.getX() - 1][position.getY() + 1];
+                if (temp.getOrientation()) {
+                    upLeft = temp.get_front_down_right();
+                } else {
+                    upLeft = temp.get_back_down_right();
+                }
             }
-            if(table[position.getX()-1][position.getY()+1]!=null) {
-                upRight = table[position.getX() + 1][position.getY() + 1].get_front_down_left();
+            if(table[position.getX()+1][position.getY()+1]!=null) {
+                temp=table[position.getX()+1][position.getY()+1];
+                if(temp.getOrientation()){
+                    upRight = temp.get_front_down_left();
+                }else{
+                    upRight = temp.get_back_down_left();
+                }
             }
-            if(table[position.getX()-1][position.getY()+1]!=null) {
-                downLeft = table[position.getX() - 1][position.getY() - 1].get_front_up_right();
+            if(table[position.getX()-1][position.getY()-1]!=null) {
+                temp = table[position.getX() - 1][position.getY() - 1];
+                if (temp.getOrientation()) {
+                    downLeft = temp.get_front_up_right();
+                } else {
+                    downLeft = temp.get_back_up_right();
+                }
             }
-            if(table[position.getX()-1][position.getY()+1]!=null) {
-                downRight = table[position.getX() + 1][position.getY() - 1].get_front_up_left();
-            }
+                if (table[position.getX() + 1][position.getY() - 1] != null) {
+                    temp = table[position.getX() + 1][position.getY() - 1];
+                    if (temp.getOrientation()) {
+                        downRight = temp.get_front_up_left();
+                    } else {
+                        downRight = temp.get_back_up_left();
+                    }
+                }
 
             //subtracting the resource we are loosing when placing the new card
             if(upLeft!=null){
@@ -154,41 +176,42 @@ public class Board {
     }
 
     /**
-     * when using a resource card, the method gives points scored by that specific card
-     * when using a gold card, the method checks if you need to cover angles to receive points, or if you have to have jard, scrolls and feathers
-     * @param card is the card you have placed now
-     * @param coveredAngles is the number of angles you have covered when you have placed this card
-     * @return points scored
+     * When passed a resourceCard, the method gives the points scored by that specific card
+     * When passed a goldCard, the method checks the "scoring condition" (angles coverage/number of objects)
+     * @param card is the card the Player has just placed
+     * @param coveredAngles is the number of angles covered by the PlayableCard just placed
+     * @return points are the points actually scored thanks to card
      */
     public int cardPoints (PlayableCard card, int coveredAngles){
         int points = card.getPoints(); // if the card gives you points in any case
             if(card.isCoverAngleToReceivePoints()) {
-                points = coveredAngles * card.getPoints();
+                points = coveredAngles * points;
             } else if (card.isJarToReceivePoints()){
-                points = card.getPoints() * numResources.get(PlayableCard.ResourceType.JAR);
+                points = points * numResources.get(AngleType.JAR);
             } else if (card.isFeatherToReceivePoints()){
-                points = card.getPoints() * numResources.get(PlayableCard.ResourceType.FEATHER);
+                points = points * numResources.get(AngleType.FEATHER);
             } else if (card.isScrollToReceivePoints()) {
-                points = card.getPoints() * numResources.get(PlayableCard.ResourceType.SCROLL);
+                points = points * numResources.get(AngleType.SCROLL);
             }
             return points;
     }
 
     /**
-     * the method checks if it's a gold card and the resources needed to place it
-     * @param card is the card you have placed now
-     * @return boolean value
+     * This method checks if the Player has enough resources to place the card
+     * @param card is the card the Player has just placed
+     * @return boolean that indicates if the Player has enough resources to play the specific card
      */
     private boolean enoughResources (PlayableCard card) { // CONTROLLARE SE SI PUò USARE per pattern
-        if (card.isNeededResourcesBoolean()) {
-            for (PlayableCard.ResourceType t: numResources.keySet()){
+        if (!card.getNeededResources().isEmpty()) {
+            for (CentralType t : card.getNeededResources().keySet()) {
                 if (numResources.get(t) < card.getNeededResources().get(t)) {
                     return false;
                 }
             }
             return true;
+        } else {
+            return true;
         }
-        return true;
     }
 
 
@@ -199,16 +222,16 @@ public class Board {
      */
     public void updateUnplayablePositions(PlayableCard card) {
         if (card.getOrientation()) {
-            if (card.get_front_up_right() == PlayableCard.ResourceType.ABSENT) {
+            if (card.get_front_up_right() == AngleType.ABSENT) {
                 unPlayablePositions.add(card.getPosition().findUpRight());
             }
-            if (card.get_front_up_left() == PlayableCard.ResourceType.ABSENT) {
+            if (card.get_front_up_left() == AngleType.ABSENT) {
                 unPlayablePositions.add(card.getPosition().findUpLeft());
             }
-            if (card.get_front_down_right() == PlayableCard.ResourceType.ABSENT) {
+            if (card.get_front_down_right() == AngleType.ABSENT) {
                 unPlayablePositions.add(card.getPosition().findDownRight());
             }
-            if (card.get_front_down_left() == PlayableCard.ResourceType.ABSENT) {
+            if (card.get_front_down_left() == AngleType.ABSENT) {
                 unPlayablePositions.add(card.getPosition().findDownLeft());
             }
         }
@@ -221,19 +244,19 @@ public class Board {
     public void updatePlayablePositions(PlayableCard card) {
         //se non è presente in unplayable position aggiungo tutti gli angoli!=ABSENT
         if (card.getOrientation()) {
-            if (card.get_front_up_right() != PlayableCard.ResourceType.ABSENT &&
+            if (card.get_front_up_right() != AngleType.ABSENT &&
                     !unPlayablePositions.contains(card.getPosition().findUpRight())) {
                 playablePositions.add(card.getPosition().findUpRight());
             }
-            if (card.get_front_up_left() != PlayableCard.ResourceType.ABSENT &&
+            if (card.get_front_up_left() != AngleType.ABSENT &&
                     !unPlayablePositions.contains(card.getPosition().findUpLeft())) {
                 playablePositions.add(card.getPosition().findUpLeft());
             }
-            if (card.get_front_down_right() != PlayableCard.ResourceType.ABSENT &&
+            if (card.get_front_down_right() != AngleType.ABSENT &&
                     !unPlayablePositions.contains(card.getPosition().findDownRight())) {
                 playablePositions.add(card.getPosition().findDownRight());
             }
-            if (card.get_front_down_left() != PlayableCard.ResourceType.ABSENT &&
+            if (card.get_front_down_left() != AngleType.ABSENT &&
                     !unPlayablePositions.contains(card.getPosition().findDownLeft())) {
                 playablePositions.add(card.getPosition().findDownLeft());
             }
