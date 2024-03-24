@@ -1,19 +1,39 @@
-[
-  {
-    "id" = 41,
-    "points" = 1,
-    "front_up_right" = "NO_RESOURCE",
-    "front_up_left" = "ABSENT",
-    "front_down_right" = "FEATHER",
-    "front_down_left" = "NO_RESOURCE",
-    "back_up_right" = "NO_RESOURCE",
-    "back_up_left" = "NO_RESOURCE",
-    "back_down_right" = "NO_RESOURCE",
-    "back_down_left" = "NO_RESOURCE",
+{
 
+"goldCard": [
+
+  {
+    "id": 41,
+    "points": 1,
+    "neededResources": true,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "ABSENT",
+    "front_down_right": "FEATHER",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": "",
+    "haveJartoReceeivePoints": false,
+    "haveFeatherToReceivePoints": true,
+    "haveScrollToReceivePoints": false,
+    "neededResourcesBoolean": true,
+    "neededResources": [
+      {"FUNGI": 2},
+      {"ANIMAL": 1}
+    ],
+    "centralResources": [
+      {"FUNGI": 1}
+    ]
   },
-  {
 
+
+  {
 
   }
+
+
+
 ]
+}
