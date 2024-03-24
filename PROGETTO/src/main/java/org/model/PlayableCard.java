@@ -11,6 +11,29 @@ public class PlayableCard extends Card {
 
     private int points;
 
+    public PlayableCard (int id, int points, AngleType front_down_left, AngleType front_up_left, AngleType front_down_right, AngleType front_up_right,
+                         AngleType back_down_left, AngleType back_down_right, AngleType back_up_left, AngleType back_up_right,
+                         List<CentralType> centralResources, boolean coverAngleToReceivePoints, boolean haveFeatherToReceivePoints,
+                         boolean haveScrollToReceivePoints, boolean haveJarToReceivePoints, boolean neededResourcesBoolean,
+                         Map <CentralType, Integer> neededResources) {
+        this.setId(id);
+        this.points = points;
+        this.front_down_left = front_down_left;
+        this.front_up_left = front_up_left;
+        this.front_down_right = front_down_right;
+        this.front_up_right = front_up_right;
+        this.back_down_left = back_down_left;
+        this.back_down_right = back_down_right;
+        this.back_up_left = back_up_left;
+        this.back_up_right = back_up_right;
+        this.centralResources = centralResources;
+        this.coverAngleToReceivePoints = coverAngleToReceivePoints;
+        this.haveFeatherToReceivePoints = haveFeatherToReceivePoints;
+        this.haveJarToReceivePoints = haveJarToReceivePoints;
+        this.haveScrollToReceivePoints = haveScrollToReceivePoints;
+        this.neededResources = neededResources;
+    }
+
 
 
     // these variables contains the type of resource present in a specific corner of the card
@@ -22,7 +45,7 @@ public class PlayableCard extends Card {
     private AngleType back_up_left;
     private AngleType back_down_right;
     private AngleType back_down_left;
-    private List<AngleType> centralResources;
+    private List<CentralType> centralResources;
 
     private Coordinates position;
 
@@ -61,7 +84,7 @@ public class PlayableCard extends Card {
      */
 
     ///SETTER
-    public void setCentralResources (List<AngleType> centralResources) {
+    public void setCentralResources (List<CentralType> centralResources) {
         this.centralResources = centralResources;
     }
 
@@ -142,7 +165,7 @@ public class PlayableCard extends Card {
         return coverAngleToReceivePoints;
     }
 
-    public List<AngleType> getCentralResources() {
+    public List<CentralType> getCentralResources() {
         return centralResources;
     }
 

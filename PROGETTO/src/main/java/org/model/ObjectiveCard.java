@@ -12,6 +12,7 @@ public class ObjectiveCard extends Card {
          */
         public ObjectiveCard(int points) {
             this.cardPoints = points;
+            this.pointsToPlayer = 0;
         }
 
         /**

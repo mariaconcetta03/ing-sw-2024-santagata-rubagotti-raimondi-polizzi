@@ -5,7 +5,6 @@
   {
     "id": 41,
     "points": 1,
-    "neededResources": true,
     "front_up_right": "NO_RESOURCE",
     "front_up_left": "ABSENT",
     "front_down_right": "FEATHER",
@@ -24,7 +23,7 @@
       {"ANIMAL": 1}
     ],
     "centralResources": [
-      {"FUNGI": 1}
+      "FUNGI"
     ]
   },
 
