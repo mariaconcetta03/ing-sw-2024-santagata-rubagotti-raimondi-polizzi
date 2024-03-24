@@ -12,20 +12,9 @@ public class PlayableCard extends Card {
     private int points;
 
 
-    public enum ResourceType {
-        FUNGI,
-        NATURE,
-        INSECT,
-        ANIMAL,
-        SCROLL,
-        FEATHER,
-        JAR,
-        NO_RESOURCE,
-        ABSENT
-    }
 
     // these variables contains the type of resource present in a specific corner of the card
-    private ResourceType front_up_right;
+    private AngleType front_up_right;
     private ResourceType front_up_left;
     private ResourceType front_down_right;
     private ResourceType front_down_left;
@@ -131,9 +120,6 @@ public class PlayableCard extends Card {
     public Map<ResourceType, Integer> getNeededResources() {
            return neededResources;
     }
-    public ResourceType getCardType() {
-            return cardType;
-    }
 
     public boolean isNeededResourcesBoolean() {
         return neededResourcesBoolean;
@@ -155,7 +141,7 @@ public class PlayableCard extends Card {
         return coverAngleToReceivePoints;
     }
 
-    public List<ResourceType> getCentralResources() {
+    public List<CentralType> getCentralResources() {
         return centralResources;
     }
 
