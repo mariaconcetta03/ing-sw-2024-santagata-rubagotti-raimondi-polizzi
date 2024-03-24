@@ -1,0 +1,40 @@
+{
+  "baseCard": [
+    {
+      "id": 81,
+      "points": 0,
+      "front_up_right": "",
+      "front_up_left": "ABSENT",
+      "front_down_right": "FEATHER",
+      "front_down_left": "NO_RESOURCE",
+      "back_up_right": "NO_RESOURCE",
+      "back_up_left": "NO_RESOURCE",
+      "back_down_right": "NO_RESOURCE",
+      "back_down_left": "NO_RESOURCE",
+      "coverAngleToReceivePoints": false,
+      "haveJartoReceivePoints": false,
+      "haveFeathertoReceivePoints": false,
+      "haveScrolltoReceivePoints": false,
+      "neededResourcesBoolean": false,
+      "neededResources": [
+        {"ANIMAL": 2},
+        {"FUNGI": 1}
+      ],
+      "centralResources": [
+          "FUNGI",
+          "ANIMAL",
+          "NATURE"
+        ]
+      },
+    {
+
+    },
+    {
+
+    },
+    {
+
+    }
+
+]
+}
