@@ -276,4 +276,44 @@ public class Board {
             }
         }
     }
+
+    /**
+     * Getter method
+     * @return a Set containing the positions where it's possible to play a card
+     */
+    public Set<Coordinates> getPlayablePositions() {
+        return playablePositions;
+    }
+
+    /**
+     * Getter method
+     * @return
+     */
+    public Set<Coordinates> getUnPlayablePositions() {
+        return unPlayablePositions;
+    }
+
+    /**
+     * Getter method
+     * @return
+     */
+    public int getBoardDimensions() {
+        return boardDimensions;
+    }
+
+    /**
+     * Getter method
+     * @return
+     */
+    public Map<AngleType, Integer> getNumResources() {
+        return numResources;
+    }
+
+    /**
+     * Getter method
+     * @return
+     */
+    public PlayableCard[][] getTable() {
+        return table;
+    }
 }
