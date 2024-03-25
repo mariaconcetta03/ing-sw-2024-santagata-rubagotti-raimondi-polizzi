@@ -1,7 +1,7 @@
 package org.model;
 
 public class ObjectiveCheckupPatternType implements ObjectiveCheckup{
-    int countObjectiveCardRealPoints(Player player){
+    public int countObjectiveCardRealPoints(Player player){
 
     }
 }

@@ -1,7 +1,7 @@
 package org.model;
 
 public interface ObjectiveCheckup {
-    int countObjectiveCardRealPoints(Player player);
+    public int countObjectiveCardRealPoints(Player player);
 
     /**
      * in PLayer we could have the objective cards of the Player and an attribute
