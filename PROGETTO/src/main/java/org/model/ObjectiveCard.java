@@ -69,7 +69,7 @@ public class ObjectiveCard extends Card {
         /**
          * PointsToPlayer is set to 0, for example to begin the counting of points for another different player
          */
-        public void resetPointsToPlayer() {
+        public void resetPointsToPlayer() { //we have first to give the points to the right player
                 this.pointsToPlayer = 0;
             }
 }
