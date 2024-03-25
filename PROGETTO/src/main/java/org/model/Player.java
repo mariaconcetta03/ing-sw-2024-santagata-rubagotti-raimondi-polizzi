@@ -8,6 +8,7 @@ package org.model;
 public class Player {
     private ObjectiveCard personalObjective; // set a personal objective chosen by a player
 
+
     public enum PlayerState {
         IS_PLAYING,
         IS_WAITING,
@@ -28,6 +29,7 @@ public class Player {
      * listed in the Enumeration Pawn
     */
     private PlayerState state;
+    private int numObjectivesReached;
 
 
 
@@ -46,6 +48,7 @@ public class Player {
         this.state = PlayerState.IS_WAITING;
         this.playerDeck = new PlayableCard[]{null, null, null};
         this.game = game;
+        this.numObjectivesReached = 0;
     }
 
 
@@ -175,6 +178,15 @@ public class Player {
 
 
     /**
+     * This method adds the number of objective reached by the player (+1)
+     */
+    public void addNumObjectivesReached() {
+        this.numObjectivesReached = numObjectivesReached + 1;
+    }
+
+
+
+    /**
      * Setter method
      * @param color is the one chosen by player
      */
@@ -283,6 +295,24 @@ public class Player {
         return this.board;
     }
 
+
+
+    /**
+     * Getter method
+     * @return personalObjective is the chosen objective of the player
+     */
+    public ObjectiveCard getPersonalObjective(){
+        return this.personalObjective;
+    }
+
+
+    /**
+     * Getter method
+     * @return the number of objectives reached by the player
+     */
+    public int getNumObjectivesReached() {
+        return numObjectivesReached;
+    }
 
 }
 

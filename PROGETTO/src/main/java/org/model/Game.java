@@ -245,18 +245,43 @@ public class Game {
 
 
     /**
-     * This method returns the player with the higher number of points
+     * This method returns a list with the player who won the match. If there are 2 or more winners, it returns a list with more players
      * @return winner
      */
-    public Player winner () {
-        Player winner = this.players.get(0);
-        for (int i=0; i<this.players.size(); i++) { //looking for the player with the higher points
-            if (winner.getPoints() < this.players.get(i).getPoints()){
-                winner = this.players.get(i);
+    public List<Player> winner () {
+        List<Player> winners = new ArrayList<>();
+        int maxPoints = 0;
+        for (int i = 0; i < this.players.size(); i++) { // looking for the highest points
+            if (maxPoints < this.players.get(i).getPoints()) {
+                maxPoints = this.players.get(i).getPoints();
             }
         }
-        return winner;
+
+        for (int i = 0; i < this.players.size(); i++) { // putting in the list the player(s) with highest points
+            if (this.players.get(i).getPoints() == maxPoints) {
+                winners.add(this.players.get(i));
+            }
+        }
+
+        if (winners.size() > 1) { // I need to check how many objectives every player has respected
+            int maxObjectives = 0;
+
+            for (int i = 0; i < this.players.size(); i++) { // checking the higher number of objectives achieved
+                if (this.players.get(i).getNumObjectivesReached() > maxObjectives) {
+                    maxObjectives = this.players.get(i).getNumObjectivesReached();
+                }
+            }
+
+
+            for (int i = 0; i < winners.size(); i++) { // I need to remove the ones who have achieved less objectives
+                if (this.players.get(i).getNumObjectivesReached() < maxObjectives) {
+                    winners.remove(i);
+                }
+            }
+        }
+        return winners;
     }
+
 
 
 
@@ -509,6 +534,5 @@ public class Game {
     public void setState (GameState state) {
         this.state = state;
     }
-
 
 }
