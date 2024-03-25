@@ -45,7 +45,7 @@ public class PlayableCard extends Card {
     private AngleType back_up_left;
     private AngleType back_down_right;
     private AngleType back_down_left;
-    private List<AngleType> centralResources;
+    private List<CentralType> centralResources;
 
     private Coordinates position;
 

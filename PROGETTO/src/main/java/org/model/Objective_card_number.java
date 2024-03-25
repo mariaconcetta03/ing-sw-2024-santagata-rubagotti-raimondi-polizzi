@@ -7,7 +7,7 @@ import java.util.Map;
  */
 
 public class Objective_card_number extends ObjectiveCard {
-    private Map<AngleType, Integer> resources; // each resource is associated with an int, which
+    private Map<CountingType, Integer> resources; // each resource is associated with an int, which
     // indicates the number of resources needed by the objective card
 
 
@@ -33,7 +33,7 @@ public class Objective_card_number extends ObjectiveCard {
         int minResources = Integer.MAX_VALUE; //that's an improbable superior limit
         Map<AngleType,Integer> symbolsOnBoard=player.getBoard().getNumResources();
 
-        for(AngleType t : resources.keySet()){
+        for(CountingType t : resources.keySet()){
             if((symbolsOnBoard.get(t)/resources.get(t))<minResources){
                 minResources= symbolsOnBoard.get(t)/resources.get(t);
             }
