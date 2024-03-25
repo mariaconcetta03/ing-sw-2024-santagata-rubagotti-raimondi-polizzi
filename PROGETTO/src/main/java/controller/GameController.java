@@ -110,7 +110,9 @@ public class GameController {
 
 
     /**
-     *
+     * This method invokes a method in game, which does the necessary actions for the next round.
+     * If the game state is ENDING, then the last rounds are done. After that, endGame is invoked.
+     * we have decided that is the controller the one that manages the changing of turn
      */
     public void nextPhase(){
 
