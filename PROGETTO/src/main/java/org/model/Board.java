@@ -6,6 +6,7 @@ public class Board {
     private static final int numCarte=80;
     private Set<Coordinates> playablePositions;
     private Set<Coordinates> unPlayablePositions;
+    private Map<Coordinates, PlayableCard> playedCards; //we need that for the objective_pattern
     private int boardDimensions;
     private Map<AngleType, Integer> numResources;
 
@@ -98,6 +99,7 @@ public class Board {
             //inserting the card
             card.setPosition(position);
             this.table[position.getX()][position.getY()] = card;
+            playedCards.put(position, card);
 
             //adding the new card resources
             if(card.getOrientation()) {
@@ -315,5 +317,13 @@ public class Board {
      */
     public PlayableCard[][] getTable() {
         return table;
+    }
+
+    /**
+     * Getter method
+     * @return a Map containing all the cards played by the Player with their Coordinates
+     */
+    public Map<Coordinates, PlayableCard> getPlayedCards() {
+        return playedCards;
     }
 }

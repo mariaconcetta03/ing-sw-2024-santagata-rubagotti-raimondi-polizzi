@@ -63,7 +63,6 @@ public class Coordinates {
     }
 
 
-
     /**
      * These 4 functions return the coordinates which surround the current Coordinate object
      * @return Coordinates(x,y)

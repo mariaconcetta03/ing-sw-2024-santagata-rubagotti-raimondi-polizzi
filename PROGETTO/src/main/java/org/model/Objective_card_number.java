@@ -7,27 +7,18 @@ import java.util.Map;
  */
 
 public class Objective_card_number extends ObjectiveCard {
-    private Map<CountingType, Integer> resources; // each resource is associated with an int, which
+    private Map<AngleType, Integer> resources; // each resource is associated with an int, which
     // indicates the number of resources needed by the objective card
-
-
-
 
 
     /**
      * Class constructor
      *
      * @param points    the points the card gives to the player if he has achieved the objective
-     * @param resources a Map of the resources needed for the extra points
      */
-    public Objective_card_number(int points, Map<CountingType, Integer> resources) {
+    public Objective_card_number(int points) {
         super(points);
-        this.resources = resources;
     }
-
-
-
-
 
     /**
      * This method returns the number of points collected thanks to the achievement of this objective
@@ -35,24 +26,19 @@ public class Objective_card_number extends ObjectiveCard {
      * (f.e. if the combination needed is : 1 jar, 1 feather; then it counts the resources on the board
      * f.e.  3 jar, 2 feather --> minResources = 2)
      *
-     * @param symbolsOnBoard all the resources, collected in a Map, which the player has on his own board
-     * @return the number of total extra points collected by the player thanks to the achievement of the objective
+     * @param player the Player which we are checking the objective for
      */
-    public int checkResourcesNumber (Map<CountingType, Integer> symbolsOnBoard) {
+    @Override
+    public void addPointsToPlayer(Player player) {
         int minResources = Integer.MAX_VALUE; //that's an improbable superior limit
+        Map<AngleType,Integer> symbolsOnBoard=player.getBoard().getNumResources();
 
-        for (CountingType t : resources.keySet()) {
-            if (resources.get(t) != 0) { // se l'obiettivo non richiede nulla --> non controllo!
-                if (symbolsOnBoard.get(t) / resources.get(t) < minResources) {
-                    minResources = symbolsOnBoard.get(t) / resources.get(t);
-                }
+        for(AngleType t : resources.keySet()){
+            if((symbolsOnBoard.get(t)/resources.get(t))<minResources){
+                minResources= symbolsOnBoard.get(t)/resources.get(t);
             }
         }
-        return minResources * this.getCardPoints();
-        /** for example if we have to find a set of resources, for each set found we
-         * receive the points indicated in the card
-         */
-
+        //adding the just calculated point to the player
+        player.addPoints(minResources* this.getCardPoints());
     }
-
 }
