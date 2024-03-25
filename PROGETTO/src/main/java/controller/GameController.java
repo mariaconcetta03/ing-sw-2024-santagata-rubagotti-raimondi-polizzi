@@ -9,8 +9,9 @@ public class GameController {
     private Game game;
     private Deck deck = new Deck(new Stack<>());
     int lastRounds = 10;
+    private List<Player> winners;
 
-    
+
 
     public boolean waitingForPlayers(Player player) { //when we call this method we are adding another player
         game.addPlayer(player);
@@ -162,9 +163,28 @@ public class GameController {
 
 
     /**
-     *
+     * This method ends the game. It sets the game state to ENDED, checks all the objectives (2 common objs
+     * and 1 personalObj) and adds the points to the correct player.
+     * Finally, it checks the winner (or winners) of the game, and puts them in a list called "winners"
      */
     public void endGame(){
+        // setting the game state to ENDED
         game.setState(Game.GameState.ENDED);
+
+        // checking the objectives and adding the points to the correct player
+        ObjectiveCard commonObj1 = game.getObjectiveCard1();
+        ObjectiveCard commonObj2 = game.getObjectiveCard2();
+        ObjectiveCard personalObjective;
+        for (int i = 0; i<game.getnPlayers(); i++) {
+            personalObjective = game.getPlayers().get(i).getPersonalObjective();
+            commonObj1.addPointsToPlayer(game.getPlayers().get(i));
+            commonObj2.addPointsToPlayer(game.getPlayers().get(i));
+            personalObjective.addPointsToPlayer(game.getPlayers().get(i));
+        }
+
+        // checking the winner(s)
+        winners = game.winner();
     }
+
+
 }
