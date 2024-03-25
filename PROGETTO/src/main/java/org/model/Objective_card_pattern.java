@@ -42,17 +42,22 @@ public class Objective_card_pattern extends ObjectiveCard{
         Coordinates temp2=positionCard2;
 
         for(Coordinates center : cardsPositions){
+            temp1=positionCard1; // ADD!!
+            temp2=positionCard2; // ADD!! SONO COORDINATE RELATIVE QUINDI DEVO INIZIALIZZARLE UNA SOLA VOLTA OPPURE NON LE INIZIALIZZO E LE USO COSI COME SONO
             temp1= sumCoordinates(center,temp1);
             temp2= sumCoordinates(center,temp2);
             //checks the positions of the other 2 cards
             if(cardsPositions.contains(temp1)&&cardsPositions.contains(temp2)){
                 //checks the type of all the 3 cards
                 if(player.getBoard().getPlayedCards().get(temp1).getCentralResources().get(0).equals(card1Type)&&
+                        // NO. SE è UNA CARTA BASE CON PRIMA RISORSA LUPETTO (ESEMPIO) QUELLA CARTA NON FA PARTE DEL PATTERN BLU.
+                        // we don't have to add the base card to the Map because it doesn't have a color associated with a symbol
                         player.getBoard().getPlayedCards().get(temp2).getCentralResources().get(0).equals(card2Type)&&
                         player.getBoard().getPlayedCards().get(center).getCentralResources().get(0).equals(card0Type)){
                     //increment the counter and remove from the Set the position already used
                     counter++;
-                    cardsPositions.remove(center);
+                    cardsPositions.remove(center);      //maybe it's better to write cardsPositions.put(center, BLANK). Blank is
+                                                        // not something we can find in the ObjectiveCardPattern (ignored by all if-controls)
                     cardsPositions.remove(temp1);
                     cardsPositions.remove(temp2);
                 }

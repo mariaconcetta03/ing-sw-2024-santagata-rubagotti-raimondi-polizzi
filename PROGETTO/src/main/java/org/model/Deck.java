@@ -72,8 +72,7 @@ public class Deck {
         Stack<PlayableCard> resourceDeck = new Stack<>();
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            resourceDeck = objectMapper.readValue(new File("src/main/java/org/model/jsons/resourceCards.json"), new TypeReference<Stack<PlayableCard>>() {
-            });
+            resourceDeck = objectMapper.readValue(new File("src/main/java/org/model/jsons/resourceCards.json"), new TypeReference <Stack<PlayableCard>>() {});
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -87,7 +86,7 @@ public class Deck {
         int [] objectiveDeck = new int[16];
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            objectiveDeck = objectMapper.readValue(new File("src/main/java/org/model/jsons/resourceCards.json"), new TypeReference<Stack<PlayableCard>>() {
+            objectiveDeck = objectMapper.readValue(new File("src/main/java/org/model/jsons/resourceCards.json"), new TypeReference int[]);{
             });
         } catch (IOException e) {
             throw new RuntimeException(e);
