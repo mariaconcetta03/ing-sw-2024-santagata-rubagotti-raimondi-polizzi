@@ -79,7 +79,7 @@ public class Player {
      * @param card1 first random objective card
      * @param card2 second random objective card
      */
-    public void obtainObjectiveCards (ObjectiveCard card1, ObjectiveCard card2) {
+    public void obtainObjectiveCards (ObjectiveCard card1, ObjectiveCard card2) { // implementato nel controller
         passToView (card1, card2); // this method will be developed in the VIEW
     }
 

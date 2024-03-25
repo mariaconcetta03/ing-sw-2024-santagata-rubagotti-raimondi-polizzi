@@ -83,6 +83,21 @@ public class Deck {
 
 
 
+    public int[] objectiveDeck() throws IOException {
+        int [] objectiveDeck = new int[16];
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            objectiveDeck = objectMapper.readValue(new File("src/main/java/org/model/jsons/resourceCards.json"), new TypeReference<Stack<PlayableCard>>() {
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return objectiveDeck;
+    }
+
+
+
+
     /**
      * This method creates a baseDeck with all his 6 cards
      * @return baseDeck

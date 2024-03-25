@@ -104,8 +104,9 @@ public class Game {
      * it gives each player 2 objective cards, he will decide which one to choose
      * it sets the game-order of the players
      * @throws IllegalArgumentException if players are less than 2 or more than 4
+     * @return List<Integer> index of the objective cards already used for the market
      */
-    public void startGame () throws IllegalArgumentException {
+    public List<Integer> startGame () throws IllegalArgumentException {
         if((players.size()<2)||(players.size()>4)){
             throw new IllegalArgumentException("Incorrect number of players");}
 
@@ -206,6 +207,8 @@ public class Game {
             not_assigned--;
         }
         this.players = newOrder; // setting the new order
+        return usedIndexes;
+
     }
 
 
@@ -417,6 +420,18 @@ public class Game {
 
 
 
+
+    /**
+     * Getter method
+     * @return CurrentPlayer in the match
+     */
+    public Player getCurrentPlayer() {
+        return this.currentPlayer;
+    }
+
+
+
+
     /**
      * Getter method
      * @return resourceCard2 in the market
@@ -471,7 +486,7 @@ public class Game {
      * Getter method
      * @return objectiveDeck of the game
      */
-    public ObjectiveCard[] getObjectiveDeckDeck() {
+    public ObjectiveCard[] getObjectiveDeck() {
         return objectiveDeck;
     }
 
@@ -533,6 +548,17 @@ public class Game {
      */
     public void setState (GameState state) {
         this.state = state;
+    }
+
+
+
+
+    /**
+     * Setter method
+     * @param player which is playing now
+     */
+    public void setCurrentPlayer (Player player) {
+        this.currentPlayer = player;
     }
 
 }
