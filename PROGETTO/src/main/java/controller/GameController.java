@@ -10,6 +10,21 @@ public class GameController {
     private Deck deck = new Deck(new Stack<>());
     int lastRounds = 10;
 
+    
+
+    public boolean waitingForPlayers(Player player) { //when we call this method we are adding another player
+        game.addPlayer(player);
+        if (game.getPlayers().size() < game.getnPlayers()) {
+            return true; //this method would be called at least another time
+        } else {
+            startGame(); //do we have to use the parameter game.getPlayers() to identify which game we are talking about?
+            return false;
+        }
+    }
+
+
+
+
     /**
      * This method starts the game. The game state is set to STARTED. 2 objective cards are given to each
      * player, and he will need to choose one of these. Then the market is completed and each player receives
@@ -25,12 +40,11 @@ public class GameController {
 
 
         if(game.getState() == Game.GameState.WAITING_FOR_START) {
-            lastRound = false;
-            usedIndexes = game.startGame();
-            game.giveInitialCards();
+            usedIndexes = game.startGame(); //index used for the objective cards
+            game.giveInitialCards();//we already have the players
 
 
-            for (int i = 0; i< game.getnPlayers(); i++) {
+            for (int i = 0; i< game.getnPlayers(); i++) { //we already have the players
                 while (usedIndexes.contains(number1)) {
                     number1 = random.nextInt(16);
                 }
@@ -136,10 +150,10 @@ public class GameController {
         if (game.getState() == Game.GameState.ENDING && lastRounds > 0) {
             lastRounds --;
             game.nextRound();
-        } else if (game.getState() == Game.GameState.ENDING && lastRounds == 0) {
+        } else if (game.getState() == Game.GameState.ENDING && lastRounds == 0) { //20 points reached the players will have only another round
             endGame();
         } else if (game.getState() == Game.GameState.STARTED) {
-            game.nextRound();
+            game.nextRound(); //the order of the players in the list will be changed
         }
     }
 
