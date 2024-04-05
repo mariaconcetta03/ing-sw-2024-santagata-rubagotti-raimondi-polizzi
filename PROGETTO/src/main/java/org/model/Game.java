@@ -21,7 +21,7 @@ public class Game {
         WAITING_FOR_START
     }
     private GameState state;
-    private Player currentPlayer; // player who needs to play at this moment (now it's his turn)
+    private Player currentPlayer; // player who needs to play at this moment (now, it's his turn)
     private Deck resourceDeck; // contains all the resource cards
     private Deck goldDeck; // contains all the gold cards
     private Deck baseDeck; // contains all the base cards, which are the cards that players use to start the game
