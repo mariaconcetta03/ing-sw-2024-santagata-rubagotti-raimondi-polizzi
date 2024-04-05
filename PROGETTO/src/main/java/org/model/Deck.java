@@ -1,11 +1,9 @@
 package org.model;
-import com.fasterxml.jackson.core.JsonProcessingException;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DatabindException;
+import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import groovy.json.JsonParserType;
-import groovyjarjarasm.asm.TypeReference;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.io.FileReader;
@@ -52,11 +50,11 @@ public class Deck {
     public Deck goldDeck() throws IOException {
         Stack<PlayableCard> goldDeck = new Stack<>();
         ObjectMapper objectMapper = new ObjectMapper();
-        try {
-             goldDeck = objectMapper.readValue(new File("src/main/java/org/model/jsons/goldCards.json"), new TypeReference<Stack<PlayableCard>>() {
-            });
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        File file= new File(".\\json\\goldCards.json");
+        try{
+            goldDeck=objectMapper.readValue(file, new TypeReference<Stack<PlayableCard>>() {});
+        }catch (DatabindException e){
+            e.printStackTrace();
         }
         return new Deck(goldDeck);
     }
