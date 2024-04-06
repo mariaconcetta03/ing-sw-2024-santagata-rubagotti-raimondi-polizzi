@@ -5,7 +5,7 @@ import java.util.*;
 public class Objective_card_pattern extends ObjectiveCard{
     private Coordinates positionCard1; //the next card of the pattern composed by three cards
     private Coordinates positionCard2; //the third card of the pattern
-    private AngleType card0Type;
+    private AngleType card0Type; //AngleType and not CentralType because of some problems in counting the resources
     private AngleType card1Type;
     private AngleType card2Type;
 
@@ -46,9 +46,9 @@ public class Objective_card_pattern extends ObjectiveCard{
                 //checks the positions of the other 2 cards
                 if (cardsPositions.contains(temp1) && cardsPositions.contains(temp2)) {
                     //checks the type of all the 3 cards
-                    if (player.getBoard().getPlayedCards().get(temp1).getCentralResources().get(0).equals(card1Type) &&
-                            player.getBoard().getPlayedCards().get(temp2).getCentralResources().get(0).equals(card2Type) &&
-                            player.getBoard().getPlayedCards().get(center).getCentralResources().get(0).equals(card0Type)) {
+                    if (player.getBoard().getPlayedCards().get(temp1).equals(card1Type) &&
+                            player.getBoard().getPlayedCards().get(temp2).equals(card2Type) &&
+                            player.getBoard().getPlayedCards().get(center).equals(card0Type)) {
                         counter++; //increment the counter
                         alreadyCountedPositions.add(center); //to mark the coordinates already counted in a pattern
                         alreadyCountedPositions.add(temp1);

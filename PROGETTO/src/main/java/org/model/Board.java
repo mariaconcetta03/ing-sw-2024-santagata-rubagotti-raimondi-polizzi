@@ -6,7 +6,7 @@ public class Board {
     private static final int numCarte=80;
     private Set<Coordinates> playablePositions;
     private Set<Coordinates> unPlayablePositions;
-    private Map<Coordinates, PlayableCard> playedCards; //we need that for the objective_pattern
+    private Map<Coordinates, AngleType> playedCards; //we need that for the objective_pattern
     private int boardDimensions;
     private Map<AngleType, Integer> numResources;
 
@@ -99,7 +99,7 @@ public class Board {
             //inserting the card
             card.setPosition(position);
             this.table[position.getX()][position.getY()] = card;
-            playedCards.put(position, card);
+            playedCards.put(position, card.getCentralResources().get(0)); //only the base card (here not considered) has more than one resource in the center
 
             //adding the new card resources
             if(card.getOrientation()) {
@@ -323,7 +323,7 @@ public class Board {
      * Getter method
      * @return a Map containing all the cards played by the Player with their Coordinates
      */
-    public Map<Coordinates, PlayableCard> getPlayedCards() {
+    public Map<Coordinates, AngleType> getPlayedCards() {
         return playedCards;
     }
 }
