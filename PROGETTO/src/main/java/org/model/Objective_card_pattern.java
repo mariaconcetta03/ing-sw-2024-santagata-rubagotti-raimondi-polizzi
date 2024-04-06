@@ -18,6 +18,20 @@ public class Objective_card_pattern extends ObjectiveCard{
     }
 
     /**
+     * Class constructor
+     * @param points the card gives for each time the Player completes the pattern
+     */
+    public Objective_card_pattern(int points,Coordinates positionCard1,Coordinates positionCard2,AngleType card0Type,AngleType card1Type,AngleType card2Type) {
+        super(points);
+        this.positionCard1=positionCard1;
+        this.positionCard2=positionCard2;
+        this.card0Type=card0Type;
+        this.card1Type=card1Type;
+        this.card2Type=card2Type;
+    }
+
+
+    /**
      * This method apply sum to Coordinates object
      * @param c1 first Coordinates object
      * @param c2 second Coordinates object
@@ -32,7 +46,7 @@ public class Objective_card_pattern extends ObjectiveCard{
      * @param player is the player that has this Objective Card as personal Objective or Common Objective
      */
     @Override
-    public void addPointsToPlayer(Player player) {
+    public int addPointsToPlayer(Player player) {
         int counter=0;
         //creates a Set view of the keyset of the player's Board
         Set<Coordinates> cardsPositions=player.getBoard().getPlayedCards().keySet(); //this Set doesn't contain the base card (which has no color)
@@ -59,6 +73,6 @@ public class Objective_card_pattern extends ObjectiveCard{
         }
 
         player.addPoints(counter * this.getCardPoints());
-
+        return counter * this.getCardPoints(); //this can be useful for the test
     }
 }
