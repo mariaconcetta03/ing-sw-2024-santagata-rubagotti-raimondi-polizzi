@@ -29,7 +29,7 @@ public class Objective_card_number extends ObjectiveCard {
      * @param player the Player which we are checking the objective for
      */
     @Override
-    public void addPointsToPlayer(Player player) {
+    public int addPointsToPlayer(Player player) {
         int minResources = Integer.MAX_VALUE; //that's an improbable superior limit
         Map<AngleType,Integer> symbolsOnBoard=player.getBoard().getNumResources();
 
@@ -40,5 +40,6 @@ public class Objective_card_number extends ObjectiveCard {
         }
         //adding the just calculated point to the player
         player.addPoints(minResources* this.getCardPoints());
+        return minResources* this.getCardPoints(); //we can use this in the test
     }
 }
