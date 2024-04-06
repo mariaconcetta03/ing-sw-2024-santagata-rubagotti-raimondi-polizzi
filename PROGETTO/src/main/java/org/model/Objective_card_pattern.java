@@ -35,31 +35,25 @@ public class Objective_card_pattern extends ObjectiveCard{
     public void addPointsToPlayer(Player player) {
         int counter=0;
         //creates a Set view of the keyset of the player's Board
-        Set<Coordinates> cardsPositions=player.getBoard().getPlayedCards().keySet();
-
-        //temp values to help me directly remove the coordinates if found
-        Coordinates temp1=positionCard1;
-        Coordinates temp2=positionCard2;
+        Set<Coordinates> cardsPositions=player.getBoard().getPlayedCards().keySet(); //this Set doesn't contain the base card (which has no color)
+        Set<Coordinates> alreadyCountedPositions= new HashSet<>();
 
         for(Coordinates center : cardsPositions){
-            temp1=positionCard1; // ADD!!
-            temp2=positionCard2; // ADD!! SONO COORDINATE RELATIVE QUINDI DEVO INIZIALIZZARLE UNA SOLA VOLTA OPPURE NON LE INIZIALIZZO E LE USO COSI COME SONO
-            temp1= sumCoordinates(center,temp1);
-            temp2= sumCoordinates(center,temp2);
-            //checks the positions of the other 2 cards
-            if(cardsPositions.contains(temp1)&&cardsPositions.contains(temp2)){
-                //checks the type of all the 3 cards
-                if(player.getBoard().getPlayedCards().get(temp1).getCentralResources().get(0).equals(card1Type)&&
-                        // NO. SE è UNA CARTA BASE CON PRIMA RISORSA LUPETTO (ESEMPIO) QUELLA CARTA NON FA PARTE DEL PATTERN BLU.
-                        // we don't have to add the base card to the Map because it doesn't have a color associated with a symbol
-                        player.getBoard().getPlayedCards().get(temp2).getCentralResources().get(0).equals(card2Type)&&
-                        player.getBoard().getPlayedCards().get(center).getCentralResources().get(0).equals(card0Type)){
-                    //increment the counter and remove from the Set the position already used
-                    counter++;
-                    cardsPositions.remove(center);      //maybe it's better to write cardsPositions.put(center, BLANK). Blank is
-                                                        // not something we can find in the ObjectiveCardPattern (ignored by all if-controls)
-                    cardsPositions.remove(temp1);
-                    cardsPositions.remove(temp2);
+            //temp values to help me directly write in alreadyCountedPositions the coordinates if found
+            Coordinates temp1= sumCoordinates(center,positionCard1);
+            Coordinates temp2= sumCoordinates(center,positionCard2);
+            if(!(alreadyCountedPositions.contains(center))&&!(alreadyCountedPositions.contains(temp1))&&!(alreadyCountedPositions.contains(temp2))) {
+                //checks the positions of the other 2 cards
+                if (cardsPositions.contains(temp1) && cardsPositions.contains(temp2)) {
+                    //checks the type of all the 3 cards
+                    if (player.getBoard().getPlayedCards().get(temp1).getCentralResources().get(0).equals(card1Type) &&
+                            player.getBoard().getPlayedCards().get(temp2).getCentralResources().get(0).equals(card2Type) &&
+                            player.getBoard().getPlayedCards().get(center).getCentralResources().get(0).equals(card0Type)) {
+                        counter++; //increment the counter
+                        alreadyCountedPositions.add(center); //to mark the coordinates already counted in a pattern
+                        alreadyCountedPositions.add(temp1);
+                        alreadyCountedPositions.add(temp2);
+                    }
                 }
             }
         }
