@@ -29,7 +29,8 @@ public class ObjectiveCard extends Card {
         /** To be Overridden
          * updates player's points
          */
-        public void addPointsToPlayer(Player player) {
+        public int addPointsToPlayer(Player player) {
+            return 0;
         }
 
         /**
