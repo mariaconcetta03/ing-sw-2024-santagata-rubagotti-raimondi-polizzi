@@ -84,7 +84,7 @@ public class Deck {
         int [] objectiveDeck = new int[16];
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            objectiveDeck = objectMapper.readValue(new File("src/main/java/org/model/jsons/resourceCards.json"), new TypeReference int[]);{
+            objectiveDeck = objectMapper.readValue(new File("src/main/java/org/model/jsons/resourceCards.json"), new TypeReference(int index "i" has );{
             });
         } catch (IOException e) {
             throw new RuntimeException(e);
