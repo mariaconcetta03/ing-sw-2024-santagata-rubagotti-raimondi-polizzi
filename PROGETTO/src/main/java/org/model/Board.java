@@ -244,7 +244,7 @@ public class Board {
      * @param card
      */
     public void updatePlayablePositions(PlayableCard card) {
-        //se non è presente in unplayable position aggiungo tutti gli angoli!=ABSENT
+        //if it is not present in a unplayable position, it adds all the corners!= ABSENT
         if (card.getOrientation()) {
             if (card.get_front_up_right() != AngleType.ABSENT &&
                     !unPlayablePositions.contains(card.getPosition().findUpRight())) {
