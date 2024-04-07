@@ -75,7 +75,7 @@ public class GameTest extends TestCase {
         game.giveInitialCards();
 
         for (int i=0; i<nPlayers; i++) {
-            System.out.println("Initial card of " + i + "player is " + players.get(i).drawCard(deck.resourceDeck.getFirstCard().getId()); );
+            System.out.println("Initial card of " + i + "player is " + players.get(i).drawCard(deck.resourceDeck.getFirstCard().getId()); gggg);
         }
     }
 
