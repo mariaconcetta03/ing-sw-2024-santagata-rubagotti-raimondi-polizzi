@@ -86,6 +86,19 @@ public class GameTest extends TestCase {
     }
 
     public void testStartChat() {
+        Deck deck = new Deck();
+        ObjectiveCard[] obj = new ObjectiveCard[16];
+        Player p1 = new Player();
+        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+        Player p = new Player(game);
+        game.addPlayer(p);
+        System.out.println("Starting chat between P1 and P2");
+
+        game.startChat(p, p1);
+
+        for(int i = 0; i < game.getChats().size(); i++) {
+            System.out.println("The number of the active chats is: " + game.getChats().size());
+        }
     }
 
     public void testStartGeneralChat() {
@@ -95,14 +108,46 @@ public class GameTest extends TestCase {
     }
 
     public void testResetGoldCard1() {
+        Deck deck = new Deck();
+        ObjectiveCard[] obj = new ObjectiveCard[16];
+        Player p1 = new Player();
+        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+
+        System.out.println("The previous gold card (1) had the ID: " + game.getGoldCard1().getId());
+        game.resetGoldCard1();
+        System.out.println("the new gold card (1) has the ID " +  game.getGoldCard1().getId());
     }
 
     public void testResetGoldCard2() {
+        Deck deck = new Deck();
+        ObjectiveCard[] obj = new ObjectiveCard[16];
+        Player p1 = new Player();
+        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+
+        System.out.println("The previous gold card (2) had the ID: " + game.getGoldCard2().getId());
+        game.resetGoldCard2();
+        System.out.println("the new gold card (2) has the ID " +  game.getGoldCard2().getId());
     }
 
     public void testResetResourceCard1() {
+        Deck deck = new Deck();
+        ObjectiveCard[] obj = new ObjectiveCard[16];
+        Player p1 = new Player();
+        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+
+        System.out.println("The previous resource card (1) had the ID: " + game.getResourceCard1().getId());
+        game.resetResourceCard1();
+        System.out.println("the new resource card (1) has the ID " +  game.getResourceCard1().getId());
     }
 
     public void testResetResourceCard2() {
+        Deck deck = new Deck();
+        ObjectiveCard[] obj = new ObjectiveCard[16];
+        Player p1 = new Player();
+        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+
+        System.out.println("The previous resource card (2) had the ID: " + game.getResourceCard2().getId());
+        game.resetResourceCard2();
+        System.out.println("the new resource card (2) has the ID " +  game.getResourceCard2().getId());
     }
 }
