@@ -75,7 +75,7 @@ public class GameTest extends TestCase {
         game.giveInitialCards();
 
         for (int i=0; i<nPlayers; i++) {
-            System.out.println("Initial card of " + i + "player is " + players.get(i).drawCard(deck.resourceDeck.getFirstCard().getId()); gggg);
+            System.out.println("Initial cards given");
         }
     }
 
@@ -83,7 +83,37 @@ public class GameTest extends TestCase {
 
 
     public void testWinner() {
+        Deck deck = new Deck();
+        ObjectiveCard[] obj = new ObjectiveCard[16];
+        Player p1 = new Player();
+        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+        Player p = new Player(game);
+        game.addPlayer(p);
+
+        // adding points to the player
+        p1.addPoints(5);
+        p.addPoints(3);
+        p1.setNickname("Pippo");
+        p.setNickname("Pluto");
+
+
+
+        // printing the points
+        System.out.println("The player Pippo has 5 points");
+        System.out.println("The player Pluto has 3 points");
+
+
+            List <Player> winners = new ArrayList<>();
+            winners = game.winner();
+
+            for (int i = 0; i < winners.size(); i++) {
+                System.out.println("The winner is/are: " + winners.get(i).getNickname());
+            }
+
     }
+
+
+
 
     public void testStartChat() {
         Deck deck = new Deck();
@@ -101,11 +131,51 @@ public class GameTest extends TestCase {
         }
     }
 
+
+
+
     public void testStartGeneralChat() {
+        Deck deck = new Deck();
+        ObjectiveCard[] obj = new ObjectiveCard[16];
+        Player p1 = new Player();
+        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+        Player p = new Player(game);
+        game.addPlayer(p);
+        System.out.println("Starting general chat");
+
+        game.startGeneralChat();
+        for(int i = 0; i < game.getChats().size(); i++) {
+            System.out.println("The number of the active chats is: " + game.getChats().size());
+        }
     }
 
+
+
+
     public void testNextRound() {
+        Deck deck = new Deck();
+        ObjectiveCard[] obj = new ObjectiveCard[16];
+        Player p1 = new Player();
+        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+        Player p = new Player(game);
+        game.addPlayer(p);
+
+        p1.setNickname("Pippo");
+        p.setNickname("Pluto");
+
+        System.out.println("The current playing order is FIRST PLAYER (" + game.getPlayers().get(0).getNickname() + "), " +
+                "SECOND PLAYER (" + game.getPlayers().get(1).getNickname() + ")");
+
+        // changing the playing order
+        System.out.println("Changing the playing order...");
+        game.nextRound();
+
+        System.out.println("The new playing order is FIRST PLAYER (" + game.getPlayers().get(0).getNickname() + "), " +
+                "SECOND PLAYER (" + game.getPlayers().get(1).getNickname() + ")");
     }
+
+
+
 
     public void testResetGoldCard1() {
         Deck deck = new Deck();
@@ -118,6 +188,8 @@ public class GameTest extends TestCase {
         System.out.println("the new gold card (1) has the ID " +  game.getGoldCard1().getId());
     }
 
+
+
     public void testResetGoldCard2() {
         Deck deck = new Deck();
         ObjectiveCard[] obj = new ObjectiveCard[16];
@@ -128,6 +200,8 @@ public class GameTest extends TestCase {
         game.resetGoldCard2();
         System.out.println("the new gold card (2) has the ID " +  game.getGoldCard2().getId());
     }
+
+
 
     public void testResetResourceCard1() {
         Deck deck = new Deck();
@@ -140,6 +214,8 @@ public class GameTest extends TestCase {
         System.out.println("the new resource card (1) has the ID " +  game.getResourceCard1().getId());
     }
 
+
+
     public void testResetResourceCard2() {
         Deck deck = new Deck();
         ObjectiveCard[] obj = new ObjectiveCard[16];
@@ -150,4 +226,5 @@ public class GameTest extends TestCase {
         game.resetResourceCard2();
         System.out.println("the new resource card (2) has the ID " +  game.getResourceCard2().getId());
     }
+
 }
