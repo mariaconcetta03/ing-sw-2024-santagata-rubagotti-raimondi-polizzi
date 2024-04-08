@@ -399,6 +399,15 @@ public class Game {
     }
 
 
+    /**
+     * Getter method
+     * @return chats is the list of all opened chats
+     */
+    public List<Chat> getChats() {
+        return this.chats;
+    }
+
+
 
     /**
      * Getter method
