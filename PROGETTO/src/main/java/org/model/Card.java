@@ -9,8 +9,6 @@ import org.json.simple.parser.JSONParser;
 public abstract class Card {
     private int id; // each card has a different ID
 
-
-
     /**
      * Getter method
      * @return the id of a card

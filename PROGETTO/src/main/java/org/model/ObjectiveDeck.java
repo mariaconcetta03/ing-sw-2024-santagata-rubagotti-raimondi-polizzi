@@ -1,0 +1,71 @@
+package org.model;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
+public class ObjectiveDeck extends Deck{
+    private Stack<ObjectiveCard> cards; // contains all the cards in this deck
+
+
+
+    /**
+     * Class constructor
+     * creates a new deck, allocating space for a stack
+     */
+    public ObjectiveDeck(Stack<ObjectiveCard> stack) {
+        cards = stack;
+    }
+
+
+
+    /**
+     * Class constructor
+     * creates a new deck, with a null stack
+     */
+    public ObjectiveDeck() {
+        cards = null;
+    }
+
+
+
+    /**
+     * This method adds a card to the deck
+     * @param card you want to add to the deck
+     */
+    public void addCard (ObjectiveCard card) {
+        cards.add(card);
+    }
+
+
+
+    /**
+     * This method returns the first card in the deck
+     * @return the first card in the deck
+     */
+    public ObjectiveCard getFirstCard() { // returns the first card on the deck, for example when the player needs to pick it up
+        return cards.pop();
+    }
+
+
+
+    /**
+     * This method creates a goldDeck with all his 40 cards
+     * @return goldDeck
+     */
+    public static ObjectiveDeck objectiveDeck(){
+        Stack<ObjectiveCard> objectiveDeck = new Stack<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        File file= new File(".\\jsons\\objectiveCards.json");
+        try{
+            objectiveDeck=objectMapper.readValue(file, new TypeReference<Stack<ObjectiveCard>>() {});
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return new ObjectiveDeck(objectiveDeck);
+    }
+
+}

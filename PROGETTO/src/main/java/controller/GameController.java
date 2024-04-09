@@ -7,7 +7,7 @@ import java.util.*;
 
 public class GameController {
     private Game game;
-    private Deck deck = new Deck(new Stack<>());
+    private PlayableDeck pdeck = new PlayableDeck(new Stack<>());//non ho capito
     int lastRounds = 10;
     private List<Player> winners;
 

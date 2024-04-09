@@ -22,10 +22,10 @@ public class Game {
     }
     private GameState state;
     private Player currentPlayer; // player who needs to play at this moment (now, it's his turn)
-    private Deck resourceDeck; // contains all the resource cards
-    private Deck goldDeck; // contains all the gold cards
-    private Deck baseDeck; // contains all the base cards, which are the cards that players use to start the game
-    private ObjectiveCard[] objectiveDeck; // contains all the objective cards
+    private PlayableDeck resourceDeck; // contains all the resource cards
+    private PlayableDeck goldDeck; // contains all the gold cards
+    private PlayableDeck baseDeck; // contains all the base cards, which are the cards that players use to start the game
+    private ObjectiveDeck objectiveDeck; // contains all the objective cards
 
     /** these ones are the 4 cards which are at the table center: players can see them and can decide to draw from the
        deck, or to draw one of these cards */
@@ -55,17 +55,17 @@ public class Game {
      * @param baseDeck all the base cards
      * @param objectiveDeck all the objective cards
      */
-    public Game (Player player, int id, Deck resourceDeck, Deck goldDeck, Deck baseDeck, ObjectiveCard[] objectiveDeck) {
+    public Game (Player player, int id, PlayableDeck resourceDeck, PlayableDeck goldDeck, PlayableDeck baseDeck, ObjectiveDeck objectiveDeck) {
         this.id = id;
         this.players = new ArrayList<>();
         this.players.add(player);
         this.chats = new ArrayList<>();
         this.state = GameState.WAITING_FOR_START;
         this.currentPlayer = null;
-        this.resourceDeck = resourceDeck;
-        this.goldDeck = goldDeck;
-        this.baseDeck = baseDeck;
-        this.objectiveDeck = objectiveDeck;
+        this.resourceDeck = resourceDeck.resourceDeck();
+        this.goldDeck = goldDeck.goldDeck();
+        this.baseDeck = baseDeck.baseDeck();
+        this.objectiveDeck = objectiveDeck.objectiveDeck();
         this.resourceCard1 = null;
         this.resourceCard2 = null;
         this.goldCard1 = null;
@@ -106,7 +106,7 @@ public class Game {
      * @throws IllegalArgumentException if players are less than 2 or more than 4
      * @return List<Integer> index of the objective cards already used for the market
      */
-    public List<Integer> startGame () throws IllegalArgumentException {
+    public void startGame () throws IllegalArgumentException {
         if((players.size()<2)||(players.size()>4)){
             throw new IllegalArgumentException("Incorrect number of players");}
 
@@ -124,10 +124,13 @@ public class Game {
         this.goldCard2 = this.goldDeck.getFirstCard();
 
         // shuffling the base deck and each player draws a starter card (base card)
+        this.baseDeck.shuffleDeck();
         for (int i=0; i<this.players.size(); i++) {
-            this.baseDeck.shuffleDeck();
             this.players.get(i).drawCard(this.baseDeck.getFirstCard());
         }
+
+        // shuffling the objective deck
+        this.objectiveDeck.shuffleDeck();
 
         // letting the players decide the color of their pawn
         // the order of choosing is the order in which the player connected to the server
@@ -159,32 +162,12 @@ public class Game {
         sc.close();
 
         // giving 2 cards to the market as common objective
-        List<Integer> usedIndexes = new ArrayList<>();
-        Random rand = new Random();
-
-        int index = rand.nextInt(objectiveDeck.length);
-        this.objectiveCard1 = objectiveDeck[index];
-        usedIndexes.add(index);
-        while (usedIndexes.contains(index)) {
-            index = rand.nextInt(objectiveDeck.length);
-		}
-        usedIndexes.add(index);
-        this.objectiveCard2 = objectiveDeck[index];
-
+        this.objectiveCard1 = objectiveDeck.getFirstCard();
+        this.objectiveCard2 = objectiveDeck.getFirstCard();
 
         // giving each player 2 objective cards, he will decide which one to choose
-        for (int i=0; i<this.players.size(); i++) {
-            while (usedIndexes.contains(index)) {
-                index = rand.nextInt(objectiveDeck.length);
-            }
-            usedIndexes.add(index);
-
-            int index2 = index;
-            while (usedIndexes.contains(index2)) {
-                index2 = rand.nextInt(objectiveDeck.length);
-            }
-            usedIndexes.add(index2);
-            this.players.get(i).obtainObjectiveCards (this.objectiveDeck[index], this.objectiveDeck[index2]);
+        for (int i = 0; i<nPlayers; i++) {
+            this.players.get(i).obtainObjectiveCards (objectiveDeck.getFirstCard(), objectiveDeck.getFirstCard());
         }
 
         // setting the game-order of the players
@@ -207,8 +190,6 @@ public class Game {
             not_assigned--;
         }
         this.players = newOrder; // setting the new order
-        return usedIndexes;
-
     }
 
 
@@ -495,7 +476,7 @@ public class Game {
      * Getter method
      * @return objectiveDeck of the game
      */
-    public ObjectiveCard[] getObjectiveDeck() {
+    public ObjectiveDeck getObjectiveDeck() {
         return objectiveDeck;
     }
 
