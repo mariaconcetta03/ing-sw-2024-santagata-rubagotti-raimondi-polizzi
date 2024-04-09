@@ -72,16 +72,21 @@ public class Player {
 
 
 
-    /**
-     * This method receives the two random Objective cards from the Game class, and passes them
-     * to the view, so that the player can choose a card or the other, and then use the method
-     * "setPersonalObjective" to set the chosen objective
-     * @param card1 first random objective card
-     * @param card2 second random objective card
-     */
-    public void obtainObjectiveCards (ObjectiveCard card1, ObjectiveCard card2) { // implementato nel controller
-        passToView (card1, card2); // this method will be developed in the VIEW
-    }
+// -------------------------------------------------------------------------------------------------------------------
+// QUESTA PARTE VA RIVISTA QUANDO FACCIO LA VIEW !!!
+//
+//    /**
+//     * This method receives the two random Objective cards from the Game class, and passes them
+//     * to the view, so that the player can choose a card or the other, and then use the method
+//     * "setPersonalObjective" to set the chosen objective
+//     * @param card1 first random objective card
+//     * @param card2 second random objective card
+//     */
+//    public void obtainObjectiveCards (ObjectiveCard card1, ObjectiveCard card2) { // implementato nel controller
+//        passToView (card1, card2); // this method will be developed in the VIEW
+//    }
+// -------------------------------------------------------------------------------------------------------------------
+
 
 
 
