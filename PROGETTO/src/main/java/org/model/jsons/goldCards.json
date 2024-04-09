@@ -1,7 +1,4 @@
-{
-
-"goldCard": [
-
+[
   {
     "id": 41,
     "points": 1,
@@ -14,25 +11,19 @@
     "back_down_right": "NO_RESOURCE",
     "back_down_left": "NO_RESOURCE",
     "coverAngleToReceivePoints": "",
-    "haveJartoReceeivePoints": false,
+    "haveJarToReceivePoints": false,
     "haveFeatherToReceivePoints": true,
     "haveScrollToReceivePoints": false,
     "neededResourcesBoolean": true,
-    "neededResources": [
-      {"FUNGI": 2},
-      {"ANIMAL": 1}
-    ],
+    "neededResources": {
+      "FUNGI":
+        2
+      ,
+      "ANIMAL":
+        1
+    },
     "centralResources": [
-      "FUNGI"
+      "FUNGI", "INSECT"
     ]
-  },
-
-
-  {
-
   }
-
-
-
-]
-}
+  ]

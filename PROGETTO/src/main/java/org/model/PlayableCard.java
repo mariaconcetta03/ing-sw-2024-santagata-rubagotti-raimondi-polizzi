@@ -230,4 +230,32 @@ public class PlayableCard extends Card {
         return position;
     }
 
+
+    public void setBack_up_right(AngleType back_up_right) {
+        this.back_up_right = back_up_right;
+    }
+
+    public void setBack_up_left(AngleType back_up_left) {
+        this.back_up_left = back_up_left;
+    }
+
+    public void setBack_down_right(AngleType back_down_right) {
+        this.back_down_right = back_down_right;
+    }
+
+    public void setBack_down_left(AngleType back_down_left) {
+        this.back_down_left = back_down_left;
+    }
+
+    public void setHaveJarToReceivePoints(boolean haveJarToReceivePoints) {
+        this.haveJarToReceivePoints = haveJarToReceivePoints;
+    }
+
+    public void setHaveFeatherToReceivePoints(boolean haveFeatherToReceivePoints) {
+        this.haveFeatherToReceivePoints = haveFeatherToReceivePoints;
+    }
+
+    public void setHaveScrollToReceivePoints(boolean haveScrollToReceivePoints) {
+        this.haveScrollToReceivePoints = haveScrollToReceivePoints;
+    }
 }
