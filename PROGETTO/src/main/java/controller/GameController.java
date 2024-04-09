@@ -40,7 +40,7 @@ public class GameController {
 
 
         if(game.getState() == Game.GameState.WAITING_FOR_START) {
-            usedIndexes = game.startGame(); //index used for the objective cards
+            //usedIndexes = game.startGame(); //index used for the objective cards
             game.giveInitialCards();//we already have the players
 
 
@@ -54,7 +54,7 @@ public class GameController {
                     number2 = random.nextInt(16);
                 }
                 usedIndexes.add(number2);
-                game.getPlayers().get(i).obtainObjectiveCards(game.getObjectiveDeck()[number1], game.getObjectiveDeck()[number2]);
+                //game.getPlayers().get(i).obtainObjectiveCards(game.getObjectiveDeck()[number1], game.getObjectiveDeck()[number2]);
             }
         } else throw new IllegalStateException();
     }

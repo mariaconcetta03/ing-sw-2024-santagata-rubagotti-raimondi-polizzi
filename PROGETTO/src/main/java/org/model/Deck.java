@@ -24,6 +24,4 @@ public abstract class Deck {
     public boolean isFinished() { // if the deck it's finished, then returns TRUE. If it's not, then returns FALSE
         return cards.isEmpty();
     }
-
-    public void goo;
 }

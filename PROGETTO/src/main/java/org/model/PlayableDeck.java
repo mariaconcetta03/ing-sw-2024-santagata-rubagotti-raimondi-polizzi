@@ -62,7 +62,7 @@ public class PlayableDeck extends Deck{
     public static PlayableDeck goldDeck(){
         Stack<PlayableCard> goldDeck = new Stack<>();
         ObjectMapper objectMapper = new ObjectMapper();
-        File file= new File(".\\jsons\\goldCards.json");
+        File file= new File("src/main/java/org/model/jsons/goldCards.json");
         try{
             goldDeck=objectMapper.readValue(file, new TypeReference<Stack<PlayableCard>>() {});
         }catch (IOException e){
