@@ -21,6 +21,12 @@ public class Objective_card_number extends ObjectiveCard {
         super(points);
     }
 
+    public Objective_card_number(int points,Map<CountingType, Integer> resources){
+        super(points);
+        this.resources = resources; //there is no copy
+
+    }
+
     /**
      * This method returns the number of points collected thanks to the achievement of this objective
      * The method calculates the minor value in order to satisfy the combination
