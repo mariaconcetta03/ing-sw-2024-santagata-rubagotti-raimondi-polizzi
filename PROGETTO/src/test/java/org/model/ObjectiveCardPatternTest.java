@@ -16,6 +16,9 @@ public class ObjectiveCardPatternTest extends TestCase {
         playedCards.put(new Coordinates(1,1),AngleType.INSECT);
         playedCards.put(new Coordinates(2,2),AngleType.INSECT);
         playedCards.put(new Coordinates(3,3),AngleType.INSECT);
+        playedCards.put(new Coordinates(4,4),AngleType.INSECT);
+        playedCards.put(new Coordinates(5,5),AngleType.INSECT);
+        playedCards.put(new Coordinates(6,6),AngleType.FUNGI);  //see the drive file ObjectiveCardPatternTest
         assertEquals(usedCard.addPointsToPlayer(new Player()),2); //the algorithm is correct if it gives 2 points to the player
     }
    
