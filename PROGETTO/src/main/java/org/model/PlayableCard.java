@@ -11,6 +11,23 @@ public class PlayableCard extends Card {
 
     private int points;
 
+    public PlayableCard(){
+        this.points = -1;
+        this.front_down_left = null;
+        this.front_up_left = null;
+        this.front_down_right = null;
+        this.front_up_right = null;
+        this.back_down_left = null;
+        this.back_down_right = null;
+        this.back_up_left = null;
+        this.back_up_right = null;
+        this.centralResources = null;
+        this.coverAngleToReceivePoints = false;
+        this.haveFeatherToReceivePoints = false;
+        this.haveJarToReceivePoints = false;
+        this.haveScrollToReceivePoints = false;
+        this.neededResources =null;
+    }
     public PlayableCard (int id, int points, AngleType front_down_left, AngleType front_up_left, AngleType front_down_right, AngleType front_up_right,
                          AngleType back_down_left, AngleType back_down_right, AngleType back_up_left, AngleType back_up_right,
                          List<AngleType> centralResources, boolean coverAngleToReceivePoints, boolean haveFeatherToReceivePoints,

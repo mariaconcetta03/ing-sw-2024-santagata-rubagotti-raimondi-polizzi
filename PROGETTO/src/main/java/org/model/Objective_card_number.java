@@ -38,8 +38,15 @@ public class Objective_card_number extends ObjectiveCard {
                 minResources= symbolsOnBoard.get(t)/resources.get(t);
             }
         }
+        int pointsToBeAdded=0;
+        pointsToBeAdded=minResources*this.getCardPoints();
+
+        //if we completed the objective at least once we take note of that
+        if (pointsToBeAdded!=0){
+            player.addNumObjectivesReached();
+        }
         //adding the just calculated point to the player
-        player.addPoints(minResources* this.getCardPoints());
+        player.addPoints(pointsToBeAdded);
         return minResources* this.getCardPoints(); //we can use this in the test
     }
 }

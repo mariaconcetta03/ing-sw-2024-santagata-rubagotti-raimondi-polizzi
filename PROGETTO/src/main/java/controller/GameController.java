@@ -7,7 +7,6 @@ import java.util.*;
 
 public class GameController {
     private Game game;
-    private PlayableDeck pdeck = new PlayableDeck(new Stack<>());//non ho capito
     int lastRounds = 10;
     private List<Player> winners;
 
@@ -64,22 +63,16 @@ public class GameController {
 
 
     /**
-     * there would be another package (we can call it 'miniController')
+     * there would be another package (we can call it 'ServerController')
      * that can manage the creation of different games between different
      * players (gives a different ID for each game). This was suggested by Cugula the first lesson
      * @param gameCreator
      * @param nPlayers
      */
     public void createGame (Player gameCreator, int nPlayers) throws RuntimeException {
-        try {
-            game = new Game(gameCreator, nPlayers, SuperController.getNewId, deck.resourceDeck(),
-                    deck.goldDeck(), deck.baseDeck(), deck.objectiveDeck()); //the object Deck uses these methods only to return a structure
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        //sistemare Costruttore Game (usiamo List di Player?)
+            game = new Game(gameCreator, ServerController.getFirstAvailableId());
     }
-
-
 
 
     /**

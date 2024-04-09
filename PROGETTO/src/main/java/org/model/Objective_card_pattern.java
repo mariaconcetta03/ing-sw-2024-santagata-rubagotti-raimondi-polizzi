@@ -71,8 +71,14 @@ public class Objective_card_pattern extends ObjectiveCard{
                 }
             }
         }
-
-        player.addPoints(counter * this.getCardPoints());
+        int pointsToBeAdded=0;
+        pointsToBeAdded=counter*this.getCardPoints();
+        //if we completed the objective at least once we take note of that
+        if (pointsToBeAdded!=0){
+            player.addNumObjectivesReached();
+        }
+        //adding the points just calculated to the player
+        player.addPoints(pointsToBeAdded);
         return counter * this.getCardPoints(); //this can be useful for the test
     }
 }

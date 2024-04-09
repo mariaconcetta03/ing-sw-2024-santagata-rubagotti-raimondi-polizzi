@@ -204,7 +204,7 @@ public class Board {
      * @return boolean that indicates if the Player has enough resources to play the specific card
      */
     private boolean enoughResources (PlayableCard card) { // CONTROLLARE SE SI PUò USARE per pattern
-        if (!card.getNeededResources().isEmpty()) {
+        if (!(card.getNeededResources()==null)) {
             for (CentralType t : card.getNeededResources().keySet()) {
                 if (numResources.get(t) < card.getNeededResources().get(t)) {
                     return false;

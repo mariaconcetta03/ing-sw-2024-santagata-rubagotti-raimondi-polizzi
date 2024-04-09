@@ -45,27 +45,23 @@ public class Game {
 
 
 
-
+//maybe we can make the GameController check if the numPlayer is okay, and pass to Game a List with all the players
     /**
      * Class constructor
      * @param player is the first player who connected to the server
      * @param id each game has a different id
-     * @param resourceDeck all the resource cards
-     * @param goldDeck all the gold cards
-     * @param baseDeck all the base cards
-     * @param objectiveDeck all the objective cards
      */
-    public Game (Player player, int id, PlayableDeck resourceDeck, PlayableDeck goldDeck, PlayableDeck baseDeck, ObjectiveDeck objectiveDeck) {
+    public Game (Player player, int id) {
         this.id = id;
         this.players = new ArrayList<>();
         this.players.add(player);
         this.chats = new ArrayList<>();
         this.state = GameState.WAITING_FOR_START;
         this.currentPlayer = null;
-        this.resourceDeck = resourceDeck.resourceDeck();
-        this.goldDeck = goldDeck.goldDeck();
-        this.baseDeck = baseDeck.baseDeck();
-        this.objectiveDeck = objectiveDeck.objectiveDeck();
+        this.resourceDeck = PlayableDeck.resourceDeck();
+        this.goldDeck = PlayableDeck.goldDeck();
+        this.baseDeck = PlayableDeck.baseDeck();
+        this.objectiveDeck = ObjectiveDeck.objectiveDeck();
         this.resourceCard1 = null;
         this.resourceCard2 = null;
         this.goldCard1 = null;
@@ -73,9 +69,6 @@ public class Game {
         this.objectiveCard1 = null;
         this.objectiveCard2 = null;
     }
-
-
-
 
 
 
@@ -165,9 +158,10 @@ public class Game {
         this.objectiveCard1 = objectiveDeck.getFirstCard();
         this.objectiveCard2 = objectiveDeck.getFirstCard();
 
-        // giving each player 2 objective cards, he will decide which one to choose
+        // giving each player 2 objective cards, next he will decide which one to choose
         for (int i = 0; i<nPlayers; i++) {
-            this.players.get(i).obtainObjectiveCards (objectiveDeck.getFirstCard(), objectiveDeck.getFirstCard());
+            this.players.get(i).addPersonalObjective(objectiveDeck.getFirstCard());
+            this.players.get(i).addPersonalObjective(objectiveDeck.getFirstCard());
         }
 
         // setting the game-order of the players

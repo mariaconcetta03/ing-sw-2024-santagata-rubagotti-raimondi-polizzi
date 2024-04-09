@@ -1,12 +1,14 @@
 package org.model;
 
 
+import java.util.*;
+
 /**
  * This class represents a player in a game
  */
 
 public class Player {
-    private ObjectiveCard personalObjective; // set a personal objective chosen by a player
+    private List<ObjectiveCard> personalObjective; // set a personal objective chosen by a player
 
 
     public enum PlayerState {
@@ -44,7 +46,7 @@ public class Player {
         this.board = null;
         this.points = 0;
         this.isFirst = false;
-        this.personalObjective = null;
+        this.personalObjective = new ArrayList<>();
         this.state = PlayerState.IS_WAITING;
         this.playerDeck = new PlayableCard[]{null, null, null};
         this.game = game;
@@ -65,7 +67,7 @@ public class Player {
         this.playerDeck = null;
         this.isFirst = false;
         this.color = null;
-        this.personalObjective = null;
+        this.personalObjective = new ArrayList<>();
         this.state = null;
     }
 
@@ -192,6 +194,16 @@ public class Player {
 
 
     /**
+     * Adds an objective card to the list. The list will contain 2 random objective cards, and the player will need to select only one of them
+     * @param card is the objective card you need to add to the list
+     */
+    public void addPersonalObjective(ObjectiveCard card) {
+        this.personalObjective.add(card);
+    }
+
+
+
+    /**
      * Setter method
      * @param color is the one chosen by player
      */
@@ -236,7 +248,12 @@ public class Player {
      * @param card is the personal objective chosen by the player
      */
     public void setPersonalObjective (ObjectiveCard card) {
-        this.personalObjective = card; //chosen objective card by command line by player
+        if (card.equals(this.personalObjective.get(0))) {
+            this.personalObjective.remove(1);
+        }
+        else if (card.equals(this.personalObjective.get(1))) {
+            this.personalObjective.remove(0);
+        }
     }
 
 
@@ -307,7 +324,7 @@ public class Player {
      * @return personalObjective is the chosen objective of the player
      */
     public ObjectiveCard getPersonalObjective(){
-        return this.personalObjective;
+        return this.personalObjective.get(0);
     }
 
 
