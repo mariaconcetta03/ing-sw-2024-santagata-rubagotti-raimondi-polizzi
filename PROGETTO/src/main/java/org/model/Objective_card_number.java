@@ -1,5 +1,6 @@
 package org.model;
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
