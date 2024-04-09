@@ -10,9 +10,11 @@ public class ObjectiveCard extends Card {
             NUMBER
         }
 
+
         private Player player;
         //private objectiveCardType type;
         private int cardPoints; // points the card gives when the player achieves the goal
+
 
 
         /**
@@ -23,12 +25,14 @@ public class ObjectiveCard extends Card {
             this.cardPoints = points;
         }
 
+
         /** To be Overridden
          * updates player's points
          */
         public int addPointsToPlayer(Player player) {
             return 0;
         }
+
 
         /**
          * Getter
