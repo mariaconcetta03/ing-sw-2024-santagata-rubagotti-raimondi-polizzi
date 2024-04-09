@@ -4,21 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ObjectiveCard extends Card {
-
-    public enum objectiveCardType{
-            PATTERN,
-            NUMBER
-        }
-
-
-        private Player player;
-        //private objectiveCardType type;
-        private int cardPoints; // points the card gives when the player achieves the goal
-
-
+        private int cardPoints; // points the card gives when the player achieves the goal (only one time)
 
         /**
-         * Class constructor. i've removed the type
+         * Class constructor.
          * @param points
          */
         public ObjectiveCard(int points) {
@@ -28,6 +17,7 @@ public class ObjectiveCard extends Card {
 
         /** To be Overridden
          * updates player's points
+         * we have to call this method multiple times changing the player if the objective card is shared
          */
         public int addPointsToPlayer(Player player) {
             return 0;

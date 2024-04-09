@@ -1,0 +1,245 @@
+{
+  "objectiveCard": [
+
+    {
+      "id": 87,
+      "cardPoints": 2,
+      "positionCard1": {
+        "x": 1,
+        "y": 1
+      },
+      "positionCard2": {
+        "x": 2,
+        "y": 2
+      },
+      "card0Type": "FUNGI",
+      "card1Type": "FUNGI",
+      "card2Type":"FUNGI"
+    },
+
+    {
+      "id": 88,
+      "cardPoints": 2,
+      "positionCard1": {
+        "x": 1,
+        "y": -1
+      },
+      "positionCard2": {
+        "x": 2,
+        "y": -2
+      },
+      "card0Type": "NATURE",
+      "card1Type": "NATURE",
+      "card2Type":"NATURE"
+    },
+
+    {
+      "id": 89,
+      "cardPoints": 2,
+      "positionCard1": {
+        "x": 1,
+        "y": 1
+      },
+      "positionCard2": {
+        "x": 2,
+        "y": 2
+      },
+      "card0Type": "ANIMAL",
+      "card1Type": "ANIMAL",
+      "card2Type":"ANIMAL"
+    },
+
+    {
+      "id": 90,
+      "cardPoints": 2,
+      "positionCard1": {
+        "x": 1,
+        "y": -1
+      },
+      "positionCard2": {
+        "x": 2,
+        "y": -2
+      },
+      "card0Type": "INSECT",
+      "card1Type": "INSECT",
+      "card2Type":"INSECT"
+    },
+
+    {
+      "id": 91,
+      "cardPoints": 3,
+      "positionCard1": {
+        "x": 0,
+        "y": -1
+      },
+      "positionCard2": {
+        "x": 1,
+        "y": -2
+      },
+      "card0Type": "FUNGI",
+      "card1Type": "FUNGI",
+      "card2Type":"NATURE"
+    },
+
+    {
+      "id": 92,
+      "cardPoints": 3,
+      "positionCard1": {
+        "x": 0,
+        "y": -1
+      },
+      "positionCard2": {
+        "x": -1,
+        "y": -2
+      },
+      "card0Type": "NATURE",
+      "card1Type": "NATURE",
+      "card2Type":"INSECT"
+    },
+
+    {
+      "id": 93,
+      "cardPoints": 3,
+      "positionCard1": {
+        "x": 0,
+        "y": -1
+      },
+      "positionCard2": {
+        "x": 1,
+        "y": 1
+      },
+      "card0Type": "ANIMAL",
+      "card1Type": "ANIMAL",
+      "card2Type":"FUNGI"
+    },
+
+    {
+      "id": 94,
+      "cardPoints": 3,
+      "positionCard1": {
+        "x": 0,
+        "y": -1
+      },
+      "positionCard2": {
+        "x": -1,
+        "y": 1
+      },
+      "card0Type": "INSECT",
+      "card1Type": "INSECT",
+      "card2Type":"ANIMAL"
+    },
+
+    {
+      "id": 95,
+      "cardPoints": 2,
+      "resources": [
+        {"FUNGI": 3},
+        {"NATURE": 0},
+        {"INSECT": 0},
+        {"ANIMAL": 0},
+        {"FEATHER": 0},
+        {"JAR": 0},
+        {"SCROLL": 0}
+      ]
+    },
+
+    {
+      "id": 96,
+      "cardPoints": 2,
+      "resources": [
+        {"FUNGI": 0},
+        {"NATURE": 3},
+        {"INSECT": 0},
+        {"ANIMAL": 0},
+        {"FEATHER": 0},
+        {"JAR": 0},
+        {"SCROLL": 0}
+      ]
+    },
+
+    {
+      "id": 97,
+      "cardPoints": 2,
+      "resources": [
+        {"FUNGI": 0},
+        {"NATURE": 0},
+        {"INSECT": 0},
+        {"ANIMAL": 3},
+        {"FEATHER": 0},
+        {"JAR": 0},
+        {"SCROLL": 0}
+      ]
+    },
+
+    {
+      "id": 98,
+      "cardPoints": 2,
+      "resources": [
+        {"FUNGI": 0},
+        {"NATURE": 0},
+        {"INSECT": 3},
+        {"ANIMAL": 0},
+        {"FEATHER": 0},
+        {"JAR": 0},
+        {"SCROLL": 0}
+      ]
+    },
+
+    {
+      "id": 99,
+      "cardPoints": 3,
+      "resources": [
+        {"FUNGI": 0},
+        {"NATURE": 0},
+        {"INSECT": 0},
+        {"ANIMAL": 0},
+        {"FEATHER": 1},
+        {"JAR": 1},
+        {"SCROLL": 1}
+      ]
+    },
+
+    {
+      "id": 100,
+      "cardPoints": 2,
+      "resources": [
+        {"FUNGI": 0},
+        {"NATURE": 0},
+        {"INSECT": 0},
+        {"ANIMAL": 0},
+        {"FEATHER": 0},
+        {"JAR": 0},
+        {"SCROLL": 2}
+      ]
+    },
+
+    {
+      "id": 101,
+      "cardPoints": 2,
+      "resources": [
+        {"FUNGI": 0},
+        {"NATURE": 0},
+        {"INSECT": 0},
+        {"ANIMAL": 0},
+        {"FEATHER": 0},
+        {"JAR": 2},
+        {"SCROLL": 0}
+      ]
+    },
+
+    {
+      "id": 102,
+      "cardPoints": 2,
+      "resources": [
+        {"FUNGI": 0},
+        {"NATURE": 0},
+        {"INSECT": 0},
+        {"ANIMAL": 0},
+        {"FEATHER": 2},
+        {"JAR": 0},
+        {"SCROLL": 0}
+      ]
+    }
+
+  ]
+}
