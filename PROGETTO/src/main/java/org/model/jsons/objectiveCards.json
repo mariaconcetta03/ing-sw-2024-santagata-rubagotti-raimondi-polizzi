@@ -133,13 +133,7 @@
       "id": 95,
       "cardPoints": 2,
       "resources": [
-        {"FUNGI": 3},
-        {"NATURE": 0},
-        {"INSECT": 0},
-        {"ANIMAL": 0},
-        {"FEATHER": 0},
-        {"JAR": 0},
-        {"SCROLL": 0}
+        {"FUNGI": 3}
       ]
     },
 
@@ -147,13 +141,7 @@
       "id": 96,
       "cardPoints": 2,
       "resources": [
-        {"FUNGI": 0},
-        {"NATURE": 3},
-        {"INSECT": 0},
-        {"ANIMAL": 0},
-        {"FEATHER": 0},
-        {"JAR": 0},
-        {"SCROLL": 0}
+        {"NATURE": 3}
       ]
     },
 
@@ -161,13 +149,7 @@
       "id": 97,
       "cardPoints": 2,
       "resources": [
-        {"FUNGI": 0},
-        {"NATURE": 0},
-        {"INSECT": 0},
-        {"ANIMAL": 3},
-        {"FEATHER": 0},
-        {"JAR": 0},
-        {"SCROLL": 0}
+        {"ANIMAL": 3}
       ]
     },
 
@@ -175,13 +157,7 @@
       "id": 98,
       "cardPoints": 2,
       "resources": [
-        {"FUNGI": 0},
-        {"NATURE": 0},
-        {"INSECT": 3},
-        {"ANIMAL": 0},
-        {"FEATHER": 0},
-        {"JAR": 0},
-        {"SCROLL": 0}
+        {"INSECT": 3}
       ]
     },
 
@@ -189,10 +165,6 @@
       "id": 99,
       "cardPoints": 3,
       "resources": [
-        {"FUNGI": 0},
-        {"NATURE": 0},
-        {"INSECT": 0},
-        {"ANIMAL": 0},
         {"FEATHER": 1},
         {"JAR": 1},
         {"SCROLL": 1}
@@ -203,12 +175,6 @@
       "id": 100,
       "cardPoints": 2,
       "resources": [
-        {"FUNGI": 0},
-        {"NATURE": 0},
-        {"INSECT": 0},
-        {"ANIMAL": 0},
-        {"FEATHER": 0},
-        {"JAR": 0},
         {"SCROLL": 2}
       ]
     },
@@ -217,13 +183,7 @@
       "id": 101,
       "cardPoints": 2,
       "resources": [
-        {"FUNGI": 0},
-        {"NATURE": 0},
-        {"INSECT": 0},
-        {"ANIMAL": 0},
-        {"FEATHER": 0},
-        {"JAR": 2},
-        {"SCROLL": 0}
+        {"JAR": 2}
       ]
     },
 
@@ -231,13 +191,7 @@
       "id": 102,
       "cardPoints": 2,
       "resources": [
-        {"FUNGI": 0},
-        {"NATURE": 0},
-        {"INSECT": 0},
-        {"ANIMAL": 0},
-        {"FEATHER": 2},
-        {"JAR": 0},
-        {"SCROLL": 0}
+        {"FEATHER": 2}
       ]
     }
 

@@ -41,7 +41,7 @@ public class Objective_card_number extends ObjectiveCard {
         Map<AngleType,Integer> symbolsOnBoard=player.getBoard().getNumResources();
 
         for(CountingType t : resources.keySet()){
-            if((symbolsOnBoard.get(t)/resources.get(t))<minResources){
+            if((symbolsOnBoard.get(t)/resources.get(t))<minResources){ //to avoid a division by zero resources doesn't have to contain keys associated with zero
                 minResources= symbolsOnBoard.get(t)/resources.get(t);
             }
         }
