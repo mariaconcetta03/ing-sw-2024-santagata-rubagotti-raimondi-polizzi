@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals; //inspired by Nardi's code :)
+import static org.junit.jupiter.api.Assertions.assertEquals; //inspired by Nardi's code :)
 
 public class ObjectiveCardPatternTest extends TestCase {
     public void baseTestBlueDiagonalPattern(){
