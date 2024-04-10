@@ -8,10 +8,8 @@ import java.util.List;
 public class GameTest extends TestCase {
 
     public void testAddPlayer() {
-        Deck deck = new Deck();
-        ObjectiveCard[] obj = new ObjectiveCard[16];
         Player p1 = new Player();
-        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+        Game game = new Game(p1, 1);
         Player p = new Player(game);
         List<Player> players = new ArrayList<>();
         players = game.getPlayers();
@@ -26,18 +24,15 @@ public class GameTest extends TestCase {
 
 
     public void testStartGame() {
-        Deck deck = new Deck();
-        ObjectiveCard[] obj = new ObjectiveCard[16];
         Player p1 = new Player();
-        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+        Game game = new Game(p1, 1);
         Player p = new Player(game);
         game.addPlayer(p);
 
         game.setnPlayers(4);
         int numPlayers = game.getnPlayers();
 
-        List<Integer> usedIndexes = new ArrayList<>();
-        usedIndexes = game.startGame();
+        game.startGame();
 
         // printing the game status
         if (game.getState().equals(Game.GameState.STARTED)) {
@@ -64,18 +59,21 @@ public class GameTest extends TestCase {
     }
 
     public void testGiveInitialCards() {
-        Deck deck = new Deck();
         ObjectiveCard[] obj = new ObjectiveCard[16];
         Player p1 = new Player();
-        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+        Game game = new Game(p1, 1);
         int nPlayers = game.getnPlayers();
-        List<Player> players = new ArrayList<>();
+        List<Player> players;
         players = game.getPlayers();
 
         game.giveInitialCards();
 
         for (int i=0; i<nPlayers; i++) {
-            System.out.println("Initial cards given");
+            System.out.println("Initial cards given to player number: " + i);
+            System.out.println("First card ID: " + game.getPlayers().get(i).getPlayerDeck(1).getId());
+            System.out.println("Second card ID: " + game.getPlayers().get(i).getPlayerDeck(2).getId());
+            System.out.println("Third card ID: " + game.getPlayers().get(i).getPlayerDeck(3).getId());
+            System.out.println("------------------------------------------");
         }
     }
 
@@ -83,10 +81,8 @@ public class GameTest extends TestCase {
 
 
     public void testWinner() {
-        Deck deck = new Deck();
-        ObjectiveCard[] obj = new ObjectiveCard[16];
         Player p1 = new Player();
-        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+        Game game = new Game(p1, 1);
         Player p = new Player(game);
         game.addPlayer(p);
 
@@ -103,7 +99,7 @@ public class GameTest extends TestCase {
         System.out.println("The player Pluto has 3 points");
 
 
-        List <Player> winners = new ArrayList<>();
+        List <Player> winners;
         winners = game.winner();
 
         for (int i = 0; i < winners.size(); i++) {
@@ -116,10 +112,8 @@ public class GameTest extends TestCase {
 
 
     public void testStartChat() {
-        Deck deck = new Deck();
-        ObjectiveCard[] obj = new ObjectiveCard[16];
         Player p1 = new Player();
-        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+        Game game = new Game(p1, 1);
         Player p = new Player(game);
         game.addPlayer(p);
         System.out.println("Starting chat between P1 and P2");
@@ -135,10 +129,8 @@ public class GameTest extends TestCase {
 
 
     public void testStartGeneralChat() {
-        Deck deck = new Deck();
-        ObjectiveCard[] obj = new ObjectiveCard[16];
         Player p1 = new Player();
-        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+        Game game = new Game(p1, 1);
         Player p = new Player(game);
         game.addPlayer(p);
         System.out.println("Starting general chat");
@@ -153,10 +145,8 @@ public class GameTest extends TestCase {
 
 
     public void testNextRound() {
-        Deck deck = new Deck();
-        ObjectiveCard[] obj = new ObjectiveCard[16];
         Player p1 = new Player();
-        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+        Game game = new Game(p1, 1);
         Player p = new Player(game);
         game.addPlayer(p);
 
@@ -178,10 +168,8 @@ public class GameTest extends TestCase {
 
 
     public void testResetGoldCard1() {
-        Deck deck = new Deck();
-        ObjectiveCard[] obj = new ObjectiveCard[16];
         Player p1 = new Player();
-        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+        Game game = new Game(p1, 1);
 
         System.out.println("The previous gold card (1) had the ID: " + game.getGoldCard1().getId());
         game.resetGoldCard1();
@@ -191,10 +179,8 @@ public class GameTest extends TestCase {
 
 
     public void testResetGoldCard2() {
-        Deck deck = new Deck();
-        ObjectiveCard[] obj = new ObjectiveCard[16];
         Player p1 = new Player();
-        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+        Game game = new Game(p1, 1);
 
         System.out.println("The previous gold card (2) had the ID: " + game.getGoldCard2().getId());
         game.resetGoldCard2();
@@ -204,10 +190,8 @@ public class GameTest extends TestCase {
 
 
     public void testResetResourceCard1() {
-        Deck deck = new Deck();
-        ObjectiveCard[] obj = new ObjectiveCard[16];
         Player p1 = new Player();
-        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+        Game game = new Game(p1, 1);
 
         System.out.println("The previous resource card (1) had the ID: " + game.getResourceCard1().getId());
         game.resetResourceCard1();
@@ -217,10 +201,8 @@ public class GameTest extends TestCase {
 
 
     public void testResetResourceCard2() {
-        Deck deck = new Deck();
-        ObjectiveCard[] obj = new ObjectiveCard[16];
         Player p1 = new Player();
-        Game game = new Game(p1, 1, deck.resourceDeck(), deck.goldDeck(), deck.baseDeck(), obj);
+        Game game = new Game(p1, 1);
 
         System.out.println("The previous resource card (2) had the ID: " + game.getResourceCard2().getId());
         game.resetResourceCard2();
