@@ -89,11 +89,6 @@ public class PlayableCard extends Card {
     */
     private boolean haveFeatherToReceivePoints; //read the comment above
     private boolean haveScrollToReceivePoints; //read the comment above
-    private boolean neededResourcesBoolean;
-    /**
-     * always true when we are talking about a GoldCard because in this case there
-     * are always resources needed
-    */
     private Map<CentralType, Integer> neededResources;
     /**
      * this structure would be used only when the above attribute is true. The
@@ -129,10 +124,6 @@ public class PlayableCard extends Card {
         this.neededResources = neededResources;
     }
 
-    public void setNeededResourcesBoolean(boolean neededResourcesBoolean) {
-            this.neededResourcesBoolean = neededResourcesBoolean;
-    }
-
     public void setScrollToReceivePoints(boolean haveScrollToReceivePoints) {
            this.haveScrollToReceivePoints = haveScrollToReceivePoints;
     }
@@ -160,10 +151,6 @@ public class PlayableCard extends Card {
     //GETTER
     public Map<CentralType, Integer> getNeededResources() {
            return neededResources;
-    }
-
-    public boolean isNeededResourcesBoolean() {
-        return neededResourcesBoolean;
     }
 
     public boolean isScrollToReceivePoints() {

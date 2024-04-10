@@ -64,7 +64,7 @@ public class Player {
         this.board = null;
         this.points = 0;
         this.game = null;
-        this.playerDeck = null;
+        this.playerDeck = new PlayableCard[]{null, null, null};
         this.isFirst = false;
         this.color = null;
         this.personalObjective = new ArrayList<>();
@@ -148,7 +148,7 @@ public class Player {
         card.setOrientation(orientation);
 
         // I'll add a method for giving coordinates to the board
-        if (!board.placeCard(card, position)){
+        if (!board.placeCard(card, position)) {
             throw new IllegalArgumentException();
         }
 
@@ -334,6 +334,21 @@ public class Player {
      */
     public int getNumObjectivesReached() {
         return numObjectivesReached;
+    }
+
+
+    /**
+     * Getter method
+     * @param index of the card, it must be between 1 and 3
+     * @return the card of the player in "index" position - 1
+     */
+    public PlayableCard getPlayerDeck (int index) {
+        if (index < 4 && index > 0) {
+            return this.playerDeck[index-1];
+        }
+        else {
+            return null;
+        }
     }
 
 }

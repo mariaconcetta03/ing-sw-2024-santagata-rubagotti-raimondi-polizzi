@@ -1,40 +1,133 @@
-{
-  "baseCard": [
+[
     {
       "id": 81,
       "points": 0,
-      "front_up_right": "",
-      "front_up_left": "ABSENT",
-      "front_down_right": "FEATHER",
-      "front_down_left": "NO_RESOURCE",
+      "front_up_right": "NATURE",
+      "front_up_left": "FUNGI",
+      "front_down_right": "ANIMAL",
+      "front_down_left": "INSECT",
+      "back_up_right": "NATURE",
+      "back_up_left": "NO_RESOURCE",
+      "back_down_right": "NO_RESOURCE",
+      "back_down_left": "INSECT",
+      "coverAngleToReceivePoints": false,
+      "haveJarToReceivePoints": false,
+      "haveFeatherToReceivePoints": false,
+      "haveScrollToReceivePoints": false,
+      "neededResources": null,
+      "centralResources": [
+          "INSECT"
+        ]
+      },
+
+    {
+      "id": 82,
+      "points": 0,
+      "front_up_right": "ANIMAL",
+      "front_up_left": "INSECT",
+      "front_down_right": "NATURE",
+      "front_down_left": "FUNGI",
       "back_up_right": "NO_RESOURCE",
       "back_up_left": "NO_RESOURCE",
       "back_down_right": "NO_RESOURCE",
       "back_down_left": "NO_RESOURCE",
       "coverAngleToReceivePoints": false,
-      "haveJartoReceivePoints": false,
-      "haveFeathertoReceivePoints": false,
-      "haveScrolltoReceivePoints": false,
-      "neededResourcesBoolean": false,
-      "neededResources": [
-        {"ANIMAL": 2},
-        {"FUNGI": 1}
-      ],
+      "haveJarToReceivePoints": false,
+      "haveFeatherToReceivePoints": false,
+      "haveScrollToReceivePoints": false,
+      "neededResources": null,
       "centralResources": [
-          "FUNGI",
-          "ANIMAL",
-          "NATURE"
-        ]
-      },
-    {
-
+        "NATURE",
+        "FUNGI"
+      ]
     },
-    {
 
+    {
+      "id": 83,
+      "points": 0,
+      "front_up_right": "INSECT",
+      "front_up_left": "FUNGI",
+      "front_down_right": "ANIMAL",
+      "front_down_left": "NATURE",
+      "back_up_right": "NO_RESOURCE",
+      "back_up_left": "NO_RESOURCE",
+      "back_down_right": "ABSENT",
+      "back_down_left": "ABSENT",
+      "coverAngleToReceivePoints": false,
+      "haveJarToReceivePoints": false,
+      "haveFeatherToReceivePoints": false,
+      "haveScrollToReceivePoints": false,
+      "neededResources": null,
+      "centralResources": [
+        "ANIMAL",
+        "INSECT",
+        "NATURE"
+      ]
     },
-    {
 
+    {
+      "id": 84,
+      "points": 0,
+      "front_up_right": "ANIMAL",
+      "front_up_left": "NATURE",
+      "front_down_right": "INSECT",
+      "front_down_left": "FUNGI",
+      "back_up_right": "NO_RESOURCE",
+      "back_up_left": "ANIMAL",
+      "back_down_right": "FUNGI",
+      "back_down_left": "NO_RESOURCE",
+      "coverAngleToReceivePoints": false,
+      "haveJarToReceivePoints": false,
+      "haveFeatherToReceivePoints": false,
+      "haveScrollToReceivePoints": false,
+      "neededResources": null,
+      "centralResources": [
+        "FUNGI"
+      ]
+    },
+
+    {
+      "id": 85,
+      "points": 0,
+      "front_up_right": "INSECT",
+      "front_up_left": "NATURE",
+      "front_down_right": "FUNGI",
+      "front_down_left": "ANIMAL",
+      "back_up_right": "NO_RESOURCE",
+      "back_up_left": "NO_RESOURCE",
+      "back_down_right": "NO_RESOURCE",
+      "back_down_left": "NO_RESOURCE",
+      "coverAngleToReceivePoints": false,
+      "haveJarToReceivePoints": false,
+      "haveFeatherToReceivePoints": false,
+      "haveScrollToReceivePoints": false,
+      "neededResources": null,
+      "centralResources": [
+        "ANIMAL",
+        "INSECT"
+      ]
+    },
+
+    {
+      "id": 86,
+      "points": 0,
+      "front_up_right": "ANIMAL",
+      "front_up_left": "FUNGI",
+      "front_down_right": "INSECT",
+      "front_down_left": "NATURE",
+      "back_up_right": "NO_RESOURCE",
+      "back_up_left": "NO_RESOURCE",
+      "back_down_right": "ABSENT",
+      "back_down_left": "ABSENT",
+      "coverAngleToReceivePoints": false,
+      "haveJarToReceivePoints": false,
+      "haveFeatherToReceivePoints": false,
+      "haveScrollToReceivePoints": false,
+      "neededResources": null,
+      "centralResources": [
+        "NATURE",
+        "ANIMAL",
+        "FUNGI"
+      ]
     }
-
 ]
-}

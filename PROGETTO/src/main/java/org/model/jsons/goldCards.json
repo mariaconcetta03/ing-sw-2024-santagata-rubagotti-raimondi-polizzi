@@ -10,11 +10,10 @@
     "back_up_left": "NO_RESOURCE",
     "back_down_right": "NO_RESOURCE",
     "back_down_left": "NO_RESOURCE",
-    "coverAngleToReceivePoints": "",
+    "coverAngleToReceivePoints": false,
     "haveJarToReceivePoints": false,
     "haveFeatherToReceivePoints": true,
     "haveScrollToReceivePoints": false,
-    "neededResourcesBoolean": true,
     "neededResources": {
       "FUNGI":
         2
@@ -23,7 +22,1012 @@
         1
     },
     "centralResources": [
-      "FUNGI", "INSECT"
+      "FUNGI"
+    ]
+  },
+
+  {
+    "id": 42,
+    "points": 1,
+    "front_up_right": "JAR",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "ABSENT",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": true,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "FUNGI":
+      2
+    ,
+      "NATURE":
+      1
+    },
+    "centralResources": [
+      "FUNGI"
+    ]
+  },
+
+  {
+    "id": 43,
+    "points": 1,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "SCROLL",
+    "front_down_right": "ABSENT",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": true,
+    "neededResources": {
+      "FUNGI":
+      2
+    ,
+      "INSECT":
+      1
+    },
+    "centralResources": [
+      "FUNGI"
+    ]
+  },
+
+  {
+    "id": 44,
+    "points": 2,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "ABSENT",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": true,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "FUNGI":
+      3
+    ,
+      "ANIMAL":
+      1
+    },
+    "centralResources": [
+      "FUNGI"
+    ]
+  },
+
+  {
+    "id": 45,
+    "points": 2,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "ABSENT",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": true,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "FUNGI":
+      3
+    ,
+      "NATURE":
+      1
+    },
+    "centralResources": [
+      "FUNGI"
+    ]
+  },
+
+  {
+    "id": 46,
+    "points": 2,
+    "front_up_right": "ABSENT",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": true,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "FUNGI":
+      3
+    ,
+      "INSECT":
+      1
+    },
+    "centralResources": [
+      "FUNGI"
+    ]
+  },
+
+  {
+    "id": 47,
+    "points": 3,
+    "front_up_right": "ABSENT",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "ABSENT",
+    "front_down_left": "JAR",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "FUNGI":
+      3
+    },
+    "centralResources": [
+      "FUNGI"
+    ]
+  },
+
+  {
+    "id": 48,
+    "points": 3,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "FEATHER",
+    "front_down_right": "ABSENT",
+    "front_down_left": "ABSENT",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "FUNGI":
+      3
+    },
+    "centralResources": [
+      "FUNGI"
+    ]
+  },
+
+  {
+  "id": 49,
+  "points": 3,
+  "front_up_right": "ABSENT",
+  "front_up_left": "SCROLL",
+  "front_down_right": "NO_RESOURCE",
+  "front_down_left": "ABSENT",
+  "back_up_right": "NO_RESOURCE",
+  "back_up_left": "NO_RESOURCE",
+  "back_down_right": "NO_RESOURCE",
+  "back_down_left": "NO_RESOURCE",
+  "coverAngleToReceivePoints": false,
+  "haveJarToReceivePoints": false,
+  "haveFeatherToReceivePoints": false,
+  "haveScrollToReceivePoints": false,
+  "neededResources": {
+    "FUNGI":
+    3
+  },
+  "centralResources": [
+    "FUNGI"
+  ]
+},
+
+  {
+    "id": 50,
+    "points": 5,
+    "front_up_right": "ABSENT",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "ABSENT",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "FUNGI":
+      5
+    },
+    "centralResources": [
+      "FUNGI"
+    ]
+  },
+
+  {
+    "id": 51,
+    "points": 1,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "FEATHER",
+    "front_down_right": "ABSENT",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": true,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "NATURE":
+      2
+    ,
+      "INSECT":
+      1
+    },
+    "centralResources": [
+      "NATURE"
+    ]
+  },
+
+  {
+    "id": 52,
+    "points": 1,
+    "front_up_right": "SCROLL",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "ABSENT",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": true,
+    "neededResources": {
+      "NATURE":
+      2
+    ,
+      "FUNGI":
+      1
+    },
+    "centralResources": [
+      "NATURE"
+    ]
+  },
+
+  {
+    "id": 53,
+    "points": 1,
+    "front_up_right": "ABSENT",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "JAR",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": true,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "NATURE":
+      2
+    ,
+      "ANIMAL":
+      1
+    },
+    "centralResources": [
+      "NATURE"
+    ]
+  },
+
+  {
+    "id": 54,
+    "points": 2,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "ABSENT",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": true,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "NATURE":
+      3
+    ,
+      "INSECT":
+      1
+    },
+    "centralResources": [
+      "NATURE"
+    ]
+  },
+
+  {
+    "id": 55,
+    "points": 2,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "ABSENT",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": true,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "NATURE":
+      3
+    ,
+      "ANIMAL":
+      1
+    },
+    "centralResources": [
+      "NATURE"
+    ]
+  },
+
+  {
+    "id": 56,
+    "points": 2,
+    "front_up_right": "ABSENT",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": true,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "NATURE":
+      3
+    ,
+      "FUNGI":
+      1
+    },
+    "centralResources": [
+      "NATURE"
+    ]
+  },
+
+  {
+    "id": 57,
+    "points": 3,
+    "front_up_right": "ABSENT",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "ABSENT",
+    "front_down_left": "FEATHER",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "NATURE":
+      3
+    },
+    "centralResources": [
+      "NATURE"
+    ]
+  },
+
+  {
+    "id": 58,
+    "points": 3,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "SCROLL",
+    "front_down_right": "ABSENT",
+    "front_down_left": "ABSENT",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "NATURE":
+      3
+    },
+    "centralResources": [
+      "NATURE"
+    ]
+  },
+
+  {
+    "id": 59,
+    "points": 3,
+    "front_up_right": "JAR",
+    "front_up_left": "ABSENT",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "ABSENT",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "NATURE":
+      3
+    },
+    "centralResources": [
+      "NATURE"
+    ]
+  },
+
+  {
+    "id": 60,
+    "points": 3,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "ABSENT",
+    "front_down_left": "ABSENT",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "NATURE":
+      5
+    },
+    "centralResources": [
+      "NATURE"
+    ]
+  },
+
+
+  {
+    "id": 61,
+    "points": 1,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "JAR",
+    "front_down_right": "ABSENT",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": true,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "ANIMAL":
+      2
+    ,
+      "INSECT":
+      1
+    },
+    "centralResources": [
+      "ANIMAL"
+    ]
+  },
+
+  {
+    "id": 62,
+    "points": 1,
+    "front_up_right": "ABSENT",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "SCROLL",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": true,
+    "neededResources": {
+      "ANIMAL":
+      2
+    ,
+      "NATURE":
+      1
+    },
+    "centralResources": [
+      "ANIMAL"
+    ]
+  },
+
+  {
+    "id": 63,
+    "points": 1,
+    "front_up_right": "ABSENT",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "FEATHER",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": true,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "ANIMAL":
+      2
+    ,
+      "FUNGI":
+      1
+    },
+    "centralResources": [
+      "ANIMAL"
+    ]
+  },
+
+  {
+    "id": 64,
+    "points": 2,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "ABSENT",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": true,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "ANIMAL":
+      3
+    ,
+      "INSECT":
+      1
+    },
+    "centralResources": [
+      "ANIMAL"
+    ]
+  },
+
+  {
+    "id": 65,
+    "points": 2,
+    "front_up_right": "ABSENT",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": true,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "ANIMAL":
+      3
+    ,
+      "FUNGI":
+      1
+    },
+    "centralResources": [
+      "ANIMAL"
+    ]
+  },
+
+  {
+    "id": 66,
+    "points": 2,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "ABSENT",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": true,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "ANIMAL":
+      3
+    ,
+      "NATURE":
+      1
+    },
+    "centralResources": [
+      "ANIMAL"
+    ]
+  },
+
+  {
+    "id": 67,
+    "points": 3,
+    "front_up_right": "ABSENT",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "ABSENT",
+    "front_down_left": "SCROLL",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "ANIMAL":
+      3
+    },
+    "centralResources": [
+      "ANIMAL"
+    ]
+  },
+
+  {
+    "id": 68,
+    "points": 3,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "JAR",
+    "front_down_right": "ABSENT",
+    "front_down_left": "ABSENT",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "ANIMAL":
+      3
+    },
+    "centralResources": [
+      "ANIMAL"
+    ]
+  },
+
+  {
+    "id": 69,
+    "points": 3,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "ABSENT",
+    "front_down_right": "FEATHER",
+    "front_down_left": "ABSENT",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "ANIMAL":
+      3
+    },
+    "centralResources": [
+      "ANIMAL"
+    ]
+  },
+
+  {
+    "id": 70,
+    "points": 5,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "ABSENT",
+    "front_down_right": "ABSENT",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "ANIMAL":
+      5
+    },
+    "centralResources": [
+      "ANIMAL"
+    ]
+  },
+
+  {
+    "id": 71,
+    "points": 1,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "FEATHER",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "ABSENT",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": true,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "INSECT":
+      2
+    ,
+      "NATURE":
+      1
+    },
+    "centralResources": [
+      "INSECT"
+    ]
+  },
+
+  {
+    "id": 72,
+    "points": 1,
+    "front_up_right": "ABSENT",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "SCROLL",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": true,
+    "neededResources": {
+      "INSECT":
+      2
+    ,
+      "ANIMAL":
+      1
+    },
+    "centralResources": [
+      "INSECT"
+    ]
+  },
+
+  {
+    "id": 73,
+    "points": 1,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "JAR",
+    "front_down_left": "ABSENT",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": true,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "INSECT":
+      2
+    ,
+      "FUNGI":
+      1
+    },
+    "centralResources": [
+      "INSECT"
+    ]
+  },
+
+  {
+    "id": 74,
+    "points": 2,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "ABSENT",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": true,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "INSECT":
+      3
+    ,
+      "ANIMAL":
+      1
+    },
+    "centralResources": [
+      "INSECT"
+    ]
+  },
+
+  {
+    "id": 75,
+    "points": 2,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "ABSENT",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": true,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "INSECT":
+      3
+    ,
+      "NATURE":
+      1
+    },
+    "centralResources": [
+      "INSECT"
+    ]
+  },
+
+  {
+    "id": 76,
+    "points": 2,
+    "front_up_right": "ABSENT",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": true,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "ANIMAL":
+      3
+    ,
+      "FUNGI":
+      1
+    },
+    "centralResources": [
+      "INSECT"
+    ]
+  },
+
+  {
+    "id": 77,
+    "points": 3,
+    "front_up_right": "ABSENT",
+    "front_up_left": "JAR",
+    "front_down_right": "ABSENT",
+    "front_down_left": "NO_RESOURCE",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "INSECT":
+      3
+    },
+    "centralResources": [
+      "INSECT"
+    ]
+  },
+
+  {
+    "id": 78,
+    "points": 3,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "SCROLL",
+    "front_down_right": "ABSENT",
+    "front_down_left": "ABSENT",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "INSECT":
+      3
+    },
+    "centralResources": [
+      "INSECT"
+    ]
+  },
+
+  {
+    "id": 79,
+    "points": 3,
+    "front_up_right": "ABSENT",
+    "front_up_left": "ABSENT",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "FEATHER",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "INSECT":
+      3
+    },
+    "centralResources": [
+      "INSECT"
+    ]
+  },
+
+  {
+    "id": 80,
+    "points": 5,
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "NO_RESOURCE",
+    "front_down_right": "ABSENT",
+    "front_down_left": "ABSENT",
+    "back_up_right": "NO_RESOURCE",
+    "back_up_left": "NO_RESOURCE",
+    "back_down_right": "NO_RESOURCE",
+    "back_down_left": "NO_RESOURCE",
+    "coverAngleToReceivePoints": false,
+    "haveJarToReceivePoints": false,
+    "haveFeatherToReceivePoints": false,
+    "haveScrollToReceivePoints": false,
+    "neededResources": {
+      "INSECT":
+      5
+    },
+    "centralResources": [
+      "INSECT"
     ]
   }
-  ]
+]
