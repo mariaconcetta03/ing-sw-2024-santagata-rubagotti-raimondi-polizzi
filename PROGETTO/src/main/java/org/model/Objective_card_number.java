@@ -39,8 +39,8 @@ public class Objective_card_number extends ObjectiveCard {
     public int addPointsToPlayer(Player player) {
         int minResources = Integer.MAX_VALUE; //that's an improbable superior limit
         Map<AngleType,Integer> symbolsOnBoard=player.getBoard().getNumResources();
-
-        for(CountingType t : resources.keySet()){
+        //at least once we have to enter this cycle and we don't know the order of the keys selection
+        for(CountingType t : resources.keySet()){ //resources.keySet() will never be empty because we are considering an Objective_card_number
             if((symbolsOnBoard.get(t)/resources.get(t))<minResources){ //to avoid a division by zero resources doesn't have to contain keys associated with zero
                 minResources= symbolsOnBoard.get(t)/resources.get(t);
             }
