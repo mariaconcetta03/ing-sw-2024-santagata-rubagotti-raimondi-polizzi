@@ -16,13 +16,13 @@ public class PlayerTest extends TestCase {
         centralResources.add (AngleType.INSECT);
         PlayableCard playableCard1 = new PlayableCard(1, 2, AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
                 AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE, centralResources, false,
-                true, false, false, false, null);
+                true, false, false, null);
         PlayableCard playableCard2 = new PlayableCard(2, 2, AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
                 AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE, centralResources, false,
-                true, false, false, false, null);
+                true, false, false, null);
         PlayableCard playableCard3 = new PlayableCard(3, 2, AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
                 AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE, centralResources, false,
-                true, false, false, false, null);
+                true, false, false, null);
 
         // the player draws each of the 3 cards
         p1.drawCard(playableCard1);
@@ -52,7 +52,7 @@ public class PlayerTest extends TestCase {
         centralResources.add (AngleType.INSECT);
         PlayableCard card = new PlayableCard(1, 2, AngleType.FEATHER, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
                 AngleType.FUNGI, AngleType.SCROLL, AngleType.ABSENT, AngleType.NO_RESOURCE, centralResources, false,
-                true, false, false, false, null);
+                true, false, false, null);
 
         // checking playable and unplayable positions of the card which is already existing
         card.setPosition(new Coordinates(2,2));
@@ -64,7 +64,7 @@ public class PlayerTest extends TestCase {
         // creating the card which the player wants to play
         PlayableCard cardToPlay = new PlayableCard(2, 2, AngleType.FUNGI, AngleType.SCROLL, AngleType.INSECT, AngleType.NATURE,
                 AngleType.FUNGI, AngleType.SCROLL, AngleType.ABSENT, AngleType.NO_RESOURCE, centralResources, false,
-                true, false, false, false, null);
+                true, false, false, null);
 
         // played cards before the cardToPlay is played
         for (Map.Entry<Coordinates, AngleType> entry : board.getPlayedCards().entrySet()) {
@@ -98,7 +98,7 @@ public class PlayerTest extends TestCase {
         centralResources.add (AngleType.INSECT);
         PlayableCard baseCard = new PlayableCard(1, 2, AngleType.FEATHER, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
                 AngleType.FUNGI, AngleType.SCROLL, AngleType.ABSENT, AngleType.NO_RESOURCE, centralResources, false,
-                true, false, false, false, null);
+                true, false, false, null);
 
 
         // playable positions before the card is played

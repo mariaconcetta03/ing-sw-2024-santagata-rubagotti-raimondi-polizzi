@@ -31,7 +31,7 @@ public class PlayableCard extends Card {
     public PlayableCard (int id, int points, AngleType front_down_left, AngleType front_up_left, AngleType front_down_right, AngleType front_up_right,
                          AngleType back_down_left, AngleType back_down_right, AngleType back_up_left, AngleType back_up_right,
                          List<AngleType> centralResources, boolean coverAngleToReceivePoints, boolean haveFeatherToReceivePoints,
-                         boolean haveScrollToReceivePoints, boolean haveJarToReceivePoints, boolean neededResourcesBoolean,
+                         boolean haveScrollToReceivePoints, boolean haveJarToReceivePoints,
                          Map <CentralType, Integer> neededResources) {
         this.setId(id);
         this.points = points;

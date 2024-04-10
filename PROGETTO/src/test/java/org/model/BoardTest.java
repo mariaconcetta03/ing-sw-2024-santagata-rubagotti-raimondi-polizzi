@@ -28,7 +28,7 @@ public class BoardTest extends TestCase {
 
         PlayableCard baseCard = new PlayableCard(1, 2, AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
                 AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE, centralResources, false,
-                false, false, false, false, null);
+                false, false, false, null);
 
         // placing the card on the BACK side
         board.placeBaseCard(baseCard);
@@ -54,9 +54,13 @@ public class BoardTest extends TestCase {
 
 
         List<AngleType> centralResources = null;
-        PlayableCard resourceCard = new PlayableCard(2, 1, AngleType.ABSENT, AngleType.FEATHER, AngleType.FUNGI, AngleType.NATURE, centralResources, false, false, false, false, false, false, null);
+        PlayableCard resourceCard = new PlayableCard(1, 2, AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
+                AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE, centralResources, false,
+                false, false, false, null);
         Coordinates position = new Coordinates(2,3);
         resourceCard.setOrientation(true);
+        resourceCard.setPosition(position);
+        board.placeCard(resourceCard, position);
 
         // printing the positions where matrix is not null
         for (Map.Entry<Coordinates, AngleType> entry : board.getPlayedCards().entrySet()) {
@@ -82,7 +86,7 @@ public class BoardTest extends TestCase {
         centralResources.add (AngleType.INSECT);
         PlayableCard card = new PlayableCard(1, 2, AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
                 AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE, centralResources, false,
-                true, false, false, false, null);
+                true, false, false, null);
 
         int numFeathers = board.getNumResources().get(AngleType.FEATHER);
         System.out.println ("The player has " + numFeathers + " feathers. The card gives two points for each feather. " +
@@ -102,7 +106,7 @@ public class BoardTest extends TestCase {
         centralResources.add (AngleType.INSECT);
         PlayableCard card = new PlayableCard(1, 2, AngleType.ABSENT, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
                 AngleType.FUNGI, AngleType.SCROLL, AngleType.ABSENT, AngleType.NO_RESOURCE, centralResources, false,
-                true, false, false, false, null);
+                true, false, false, null);
 
         // unplayable positions before the card is played
         unplayablePositions = board.getUnPlayablePositions();
@@ -134,7 +138,7 @@ public class BoardTest extends TestCase {
         centralResources.add (AngleType.INSECT);
         PlayableCard card = new PlayableCard(1, 2, AngleType.ABSENT, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
                 AngleType.FUNGI, AngleType.SCROLL, AngleType.ABSENT, AngleType.NO_RESOURCE, centralResources, false,
-                true, false, false, false, null);
+                true, false, false, null);
 
         // playable positions before the card is played
         playablePositions = board.getPlayablePositions();
