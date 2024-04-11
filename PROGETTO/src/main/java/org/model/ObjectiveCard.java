@@ -26,7 +26,7 @@ public class ObjectiveCard extends Card {
         public ObjectiveCard(int id, int cardPoints, Map<CountingType, Integer> resources, Coordinates positionCard1,Coordinates positionCard2,AngleType card0Type,AngleType card1Type,AngleType card2Type){
             this.setId(id);
             this.cardPoints = cardPoints;
-            this.resources = resources; //there is no copy
+            this.resources = resources;
             this.positionCard1 = positionCard1;
             this.positionCard2 = positionCard2;
             this.card0Type = card0Type;
@@ -153,7 +153,6 @@ public class ObjectiveCard extends Card {
 
 
 
-
         /**
          * Getter
          * @return cardPoints
@@ -162,4 +161,55 @@ public class ObjectiveCard extends Card {
                 return this.cardPoints;
             }
 
+    public void setCardPoints(int cardPoints) {
+        this.cardPoints = cardPoints;
+    }
+
+    public Map<CountingType, Integer> getResources() {
+        return resources;
+    }
+
+    public void setResources(Map<CountingType, Integer> resources) {
+        this.resources = resources;
+    }
+
+    public Coordinates getPositionCard1() {
+        return positionCard1;
+    }
+
+    public void setPositionCard1(Coordinates positionCard1) {
+        this.positionCard1 = positionCard1;
+    }
+
+    public Coordinates getPositionCard2() {
+        return positionCard2;
+    }
+
+    public void setPositionCard2(Coordinates positionCard2) {
+        this.positionCard2 = positionCard2;
+    }
+
+    public AngleType getCard0Type() {
+        return card0Type;
+    }
+
+    public void setCard0Type(AngleType card0Type) {
+        this.card0Type = card0Type;
+    }
+
+    public AngleType getCard1Type() {
+        return card1Type;
+    }
+
+    public void setCard1Type(AngleType card1Type) {
+        this.card1Type = card1Type;
+    }
+
+    public AngleType getCard2Type() {
+        return card2Type;
+    }
+
+    public void setCard2Type(AngleType card2Type) {
+        this.card2Type = card2Type;
+    }
 }

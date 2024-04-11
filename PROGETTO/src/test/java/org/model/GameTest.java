@@ -9,14 +9,17 @@ public class GameTest extends TestCase {
 
     public void testAddPlayer() {
         Player p1 = new Player();
+        p1.setNickname("Topino");
         Game game = new Game(p1, 1);
         Player p = new Player(game);
+        p.setNickname("Papero");
         List<Player> players = new ArrayList<>();
         players = game.getPlayers();
+        game.setnPlayers(2);
         game.addPlayer(p);
 
         for (int i = 0; i< players.size(); i++) {
-            System.out.println("Player number" + i + "with nickname" + players.get(i).getNickname());
+            System.out.println("Player number " + i + " with nickname " + players.get(i).getNickname());
         }
     }
 

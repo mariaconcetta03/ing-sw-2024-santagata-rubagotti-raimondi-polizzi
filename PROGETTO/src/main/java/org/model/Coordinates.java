@@ -17,17 +17,22 @@ public class Coordinates {
      * @param x coordinate x
      * @param y coordinate y
      */
-    Coordinates(int x, int y) {
+    public Coordinates(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
 
 
-    /**
-     * Getter method
-     * @return x
-     */
+    public Coordinates() {}
+
+
+
+
+        /**
+         * Getter method
+         * @return x
+         */
     public int getX() {
         return x;
     }

@@ -2,7 +2,8 @@
     {
       "id": 87,
       "cardPoints": 2,
-      "resources": {},
+      "resources": {
+     },
       "positionCard1": {
         "x": 1,
         "y": 1
@@ -143,9 +144,9 @@
       },
     "positionCard1": {},
     "positionCard2": {},
-    "card0Type": "",
-    "card1Type": "",
-    "card2Type":""
+    "card0Type": null,
+    "card1Type": null,
+    "card2Type": null
     },
 
     {
@@ -156,9 +157,9 @@
       },
       "positionCard1": {},
       "positionCard2": {},
-      "card0Type": "",
-      "card1Type": "",
-      "card2Type":""
+      "card0Type": null,
+      "card1Type": null,
+      "card2Type": null
     },
 
     {
@@ -169,9 +170,9 @@
       },
       "positionCard1": {},
       "positionCard2": {},
-      "card0Type": "",
-      "card1Type": "",
-      "card2Type":""
+      "card0Type": null,
+      "card1Type": null,
+      "card2Type":null
     },
 
     {
@@ -182,9 +183,9 @@
       },
       "positionCard1": {},
       "positionCard2": {},
-      "card0Type": "",
-      "card1Type": "",
-      "card2Type":""
+      "card0Type": null,
+      "card1Type": null,
+      "card2Type":null
     },
 
     {
@@ -197,9 +198,9 @@
       },
       "positionCard1": {},
       "positionCard2": {},
-      "card0Type": "",
-      "card1Type": "",
-      "card2Type":""
+      "card0Type": null,
+      "card1Type": null,
+      "card2Type":null
     },
 
     {
@@ -210,9 +211,9 @@
       },
       "positionCard1": {},
       "positionCard2": {},
-      "card0Type": "",
-      "card1Type": "",
-      "card2Type":""
+      "card0Type": null,
+      "card1Type": null,
+      "card2Type":null
     },
 
     {
@@ -223,9 +224,9 @@
       },
       "positionCard1": {},
       "positionCard2": {},
-      "card0Type": "",
-      "card1Type": "",
-      "card2Type":""
+      "card0Type": null,
+      "card1Type": null,
+      "card2Type":null
     },
 
     {
@@ -236,9 +237,9 @@
       },
       "positionCard1": {},
       "positionCard2": {},
-      "card0Type": "",
-      "card1Type": "",
-      "card2Type":""
+      "card0Type": null,
+      "card1Type": null,
+      "card2Type":null
     }
 
 ]
