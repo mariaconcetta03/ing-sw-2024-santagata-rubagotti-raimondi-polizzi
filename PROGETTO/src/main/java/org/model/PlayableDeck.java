@@ -79,7 +79,7 @@ public class PlayableDeck extends Deck{
     public static PlayableDeck resourceDeck(){
         Stack<PlayableCard> resourceDeck = new Stack<>();
         ObjectMapper objectMapper = new ObjectMapper();
-        File file= new File(".\\jsons\\resourceCards.json");
+        File file= new File("src/main/java/org/model/jsons/resourceCards.json");
         try{
             resourceDeck=objectMapper.readValue(file, new TypeReference<Stack<PlayableCard>>() {});
         }catch (IOException e){
@@ -96,7 +96,7 @@ public class PlayableDeck extends Deck{
     public static PlayableDeck baseDeck() {
         Stack<PlayableCard> baseDeck = new Stack<>();
         ObjectMapper objectMapper = new ObjectMapper();
-        File file= new File(".\\jsons\\baseCards.json");
+        File file= new File("src/main/java/org/model/jsons/baseCards.json");
         try{
             baseDeck=objectMapper.readValue(file, new TypeReference<Stack<PlayableCard>>() {});
         } catch (IOException e){

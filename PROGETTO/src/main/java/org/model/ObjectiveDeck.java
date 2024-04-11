@@ -59,7 +59,7 @@ public class ObjectiveDeck extends Deck{
     public static ObjectiveDeck objectiveDeck(){
         Stack<ObjectiveCard> objectiveDeck = new Stack<>();
         ObjectMapper objectMapper = new ObjectMapper();
-        File file= new File(".\\jsons\\objectiveCards.json");
+        File file= new File("src/main/java/org/model/jsons/objectiveCards.json");
         try{
             objectiveDeck=objectMapper.readValue(file, new TypeReference<Stack<ObjectiveCard>>() {});
         }catch (IOException e){
