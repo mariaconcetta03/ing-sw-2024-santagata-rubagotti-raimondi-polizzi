@@ -10,8 +10,8 @@ public class ObjectiveCardNumberTest {
         resources.put(CountingType.JAR,1);
         resources.put(CountingType.FEATHER,1);
         resources.put(CountingType.SCROLL,1);
-        Objective_card_number usedCard = new Objective_card_number(3, resources); //three points to be multiplied for the times we found the 'resources' requested (to be taken in groups)
-        Map<AngleType, Integer> numResources= new HashMap<>(); //this is the structure used by addPointsToPlayer method
+        ObjectiveCard usedCard = new ObjectiveCard(3, 3, resources, null, null, null, null, null); //three points to be multiplied for the times we found the 'resources' requested (to be taken in groups)
+        Map<AngleType, Integer> numResources = new HashMap<>(); //this is the structure used by addPointsToPlayer method
         numResources.put(AngleType.JAR, 3); //that means that in the Table there are three visible jars
         numResources.put(AngleType.FEATHER, 2);
         numResources.put(AngleType.SCROLL, 1); //this is the lowest number (if compared to the two lines above)

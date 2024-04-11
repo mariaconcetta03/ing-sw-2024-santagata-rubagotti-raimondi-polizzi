@@ -20,6 +20,7 @@ public class Board {
         this.boardDimensions = 0;
         this.playablePositions = new HashSet<>();
         this.unPlayablePositions = new HashSet<>();
+        this.playedCards = new HashMap<>();
         this.table = null;
         this.player = player;
         //initialisation of the resource Map
@@ -41,10 +42,10 @@ public class Board {
      * @param nPlayers is the number of players that are playing the Game
      */
     public void setBoard(int nPlayers){
-        this.boardDimensions=1+2*(numCarte+nPlayers-1/nPlayers);
+        this.boardDimensions=1+2*(numCarte/nPlayers);
         this.table = new PlayableCard [boardDimensions][boardDimensions];
         for(int i = 0; i < boardDimensions; i++){
-            for(int j = 0; i < boardDimensions; j++){
+            for(int j = 0; j < boardDimensions; j++){
                 table[i][j] = null;
             }
         }
@@ -234,6 +235,19 @@ public class Board {
                 unPlayablePositions.add(card.getPosition().findDownRight());
             }
             if (card.get_front_down_left() == AngleType.ABSENT) {
+                unPlayablePositions.add(card.getPosition().findDownLeft());
+            }
+        } else {
+            if (card.get_back_up_right() == AngleType.ABSENT) {
+                unPlayablePositions.add(card.getPosition().findUpRight());
+            }
+            if (card.get_back_up_left() == AngleType.ABSENT) {
+                unPlayablePositions.add(card.getPosition().findUpLeft());
+            }
+            if (card.get_back_down_right() == AngleType.ABSENT) {
+                unPlayablePositions.add(card.getPosition().findDownRight());
+            }
+            if (card.get_back_down_left() == AngleType.ABSENT) {
                 unPlayablePositions.add(card.getPosition().findDownLeft());
             }
         }

@@ -21,6 +21,7 @@ public class BoardTest extends TestCase {
     public void testPlaceBaseCard() {
         Player p1 = new Player();
         Board board = new Board(p1);
+        board.setBoard(2);
 
         List<AngleType> centralResources = new ArrayList<>();
         centralResources.add(AngleType.INSECT);
@@ -31,18 +32,11 @@ public class BoardTest extends TestCase {
                 false, false, false, null);
 
         // placing the card on the BACK side
-        board.placeBaseCard(baseCard);
+        baseCard.setPosition(new Coordinates(40, 40));
         baseCard.setOrientation(false);
+        board.placeBaseCard(baseCard);
 
-        // printing the positions where matrix is not null
-        for (Map.Entry<Coordinates, AngleType> entry : board.getPlayedCards().entrySet()) {
-            System.out.println("Coordinate: " + entry.getKey() + ", Resource: : " + entry.getValue());
-        }
-
-        // printing the resources count
-        for (Map.Entry<AngleType, Integer> entry : board.getNumResources().entrySet()) {
-            System.out.println("Resource: " + entry.getKey() + ", Count: " + entry.getValue());
-        }
+        System.out.println("Base card successfully placed");
 
     }
 
@@ -51,13 +45,27 @@ public class BoardTest extends TestCase {
     public void testPlaceCard() {
         Player p1 = new Player();
         Board board = new Board(p1);
+        board.setBoard(2);
+
+        List<AngleType> centralResources = new ArrayList<>();
+        centralResources.add(AngleType.INSECT);
+        centralResources.add(AngleType.ANIMAL);
+
+        PlayableCard baseCard = new PlayableCard(1, 2, AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
+                AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE, centralResources, false,
+                false, false, false, null);
+
+        // placing the card on the BACK side
+        baseCard.setPosition(new Coordinates(40, 40));
+        baseCard.setOrientation(false);
+        board.placeBaseCard(baseCard);
 
 
-        List<AngleType> centralResources = null;
+        centralResources = null;
         PlayableCard resourceCard = new PlayableCard(1, 2, AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
                 AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE, centralResources, false,
                 false, false, false, null);
-        Coordinates position = new Coordinates(2,3);
+        Coordinates position = new Coordinates(41,41);
         resourceCard.setOrientation(true);
         resourceCard.setPosition(position);
         board.placeCard(resourceCard, position);
@@ -71,7 +79,6 @@ public class BoardTest extends TestCase {
         for (Map.Entry<AngleType, Integer> entry : board.getNumResources().entrySet()) {
             System.out.println("Resource: " + entry.getKey() + ", Count: " + entry.getValue());
         }
-
 
     }
 
@@ -104,7 +111,7 @@ public class BoardTest extends TestCase {
         // the card has 3 unplayable positions because
         List<AngleType> centralResources = new ArrayList<>();
         centralResources.add (AngleType.INSECT);
-        PlayableCard card = new PlayableCard(1, 2, AngleType.ABSENT, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
+        PlayableCard basecard = new PlayableCard(1, 2, AngleType.ABSENT, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
                 AngleType.FUNGI, AngleType.SCROLL, AngleType.ABSENT, AngleType.NO_RESOURCE, centralResources, false,
                 true, false, false, null);
 
@@ -115,14 +122,14 @@ public class BoardTest extends TestCase {
         }
 
         // checking unplayable positions
-        card.setPosition(new Coordinates(2,2));
-        card.setOrientation(true);
-        board.updateUnplayablePositions(card);
+        basecard.setPosition(new Coordinates(40,40));
+        basecard.setOrientation(false);
+        board.updateUnplayablePositions(basecard);
 
         // unplayable positions after the card is played
         unplayablePositions = board.getUnPlayablePositions();
         for (Coordinates coordinate : unplayablePositions) {
-            System.out.println("After playing: " + coordinate);
+            System.out.println("After playing: " + coordinate.getX() + " " + coordinate.getY());
         }
     }
 
@@ -143,18 +150,18 @@ public class BoardTest extends TestCase {
         // playable positions before the card is played
         playablePositions = board.getPlayablePositions();
         for (Coordinates coordinate : playablePositions) {
-            System.out.println("Before playing: " + coordinate);
+            System.out.println("Before playing: " + coordinate.getX() + " " + coordinate.getY());
         }
 
         // checking unplayable positions
-        card.setPosition(new Coordinates(2,2));
+        card.setPosition(new Coordinates(40,40));
         card.setOrientation(true);
         board.updatePlayablePositions(card);
 
         // playable positions after the card is played
         playablePositions = board.getPlayablePositions();
         for (Coordinates coordinate : playablePositions) {
-            System.out.println("After playing: " + coordinate);
+            System.out.println("After playing: " + coordinate.getX() + " " + coordinate.getY());
         }
     }
 

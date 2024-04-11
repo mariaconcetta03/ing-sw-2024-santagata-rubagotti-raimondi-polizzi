@@ -28,8 +28,8 @@ public class PlayableCard extends Card {
         this.haveScrollToReceivePoints = false;
         this.neededResources =null;
     }
-    public PlayableCard (int id, int points, AngleType front_down_left, AngleType front_up_left, AngleType front_down_right, AngleType front_up_right,
-                         AngleType back_down_left, AngleType back_down_right, AngleType back_up_left, AngleType back_up_right,
+    public PlayableCard (int id, int points, AngleType front_up_right, AngleType front_up_left, AngleType front_down_right, AngleType front_down_left,
+                         AngleType back_up_right, AngleType back_up_left, AngleType back_down_right, AngleType back_down_left,
                          List<AngleType> centralResources, boolean coverAngleToReceivePoints, boolean haveFeatherToReceivePoints,
                          boolean haveScrollToReceivePoints, boolean haveJarToReceivePoints,
                          Map <CentralType, Integer> neededResources) {

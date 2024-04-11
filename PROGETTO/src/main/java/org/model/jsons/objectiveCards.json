@@ -1,9 +1,8 @@
-{
-  "objectiveCard": [
-
+[
     {
       "id": 87,
       "cardPoints": 2,
+      "resources": {},
       "positionCard1": {
         "x": 1,
         "y": 1
@@ -20,6 +19,7 @@
     {
       "id": 88,
       "cardPoints": 2,
+      "resources": {},
       "positionCard1": {
         "x": 1,
         "y": -1
@@ -36,6 +36,7 @@
     {
       "id": 89,
       "cardPoints": 2,
+      "resources": {},
       "positionCard1": {
         "x": 1,
         "y": 1
@@ -52,6 +53,7 @@
     {
       "id": 90,
       "cardPoints": 2,
+      "resources": {},
       "positionCard1": {
         "x": 1,
         "y": -1
@@ -68,6 +70,7 @@
     {
       "id": 91,
       "cardPoints": 3,
+      "resources": {},
       "positionCard1": {
         "x": 0,
         "y": -1
@@ -84,6 +87,7 @@
     {
       "id": 92,
       "cardPoints": 3,
+      "resources": {},
       "positionCard1": {
         "x": 0,
         "y": -1
@@ -100,6 +104,7 @@
     {
       "id": 93,
       "cardPoints": 3,
+      "resources": {},
       "positionCard1": {
         "x": 0,
         "y": -1
@@ -116,6 +121,7 @@
     {
       "id": 94,
       "cardPoints": 3,
+      "resources": {},
       "positionCard1": {
         "x": 0,
         "y": -1
@@ -132,68 +138,107 @@
     {
       "id": 95,
       "cardPoints": 2,
-      "resources": [
-        {"FUNGI": 3}
-      ]
+      "resources": {
+        "FUNGI": 3
+      },
+    "positionCard1": {},
+    "positionCard2": {},
+    "card0Type": "",
+    "card1Type": "",
+    "card2Type":""
     },
 
     {
       "id": 96,
       "cardPoints": 2,
-      "resources": [
-        {"NATURE": 3}
-      ]
+      "resources": {
+        "NATURE": 3
+      },
+      "positionCard1": {},
+      "positionCard2": {},
+      "card0Type": "",
+      "card1Type": "",
+      "card2Type":""
     },
 
     {
       "id": 97,
       "cardPoints": 2,
-      "resources": [
-        {"ANIMAL": 3}
-      ]
+      "resources": {
+        "ANIMAL": 3
+      },
+      "positionCard1": {},
+      "positionCard2": {},
+      "card0Type": "",
+      "card1Type": "",
+      "card2Type":""
     },
 
     {
       "id": 98,
       "cardPoints": 2,
-      "resources": [
-        {"INSECT": 3}
-      ]
+      "resources": {
+        "INSECT": 3
+      },
+      "positionCard1": {},
+      "positionCard2": {},
+      "card0Type": "",
+      "card1Type": "",
+      "card2Type":""
     },
 
     {
       "id": 99,
       "cardPoints": 3,
-      "resources": [
-        {"FEATHER": 1},
-        {"JAR": 1},
-        {"SCROLL": 1}
-      ]
+      "resources": {
+        "FEATHER": 1,
+        "JAR": 1,
+        "SCROLL": 1
+      },
+      "positionCard1": {},
+      "positionCard2": {},
+      "card0Type": "",
+      "card1Type": "",
+      "card2Type":""
     },
 
     {
       "id": 100,
       "cardPoints": 2,
-      "resources": [
-        {"SCROLL": 2}
-      ]
+      "resources": {
+        "SCROLL": 2
+      },
+      "positionCard1": {},
+      "positionCard2": {},
+      "card0Type": "",
+      "card1Type": "",
+      "card2Type":""
     },
 
     {
       "id": 101,
       "cardPoints": 2,
-      "resources": [
-        {"JAR": 2}
-      ]
+      "resources": {
+        "JAR": 2
+      },
+      "positionCard1": {},
+      "positionCard2": {},
+      "card0Type": "",
+      "card1Type": "",
+      "card2Type":""
     },
 
     {
       "id": 102,
       "cardPoints": 2,
-      "resources": [
-        {"FEATHER": 2}
-      ]
+      "resources": {
+        "FEATHER": 2
+      },
+      "positionCard1": {},
+      "positionCard2": {},
+      "card0Type": "",
+      "card1Type": "",
+      "card2Type":""
     }
 
-  ]
-}
+]

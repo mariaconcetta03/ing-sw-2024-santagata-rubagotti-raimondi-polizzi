@@ -14,7 +14,7 @@
       "haveJarToReceivePoints": false,
       "haveFeatherToReceivePoints": false,
       "haveScrollToReceivePoints": false,
-      "neededResources": null,
+      "neededResources": {},
       "centralResources": [
           "INSECT"
         ]
@@ -35,7 +35,7 @@
       "haveJarToReceivePoints": false,
       "haveFeatherToReceivePoints": false,
       "haveScrollToReceivePoints": false,
-      "neededResources": null,
+      "neededResources": {},
       "centralResources": [
         "NATURE",
         "FUNGI"
@@ -57,7 +57,7 @@
       "haveJarToReceivePoints": false,
       "haveFeatherToReceivePoints": false,
       "haveScrollToReceivePoints": false,
-      "neededResources": null,
+      "neededResources": {},
       "centralResources": [
         "ANIMAL",
         "INSECT",
@@ -80,7 +80,7 @@
       "haveJarToReceivePoints": false,
       "haveFeatherToReceivePoints": false,
       "haveScrollToReceivePoints": false,
-      "neededResources": null,
+      "neededResources": {},
       "centralResources": [
         "FUNGI"
       ]
@@ -101,7 +101,7 @@
       "haveJarToReceivePoints": false,
       "haveFeatherToReceivePoints": false,
       "haveScrollToReceivePoints": false,
-      "neededResources": null,
+      "neededResources": {},
       "centralResources": [
         "ANIMAL",
         "INSECT"
@@ -123,7 +123,7 @@
       "haveJarToReceivePoints": false,
       "haveFeatherToReceivePoints": false,
       "haveScrollToReceivePoints": false,
-      "neededResources": null,
+      "neededResources": {},
       "centralResources": [
         "NATURE",
         "ANIMAL",
