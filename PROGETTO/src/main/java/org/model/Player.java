@@ -100,6 +100,7 @@ public class Player {
      * @param card is the card the player has taken from a deck or from the market
      */
     public void drawCard(PlayableCard card) {
+        boolean drawn = false;
 
         PlayableCard resourceCard1 = game.getResourceCard1(); //market
         PlayableCard resourceCard2 = game.getResourceCard2(); //market
@@ -126,8 +127,9 @@ public class Player {
         }
 
         // where card is null, the new card is placed
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3 && !drawn; i++) {
             if (playerDeck[i] == null) {
+                drawn = true;
                 playerDeck[i] = card;
             }
         }
