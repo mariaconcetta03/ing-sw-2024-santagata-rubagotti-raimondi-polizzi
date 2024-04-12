@@ -1,10 +1,11 @@
 package org.model;
 
+import junit.framework.TestCase;
 import java.util.HashMap;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ObjectiveCardNumberTest {
+public class ObjectiveCardNumberTest extends TestCase {
     public void addPointsToPlayerTest() { //see the comments in Objective_card_number to comprehend how this method covers all the test cases
         Map<CountingType, Integer> resources = new HashMap<>(); //the structure tha memorizes the resources needed and that is contained in Objective_card_number
         resources.put(CountingType.JAR,1);

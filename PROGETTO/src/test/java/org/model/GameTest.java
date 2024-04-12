@@ -28,12 +28,14 @@ public class GameTest extends TestCase {
 
     public void testStartGame() {
         Player p1 = new Player();
-        Game game = new Game(p1, 1);
+        Game game = new Game(p1,1);
         Player p = new Player(game);
+        game.setnPlayers(2);
         game.addPlayer(p);
 
-        game.setnPlayers(4);
         int numPlayers = game.getnPlayers();
+        p1.setGame(game);
+        p.setGame(game);
 
         game.startGame();
 

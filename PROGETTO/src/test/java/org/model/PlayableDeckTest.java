@@ -52,8 +52,10 @@ public class PlayableDeckTest extends TestCase {
         System.out.println("Need to count jar to score points?: "+card2.isJarToReceivePoints());
         System.out.println("Need to count scroll to score points?: "+card2.isScrollToReceivePoints());
         System.out.println("Center resource (card's type): "+card2.getCentralResources().get(0));
+        System.out.println("Needed NATURE to place the card: "+card2.getNeededResources().get(CentralType.NATURE));
+        System.out.println("Needed INSECT to place the card: "+card2.getNeededResources().get(CentralType.INSECT));
         System.out.println("Needed FUNGI to place the card: "+card2.getNeededResources().get(CentralType.FUNGI));
-
+        System.out.println("Needed ANIMAL to place the card: "+card2.getNeededResources().get(CentralType.ANIMAL));
 
     }
 
