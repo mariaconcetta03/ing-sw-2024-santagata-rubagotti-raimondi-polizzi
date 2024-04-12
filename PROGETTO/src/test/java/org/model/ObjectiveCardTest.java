@@ -10,6 +10,10 @@ public class ObjectiveCardTest extends TestCase {
     public void testAddPointsToPlayer1() {
         //let's use for example the blue diagonal pattern (down to up, left to right)
         ObjectiveCard usedCard = new ObjectiveCard(2, 2, null, new Coordinates(1, 1), new Coordinates(2, 2), AngleType.INSECT, AngleType.INSECT, AngleType.INSECT);
+        Player player= new Player();
+        Board board=new Board(player);
+        board.setBoard(2);
+        board.placeCard(new PlayableCard(1,0,..),new Coordinates());
         Map<Coordinates, AngleType> playedCards;
         playedCards = new HashMap<>();
         playedCards.put(new Coordinates(1, 1), AngleType.INSECT);
@@ -18,7 +22,7 @@ public class ObjectiveCardTest extends TestCase {
         playedCards.put(new Coordinates(4, 4), AngleType.INSECT);
         playedCards.put(new Coordinates(5, 5), AngleType.INSECT);
         playedCards.put(new Coordinates(6, 6), AngleType.FUNGI);  //see the drive file ObjectiveCardPatternTest
-        assertEquals(usedCard.addPointsToPlayer(new Player()), 2); //the algorithm is correct if it gives 2 points to the player
+        assertEquals(usedCard.addPointsToPlayer(player), 2); //the algorithm is correct if it gives 2 points to the player
     }
 
     public void testAddPointsToPlayer2(){
