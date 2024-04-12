@@ -55,31 +55,32 @@ public class Board {
      * This method places the first card for a player in the middle of the table (boardDimension/2) and adds related resources
      * @param baseCard is the base card the Player has placed
      */
-    public void placeBaseCard(PlayableCard baseCard){
-        this.table[boardDimensions/2][boardDimensions/2] = baseCard;
+    public void placeBaseCard(PlayableCard baseCard) {
+        this.table[boardDimensions / 2][boardDimensions / 2] = baseCard;
+        baseCard.setPosition(new Coordinates(boardDimensions / 2, boardDimensions / 2));
 
         //adding the new card resources
         //if played on the front (only 4 angles)
 
-        if(baseCard.getOrientation()) {
+        if (baseCard.getOrientation()) {
             numResources.put(baseCard.get_front_down_left(), numResources.get(baseCard.get_front_down_left()) + 1);
             numResources.put(baseCard.get_front_down_right(), numResources.get(baseCard.get_front_down_right()) + 1);
             numResources.put(baseCard.get_front_up_left(), numResources.get(baseCard.get_front_up_left()) + 1);
             numResources.put(baseCard.get_front_up_right(), numResources.get(baseCard.get_front_up_right()) + 1);
-        }else{
+        } else {
             //if played on the back side (4 angles and central resources
 
-            for(AngleType t : baseCard.getCentralResources()){
-                numResources.put(t, numResources.get(t)+1);
+            for (AngleType t : baseCard.getCentralResources()) {
+                numResources.put(t, numResources.get(t) + 1);
             }
-            numResources.put(baseCard.get_back_down_left(), numResources.get(baseCard.get_back_down_left()) + 1);
-            numResources.put(baseCard.get_back_down_right(), numResources.get(baseCard.get_back_down_right()) + 1);
-            numResources.put(baseCard.get_back_up_left(), numResources.get(baseCard.get_back_up_left()) + 1);
-            numResources.put(baseCard.get_back_up_right(), numResources.get(baseCard.get_back_up_right()) + 1);
+                numResources.put(baseCard.get_back_down_left(), numResources.get(baseCard.get_back_down_left()) + 1);
+                numResources.put(baseCard.get_back_down_right(), numResources.get(baseCard.get_back_down_right()) + 1);
+                numResources.put(baseCard.get_back_up_left(), numResources.get(baseCard.get_back_up_left()) + 1);
+                numResources.put(baseCard.get_back_up_right(), numResources.get(baseCard.get_back_up_right()) + 1);
+            }
+            updateUnplayablePositions(baseCard);
+            updatePlayablePositions(baseCard);
         }
-        updateUnplayablePositions(baseCard);
-        updatePlayablePositions(baseCard);
-    }
 
     /**
      * Places a card in the table and updates playable/unplayable positions
@@ -90,7 +91,17 @@ public class Board {
     //we have to add the requirements in the gold cards
     public boolean placeCard(PlayableCard card, Coordinates position) {
         int coveredAngles = 0;
-        if (playablePositions.contains(position) && enoughResources(card)) {
+        boolean present = false;
+
+        Iterator<Coordinates> pos = playablePositions.iterator();
+
+        while(pos.hasNext()){
+            if (pos.next().equals(position)) {
+                present = true;
+            }
+        }
+
+        if (present && enoughResources(card)) {
             //all the angles of the adjacent cards we could cover with the one we are placing
             AngleType upLeft=null;
             AngleType upRight=null;
@@ -185,7 +196,7 @@ public class Board {
      * @param coveredAngles is the number of angles covered by the PlayableCard just placed
      * @return points are the points actually scored thanks to card
      */
-    public int cardPoints (PlayableCard card, int coveredAngles){
+    public int cardPoints (PlayableCard card, int coveredAngles) {
         int points = card.getPoints(); // if the card gives you points in any case
             if(card.isCoverAngleToReceivePoints()) {
                 points = coveredAngles * points;

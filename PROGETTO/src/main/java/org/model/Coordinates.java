@@ -84,4 +84,9 @@ public class Coordinates {
     public Coordinates findDownLeft() {
         return new Coordinates(this.x - 1, this.y - 1);
     }
+
+    public boolean equals(Coordinates c) {
+        return (this.x == c.getX() && this.y == c.getY());
+    }
+
 }

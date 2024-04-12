@@ -102,8 +102,38 @@ public class ObjectiveCard extends Card {
         int counter=0;
         //creates a Set view of the keyset of the player's Board
         Set<Coordinates> cardsPositions=player.getBoard().getPlayedCards().keySet(); //this Set doesn't contain the base card (which has no color)
-        Set<Coordinates> alreadyCountedPositions= new HashSet<>();
+        Set<Coordinates> alreadyCountedPositions = new HashSet<>();
+        alreadyCountedPositions = new HashSet<>();
 
+//        Iterator<Coordinates> pos = alreadyCountedPositions.iterator();
+//        Iterator<Coordinates> cardPos = cardsPositions.iterator();
+//
+//        while(cardPos.hasNext()){
+//            Coordinates temp1= sumCoordinates(cardPos.next(),positionCard1);
+//            Coordinates temp2= sumCoordinates(cardPos.next(),positionCard2);
+//            if ( !(pos.next().equals(cardPos.next())) && ((!alreadyCountedPositions.isEmpty() || (!(alreadyCountedPositions.equals(temp1)) && !(alreadyCountedPositions.equals(temp2))))))  {
+//                while(cardPos.hasNext()){
+//                if (cardPos.next().equals(temp1) && cardPos.next().equals(temp2)) {
+//                    //checks the type of all the 3 cards
+//                    if (player.getBoard().getPlayedCards().get(temp1).equals(card1Type) &&
+//                            player.getBoard().getPlayedCards().get(temp2).equals(card2Type) &&
+//                            player.getBoard().getPlayedCards().get(pos.next()).equals(card0Type)) {
+//                        counter++; //increment the counter
+//
+//                        alreadyCountedPositions.add(cardPos.next()); //to mark the coordinates already counted in a pattern
+//                        alreadyCountedPositions.add(temp1);
+//                        alreadyCountedPositions.add(temp2);
+//                    }
+//                }
+//
+//            }
+//         }
+//        }
+
+
+
+
+///vedere qui in questo for
         for(Coordinates center : cardsPositions){
             //temp values to help me directly write in alreadyCountedPositions the coordinates if found
             Coordinates temp1= sumCoordinates(center,positionCard1);
@@ -123,6 +153,9 @@ public class ObjectiveCard extends Card {
                 }
             }
         }
+
+
+
         int pointsToBeAdded=0;
         pointsToBeAdded=counter*this.getCardPoints();
         //if we completed the objective at least once we take note of that
