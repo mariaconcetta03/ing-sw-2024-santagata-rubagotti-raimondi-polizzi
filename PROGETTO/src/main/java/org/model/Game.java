@@ -132,27 +132,10 @@ public class Game {
         colors.add(Pawn.BLUE);
         colors.add(Pawn.YELLOW);
         colors.add(Pawn.GREEN);
-        Scanner sc = new Scanner(System.in);
-        String chosenColour;
 
-        for (int i=0; i<this.players.size(); i++) {
-            chosenColour = sc.nextLine();
-            if (chosenColour.equals("RED") && colors.contains(Pawn.RED)) {
-                colors.remove(Pawn.RED);
-                this.players.get(i).setColor(Pawn.RED);
-            } else if (chosenColour.equals("BLUE") && colors.contains(Pawn.BLUE)) {
-                colors.remove(Pawn.BLUE);
-                this.players.get(i).setColor(Pawn.BLUE);
-            } else if (chosenColour.equals("YELLOW") && colors.contains(Pawn.YELLOW)) {
-                colors.remove(Pawn.YELLOW);
-                this.players.get(i).setColor(Pawn.YELLOW);
-            } else if (chosenColour.equals("GREEN") && colors.contains(Pawn.GREEN)) {
-                colors.remove(Pawn.GREEN);
-                this.players.get(i).setColor(Pawn.GREEN);
-            } else throw new IllegalArgumentException();
+        for (int i=0; i<this.nPlayers; i++) {
+                this.players.get(i).setColor(colors.get(i));
         }
-
-        sc.close();
 
         // giving 2 cards to the market as common objective
         this.objectiveCard1 = objectiveDeck.getFirstCard();
@@ -172,18 +155,18 @@ public class Game {
         this.currentPlayer = this.players.get(randomFirstPlayer); // he is the first player and the current player
         newOrder.add(this.players.get(randomFirstPlayer)); // the game-order positions start from 1. Example: 1,2,3,4
 
-        int not_assigned = 3;
-        for (int i=randomFirstPlayer; i<this.players.size(); i++) { //assigning the game-order position to the players
+        int not_assigned = nPlayers-1;
+        for (int i = randomFirstPlayer+1; i<this.nPlayers && not_assigned > 0; i++) { //assigning the game-order position to the players
             // that follow the first player in the list
             newOrder.add(this.players.get(i)); // the game-order positions start from 1. Example: 1,2,3,4
-            not_assigned--;
+            not_assigned-- ;
         }
-        for (int i = 0; not_assigned!=0 && i<this.players.size(); i++) { //assigning the game-order position to the
+        for (int i = 0; not_assigned > 0 && i<this.nPlayers; i++) { //assigning the game-order position to the
             // players that comes before the first player in the list
             newOrder.add(this.players.get(i)); // the game-order positions start from 1. Example: 1,2,3,4
             not_assigned--;
         }
-        this.players = newOrder; // setting the new order
+        this.players = newOrder; // setting the new order NON VA BENE!!!!!!!!!!!!!!!!!!!!!!!!!
     }
 
 
