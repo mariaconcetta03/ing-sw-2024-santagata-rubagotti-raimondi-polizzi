@@ -27,6 +27,26 @@ public class PlayableDeck extends Deck{
     }
 
 
+
+    /**
+     * This method shuffles the deck: all the cards will have a random order after this function has been called
+     */
+    @Override
+    public void shuffleDeck() {
+        Collections.shuffle(cards);
+    }
+
+
+    /**
+     * Check if the deck is finished (contains no more cards)
+     * @return true if the deck is finished, false if it's not
+     */
+    @Override
+    public boolean isFinished() {
+        return cards.isEmpty();
+    }
+
+
     /**
      * Class constructor
      * creates a new deck, with a null stack
