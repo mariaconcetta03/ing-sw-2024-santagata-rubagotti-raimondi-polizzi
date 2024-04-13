@@ -1,15 +1,20 @@
 package org.model;
 
+import com.ctc.wstx.shaded.msv_core.reader.xmlschema.IncludeState;
 import junit.framework.TestCase;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayNameGenerator;
+
+import javax.script.AbstractScriptEngine;
 
 import java.util.*;
 
 public class PlayerTest extends TestCase {
 
-    void drawCardTest() {
+    public void testDrawCard() {
         // creating the player
         Player p1 = new Player();
+        Game game = new Game(p1, 1);
+        p1.setGame(game);
 
         // creating 3 cards (playable card) with ID: 1, 2, 3
         List<AngleType> centralResources = new ArrayList<>();
@@ -40,9 +45,16 @@ public class PlayerTest extends TestCase {
 
 
 
-    void playCardTest() {
+    public void testPlayCard() {
         // creating the structures
         Player p1 = new Player();
+        Player p2 = new Player();
+        Game game = new Game(p1, 1);
+        game.setnPlayers(2);
+        game.addPlayer(p2);
+        p1.setGame(game);
+        p2.setGame(game);
+        game.giveInitialCards();
         Board board = new Board(p1);
         p1.setBoard(board);
         board.setBoard(2);
@@ -78,14 +90,14 @@ public class PlayerTest extends TestCase {
 
         // played cards after the cardToPlay is played
         for (Map.Entry<Coordinates, AngleType> entry : board.getPlayedCards().entrySet()) {
-            System.out.println("Played positions after playing are: " + board.getPlayedCards().get(entry.getKey()));
+            System.out.println("The card played has the central type: " + board.getPlayedCards().get(entry.getKey()));
         }
     }
 
 
 
 
-    void playBaseCardTest() {
+    public void testPlayBaseCard() {
 
         // creating the structures
         Player p1 = new Player();
@@ -103,7 +115,7 @@ public class PlayerTest extends TestCase {
 
         // playable positions before the card is played
         for (Coordinates coordinate : board.getPlayablePositions()) {
-            System.out.println("Before playing the base card, playable positions are: " + coordinate);
+            System.out.println("Before playing the base card, playable positions are (x, y): " + coordinate.getX() + " " +coordinate.getY());
         }
 
         // the player plays the base card
@@ -113,14 +125,14 @@ public class PlayerTest extends TestCase {
 
         // playable positions after the card is played
         for (Coordinates coordinate : board.getPlayablePositions()) {
-            System.out.println("After playing the base card, playable positions are: " + coordinate);
+            System.out.println("After playing the base card, playable positions are (x, y): " + coordinate.getX() + " " + coordinate.getY());
         }
     }
 
 
 
 
-    void addPointsTest() {
+    public void testAddPoints() {
         Player p1 = new Player();
 
         // printing the points before and after the invoking of the function
@@ -133,7 +145,7 @@ public class PlayerTest extends TestCase {
 
 
 
-    void addNumObjectivesReachedTest() {
+    public void testAddNumObjectivesReached() {
         Player p1 = new Player();
 
         // printing the number of objectives reached before and after the invoking of the function

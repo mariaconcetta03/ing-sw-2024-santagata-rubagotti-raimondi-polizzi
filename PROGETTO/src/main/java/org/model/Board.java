@@ -51,6 +51,7 @@ public class Board {
      */
     public void placeBaseCard(PlayableCard baseCard){
         this.table[boardDimensions/2][boardDimensions/2] = baseCard;
+        baseCard.setPosition(new Coordinates(boardDimensions/2, boardDimensions/2));
 
         //adding the new card resources
         //if played on the front (only 4 angles)
