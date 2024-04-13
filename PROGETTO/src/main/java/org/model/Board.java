@@ -91,6 +91,8 @@ public class Board {
             AngleType downLeft=null;
             AngleType downRight=null;
             //inserting the card
+            playablePositions.remove(position);
+            unPlayablePositions.add(position);
             card.setPosition(position);
             this.table[position.getX()][position.getY()] = card;
             playedCards.put(position, card.getCentralResources().get(0)); //only the base card (here not considered) has more than one resource in the center

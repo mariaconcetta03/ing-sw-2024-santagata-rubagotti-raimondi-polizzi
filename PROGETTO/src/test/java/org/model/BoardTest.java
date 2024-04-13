@@ -40,8 +40,37 @@ public class BoardTest extends TestCase {
 
     }
 
+    //Test created by FRA to solve the problem related to contains
+    public void testContainsCard(){
+        Player p1 = new Player();
+        Board board = new Board(p1);
+        board.setBoard(2);
+        List<AngleType> centralRes1=new ArrayList<>();
+        centralRes1.add(AngleType.FUNGI);
+        PlayableCard pc=new PlayableCard(1, 2, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE,
+                AngleType.NO_RESOURCE, centralRes1 , false, false, false, false, null);
+        Coordinates position1= new Coordinates(board.getBoardDimensions()/2, board.getBoardDimensions()/2);
+        board.getPlayablePositions().add(position1);
+        board.placeCard(pc, position1);
+        List<AngleType> centralRes2=new ArrayList<>();
+        centralRes2.add(AngleType.ANIMAL);
+        PlayableCard pc2= new PlayableCard(1, 2, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE,
+                AngleType.NO_RESOURCE, centralRes2 , false, false, false, false, null);
+        System.out.println("Type of the card I placed: "+board.getPlayedCards().get(position1));
+        System.out.println("Did I manage to place the card? "+board.placeCard(pc2, position1));
+        Coordinates position2= new Coordinates(board.getBoardDimensions()/2 +1, board.getBoardDimensions()/2 + 1);
+        System.out.println("Did I manage to place the card? "+board.placeCard(pc2, position2));
+    }
 
+    //Test created by FRA to solve the problem related to contains
+    public void testContainsCoordinates(){
+        Set<Coordinates> testSet= new HashSet<>();
+        Coordinates p1= new Coordinates(0,0);
+        testSet.add(p1);
+        Coordinates p2= new Coordinates(0, 0);
+        System.out.println("Does the set already contains the position? "+testSet.contains(p2));
 
+    }
     public void testPlaceCard() {
         Player p1 = new Player();
         Board board = new Board(p1);

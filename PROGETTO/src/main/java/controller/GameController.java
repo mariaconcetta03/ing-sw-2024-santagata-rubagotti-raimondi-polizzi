@@ -7,11 +7,37 @@ import java.util.*;
 
 public class GameController {
     private Game game;
-    int lastRounds = 10;
+    int lastRounds;
     private List<Player> winners;
+    private List<Player> gamePlayers;
+    private int numberOfPlayers;
 
+    public GameController(){
+        game=null;
+        lastRounds=10;
+        winners=new ArrayList<>();
+    }
 
+    /**
+     * This method creates the Game that will be managed by GameController
+     * @param gameCreator is the first player creating and joining the lobby
+     */
+    public void createGame (Player gameCreator){
+        //sistemare Costruttore Game (usiamo List di Player?)
+        game = new Game(gameCreator, ServerController.getFirstAvailableId());
+    }
 
+    public void addPlayer(Player player) throws ArrayIndexOutOfBoundsException{
+        if(gamePlayers.size()<numberOfPlayers){
+            gamePlayers.add(player);
+        }else{
+            throw new ArrayIndexOutOfBoundsException("This lobby is already full!");
+        }
+        if(gamePlayers.size()==numberOfPlayers){
+            createGame(player);
+            startGame();
+        }
+    }
     public boolean waitingForPlayers(Player player) { //when we call this method we are adding another player
         game.addPlayer(player);
         if (game.getPlayers().size() < game.getnPlayers()) {
@@ -21,8 +47,6 @@ public class GameController {
             return false;
         }
     }
-
-
 
 
     /**
@@ -62,17 +86,6 @@ public class GameController {
 
 
 
-    /**
-     * there would be another package (we can call it 'ServerController')
-     * that can manage the creation of different games between different
-     * players (gives a different ID for each game). This was suggested by Cugula the first lesson
-     * @param gameCreator
-     * @param nPlayers
-     */
-    public void createGame (Player gameCreator, int nPlayers) throws RuntimeException {
-        //sistemare Costruttore Game (usiamo List di Player?)
-            game = new Game(gameCreator, ServerController.getFirstAvailableId());
-    }
 
 
     /**
@@ -179,5 +192,7 @@ public class GameController {
         winners = game.winner();
     }
 
-
+    public Game getGame() {
+        return game;
+    }
 }

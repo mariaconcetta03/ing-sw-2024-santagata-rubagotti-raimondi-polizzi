@@ -80,12 +80,8 @@ public class Game {
     public void addPlayer (Player p) throws ArrayIndexOutOfBoundsException {
         if (players.size() < nPlayers) {
             this.players.add(p);
-        } else throw new ArrayIndexOutOfBoundsException();
+        } else throw new ArrayIndexOutOfBoundsException("This lobby is full!");
     }
-
-
-
-
 
 
     /**

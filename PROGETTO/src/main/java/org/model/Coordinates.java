@@ -27,6 +27,32 @@ public class Coordinates {
     public Coordinates() {}
 
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Coordinates other = (Coordinates) obj;
+        if ( this.getX()!= other.getX()) {
+            return false;
+        }
+        if (this.getY() != other.getY()) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int start=17;
+        int res=1;
+        res=start*res+this.getX();
+        res=start*res+this.getY();
+        return res;
+    }
 
 
         /**
