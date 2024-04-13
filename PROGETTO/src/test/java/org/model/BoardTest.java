@@ -77,7 +77,6 @@ public class BoardTest extends TestCase {
         board.setBoard(2);
 
         List<AngleType> centralResources = new ArrayList<>();
-        centralResources.add(AngleType.INSECT);
         centralResources.add(AngleType.ANIMAL);
 
         PlayableCard baseCard = new PlayableCard(1, 2, AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
