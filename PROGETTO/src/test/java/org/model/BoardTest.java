@@ -90,7 +90,8 @@ public class BoardTest extends TestCase {
         board.placeBaseCard(baseCard);
 
 
-        centralResources = null;
+        centralResources = new ArrayList<>();
+        centralResources.add(AngleType.NATURE);
         PlayableCard resourceCard = new PlayableCard(1, 2, AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
                 AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE, centralResources, false,
                 false, false, false, null);
