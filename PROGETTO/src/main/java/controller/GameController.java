@@ -16,28 +16,34 @@ public class GameController {
         game=null;
         lastRounds=10;
         winners=new ArrayList<>();
+        gamePlayers= new ArrayList<>();
+        numberOfPlayers=0;
     }
 
     /**
      * This method creates the Game that will be managed by GameController
-     * @param gameCreator is the first player creating and joining the lobby
+     * @param gamePlayers is the List of players that will be in the Game
      */
-    public void createGame (Player gameCreator){
-        //sistemare Costruttore Game (usiamo List di Player?)
-        game = new Game(gameCreator, ServerController.getFirstAvailableId());
+    public void createGame (List<Player> gamePlayers){
+        game = new Game(gamePlayers, ServerController.getFirstAvailableId());
     }
 
-    public void addPlayer(Player player) throws ArrayIndexOutOfBoundsException{
-        if(gamePlayers.size()<numberOfPlayers){
+    public void addPlayer(Player player) throws ArrayIndexOutOfBoundsException {
+        if (gamePlayers.size() < numberOfPlayers) {
             gamePlayers.add(player);
-        }else{
+        } else {
             throw new ArrayIndexOutOfBoundsException("This lobby is already full!");
         }
-        if(gamePlayers.size()==numberOfPlayers){
-            createGame(player);
-            startGame();
+        if (gamePlayers.size() == numberOfPlayers) {
+            createGame(gamePlayers);
+            try {
+                startGame();
+            } catch (IllegalStateException e) {
+                System.out.println("The game is already started!");
+            }
         }
     }
+
     public boolean waitingForPlayers(Player player) { //when we call this method we are adding another player
         game.addPlayer(player);
         if (game.getPlayers().size() < game.getnPlayers()) {
@@ -83,11 +89,7 @@ public class GameController {
         } else throw new IllegalStateException();
     }
 
-
-
-
-
-
+//Bisogna gestire il caso in cui la carta passata da giocare sia la Base card, basta fare if (con gli indici) e chiamare playBaseCard
     /**
      * This method "plays" the card selected by the Player in his own Board
      * @param selectedCard the Card the Player wants to play
@@ -109,11 +111,6 @@ public class GameController {
         }
     }
 
-
-
-
-
-
     /**
      * This method allows the currentPlayer to draw a card from the decks or from the unveiled ones
      * @param selectedCard is the Card the Players wants to draw
@@ -126,8 +123,16 @@ public class GameController {
         } //if the score become higher than 20 there would be only one another turn to be played
     }
 
+    public boolean chooseObjectiveCard(ObjectiveCard selectedCard){
+        return false;
+    }
 
+    public void choosePawnColor(Pawn selectedColor){
 
+    }
+    public void sendMessage(List<Player> receivers, String message){
+
+    }
 
 
     /**
@@ -165,9 +170,6 @@ public class GameController {
     }
 
 
-
-
-
     /**
      * This method ends the game. It sets the game state to ENDED, checks all the objectives (2 common objs
      * and 1 personalObj) and adds the points to the correct player.
@@ -194,5 +196,9 @@ public class GameController {
 
     public Game getGame() {
         return game;
+    }
+
+    public void setNumberOfPlayers(int numberOfPlayers) {
+        this.numberOfPlayers = numberOfPlayers;
     }
 }

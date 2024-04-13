@@ -48,13 +48,36 @@ public class Game {
 //maybe we can make the GameController check if the numPlayer is okay, and pass to Game a List with all the players
     /**
      * Class constructor
-     * @param player is the first player who connected to the server
+     * @param gamePlayers is the List of players that will play the game
      * @param id each game has a different id
+     */
+    public Game (List<Player> gamePlayers, int id) {
+        this.id = id;
+        this.players = gamePlayers;
+        this.chats = new ArrayList<>();
+        this.state = GameState.WAITING_FOR_START;
+        this.currentPlayer = null;
+        this.resourceDeck = PlayableDeck.resourceDeck();
+        this.goldDeck = PlayableDeck.goldDeck();
+        this.baseDeck = PlayableDeck.baseDeck();
+        this.objectiveDeck = ObjectiveDeck.objectiveDeck();
+        this.resourceCard1 = null;
+        this.resourceCard2 = null;
+        this.goldCard1 = null;
+        this.goldCard2 = null;
+        this.objectiveCard1 = null;
+        this.objectiveCard2 = null;
+    }
+
+    /**
+     * 2nd constructor, we will have to delete that + delete addPlayer()
+     * @param player
+     * @param id
      */
     public Game (Player player, int id) {
         this.id = id;
         this.players = new ArrayList<>();
-        this.players.add(player);
+        players.add(player);
         this.chats = new ArrayList<>();
         this.state = GameState.WAITING_FOR_START;
         this.currentPlayer = null;
