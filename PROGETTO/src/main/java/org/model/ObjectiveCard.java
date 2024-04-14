@@ -101,9 +101,9 @@ public class ObjectiveCard extends Card {
     private int addPatternPointsToPlayer(Player player) {
         int counter=0;
         //creates a Set view of the keyset of the player's Board
-        Set<Coordinates> cardsPositions=player.getBoard().getPlayedCards().keySet(); //this Set doesn't contain the base card (which has no color)
-        Set<Coordinates> alreadyCountedPositions = new HashSet<>();
-        alreadyCountedPositions = new HashSet<>();
+//        Set<Coordinates> cardsPositions=player.getBoard().getPlayedCards().keySet(); //this Set doesn't contain the base card (which has no color)
+//        Set<Coordinates> alreadyCountedPositions = new HashSet<>();
+//        alreadyCountedPositions = new HashSet<>();
 
 //        Iterator<Coordinates> pos = alreadyCountedPositions.iterator();
 //        Iterator<Coordinates> cardPos = cardsPositions.iterator();
@@ -133,26 +133,29 @@ public class ObjectiveCard extends Card {
 
 
 
-///vedere qui in questo for
-        for(Coordinates center : cardsPositions){
-            //temp values to help me directly write in alreadyCountedPositions the coordinates if found
-            Coordinates temp1= sumCoordinates(center,positionCard1);
-            Coordinates temp2= sumCoordinates(center,positionCard2);
-            if(!(alreadyCountedPositions.contains(center))&&!(alreadyCountedPositions.contains(temp1))&&!(alreadyCountedPositions.contains(temp2))) {
-                //checks the positions of the other 2 cards
-                if (cardsPositions.contains(temp1) && cardsPositions.contains(temp2)) {
-                    //checks the type of all the 3 cards
-                    if (player.getBoard().getPlayedCards().get(temp1).equals(card1Type) &&
-                            player.getBoard().getPlayedCards().get(temp2).equals(card2Type) &&
-                            player.getBoard().getPlayedCards().get(center).equals(card0Type)) {
-                        counter++; //increment the counter
-                        alreadyCountedPositions.add(center); //to mark the coordinates already counted in a pattern
-                        alreadyCountedPositions.add(temp1);
-                        alreadyCountedPositions.add(temp2);
-                    }
-                }
-            }
-        }
+///la parte di sopra puoò funzionare al posto di questo ciclo for?
+//        for(Coordinates center : cardsPositions){
+//            //temp values to help me directly write in alreadyCountedPositions the coordinates if found
+//            Coordinates temp1= sumCoordinates(center,positionCard1);
+//            Coordinates temp2= sumCoordinates(center,positionCard2);
+//            if(!(alreadyCountedPositions.contains(center))&&!(alreadyCountedPositions.contains(temp1))&&!(alreadyCountedPositions.contains(temp2))) {
+//                //checks the positions of the other 2 cards
+//                if (cardsPositions.contains(temp1) && cardsPositions.contains(temp2)) {
+//                    //checks the type of all the 3 cards
+//                    if (player.getBoard().getPlayedCards().get(temp1).equals(card1Type) &&
+//                            player.getBoard().getPlayedCards().get(temp2).equals(card2Type) &&
+//                            player.getBoard().getPlayedCards().get(center).equals(card0Type)) {
+//                        counter++; //increment the counter
+//                        alreadyCountedPositions.add(center); //to mark the coordinates already counted in a pattern
+//                        alreadyCountedPositions.add(temp1);
+//                        alreadyCountedPositions.add(temp2);
+//                    }
+//                }
+//            }
+//        }
+
+        //provo con un altro modo: utilizzo la matrice in board per accedere direttamente alle caselle delle altre due carte dopo aver trovato la prima sulla Map delle played cards
+        //per sostituire l'already counted positions possiamo usare un'altra matrice di booleani (per poter accedere direttamente alla casella) per non dover riinizializzare eventuali attributi booleani presenti sulla carta
 
 
 
