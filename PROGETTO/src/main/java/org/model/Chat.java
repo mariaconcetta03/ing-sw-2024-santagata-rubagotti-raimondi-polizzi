@@ -1,4 +1,5 @@
 package org.model;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,16 +8,16 @@ import java.util.List;
  */
 
 
-public class Chat {
+public class Chat implements Serializable { //implements Serializable because has to use the net
     private List<Player> users; //these are the players which can communicate in the chat
     private List<Message> messages; // all the messages which have been sent in this chat
-    private int id; // every chat has a different ID
+    private final int id; // every chat has a different ID. That means that there is a way to select the players we're chatting with?
 
 
 
     /**
-     * Class contructor
-     * @param users is the List containing all the players partecipating to the chat instance
+     * Class constructor
+     * @param users is the List containing all the players taking part to the chat instance
      * @param id is the chat id
      */
     public Chat(List<Player> users, int id) {
