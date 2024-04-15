@@ -5,7 +5,7 @@ import java.util.zip.CheckedOutputStream;
 
 public class ObjectiveCard extends Card {
         private int cardPoints; // points the card gives when the player achieves the goal (only one time)
-        private Map<CountingType, Integer> resources; // each resource is associated with an int, which
+        private Map<AngleType, Integer> resources; // each resource is associated with an int, which
         // indicates the number of resources needed by the objective card
         private Coordinates positionCard1; //the next card of the pattern composed by three cards
         private Coordinates positionCard2; //the third card of the pattern
@@ -14,19 +14,17 @@ public class ObjectiveCard extends Card {
         private AngleType card2Type;
 
         /**
-         * Class constructor
+         * @param id
          * @param cardPoints
-         * @param resources
          * @param positionCard1
          * @param positionCard2
          * @param card0Type
          * @param card1Type
          * @param card2Type
          */
-        public ObjectiveCard(int id, int cardPoints, Map<CountingType, Integer> resources, Coordinates positionCard1,Coordinates positionCard2,AngleType card0Type,AngleType card1Type,AngleType card2Type){
+        public void ObjectiveCardPattern(int id, int cardPoints, Coordinates positionCard1,Coordinates positionCard2,AngleType card0Type,AngleType card1Type,AngleType card2Type){
             this.setId(id);
             this.cardPoints = cardPoints;
-            this.resources = resources;
             this.positionCard1 = positionCard1;
             this.positionCard2 = positionCard2;
             this.card0Type = card0Type;
@@ -37,17 +35,14 @@ public class ObjectiveCard extends Card {
 
 
     /**
-     * Class constructor
+     * @param id
+     * @param cardPoints
+     * @param resources
      */
-    public ObjectiveCard(){
-        this.setId(0);
-        this.cardPoints = 0;
-        this.resources = null; //there is no copy
-        this.positionCard1 = null;
-        this.positionCard2 = null;
-        this.card0Type = null;
-        this.card1Type = null;
-        this.card2Type = null;
+    public void ObjectiveCardNumber(int id, int cardPoints, Map<AngleType, Integer> resources){
+        this.setId(id);
+        this.cardPoints = cardPoints;
+        this.resources = resources;
     }
 
 
@@ -72,13 +67,18 @@ public class ObjectiveCard extends Card {
          * f.e.  3 jar, 2 feather --> minResources = 2)
          * @param player the Player which we are checking the objective for
          */
-        private int addNumberPointsToPlayer(Player player) {
+        private void addNumberPointsToPlayer(Player player) {
             int minResources = Integer.MAX_VALUE; //that's an improbable superior limit
             Map<AngleType,Integer> symbolsOnBoard=player.getBoard().getNumResources();
             //at least once we have to enter this cycle and we don't know the order of the keys selection
-            for(CountingType t : resources.keySet()){ //resources.keySet() will never be empty because we are considering an Objective_card_number
-                if((symbolsOnBoard.get(t)/resources.get(t))<minResources){ //to avoid a division by zero resources doesn't have to contain keys associated with zero
-                    minResources= symbolsOnBoard.get(t)/resources.get(t);
+            for(AngleType t : resources.keySet()){ //resources.keySet() will never be empty because we are considering an Objective_card_number
+                if(symbolsOnBoard.containsKey(t)){
+                    if((symbolsOnBoard.get(t)/resources.get(t))<minResources){ //to avoid a division by zero resources doesn't have to contain keys associated with zero
+                        minResources= symbolsOnBoard.get(t)/resources.get(t);
+                    }
+                }else{
+                    minResources=0;
+                    break; //there is no positive number under the zero value
                 }
             }
             int pointsToBeAdded=0;
@@ -90,7 +90,6 @@ public class ObjectiveCard extends Card {
             }
             //adding the just calculated point to the player
             player.addPoints(pointsToBeAdded);
-            return minResources* this.getCardPoints(); //we can use this in the test
         }
 
 
@@ -98,7 +97,7 @@ public class ObjectiveCard extends Card {
      * This method add to player the points he scored completing this specific pattern in his board
      * @param player is the player that has this Objective Card as personal Objective or Common Objective
      */
-    private int addPatternPointsToPlayer(Player player) {
+    private void addPatternPointsToPlayer(Player player) {
         int counter=0;
         Set<Coordinates> cardsPositions=player.getBoard().getPlayedCards().keySet();
         Set <Coordinates> alreadyCountedPositions = new HashSet<>();
@@ -137,7 +136,6 @@ public class ObjectiveCard extends Card {
         }
         //adding the points just calculated to the player
         player.addPoints(pointsToBeAdded);
-        return counter * this.getCardPoints(); //this can be useful for the test
     }
 
 
@@ -146,14 +144,12 @@ public class ObjectiveCard extends Card {
         /** This method updates player's points
          * we have to call this method multiple times changing the player if the objective card is shared
          */
-        public int addPointsToPlayer(Player player) {
-            int addedPoints = 0;
+        public void addPointsToPlayer(Player player) {
             if (this.getId() >= 87 && this.getId() <= 94) {
-                addedPoints = addPatternPointsToPlayer(player);
+                addPatternPointsToPlayer(player);
             } else if (this.getId() >= 95 && this.getId() <= 102) {
-                addedPoints = addNumberPointsToPlayer(player);
+                addNumberPointsToPlayer(player);
             }
-            return addedPoints;
         }
 
 
@@ -171,11 +167,11 @@ public class ObjectiveCard extends Card {
         this.cardPoints = cardPoints;
     }
 
-    public Map<CountingType, Integer> getResources() {
+    public Map<AngleType, Integer> getResources() {
         return resources;
     }
 
-    public void setResources(Map<CountingType, Integer> resources) {
+    public void setResources(Map<AngleType, Integer> resources) {
         this.resources = resources;
     }
 

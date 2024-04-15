@@ -49,6 +49,7 @@ public class PlayableCard extends Card {
         this.haveJarToReceivePoints = haveJarToReceivePoints;
         this.haveScrollToReceivePoints = haveScrollToReceivePoints;
         this.neededResources = neededResources;
+        this.orientation=true;
     }
 
 
