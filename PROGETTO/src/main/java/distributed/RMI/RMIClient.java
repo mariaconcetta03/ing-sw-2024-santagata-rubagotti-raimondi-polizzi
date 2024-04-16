@@ -28,6 +28,8 @@ public class RMIClient extends UnicastRemoteObject {
 
     }
 
+    //aggiungere un metodo che permette di dire al Server 'ho finito il mio turno' così che il Server possa mettersi in contatto con un altro Client (un altro player)
+
     public static class Settings { //this is an attribute
         static int PORT;
         static String SERVER_NAME;

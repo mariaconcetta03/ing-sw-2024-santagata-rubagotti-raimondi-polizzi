@@ -6,6 +6,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface{
+    //il server è unico e al suo interno ha un attributo Game Controller che mi permette di dare il turno ai giocatori di un Game (senza unire giocatori di più Game)
     protected RMIServer() throws RemoteException {
 
     }
