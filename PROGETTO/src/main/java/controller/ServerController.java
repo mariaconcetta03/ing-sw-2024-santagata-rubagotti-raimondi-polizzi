@@ -89,4 +89,12 @@ public class ServerController {
         }
         return true;
     }
+
+    public Map<Integer, GameController> getAllGameControllers() {
+        return allGameControllers;
+    }
+
+    public List<Player> getAllPlayers() {
+        return allPlayers;
+    }
 }
