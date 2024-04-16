@@ -168,6 +168,10 @@ public class Board {
             return false;
         }
     }
+
+
+
+
     /**
      * When passed a resourceCard, the method gives the points scored by that specific card
      * When passed a goldCard, the method checks the "scoring condition" (angles coverage/number of objects)
@@ -188,15 +192,20 @@ public class Board {
         }
         return points;
     }
+
+
+
+
+
     /**
      * This method checks if the Player has enough resources to place the card
      * @param card is the card the Player has just placed
      * @return boolean that indicates if the Player has enough resources to play the specific card
      */
-    private boolean enoughResources (PlayableCard card) { // CONTROLLARE SE SI PUò USARE per pattern
-        if (!(card.getNeededResources()==null)) {
-            for (CentralType t : card.getNeededResources().keySet()) {
-                if (numResources.get(t) < card.getNeededResources().get(t)) {
+    public boolean enoughResources (PlayableCard card) { // CONTROLLARE SE SI PUò USARE per pattern
+        if ((card.getNeededResources()!=null)) {
+            for (AngleType t : card.getNeededResources().keySet()) {
+                if (!numResources.containsKey(t) || (numResources.get(t) < card.getNeededResources().get(t))) {
                     return false;
                 }
             }
@@ -205,6 +214,10 @@ public class Board {
             return true;
         }
     }
+
+
+
+
     /**
      * Adding all the positions where the angle is ABSENT (players can't use that angle)
      * @param card
