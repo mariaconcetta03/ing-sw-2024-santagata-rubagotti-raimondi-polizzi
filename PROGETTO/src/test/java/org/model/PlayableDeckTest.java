@@ -56,7 +56,6 @@ public class PlayableDeckTest extends TestCase {
         System.out.println("Needed INSECT to place the card: "+card2.getNeededResources().get(CentralType.INSECT));
         System.out.println("Needed FUNGI to place the card: "+card2.getNeededResources().get(CentralType.FUNGI));
         System.out.println("Needed ANIMAL to place the card: "+card2.getNeededResources().get(CentralType.ANIMAL));
-
     }
 
     public void testResourceDeck() {

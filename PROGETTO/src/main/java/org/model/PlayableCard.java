@@ -32,7 +32,7 @@ public class PlayableCard extends Card {
                          AngleType back_up_right, AngleType back_up_left, AngleType back_down_right, AngleType back_down_left,
                          List<AngleType> centralResources, boolean coverAngleToReceivePoints, boolean haveFeatherToReceivePoints,
                          boolean haveScrollToReceivePoints, boolean haveJarToReceivePoints,
-                         Map <CentralType, Integer> neededResources) {
+                         Map <AngleType, Integer> neededResources) {
         this.setId(id);
         this.points = points;
         this.front_down_left = front_down_left;
@@ -90,7 +90,7 @@ public class PlayableCard extends Card {
     */
     private boolean haveFeatherToReceivePoints; //read the comment above
     private boolean haveScrollToReceivePoints; //read the comment above
-    private Map<CentralType, Integer> neededResources;
+    private Map<AngleType, Integer> neededResources;
     /**
      * this structure would be used only when the above attribute is true. The
      * key is the type of the resource, the value is the number of that type needed
@@ -121,7 +121,7 @@ public class PlayableCard extends Card {
         this.points = points;
     }
 
-    public void setNeededResources(Map<CentralType, Integer> neededResources) {
+    public void setNeededResources(Map<AngleType, Integer> neededResources) {
         this.neededResources = neededResources;
     }
 
@@ -150,7 +150,7 @@ public class PlayableCard extends Card {
     }
 
     //GETTER
-    public Map<CentralType, Integer> getNeededResources() {
+    public Map<AngleType, Integer> getNeededResources() {
            return neededResources;
     }
 
