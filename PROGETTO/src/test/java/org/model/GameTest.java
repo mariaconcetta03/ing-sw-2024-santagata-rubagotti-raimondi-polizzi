@@ -5,6 +5,9 @@ import junit.framework.TestCase;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+
 public class GameTest extends TestCase {
 
     public void testAddPlayer() {
@@ -16,8 +19,29 @@ public class GameTest extends TestCase {
         List<Player> players = new ArrayList<>();
         players = game.getPlayers();
         game.setnPlayers(2);
-        game.addPlayer(p);
 
+        for (int i = 0; i< players.size(); i++) {
+            System.out.println("Player number " + i + " with nickname " + players.get(i).getNickname());
+        }
+    }
+
+
+
+    public void testAddPlayerWithException() {
+        Player p1 = new Player();
+        p1.setNickname("Topino");
+        Game game = new Game(p1, 1);
+        Player p = new Player(game);
+        p.setNickname("Papero");
+        List<Player> players = new ArrayList<>();
+        players = game.getPlayers();
+        game.setnPlayers(2);
+        game.addPlayer(p);
+        Player p3 = new Player(game);
+        p3.setNickname("Minnie");
+        assertThrows(ArrayIndexOutOfBoundsException.class, ()->{
+            game.addPlayer(p3);
+        });
         for (int i = 0; i< players.size(); i++) {
             System.out.println("Player number " + i + " with nickname " + players.get(i).getNickname());
         }
@@ -75,6 +99,29 @@ public class GameTest extends TestCase {
 
     }
 
+
+
+    public void testStartGameWithException() {
+        Player p1 = new Player();
+        Game game = new Game(p1, 1);
+
+        game.setnPlayers(2);
+
+        int numPlayers = game.getnPlayers();
+        p1.setGame(game);
+
+        p1.setNickname("Papero");
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            game.startGame();
+        });
+
+        // printing the game status
+        if (game.getState().equals(Game.GameState.STARTED)) {
+            System.out.println("The game is set to STARTED!");
+        }
+    }
+
     public void testGiveInitialCards() {
         Player p1 = new Player();
         Game game = new Game(p1,1);
@@ -122,6 +169,80 @@ public class GameTest extends TestCase {
         // printing the points
         System.out.println("The player Papero has 5 points");
         System.out.println("The player Topolino has 3 points");
+
+
+        List <Player> winners;
+        winners = game.winner();
+
+        for (int i = 0; i < winners.size(); i++) {
+            System.out.println("The winner is/are: " + winners.get(i).getNickname());
+        }
+
+    }
+
+
+
+
+    public void testWinner2() {
+        Player p1 = new Player();
+        Game game = new Game(p1, 1);
+        Player p = new Player(game);
+        game.setnPlayers(2);
+        game.addPlayer(p);
+
+        int nPlayers = game.getnPlayers();
+        p1.setGame(game);
+        p.setGame(game);
+
+        // adding points to the player
+        p1.addPoints(5);
+        p.addPoints(5);
+        p1.setNickname("Papero");
+        p.setNickname("Topolino");
+        p.addNumObjectivesReached();
+        p1.addNumObjectivesReached();
+
+
+
+        // printing the points
+        System.out.println("The player Papero has 5 points");
+        System.out.println("The player Topolino has 5 points");
+
+
+        List <Player> winners;
+        winners = game.winner();
+
+        for (int i = 0; i < winners.size(); i++) {
+            System.out.println("The winner is/are: " + winners.get(i).getNickname());
+        }
+
+    }
+
+
+
+
+    public void testWinner3() {
+        Player p1 = new Player();
+        Game game = new Game(p1, 1);
+        Player p = new Player(game);
+        game.setnPlayers(2);
+        game.addPlayer(p);
+
+        int nPlayers = game.getnPlayers();
+        p1.setGame(game);
+        p.setGame(game);
+
+        // adding points to the player
+        p1.addPoints(5);
+        p.addPoints(5);
+        p1.setNickname("Papero");
+        p.setNickname("Topolino");
+        p.addNumObjectivesReached();
+
+
+        // printing the points
+        System.out.println("The player Papero has 5 points");
+        System.out.println("The player Topolino has 5 points");
 
 
         List <Player> winners;
