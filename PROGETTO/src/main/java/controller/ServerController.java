@@ -1,5 +1,6 @@
 package controller;
 
+import Exceptions.NicknameAlreadyTakenException;
 import org.model.Game;
 import org.model.Player;
 
@@ -57,12 +58,11 @@ public class ServerController {
      * @param chooser is the player choosing the nickname
      * @param nickname is the String he wants to put as his nickname
      */
-    public boolean chooseNickname(Player chooser, String nickname){
+    public void chooseNickname(Player chooser, String nickname) throws NicknameAlreadyTakenException {
         if(isNicknameAvailable(nickname)){
             chooser.setNickname(nickname);
-            return true;
         }else{
-            return false;
+            throw new NicknameAlreadyTakenException("The selected nickname is not available");
         }
     }
 
@@ -83,7 +83,7 @@ public class ServerController {
     public boolean isNicknameAvailable(String nickname){
         Player temp=null;
         for (Player player : allPlayers) {
-            if (player.getNickname().equals(nickname)) {
+            if ((player.getNickname()!=null)&&(player.getNickname().equals(nickname))) {
                 return false;
             }
         }

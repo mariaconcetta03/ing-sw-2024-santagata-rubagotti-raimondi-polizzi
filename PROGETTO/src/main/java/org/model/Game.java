@@ -54,6 +54,10 @@ public class Game {
     public Game (List<Player> gamePlayers, int id) {
         this.id = id;
         this.players = gamePlayers;
+        this.nPlayers=gamePlayers.size();
+        for(Player player: players){
+            player.setGame(this);
+        }
         this.chats = new ArrayList<>();
         this.state = GameState.WAITING_FOR_START;
         this.currentPlayer = null;

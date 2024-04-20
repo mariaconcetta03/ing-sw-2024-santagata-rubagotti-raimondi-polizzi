@@ -1,7 +1,7 @@
 package controller;
+import Exceptions.CardNotOwnedException;
 import org.model.*;
 
-import java.io.IOException;
 import java.util.*;
 
 
@@ -70,22 +70,8 @@ public class GameController {
 
 
         if(game.getState() == Game.GameState.WAITING_FOR_START) {
-            //usedIndexes = game.startGame(); //index used for the objective cards
-            game.giveInitialCards();//we already have the players
-
-
-            for (int i = 0; i< game.getnPlayers(); i++) { //we already have the players
-                while (usedIndexes.contains(number1)) {
-                    number1 = random.nextInt(16);
-                }
-                usedIndexes.add(number1);
-
-                while (usedIndexes.contains(number2)) {
-                    number2 = random.nextInt(16);
-                }
-                usedIndexes.add(number2);
-                //game.getPlayers().get(i).obtainObjectiveCards(game.getObjectiveDeck()[number1], game.getObjectiveDeck()[number2]);
-            }
+            game.startGame();
+            game.giveInitialCards();
         } else throw new IllegalStateException();
     }
 
@@ -123,14 +109,22 @@ public class GameController {
         } //if the score become higher than 20 there would be only one another turn to be played
     }
 
-    public boolean chooseObjectiveCard(ObjectiveCard selectedCard){
-        return false;
+    /**
+     * This method allows the chooser Player to select his personal ObjectiveCard
+     * @param chooser is the player selecting the ObjectiveCard
+     * @param selectedCard is the ObjectiveCard the player selected
+     */
+    public void chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard) {
+        try {
+            chooser.setPersonalObjective(selectedCard);
+        }catch(CardNotOwnedException ignored){
+        }
     }
 
-    public void choosePawnColor(Pawn selectedColor){
+    public void choosePawnColor(Player chooser, Pawn selectedColor){
 
     }
-    public void sendMessage(List<Player> receivers, String message){
+    public void sendMessage(Player sender, List<Player> receivers, String message){
 
     }
 

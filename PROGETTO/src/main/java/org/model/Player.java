@@ -1,6 +1,8 @@
 package org.model;
 
 
+import Exceptions.CardNotOwnedException;
+
 import java.util.*;
 
 /**
@@ -249,12 +251,15 @@ public class Player {
      * Setter method
      * @param card is the personal objective chosen by the player
      */
-    public void setPersonalObjective (ObjectiveCard card) {
-        if (card.equals(this.personalObjective.get(0))) {
-            this.personalObjective.remove(1);
-        }
-        else if (card.equals(this.personalObjective.get(1))) {
-            this.personalObjective.remove(0);
+    public void setPersonalObjective (ObjectiveCard card) throws CardNotOwnedException {
+        if (this.personalObjective.contains(card)) {
+            if (card.equals(this.personalObjective.get(0))) {
+                this.personalObjective.remove(1);
+            } else if (card.equals(this.personalObjective.get(1))) {
+                this.personalObjective.remove(0);
+            }
+        }else{
+            throw new CardNotOwnedException("You can't select this card!");
         }
     }
 
