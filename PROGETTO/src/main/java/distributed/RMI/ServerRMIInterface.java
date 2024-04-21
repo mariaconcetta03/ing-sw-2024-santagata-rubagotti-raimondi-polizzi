@@ -4,6 +4,7 @@ import utils.Event;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 public interface ServerRMIInterface extends Remote {
     void startServer() throws RemoteException;

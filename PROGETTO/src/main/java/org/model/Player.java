@@ -3,13 +3,14 @@ package org.model;
 
 import Exceptions.CardNotOwnedException;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * This class represents a player in a game
  */
 
-public class Player {
+public class Player implements Serializable {
     private List<ObjectiveCard> personalObjective; // set a personal objective chosen by a player
 
 
