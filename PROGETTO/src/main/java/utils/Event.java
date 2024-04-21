@@ -9,7 +9,7 @@ public class Event implements Serializable {
         EVENT_3
     };
 
-    public Event(EventType event){
+    public Event (EventType event){
         this.event = event;
     }
 

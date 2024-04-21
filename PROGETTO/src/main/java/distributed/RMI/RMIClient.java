@@ -1,8 +1,7 @@
 package distributed.RMI;
 
 import distributed.ClientGeneralInterface;
-import utils.Event;
-
+import utils.*;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -10,7 +9,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 public class RMIClient extends UnicastRemoteObject implements ClientGeneralInterface {
-    private ServerRMIInterface SRMIinterface; //following the slides' instructions
+    private ServerRMIInterface SRMIInterface; //following the slides' instructions
 
     public static void main( String[] args )
     {
@@ -31,12 +30,12 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     protected RMIClient() throws RemoteException {
     }
     public void startConnectionWithServer() throws RemoteException, NotBoundException { //exceptions added automatically
-        Registry registry = null;
-        registry = LocateRegistry.getRegistry(SettingsClientToServer.SERVER_NAME,
+        Registry registryServer = null;
+        registryServer = LocateRegistry.getRegistry(SettingsClientToServer.SERVER_NAME,
                 SettingsClientToServer.PORT);
         // Looking up the registry for the remote object
-        this.SRMIinterface = (ServerRMIInterface) registry.lookup("ServerChat");
-        this.SRMIinterface.sendMessage("Ciao! Sono il client e mi sono connesso con te");
+        this.SRMIInterface = (ServerRMIInterface) registryServer.lookup("ServerChat");
+        this.SRMIInterface.sendMessage("Ciao! Sono il client e mi sono connesso con te");
         System.out.println ("Iniziamo la conversazione");
         this.SRMIinterface.sendEvent(new Event(Event.EventType.EVENT_1));
     }
@@ -54,7 +53,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
 
 
-    public void receveEvent (Event event) throws RemoteException {
+    public void receiveEvent (Event event) throws RemoteException {
             System.out.println("Sono il client e sto ricevendo questo evento:");
             event.printEvent();
     }

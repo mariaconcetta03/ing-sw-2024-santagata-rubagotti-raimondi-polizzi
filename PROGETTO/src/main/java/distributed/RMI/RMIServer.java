@@ -1,10 +1,10 @@
 package distributed.RMI;
 
 import distributed.ClientGeneralInterface;
-import org.model.Chat;
-import utils.Event;
+import utils.*;
 
 import java.rmi.NotBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -14,6 +14,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
     //il server è unico e al suo interno ha un attributo Game Controller che mi permette di dare il turno ai giocatori di un Game (senza unire giocatori di più Game)
 
     private ClientGeneralInterface cInterface;
+    boolean flag = false;
     protected RMIServer() throws RemoteException {
     }
     public static void main (String[] args)
@@ -46,30 +47,56 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
 
 
     public void StartConnectionWithClient () throws NotBoundException, RemoteException {
-        Registry registry = null;
-        while (registry == null) {
-            registry = LocateRegistry.getRegistry(SettingsServerToClient.SERVER_NAME,
+        Registry registryClient;
+        while (flag == false) {}
+            registryClient = LocateRegistry.getRegistry(SettingsServerToClient.SERVER_NAME,
                     SettingsServerToClient.PORT);
-        }
-        registry.lookup("ClientChat");
 
         System.out.println("Started connection with client! (now the server can send messages to the client)");
 
+        cInterface = (ClientGeneralInterface) registryClient.lookup("ClientChat");
+
+
         // Looking up the registry for the remote object
-        this.cInterface = (ClientGeneralInterface) registry.lookup("ClientChat");
-   }
+        if (cInterface == null) {
+            System.out.println("NULLO");
+        }
+        this.cInterface.receiveEvent(new Event (Event.EventType.EVENT_2));
+    }
 
 
     public void sendMessage (String msg) throws RemoteException {
         System.out.println(msg);
+        
     }
 
 
-    public void sendEvent (Event event) throws RemoteException {
+    public void sendEvent (Event Event) throws RemoteException {
         System.out.println("Sono il server, e sto stampando quello che mi hai mandato:");
-        event.printEvent();
-        System.out.println("Sono il server, e ora ti mando l'evento successivo");
-        this.cInterface.receveEvent(new Event(Event.EventType.EVENT_2));
+        Event.printEvent();
+        System.out.println("Sono il server, e ora ti mando l'Evento successivo");
+        flag = true;
+
+        Registry registryClient;
+        registryClient = LocateRegistry.getRegistry(SettingsServerToClient.SERVER_NAME,
+                SettingsServerToClient.PORT);
+
+        System.out.println("Started connection with client! (now the server can send messages to the client)");
+
+        try {
+            Remote rmt = null;
+            registryClient.rebind("ClientChat", rmt);
+            cInterface = (ClientGeneralInterface) registryClient.lookup("ClientChat");
+        } catch (NotBoundException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        // Looking up the registry for the remote object
+        if (cInterface == null) {
+            System.out.println("NULLO");
+        }
+        this.cInterface.receiveEvent(new Event(utils.Event.EventType.EVENT_2));
     }
 
     public static class SettingsServerToClient { //this is an attribute
