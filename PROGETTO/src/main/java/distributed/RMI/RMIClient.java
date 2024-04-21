@@ -24,6 +24,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
 
@@ -37,20 +38,23 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         this.SRMIInterface = (ServerRMIInterface) registryServer.lookup("ServerChat");
         this.SRMIInterface.sendMessage("Ciao! Sono il client e mi sono connesso con te");
         System.out.println ("Iniziamo la conversazione");
-        this.SRMIinterface.sendEvent(new Event(Event.EventType.EVENT_1));
     }
 
 
     public void startClient() throws RemoteException {
             Registry registry = LocateRegistry.createRegistry(SettingsServerToClient.PORT);
             try {
+                registry = LocateRegistry.getRegistry(SettingsClientToServer.SERVER_NAME,
+                        SettingsClientToServer.PORT);
+                this.SRMIInterface = (ServerRMIInterface) registry.lookup("ServerChat");
                 registry.bind("ClientChat", this);
             }
             catch (Exception e) {
                 e.printStackTrace();
             }
             System.out.println("Client ready");
-        }
+            this.SRMIInterface.sendEvent(new Event(Event.EventType.EVENT_1));
+    }
 
 
     public void receiveEvent (Event event) throws RemoteException {
