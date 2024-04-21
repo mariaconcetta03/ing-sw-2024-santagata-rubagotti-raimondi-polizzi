@@ -105,6 +105,8 @@ public class Player implements Serializable {
     public void drawCard(PlayableCard card) {
         boolean drawn = false;
 
+        PlayableCard tmp;
+
         PlayableCard resourceCard1 = game.getResourceCard1(); //market
         PlayableCard resourceCard2 = game.getResourceCard2(); //market
         PlayableCard goldCard1 = game.getGoldCard1(); //market
@@ -127,6 +129,10 @@ public class Player implements Serializable {
             //setting new card of resource in market
             game.resetResourceCard2();
 
+        } else if (card == game.getResourceDeck().checkFirstCard()){
+            card= game.getResourceDeck().getFirstCard();
+        } else if (card == game.getGoldDeck().checkFirstCard()){
+            card= game.getGoldDeck().getFirstCard();
         }
 
         // where card is null, the new card is placed
@@ -344,6 +350,9 @@ public class Player implements Serializable {
         return numObjectivesReached;
     }
 
+    public PlayableCard[] getPlayerDeck() {
+        return playerDeck;
+    }
 
     /**
      * Getter method

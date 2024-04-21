@@ -13,6 +13,8 @@ public class Event implements Serializable {
     EventType event;
 
     public enum EventType {
+        GOOD,
+        BAD,
         ADDED_TO_LOBBY,
         BASE_CARD_PLAYED,
         BELONGING_GAME_ID,

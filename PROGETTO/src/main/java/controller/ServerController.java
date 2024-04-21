@@ -8,7 +8,7 @@ import java.util.*;
 public class ServerController {
     private static int firstAvailableId = -1;
     private Map<Integer, GameController> allGameControllers;
-    private List<Player> allPlayers;
+    private static List<Player> allPlayers;
 
     public ServerController() {
         allPlayers=new ArrayList();
@@ -88,6 +88,20 @@ public class ServerController {
             }
         }
         return true;
+    }
+
+    /**
+     * This method returns the player given his nickname
+     * @param Nickname is the nickname we are using to search for a player
+     * @return the player if found, null otherwise
+     */
+    public static Player getPlayerByNickname(String Nickname){
+        for(Player player : allPlayers){
+            if(player.getNickname().equals(Nickname)){
+                return player;
+            }
+        }
+        return null;
     }
 
     public Map<Integer, GameController> getAllGameControllers() {

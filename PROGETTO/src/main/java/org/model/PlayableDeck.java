@@ -74,6 +74,13 @@ public class PlayableDeck extends Deck{
         return cards.pop();
     }
 
+    /**
+     * This method checks which is the first card in the deck
+     * @return the first card in the deck
+     */
+    public PlayableCard checkFirstCard(){
+        return cards.peek();
+    }
 
     /**
      * This method creates a goldDeck with all his 40 cards

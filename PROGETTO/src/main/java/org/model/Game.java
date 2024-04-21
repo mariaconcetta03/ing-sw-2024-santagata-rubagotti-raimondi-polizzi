@@ -41,7 +41,7 @@ public class Game {
     private ObjectiveCard objectiveCard2;
 
     private List<Chat> chats; // contains all the chats started during the game
-
+    private List<Pawn> alreadySelectedColors;
 
 
 
@@ -71,6 +71,7 @@ public class Game {
         this.goldCard2 = null;
         this.objectiveCard1 = null;
         this.objectiveCard2 = null;
+        this.alreadySelectedColors= new ArrayList<>();
     }
 
     /**
@@ -150,15 +151,16 @@ public class Game {
 
         // letting the players decide the color of their pawn
         // the order of choosing is the order in which the player connected to the server
-        List <Pawn> colors = new ArrayList<>();
+        /**List <Pawn> colors = new ArrayList<>();
         colors.add(Pawn.RED);
         colors.add(Pawn.BLUE);
         colors.add(Pawn.YELLOW);
         colors.add(Pawn.GREEN);
 
         for (int i=0; i<this.nPlayers; i++) {
-                this.players.get(i).setColor(colors.get(i));
+        this.players.get(i).setColor(colors.get(i));
         }
+         */
 
         // giving 2 cards to the market as common objective
         this.objectiveCard1 = objectiveDeck.getFirstCard();
@@ -277,7 +279,7 @@ public class Game {
      * @param p1 first player in the chat
      * @param p2 second player in the chat
      */
-    public void startChat (Player p1, Player p2) {
+    public Chat startChat (Player p1, Player p2) {
         int index = this.chats.size();
         // choosing the id of my new chat: starting from 0, then 1,2,3,...
         List<Player> playersInChat = new ArrayList<>();
@@ -287,6 +289,7 @@ public class Game {
 
         Chat newChat = new Chat(playersInChat, index);
         chats.add(newChat);
+        return newChat;
     }
 
 
@@ -297,13 +300,14 @@ public class Game {
     /**
      * This method adds a new chat to the List chat in this game. The new chat is composed by all the players in this game
      */
-    public void startGeneralChat() {
+    public Chat startGeneralChat() {
         int index = this.chats.size();
         // choosing the id of my new chat: starting from 0, then 1,2,3,...
 
         // the General Chat includes all the players in the game
         Chat newChat = new Chat(this.players, index);
         chats.add(newChat);
+        return newChat;
     }
 
 
@@ -436,7 +440,7 @@ public class Game {
      * Getter method
      * @return resourceDeck of the game
      */
-    public Deck getResourceDeck() {
+    public PlayableDeck getResourceDeck() {
         return this.resourceDeck;
     }
 
@@ -446,7 +450,7 @@ public class Game {
      * Getter method
      * @return goldDeck of the game
      */
-    public Deck getGoldDeck() {
+    public PlayableDeck getGoldDeck() {
         return this.goldDeck;
     }
 
@@ -466,7 +470,7 @@ public class Game {
      * Getter method
      * @return baseDeck of the game
      */
-    public Deck getBaseDeck() {
+    public PlayableDeck getBaseDeck() {
         return baseDeck;
     }
 
@@ -549,6 +553,10 @@ public class Game {
      */
     public void setCurrentPlayer (Player player) {
         this.currentPlayer = player;
+    }
+
+    public List<Pawn> getAlreadySelectedColors() {
+        return alreadySelectedColors;
     }
 
 }

@@ -1,7 +1,9 @@
 package controller;
 import Exceptions.CardNotOwnedException;
 import org.model.*;
+import utils.Event;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 
@@ -101,12 +103,17 @@ public class GameController {
      * This method allows the currentPlayer to draw a card from the decks or from the unveiled ones
      * @param selectedCard is the Card the Players wants to draw
      */
-    public void drawCard(PlayableCard selectedCard){ //we can draw a card from one of the decks or from the uncovered cards
-        Player currentPlayer= game.getPlayers().get(0);
-        currentPlayer.drawCard(selectedCard);
-        if((game.getState()!=Game.GameState.ENDING)&&((game.getResourceDeck().isFinished())&&(game.getGoldDeck().isFinished()))){
-            game.setState(Game.GameState.ENDING);
-        } //if the score become higher than 20 there would be only one another turn to be played
+    public void drawCard(String nickname, PlayableCard selectedCard) { //we can draw a card from one of the decks or from the uncovered cards
+        Player currentPlayer = game.getPlayers().get(0);
+        if (!ServerController.getPlayerByNickname(nickname).equals(currentPlayer)) {
+            System.out.println("NON E IL TUO TURNO NON PUOI PESCARE");
+            //return Event.NOT_IN_TURN
+        } else {
+            currentPlayer.drawCard(selectedCard);
+            if ((game.getState() != Game.GameState.ENDING) && ((game.getResourceDeck().isFinished()) && (game.getGoldDeck().isFinished()))) {
+                game.setState(Game.GameState.ENDING);
+            } //if the score become higher than 20 there would be only one another turn to be played
+        }
     }
 
     /**
@@ -118,14 +125,49 @@ public class GameController {
         try {
             chooser.setPersonalObjective(selectedCard);
         }catch(CardNotOwnedException ignored){
+            //return Event.BAD
         }
     }
 
-    public void choosePawnColor(Player chooser, Pawn selectedColor){
-
+    public void choosePawnColor(Player chooser, Pawn selectedColor) {
+        synchronized (game.getAlreadySelectedColors()) {
+            if (!game.getAlreadySelectedColors().contains(selectedColor)) {
+                chooser.setColor(selectedColor);
+                game.getAlreadySelectedColors().add(selectedColor);
+                //return Event.GOOD;
+            } else {
+                //return Event.BAD
+            }
+        }
     }
-    public void sendMessage(Player sender, List<Player> receivers, String message){
 
+    public void sendMessage(Player sender, List<Player> receivers, String message){
+       receivers.add(sender);
+       Chat tmp;
+       if(!game.getChats().isEmpty()) {
+           for (Chat chat : game.getChats()) {
+               tmp=chat;
+               for(Player player:receivers){
+                   if(!chat.getUsers().contains(player)){
+                       tmp=null;
+                       break;
+                   }
+               }
+               if((tmp!=null)&&(tmp==chat)){
+                   receivers.remove(sender);
+                   tmp.sendMessage(new Message(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
+                   return;
+               }
+           }
+       }
+           receivers.remove(sender);
+           if (receivers.size() == game.getnPlayers()) {
+               tmp=game.startGeneralChat();
+               tmp.sendMessage(new Message(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
+           }else {
+               tmp = game.startChat(sender, receivers.get(0));
+               tmp.sendMessage(new Message(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
+           }
     }
 
 
