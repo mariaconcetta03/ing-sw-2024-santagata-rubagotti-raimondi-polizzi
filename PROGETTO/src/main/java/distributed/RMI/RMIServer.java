@@ -14,6 +14,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
+
+
 
 public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface {
     // il server è unico e al suo interno ha un attributo Game Controller che mi
@@ -39,12 +42,6 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
     public static void main (String[] args) throws RemoteException {
         try {
             new RMIServer().startServer();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            new RMIServer().StartConnectionWithClient();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -444,14 +441,16 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
         }
         this.cInterface.receiveEvent(new Event(utils.Event.EventType.EVENT_2));
     }
+*/
 
-    public static class SettingsServerToClient { //this is an attribute
-        static int PORT = 50000; // free ports: from 49152 to 65535
-        static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
 
-    }
 
-    public static class SettingsClientToServer { //this is an attribute
+
+    /**
+     * Settings class
+     * It is about port and ip address of the server with which the client communicates
+     */
+    public static class Settings { //this is an attribute
         static int PORT = 50001; // free ports: from 49152 to 65535
         static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
     }

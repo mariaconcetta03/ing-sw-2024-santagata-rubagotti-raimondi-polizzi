@@ -38,12 +38,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             e.printStackTrace();
         }
 
-        try {
-            new RMIClient().startClient();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
 
