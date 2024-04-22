@@ -52,7 +52,7 @@ public class ServerController {
             GameController temp = allGameControllers.get(gameId);
             try {
                 temp.addPlayer(player);
-                return Event.OK
+                return Event.OK;
             } catch (ArrayIndexOutOfBoundsException e) {
                 System.err.println("Choose another lobby or create a new one!");
                 return Event.FULL_LOBBY;

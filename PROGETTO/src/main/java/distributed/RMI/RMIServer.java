@@ -98,7 +98,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @param gameId is the lobby the player wants to join
      * @return the event "OK" when the lobby has been created on the server
      * if the lobby is full it returns the event "FULL_LOBBY". If the game doesn't
-     * esists, it returns "GAME_NOT_EXISTS". If that game it's already started, it
+     * exist, it returns "GAME_NOT_EXISTS". If that game it's already started, it
      * returns "GAME_ALREADY_STARTED".
      * @throws RemoteException
      */
@@ -108,7 +108,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
 
 
 
-
+//controllare perchè problema assert dopo che usava i boolean
     /**
      * This method calls the function into the ServerController
      * @param chooser is the player choosing the nickname
@@ -159,18 +159,19 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
     }
 
 
-
+//MANCA QUALCOSA PER BASECARD???????
 
     /**
      * This method calls the function into the gameController
      * @param selectedCard the Card the Player wants to play
      * @param position the position where the Player wants to play the Card
      * @param orientation the side on which the Player wants to play the Card
-     * @return the event "OK" if the card has been successfully placed, otherwise it
+     * @return the event NOT_YOUR_TURN if you can't play because it's not your turn,
+     * returns the event "OK" if the card has been successfully placed, otherwise it
      * returns the event "UNABLE_TO_PLAY_CARD"
      */
-    public Event playCard(PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException {
-      return gameController.playCard(selectedCard, position, orientation);
+    public Event playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException {
+      return gameController.playCard(nickname, selectedCard, position, orientation);
     }
 
 
@@ -202,7 +203,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
     }
 
 
-
+//manca un metodo per choose pawncolor
 
     /**
      * This method calls the function into the gameController
@@ -211,10 +212,10 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @param message is the string sent by the sender to the receivers
      * @return the event "OK" when the message has been sent successfully
      */
-    public Event sendMessage(Player sender, List<Player> receivers, String message) throws RemoteException {
-       return gameController.sendMessage(sender, receivers, message);
-    }
-
+  //  public Event sendMessage(Player sender, List<Player> receivers, String message) throws RemoteException {
+  //     return gameController.sendMessage(sender, receivers, message);
+  // }
+//
 
 
 
@@ -252,7 +253,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
 
 
 
-
+//eliminerei il set del server controller perchè lo passo nel costruttore
     /**
      * Setter method
      * @param serverController is the general Server Controller
@@ -270,6 +271,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      */
     public void setGameController(GameController gameController) {
         // PRENDERE GAME CONTROLLER DAL SERVER CONTROLLER
+        this.gameController = gameController;
     }
 
 }

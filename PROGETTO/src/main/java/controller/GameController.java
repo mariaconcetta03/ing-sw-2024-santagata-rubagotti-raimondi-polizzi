@@ -69,7 +69,7 @@ public class GameController {
      * player, and he will need to choose one of these. Then the market is completed and each player receives
      * 3 cards (2 resource cards and 1 gold card)
      */
-    public void startGame() throws IllegalStateException {
+    public Event startGame() /*throws IllegalStateException */ {
         /**List<Integer> usedIndexes = new ArrayList<>();
         // crea oggetto Random
         Random random = new Random();
@@ -79,7 +79,11 @@ public class GameController {
          */
         if(game.getState() == Game.GameState.WAITING_FOR_START) {
             game.startGame();
-        } else throw new IllegalStateException();
+            return Event.OK;
+        } else {
+            return Event.INVALID_GAME_STATUS;
+            ///throw new IllegalStateException();
+        }
     }
 
     /**
@@ -113,20 +117,20 @@ public class GameController {
      * @return true if the card was correctly played, false otherwise
      * this method should include the case in which the card placed is the base card
      */
-    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) {
+    public Event playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) {
         Player currentPlayer = game.getPlayers().get(0);
         if (!ServerController.getPlayerByNickname(nickname).equals(currentPlayer)) {
             System.out.println("NON E IL TUO TURNO, NON PUOI GIOCARE LA CARTA");
-            //return Event.NOT_IN_TURN
+            return Event.NOT_YOUR_TURN;
         }else{
             try {
                 currentPlayer.playCard(selectedCard, position, orientation);
                 if ((game.getState() != Game.GameState.ENDING) && (currentPlayer.getPoints() > 20)) {
                     game.setState(Game.GameState.ENDING);
                 }
-                //return Event.GOOD; //happy ending
+                return Event.OK; //happy ending
             } catch (IllegalArgumentException e) {
-                //return Event.BAD; error ending. This has to be forwarded to the view.
+                return Event.UNABLE_TO_PLAY_CARD; //error ending. This has to be forwarded to the view.
             }
         }
     }
@@ -135,16 +139,17 @@ public class GameController {
      * This method allows the currentPlayer to draw a card from the decks or from the unveiled ones
      * @param selectedCard is the Card the Players wants to draw
      */
-    public void drawCard(String nickname, PlayableCard selectedCard) { //we can draw a card from one of the decks or from the uncovered cards
+    public Event drawCard(String nickname, PlayableCard selectedCard) { //we can draw a card from one of the decks or from the uncovered cards
         Player currentPlayer = game.getPlayers().get(0);
         if (!ServerController.getPlayerByNickname(nickname).equals(currentPlayer)) {
             System.out.println("NON E IL TUO TURNO, NON PUOI PESCARE");
-            //return Event.NOT_IN_TURN
+            return Event.NOT_YOUR_TURN;
         } else {
             currentPlayer.drawCard(selectedCard);
             if ((game.getState() != Game.GameState.ENDING) && ((game.getResourceDeck().isFinished()) && (game.getGoldDeck().isFinished()))) {
                 game.setState(Game.GameState.ENDING);
             } //if the score become higher than 20 there would be only one another turn to be played
+            return Event.OK;
         }
     }
 
@@ -153,11 +158,12 @@ public class GameController {
      * @param chooser is the player selecting the ObjectiveCard
      * @param selectedCard is the ObjectiveCard the player selected
      */
-    public void chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard) {
+    public Event chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard) {
         try {
             chooser.setPersonalObjective(selectedCard);
+            return Event.OK;
         }catch(CardNotOwnedException ignored){
-            //return Event.BAD
+            return Event.OBJECTIVE_CARD_NOT_OWNED;
         }
     }
 
@@ -173,6 +179,13 @@ public class GameController {
         }
     }
 
+    /**
+     * This method allows the player to send a text message in the chat
+     * @param sender
+     * @param receivers
+     * @param message
+     * @return
+     */
     public void sendMessage(Player sender, List<Player> receivers, String message){
        receivers.add(sender);
        Chat tmp;
@@ -188,7 +201,6 @@ public class GameController {
                if((tmp!=null)&&(tmp==chat)){
                    receivers.remove(sender);
                    tmp.sendMessage(new Message(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
-                   return;
                }
            }
        }
@@ -208,7 +220,7 @@ public class GameController {
      * If the game state is ENDING, then the last rounds are done. After that, endGame is invoked.
      * we have decided that is the controller the one that manages the changing of turn
      */
-    public void nextPhase(){
+    public Event nextPhase(){
 
         if (game.getState() == Game.GameState.ENDING && lastRounds == 10) {
             int firstPlayer = 0;
@@ -219,7 +231,6 @@ public class GameController {
                     firstPlayer = i;
                 }
             }
-
            if (firstPlayer > 0) {
                 lastRounds = lastRounds + firstPlayer;
             } else if (firstPlayer == 0) {
