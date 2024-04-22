@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 
@@ -13,7 +14,7 @@ import java.util.*;
  */
 
 
-public class PlayableDeck extends Deck{
+public class PlayableDeck extends Deck implements Serializable {
     private Stack<PlayableCard> cards; // contains all the cards in this deck
 
 
