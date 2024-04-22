@@ -13,7 +13,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
-
+import java.util.Map;
 
 
 public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface {
@@ -108,7 +108,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
 
 
 
-//controllare perchè problema assert dopo che usava i boolean
+
     /**
      * This method calls the function into the ServerController
      * @param chooser is the player choosing the nickname
@@ -159,7 +159,22 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
     }
 
 
-//MANCA QUALCOSA PER BASECARD???????
+
+
+    /**
+     * This method calls the function into the gameController
+     * @param nickname is the nickname of the Player that wants to play a card
+     * @param baseCard is the base card that is played
+     * @param orientation the side on which the Player wants to play the Card
+     * @return the event "OK" after the base card has been placed
+     */
+    public Event playBaseCard(String nickname, PlayableCard baseCard, boolean orientation){
+        return gameController.playBaseCard(nickname, baseCard, orientation);
+    }
+
+
+
+
 
     /**
      * This method calls the function into the gameController
@@ -203,7 +218,22 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
     }
 
 
-//manca un metodo per choose pawncolor
+
+
+    /**
+     * This method allows a player to choose the color of his pawn
+     * @param chooser is the player who needs to choose the color
+     * @param selectedColor is the color chosen by the player
+     * @return the event "NOT_AVAILABLE_PAWN" if the color has been chosen by another player
+     * returns the event "OK" if the color is chosen correctly
+     * @throws RemoteException
+     */
+    public Event choosePawnColor(Player chooser, Pawn selectedColor) throws RemoteException {
+        return gameController.choosePawnColor(chooser, selectedColor);
+    }
+
+
+
 
     /**
      * This method calls the function into the gameController
@@ -212,10 +242,10 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @param message is the string sent by the sender to the receivers
      * @return the event "OK" when the message has been sent successfully
      */
-  //  public Event sendMessage(Player sender, List<Player> receivers, String message) throws RemoteException {
-  //     return gameController.sendMessage(sender, receivers, message);
-  // }
-//
+   public Event sendMessage(Player sender, List<Player> receivers, String message) throws RemoteException {
+       return gameController.sendMessage(sender, receivers, message);
+   }
+
 
 
 
@@ -232,7 +262,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
 
     /**
      * This method calls the function into the gameController
-     * @return the event "OK" when all the procedure about the enging of the game has
+     * @return the event "OK" when all the procedure about the ending of the game has
      * been successfully completed
      */
     public Event endGame() throws RemoteException {
@@ -253,25 +283,14 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
 
 
 
-//eliminerei il set del server controller perchè lo passo nel costruttore
-    /**
-     * Setter method
-     * @param serverController is the general Server Controller
-     */
-    public void setServerController(ServerController serverController){
-        this.serverController = serverController;
-    }
-
-
-
 
     /**
      * Setter method
-     * @param gameController is the specific game controller
+     * @param caller is player with a specific associated game, who calls the methods
      */
-    public void setGameController(GameController gameController) {
-        // PRENDERE GAME CONTROLLER DAL SERVER CONTROLLER
-        this.gameController = gameController;
+    public void setGameController(Player caller) {
+        this.gameController =
+                this.serverController.getAllGameControllers().get(caller.getGame().getId());
     }
 
 }

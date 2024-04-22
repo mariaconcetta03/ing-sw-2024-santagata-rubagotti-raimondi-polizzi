@@ -15,6 +15,7 @@ public enum Event implements Serializable {
     GAME_NOT_EXISTS,
     GAME_ALREADY_STARTED,
     CARD_NOT_PLAYED,
+    NOT_AVAILABLE_PAWN,
     NOT_RECEIVER,
     OBJECTIVE_CARD_NOT_OWNED,
     FULL_LOBBY,

@@ -88,12 +88,12 @@ public class GameController {
 
     /**
      * This method let the Player place the baseCard (in an already decided position) and, if all the players
-     * have placed their baseCard, it let the game finish the set-up fase giving the last necessary cards
+     * have placed their baseCard, it let the game finish the set-up phase giving the last necessary cards
      * @param nickname
      * @param baseCard
      * @param orientation
      */
-    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation){
+    public Event playBaseCard(String nickname, PlayableCard baseCard, boolean orientation){
         Player player= ServerController.getPlayerByNickname(nickname);
         player.playBaseCard(orientation, baseCard);
         PlayableCard[][] tmp;
@@ -102,10 +102,11 @@ public class GameController {
             tmp=p1.getBoard().getTable();
             //if the players haven't all played their baseCard
             if(tmp[p1.getBoard().getBoardDimensions()/2][p1.getBoard().getBoardDimensions()/2]==null){
-                return;
+                return Event.OK;
             }
         }
         game.giveInitialCards();
+        return Event.OK;
     }
 
     /**
@@ -167,14 +168,14 @@ public class GameController {
         }
     }
 
-    public void choosePawnColor(Player chooser, Pawn selectedColor) {
+    public Event choosePawnColor(Player chooser, Pawn selectedColor) {
         synchronized (game.getAlreadySelectedColors()) {
             if (!game.getAlreadySelectedColors().contains(selectedColor)) {
                 chooser.setColor(selectedColor);
                 game.getAlreadySelectedColors().add(selectedColor);
-                //return Event.GOOD;
+                return Event.OK;
             } else {
-                //return Event.BAD
+                return Event.NOT_AVAILABLE_PAWN;
             }
         }
     }
@@ -184,9 +185,9 @@ public class GameController {
      * @param sender
      * @param receivers
      * @param message
-     * @return
+     * @return Event "OK"
      */
-    public void sendMessage(Player sender, List<Player> receivers, String message){
+    public Event sendMessage(Player sender, List<Player> receivers, String message){
        receivers.add(sender);
        Chat tmp;
        if(!game.getChats().isEmpty()) {
@@ -212,6 +213,7 @@ public class GameController {
                tmp = game.startChat(sender, receivers.get(0));
                tmp.sendMessage(new Message(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
            }
+           return Event.OK;
     }
 
 
@@ -246,6 +248,7 @@ public class GameController {
         } else if (game.getState() == Game.GameState.STARTED) {
             game.nextRound(); //the order of the players in the list will be changed
         }
+        return Event.OK;
     }
 
 
@@ -254,7 +257,7 @@ public class GameController {
      * and 1 personalObj) and adds the points to the correct player.
      * Finally, it checks the winner (or winners) of the game, and puts them in a list called "winners"
      */
-    public void endGame(){
+    public Event endGame(){
         // setting the game state to ENDED
         game.setState(Game.GameState.ENDED);
 
@@ -271,6 +274,7 @@ public class GameController {
 
         // checking the winner(s)
         winners = game.winner();
+        return Event.OK;
     }
 
     public Game getGame() {

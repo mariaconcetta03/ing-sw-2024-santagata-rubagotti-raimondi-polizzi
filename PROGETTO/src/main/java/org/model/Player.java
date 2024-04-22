@@ -354,6 +354,18 @@ public class Player implements Serializable {
         return playerDeck;
     }
 
+
+    /**
+     * Getter method
+     * @return game to which the player is associated
+     */
+    public Game getGame () {
+        return this.game;
+    }
+
+
+
+
     /**
      * Getter method
      * @param index of the card, it must be between 1 and 3

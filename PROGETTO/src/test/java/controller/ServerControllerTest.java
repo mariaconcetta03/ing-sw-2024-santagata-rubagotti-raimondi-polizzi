@@ -23,9 +23,7 @@ public class ServerControllerTest extends TestCase {
         Player p1=new Player();
         ServerController s1= new ServerController();
         s1.getAllPlayers().add(p1);
-        try {
-            s1.chooseNickname(p1, "Pluto");
-        }catch(NicknameAlreadyTakenException ignored){}
+        s1.chooseNickname(p1, "Pluto");
         assertEquals("Pluto", p1.getNickname());
         Player p2=new Player();
         p2.setNickname("Pippo");
