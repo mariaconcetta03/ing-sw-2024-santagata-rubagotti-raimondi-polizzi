@@ -71,7 +71,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @param player is the player who wants to join the lobby
      * @param gameId is the lobby the player wants to join
      * @return the event "OK" when the lobby has been created on the server
-     * if the lobby is full it returns the event "FULL_LOBBY"
+     * if the lobby is full it returns the event "FULL_LOBBY". If the game doesn't
+     * esists, it returns "GAME_NOT_EXISTS". If that game it's already started, it
+     * returns "GAME_ALREADY_STARTED".
      * @throws RemoteException
      * @throws NotBoundException
      */
@@ -97,7 +99,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @return the event "OK" if the nickname doesn't exist yet and so it is set,
      * if the nickname is already used by another player, it returns the event "NICKNAME_ALREADY_USED"
      */
-    public Event chooseNickname (Player chooser, String nickname) throws RemoteException {
+    public Event chooseNickname (Player chooser, String nickname) throws RemoteException, NotBoundException {
         Registry registryServer = null;
         Event event;
         registryServer = LocateRegistry.getRegistry(Settings.SERVER_NAME,
@@ -117,7 +119,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @param gamePlayers is the List of players that will be in the Game
      * @return the event "OK" when the game has been created
      */
-    public Event createGame (List<Player> gamePlayers) throws RemoteException {
+    public Event createGame (List<Player> gamePlayers) throws RemoteException, NotBoundException {
         Registry registryServer = null;
         Event event;
         registryServer = LocateRegistry.getRegistry(Settings.SERVER_NAME,
@@ -136,7 +138,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This method adds the player to a game
      * @param player is the player who wants to be added
      * @return the event "OK" when the player has been successfully added to the game,
-     * instead it returns the event "FULL_LOBBY"
+     * instead it returns the event "FULL_LOBBY". If the game is already started, it returns
+     * "GAME_ALREADY_STARTED"
      */
     public Event addPlayerToGame (Player player) throws RemoteException {
         Registry registryServer = null;

@@ -3,6 +3,7 @@ package controller;
 import Exceptions.NicknameAlreadyTakenException;
 import org.model.Game;
 import org.model.Player;
+import utils.Event;
 
 import java.util.*;
 public class ServerController {
@@ -20,7 +21,7 @@ public class ServerController {
      * @param creator is the player who wants to create a new lobby
      * @param numOfPlayers is the number of player the creator decided can play in the lobby
      */
-    public void startLobby(Player creator, int numOfPlayers){
+    public Event startLobby(Player creator, int numOfPlayers){
         //Creating the specific GameController
         GameController gameController= new GameController();
         //inserting the new gameController in the Map
@@ -31,6 +32,7 @@ public class ServerController {
         //adding the first player
         gameController.addPlayer(creator);
         //we will have to check in the VIEW if the numOfPlayers is between 2 and 4
+        return Event.OK;
     }
 
     /**
@@ -39,21 +41,21 @@ public class ServerController {
      * @param gameId is the lobby the player wants to join
      * @return whether it was possible or not to add the player
      */
-    public void addPlayerToLobby(Player player, int gameId) {
+    public Event addPlayerToLobby(Player player, int gameId) {
         if (!allGameControllers.containsKey(gameId)) { //if the game doesn't exist
             System.err.println("The game doesn't exist");
-            // return Event.BAD
+            return Event.GAME_NOT_EXISTS;
         } else if((allGameControllers.get(gameId).getGame()!=null)&&(!allGameControllers.get(gameId).getGame().getState().equals(Game.GameState.WAITING_FOR_START))) {//if the game is already started
             System.err.println("Game already started!");
-            //return Event.BAD
+            return Event.GAME_ALREADY_STARTED;
         }else{
             GameController temp = allGameControllers.get(gameId);
             try {
                 temp.addPlayer(player);
-                //return Event.OK
+                return Event.OK
             } catch (ArrayIndexOutOfBoundsException e) {
                 System.err.println("Choose another lobby or create a new one!");
-                //return Event.BAD
+                return Event.FULL_LOBBY;
             }
         }
     }
@@ -64,11 +66,13 @@ public class ServerController {
      * @param chooser is the player choosing the nickname
      * @param nickname is the String he wants to put as his nickname
      */
-    public void chooseNickname(Player chooser, String nickname) throws NicknameAlreadyTakenException {
+    public Event chooseNickname(Player chooser, String nickname) /*throws NicknameAlreadyTakenException*/ {
         if(isNicknameAvailable(nickname)){
             chooser.setNickname(nickname);
+            return Event.OK;
         }else{
-            throw new NicknameAlreadyTakenException("The selected nickname is not available");
+            return Event.NICKNAME_ALREADY_TAKEN;
+            /*throw new NicknameAlreadyTakenException("The selected nickname is not available");*/
         }
     }
 

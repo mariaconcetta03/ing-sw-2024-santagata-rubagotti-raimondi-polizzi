@@ -49,7 +49,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      */
     public static void main (String[] args) throws RemoteException {
         try {
-            new RMIServer().startServer();
+            // new RMIServer().startServer();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -97,7 +97,9 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @param player is the player who wants to join the lobby
      * @param gameId is the lobby the player wants to join
      * @return the event "OK" when the lobby has been created on the server
-     * if the lobby is full it returns the event "FULL_LOBBY"
+     * if the lobby is full it returns the event "FULL_LOBBY". If the game doesn't
+     * esists, it returns "GAME_NOT_EXISTS". If that game it's already started, it
+     * returns "GAME_ALREADY_STARTED".
      * @throws RemoteException
      */
     public Event addPlayerToLobby (Player player, int gameId) throws RemoteException {
@@ -137,7 +139,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * This method calls the function into the gameController
      * @param player is the player who wants to be added
      * @return the event "OK" when the player has been successfully added to the game,
-     * instead it returns the event "FULL_LOBBY"
+     * instead it returns the event "FULL_LOBBY". If the game is already started, it returns
+     * "GAME_ALREADY_STARTED"
      */
     public Event addPlayerToGame (Player player) throws RemoteException {
         return gameController.addPlayer(player);

@@ -28,15 +28,17 @@ public class GameController {
      * This method creates the Game that will be managed by GameController
      * @param gamePlayers is the List of players that will be in the Game
      */
-    public void createGame (List<Player> gamePlayers){
+    public Event createGame (List<Player> gamePlayers){
         game = new Game(gamePlayers, id);
+        return Event.OK;
     }
 
-    public void addPlayer(Player player) throws ArrayIndexOutOfBoundsException {
+    public Event addPlayer(Player player) /*throws ArrayIndexOutOfBoundsException*/ {
         if (gamePlayers.size() < numberOfPlayers) {
             gamePlayers.add(player);
         } else {
-            throw new ArrayIndexOutOfBoundsException("This lobby is already full!");
+            return Event.FULL_LOBBY;
+            //throw new ArrayIndexOutOfBoundsException("This lobby is already full!");
         }
         if (gamePlayers.size() == numberOfPlayers) {
             createGame(gamePlayers);
@@ -44,8 +46,10 @@ public class GameController {
                 startGame();
             } catch (IllegalStateException e) {
                 System.out.println("The game is already started!");
+                return Event.GAME_ALREADY_STARTED;
             }
         }
+        return Event.OK;
     }
 
     /**

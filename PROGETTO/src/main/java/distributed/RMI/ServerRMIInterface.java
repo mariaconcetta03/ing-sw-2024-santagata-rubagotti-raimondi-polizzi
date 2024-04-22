@@ -18,11 +18,10 @@ public interface ServerRMIInterface extends Remote {
     Event createLobby (Player creator, int numOfPlayers) throws RemoteException;
     Event addPlayerToLobby (Player p, int gameId);
     Event chooseNickname (Player chooser, String nickname);
-    Event createGame (List<Player> gamePlayers);
-    Event addPlayerToGame (Player player);
+    Event createGame (List<Player> gamePlayers) throws RemoteException;
+    Event addPlayerToGame (Player player) throws RemoteException;
     Event startGame();
     Event playCard(PlayableCard selectedCard, Coordinates position, boolean orientation);
-    Event playBaseCard(PlayableCard selectedCard, Coordinates position, boolean orientation); //necessary adding a method to the controller
     Event drawCard(String nickname, PlayableCard selectedCard);
     Event chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard);
     Event sendMessage(Player sender, List<Player> receivers, String message);

@@ -12,6 +12,8 @@ import java.util.*;
 public enum Event implements Serializable {
     OK,
     CARD_NOT_DRAWN,
+    GAME_NOT_EXISTS,
+    GAME_ALREADY_STARTED,
     CARD_NOT_PLAYED,
     OBJECTIVE_CARD_NOT_OWNED,
     FULL_LOBBY,
