@@ -7,7 +7,7 @@ import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
-
+   
 public interface ClientGeneralInterface extends Remote {
     Event addPlayerToLobby (Player p, int gameId) throws RemoteException, NotBoundException;
     Event chooseNickname (Player chooser, String nickname) throws RemoteException, NotBoundException;
