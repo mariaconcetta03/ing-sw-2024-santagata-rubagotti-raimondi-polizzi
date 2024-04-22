@@ -13,6 +13,7 @@ public class GameController {
     private List<Player> winners;
     private List<Player> gamePlayers;
     private int numberOfPlayers;
+    private int id;
 
     public GameController(){
         game=null;
@@ -20,6 +21,7 @@ public class GameController {
         winners=new ArrayList<>();
         gamePlayers= new ArrayList<>();
         numberOfPlayers=0;
+        id=0;
     }
 
     /**
@@ -27,7 +29,7 @@ public class GameController {
      * @param gamePlayers is the List of players that will be in the Game
      */
     public void createGame (List<Player> gamePlayers){
-        game = new Game(gamePlayers, ServerController.getFirstAvailableId());
+        game = new Game(gamePlayers, id);
     }
 
     public void addPlayer(Player player) throws ArrayIndexOutOfBoundsException {
@@ -46,6 +48,7 @@ public class GameController {
         }
     }
 
+    /**
     public boolean waitingForPlayers(Player player) { //when we call this method we are adding another player
         game.addPlayer(player);
         if (game.getPlayers().size() < game.getnPlayers()) {
@@ -55,7 +58,7 @@ public class GameController {
             return false;
         }
     }
-
+     */
 
     /**
      * This method starts the game. The game state is set to STARTED. 2 objective cards are given to each
@@ -63,39 +66,64 @@ public class GameController {
      * 3 cards (2 resource cards and 1 gold card)
      */
     public void startGame() throws IllegalStateException {
-        List<Integer> usedIndexes = new ArrayList<>();
+        /**List<Integer> usedIndexes = new ArrayList<>();
         // crea oggetto Random
         Random random = new Random();
         // genera numero casuale tra 0 e 15
         int number1 = random.nextInt(16);
         int number2 = random.nextInt(16);
-
-
+         */
         if(game.getState() == Game.GameState.WAITING_FOR_START) {
             game.startGame();
-            game.giveInitialCards();
         } else throw new IllegalStateException();
     }
 
-//Bisogna gestire il caso in cui la carta passata da giocare sia la Base card, basta fare if (con gli indici) e chiamare playBaseCard
+    /**
+     * This method let the Player place the baseCard (in an already decided position) and, if all the players
+     * have placed their baseCard, it let the game finish the set-up fase giving the last necessary cards
+     * @param nickname
+     * @param baseCard
+     * @param orientation
+     */
+    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation){
+        Player player= ServerController.getPlayerByNickname(nickname);
+        player.playBaseCard(orientation, baseCard);
+        PlayableCard[][] tmp;
+        //for all players in the game
+        for(Player p1: game.getPlayers()){
+            tmp=p1.getBoard().getTable();
+            //if the players haven't all played their baseCard
+            if(tmp[p1.getBoard().getBoardDimensions()/2][p1.getBoard().getBoardDimensions()/2]==null){
+                return;
+            }
+        }
+        game.giveInitialCards();
+    }
+
     /**
      * This method "plays" the card selected by the Player in his own Board
+     * @param nickname is the nickname of the Player that wants to play a card
      * @param selectedCard the Card the Player wants to play
      * @param position the position where the Player wants to play the Card
      * @param orientation the side on which the Player wants to play the Card
      * @return true if the card was correctly played, false otherwise
      * this method should include the case in which the card placed is the base card
      */
-    public boolean playCard(PlayableCard selectedCard, Coordinates position, boolean orientation) {
-        Player p1 = game.getPlayers().get(0); //there is a list of players that change its order every time we shift turn
-        try {
-            p1.playCard(selectedCard, position, orientation);
-            if((game.getState()!=Game.GameState.ENDING)&&(p1.getPoints()>20)){
-                game.setState(Game.GameState.ENDING);
+    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) {
+        Player currentPlayer = game.getPlayers().get(0);
+        if (!ServerController.getPlayerByNickname(nickname).equals(currentPlayer)) {
+            System.out.println("NON E IL TUO TURNO, NON PUOI GIOCARE LA CARTA");
+            //return Event.NOT_IN_TURN
+        }else{
+            try {
+                currentPlayer.playCard(selectedCard, position, orientation);
+                if ((game.getState() != Game.GameState.ENDING) && (currentPlayer.getPoints() > 20)) {
+                    game.setState(Game.GameState.ENDING);
+                }
+                //return Event.GOOD; //happy ending
+            } catch (IllegalArgumentException e) {
+                //return Event.BAD; error ending. This has to be forwarded to the view.
             }
-            return true; //happy ending
-        }catch(IllegalArgumentException e){
-            return false; //error ending. This has to be forwarded to the model which will restart the cycle
         }
     }
 
@@ -106,7 +134,7 @@ public class GameController {
     public void drawCard(String nickname, PlayableCard selectedCard) { //we can draw a card from one of the decks or from the uncovered cards
         Player currentPlayer = game.getPlayers().get(0);
         if (!ServerController.getPlayerByNickname(nickname).equals(currentPlayer)) {
-            System.out.println("NON E IL TUO TURNO NON PUOI PESCARE");
+            System.out.println("NON E IL TUO TURNO, NON PUOI PESCARE");
             //return Event.NOT_IN_TURN
         } else {
             currentPlayer.drawCard(selectedCard);
@@ -236,5 +264,13 @@ public class GameController {
 
     public void setNumberOfPlayers(int numberOfPlayers) {
         this.numberOfPlayers = numberOfPlayers;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

@@ -149,7 +149,7 @@ public class Player implements Serializable {
 
 
     /**
-     * plays a card and removes one from player's deck
+     * This method plays a card and removes it from playerDeck
      * @param card the card the player wants to place on his board
      * @param position of the card (decided by the player himself)
      * @param orientation of the card (decided by the player himself)
@@ -179,8 +179,8 @@ public class Player implements Serializable {
      * @param card it's the first base card
      */
     public void playBaseCard (boolean orientation, PlayableCard card) {
-        board.placeBaseCard(card);
         card.setOrientation(orientation);
+        board.placeBaseCard(card);
     }
 
 

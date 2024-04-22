@@ -122,7 +122,6 @@ public class Game implements Serializable {
      * it gives each player 2 objective cards, he will decide which one to choose
      * it sets the game-order of the players
      * @throws IllegalArgumentException if players are less than 2 or more than 4
-     * @return List<Integer> index of the objective cards already used for the market
      */
     public void startGame () throws IllegalArgumentException {
         if((players.size()<2)||(players.size()>4)){
@@ -150,6 +149,11 @@ public class Game implements Serializable {
         // shuffling the objective deck
         this.objectiveDeck.shuffleDeck();
 
+        for(Player player : players){
+            player.setBoard(new Board(player));
+            player.getBoard().setBoard(players.size());
+        }
+
         // letting the players decide the color of their pawn
         // the order of choosing is the order in which the player connected to the server
         /**List <Pawn> colors = new ArrayList<>();
@@ -163,15 +167,6 @@ public class Game implements Serializable {
         }
          */
 
-        // giving 2 cards to the market as common objective
-        this.objectiveCard1 = objectiveDeck.getFirstCard();
-        this.objectiveCard2 = objectiveDeck.getFirstCard();
-
-        // giving each player 2 objective cards, next he will decide which one to choose
-        for (int i = 0; i<nPlayers; i++) {
-            this.players.get(i).addPersonalObjective(objectiveDeck.getFirstCard());
-            this.players.get(i).addPersonalObjective(objectiveDeck.getFirstCard());
-        }
 
         // setting the game-order of the players
         Random random = new Random();
@@ -202,14 +197,25 @@ public class Game implements Serializable {
 
 
     /**
-     * after the player has played on the board the base card, this function is invoked
-     * this function gives to the player 2 resource cards + 1 base card
+     * After the player has played on the board the baseCard, this function is invoked.
+     * It gives to each Player (2 resourceCards + 1 goldCard). It also reveals the common ObjectiveCards
+     * and gives 2 ObjectiveCards per Player to be selected later
      */
     public void giveInitialCards () {
         for (int i=0; i<nPlayers; i++) {
             players.get(i).drawCard(resourceDeck.getFirstCard()); // resource card #1
             players.get(i).drawCard(resourceDeck.getFirstCard()); // resource card #2
             players.get(i).drawCard(goldDeck.getFirstCard()); // gold card #1
+        }
+
+        // giving 2 cards to the market as common objective
+        this.objectiveCard1 = objectiveDeck.getFirstCard();
+        this.objectiveCard2 = objectiveDeck.getFirstCard();
+
+        // giving each player 2 objective cards, next he will decide which one to choose
+        for (int i = 0; i<nPlayers; i++) {
+            this.players.get(i).addPersonalObjective(objectiveDeck.getFirstCard());
+            this.players.get(i).addPersonalObjective(objectiveDeck.getFirstCard());
         }
     }
 

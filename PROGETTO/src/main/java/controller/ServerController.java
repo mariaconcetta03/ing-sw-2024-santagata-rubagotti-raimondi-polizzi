@@ -23,10 +23,14 @@ public class ServerController {
     public void startLobby(Player creator, int numOfPlayers){
         //Creating the specific GameController
         GameController gameController= new GameController();
+        //inserting the new gameController in the Map
+        int tempId=getFirstAvailableId();
+        allGameControllers.put(tempId,gameController);
+        gameController.setId(tempId);
+        gameController.setNumberOfPlayers(numOfPlayers);
         //adding the first player
         gameController.addPlayer(creator);
         //we will have to check in the VIEW if the numOfPlayers is between 2 and 4
-        gameController.setNumberOfPlayers(numOfPlayers);
     }
 
     /**
@@ -35,19 +39,21 @@ public class ServerController {
      * @param gameId is the lobby the player wants to join
      * @return whether it was possible or not to add the player
      */
-    public boolean addPlayerToLobby(Player player, int gameId) {
+    public void addPlayerToLobby(Player player, int gameId) {
         if (!allGameControllers.containsKey(gameId)) { //if the game doesn't exist
-            return false;
-        } else if(!allGameControllers.get(gameId).getGame().getState().equals(Game.GameState.WAITING_FOR_START)) {//if the game is already started
-            return false;
+            System.err.println("The game doesn't exist");
+            // return Event.BAD
+        } else if((allGameControllers.get(gameId).getGame()!=null)&&(!allGameControllers.get(gameId).getGame().getState().equals(Game.GameState.WAITING_FOR_START))) {//if the game is already started
+            System.err.println("Game already started!");
+            //return Event.BAD
         }else{
             GameController temp = allGameControllers.get(gameId);
             try {
                 temp.addPlayer(player);
-                return true;
+                //return Event.OK
             } catch (ArrayIndexOutOfBoundsException e) {
                 System.err.println("Choose another lobby or create a new one!");
-                return false;
+                //return Event.BAD
             }
         }
     }
