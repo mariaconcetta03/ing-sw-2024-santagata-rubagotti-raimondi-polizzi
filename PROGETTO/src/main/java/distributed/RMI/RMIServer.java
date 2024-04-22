@@ -1,11 +1,9 @@
 package distributed.RMI;
 
 import controller.GameController;
+import controller.ServerController;
 import distributed.ClientGeneralInterface;
-import org.model.Coordinates;
-import org.model.ObjectiveCard;
-import org.model.PlayableCard;
-import org.model.Player;
+import org.model.*;
 import utils.*;
 
 import java.rmi.NotBoundException;
@@ -24,12 +22,22 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
     // più Game)
 
 
+    ServerController serverController;
+    GameController gameController;
+
+
+
     /**
      * Class constructor
+     * @param serverController
      * @throws RemoteException
      */
-    RMIServer() throws RemoteException {
+    RMIServer(ServerController serverController) throws RemoteException {
+        this.serverController = serverController;
+        this.gameController = null;
     }
+
+
 
 
     /**
@@ -46,6 +54,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
             e.printStackTrace();
         }
     }
+
+
 
 
     /**
@@ -66,382 +76,164 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
     }
 
 
+
+
     /**
      * This method calls the function into the ServerController
      * @param creator is the player who wants to create a new lobby
      * @param numOfPlayers is the number of player the creator decided can play in the lobby
-     * @return the event "LOBBY_CREATED" when the lobby has been created on the server
+     * @return the event "OK" when the lobby has been created on the server
      * @throws RemoteException
      */
     public Event createLobby (Player creator, int numOfPlayers) throws RemoteException {
-        System.out.println("Sono il server, e ho ricevuto l'ordine di creare una nuova Lobby");
-        // il giocatore invoca la funzione del server controller, ma comunicando prima col server generico e poi con quello RMI
-        // se l'operazione va a buon fine...
-        return new Event(Event.EventType.LOBBY_CREATED);
+        return serverController.startLobby(creator, numOfPlayers);
     }
 
 
 
 
-
-// ---------------------------------- DA FARE COME SOPRA -------------------------------------
-/*
-    public Event addPlayerToLobby (Player p, int gameId){
-        // the server is creating a lobby
-        Event.printEvent();
-        System.out.println("Sono il server, e ora ti mando l'Evento successivo");
-        flag = true;
-
-        Registry registryClient;
-        registryClient = LocateRegistry.getRegistry(SettingsServerToClient.SERVER_NAME,
-                SettingsServerToClient.PORT);
-
-        System.out.println("Started connection with client! (now the server can send messages to the client)");
-
-        try {
-            Remote rmt = null;
-            registryClient.rebind("ClientChat", rmt);
-            cInterface = (ClientGeneralInterface) registryClient.lookup("ClientChat");
-        } catch (NotBoundException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        // Looking up the registry for the remote object
-        if (cInterface == null) {
-            System.out.println("NULLO");
-        }
-        this.cInterface.receiveEvent(new Event(utils.Event.EventType.EVENT_2));
-    }
-    public Event chooseNickname (Player chooser, String nickname){
-        // the server is creating a lobby
-        Event.printEvent();
-        System.out.println("Sono il server, e ora ti mando l'Evento successivo");
-        flag = true;
-
-        Registry registryClient;
-        registryClient = LocateRegistry.getRegistry(SettingsServerToClient.SERVER_NAME,
-                SettingsServerToClient.PORT);
-
-        System.out.println("Started connection with client! (now the server can send messages to the client)");
-
-        try {
-            Remote rmt = null;
-            registryClient.rebind("ClientChat", rmt);
-            cInterface = (ClientGeneralInterface) registryClient.lookup("ClientChat");
-        } catch (NotBoundException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        // Looking up the registry for the remote object
-        if (cInterface == null) {
-            System.out.println("NULLO");
-        }
-        this.cInterface.receiveEvent(new Event(utils.Event.EventType.EVENT_2));
-    }
-   public Event createGame (List<Player> gamePlayers){
-        // the server is creating a lobby
-        Event.printEvent();
-        System.out.println("Sono il server, e ora ti mando l'Evento successivo");
-        flag = true;
-
-        Registry registryClient;
-        registryClient = LocateRegistry.getRegistry(SettingsServerToClient.SERVER_NAME,
-                SettingsServerToClient.PORT);
-
-        System.out.println("Started connection with client! (now the server can send messages to the client)");
-
-        try {
-            Remote rmt = null;
-            registryClient.rebind("ClientChat", rmt);
-            cInterface = (ClientGeneralInterface) registryClient.lookup("ClientChat");
-        } catch (NotBoundException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        // Looking up the registry for the remote object
-        if (cInterface == null) {
-            System.out.println("NULLO");
-        }
-        this.cInterface.receiveEvent(new Event(utils.Event.EventType.EVENT_2));
-    }
-    public Event addPlayerToGame (Player player){
-        // the server is creating a lobby
-        Event.printEvent();
-        System.out.println("Sono il server, e ora ti mando l'Evento successivo");
-        flag = true;
-
-        Registry registryClient;
-        registryClient = LocateRegistry.getRegistry(SettingsServerToClient.SERVER_NAME,
-                SettingsServerToClient.PORT);
-
-        System.out.println("Started connection with client! (now the server can send messages to the client)");
-
-        try {
-            Remote rmt = null;
-            registryClient.rebind("ClientChat", rmt);
-            cInterface = (ClientGeneralInterface) registryClient.lookup("ClientChat");
-        } catch (NotBoundException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        // Looking up the registry for the remote object
-        if (cInterface == null) {
-            System.out.println("NULLO");
-        }
-        this.cInterface.receiveEvent(new Event(utils.Event.EventType.EVENT_2));
-    }
-    public Event startGame(){
-        // the server is creating a lobby
-        Event.printEvent();
-        System.out.println("Sono il server, e ora ti mando l'Evento successivo");
-        flag = true;
-
-        Registry registryClient;
-        registryClient = LocateRegistry.getRegistry(SettingsServerToClient.SERVER_NAME,
-                SettingsServerToClient.PORT);
-
-        System.out.println("Started connection with client! (now the server can send messages to the client)");
-
-        try {
-            Remote rmt = null;
-            registryClient.rebind("ClientChat", rmt);
-            cInterface = (ClientGeneralInterface) registryClient.lookup("ClientChat");
-        } catch (NotBoundException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        // Looking up the registry for the remote object
-        if (cInterface == null) {
-            System.out.println("NULLO");
-        }
-        this.cInterface.receiveEvent(new Event(utils.Event.EventType.EVENT_2));
-    }
-    public Event playCard(PlayableCard selectedCard, Coordinates position, boolean orientation){
-        // the server is creating a lobby
-        Event.printEvent();
-        System.out.println("Sono il server, e ora ti mando l'Evento successivo");
-        flag = true;
-
-        Registry registryClient;
-        registryClient = LocateRegistry.getRegistry(SettingsServerToClient.SERVER_NAME,
-                SettingsServerToClient.PORT);
-
-        System.out.println("Started connection with client! (now the server can send messages to the client)");
-
-        try {
-            Remote rmt = null;
-            registryClient.rebind("ClientChat", rmt);
-            cInterface = (ClientGeneralInterface) registryClient.lookup("ClientChat");
-        } catch (NotBoundException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        // Looking up the registry for the remote object
-        if (cInterface == null) {
-            System.out.println("NULLO");
-        }
-        this.cInterface.receiveEvent(new Event(utils.Event.EventType.EVENT_2));
-    }
-    public Event playBaseCard(PlayableCard selectedCard, Coordinates position, boolean orientation) {
-        // the server is creating a lobby
-        Event.printEvent();
-        System.out.println("Sono il server, e ora ti mando l'Evento successivo");
-        flag = true;
-
-        Registry registryClient;
-        registryClient = LocateRegistry.getRegistry(SettingsServerToClient.SERVER_NAME,
-                SettingsServerToClient.PORT);
-
-        System.out.println("Started connection with client! (now the server can send messages to the client)");
-
-        try {
-            Remote rmt = null;
-            registryClient.rebind("ClientChat", rmt);
-            cInterface = (ClientGeneralInterface) registryClient.lookup("ClientChat");
-        } catch (NotBoundException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        // Looking up the registry for the remote object
-        if (cInterface == null) {
-            System.out.println("NULLO");
-        }
-        this.cInterface.receiveEvent(new Event(utils.Event.EventType.EVENT_2));
-    }
-    public Event drawCard(PlayableCard selectedCard){
-        // the server is creating a lobby
-        Event.printEvent();
-        System.out.println("Sono il server, e ora ti mando l'Evento successivo");
-        flag = true;
-
-        Registry registryClient;
-        registryClient = LocateRegistry.getRegistry(SettingsServerToClient.SERVER_NAME,
-                SettingsServerToClient.PORT);
-
-        System.out.println("Started connection with client! (now the server can send messages to the client)");
-
-        try {
-            Remote rmt = null;
-            registryClient.rebind("ClientChat", rmt);
-            cInterface = (ClientGeneralInterface) registryClient.lookup("ClientChat");
-        } catch (NotBoundException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        // Looking up the registry for the remote object
-        if (cInterface == null) {
-            System.out.println("NULLO");
-        }
-        this.cInterface.receiveEvent(new Event(utils.Event.EventType.EVENT_2));
-    }
-    public Event chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard){
-        // the server is creating a lobby
-        Event.printEvent();
-        System.out.println("Sono il server, e ora ti mando l'Evento successivo");
-        flag = true;
-
-        Registry registryClient;
-        registryClient = LocateRegistry.getRegistry(SettingsServerToClient.SERVER_NAME,
-                SettingsServerToClient.PORT);
-
-        System.out.println("Started connection with client! (now the server can send messages to the client)");
-
-        try {
-            Remote rmt = null;
-            registryClient.rebind("ClientChat", rmt);
-            cInterface = (ClientGeneralInterface) registryClient.lookup("ClientChat");
-        } catch (NotBoundException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        // Looking up the registry for the remote object
-        if (cInterface == null) {
-            System.out.println("NULLO");
-        }
-        this.cInterface.receiveEvent(new Event(utils.Event.EventType.EVENT_2));
-    }
-    public Event sendMessage(Player sender, List<Player> receivers, String message){
-        // the server is creating a lobby
-        Event.printEvent();
-        System.out.println("Sono il server, e ora ti mando l'Evento successivo");
-        flag = true;
-
-        Registry registryClient;
-        registryClient = LocateRegistry.getRegistry(SettingsServerToClient.SERVER_NAME,
-                SettingsServerToClient.PORT);
-
-        System.out.println("Started connection with client! (now the server can send messages to the client)");
-
-        try {
-            Remote rmt = null;
-            registryClient.rebind("ClientChat", rmt);
-            cInterface = (ClientGeneralInterface) registryClient.lookup("ClientChat");
-        } catch (NotBoundException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        // Looking up the registry for the remote object
-        if (cInterface == null) {
-            System.out.println("NULLO");
-        }
-        this.cInterface.receiveEvent(new Event(utils.Event.EventType.EVENT_2));
-    }
-    public Event nextRound(){
-        // the server is creating a lobby
-        Event.printEvent();
-        System.out.println("Sono il server, e ora ti mando l'Evento successivo");
-        flag = true;
-
-        Registry registryClient;
-        registryClient = LocateRegistry.getRegistry(SettingsServerToClient.SERVER_NAME,
-                SettingsServerToClient.PORT);
-
-        System.out.println("Started connection with client! (now the server can send messages to the client)");
-
-        try {
-            Remote rmt = null;
-            registryClient.rebind("ClientChat", rmt);
-            cInterface = (ClientGeneralInterface) registryClient.lookup("ClientChat");
-        } catch (NotBoundException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        // Looking up the registry for the remote object
-        if (cInterface == null) {
-            System.out.println("NULLO");
-        }
-        this.cInterface.receiveEvent(new Event(utils.Event.EventType.EVENT_2));
-    }
-    public Event endGame(){
-        // the server is creating a lobby
-        Event.printEvent();
-        System.out.println("Sono il server, e ora ti mando l'Evento successivo");
-        flag = true;
-
-        Registry registryClient;
-        registryClient = LocateRegistry.getRegistry(SettingsServerToClient.SERVER_NAME,
-                SettingsServerToClient.PORT);
-
-        System.out.println("Started connection with client! (now the server can send messages to the client)");
-
-        try {
-            Remote rmt = null;
-            registryClient.rebind("ClientChat", rmt);
-            cInterface = (ClientGeneralInterface) registryClient.lookup("ClientChat");
-        } catch (NotBoundException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        // Looking up the registry for the remote object
-        if (cInterface == null) {
-            System.out.println("NULLO");
-        }
-        this.cInterface.receiveEvent(new Event(utils.Event.EventType.EVENT_2));
+    /**
+     * This method calls the function into the ServerController
+     * @param player is the player who wants to join the lobby
+     * @param gameId is the lobby the player wants to join
+     * @return the event "OK" when the lobby has been created on the server
+     * if the lobby is full it returns the event "FULL_LOBBY"
+     * @throws RemoteException
+     */
+    public Event addPlayerToLobby (Player player, int gameId) throws RemoteException {
+        return serverController.addPlayerToLobby(player, gameId);
     }
 
 
 
 
-    public void sendEvent (Event Event) throws RemoteException {
-        System.out.println("Sono il server, e sto stampando quello che mi hai mandato:");
-        Event.printEvent();
-        System.out.println("Sono il server, e ora ti mando l'Evento successivo");
-        flag = true;
-
-        Registry registryClient;
-        registryClient = LocateRegistry.getRegistry(SettingsServerToClient.SERVER_NAME,
-                SettingsServerToClient.PORT);
-
-        System.out.println("Started connection with client! (now the server can send messages to the client)");
-
-        try {
-            Remote rmt = null;
-            registryClient.rebind("ClientChat", rmt);
-            cInterface = (ClientGeneralInterface) registryClient.lookup("ClientChat");
-        } catch (NotBoundException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        // Looking up the registry for the remote object
-        if (cInterface == null) {
-            System.out.println("NULLO");
-        }
-        this.cInterface.receiveEvent(new Event(utils.Event.EventType.EVENT_2));
+    /**
+     * This method calls the function into the ServerController
+     * @param chooser is the player choosing the nickname
+     * @param nickname is the String he wants to put as his nickname
+     * @return the event "OK" if the nickname doesn't exist yet and so it is set,
+     * if the nickname is already used by another player, it returns the event "NICKNAME_ALREADY_USED"
+     */
+    public Event chooseNickname (Player chooser, String nickname) throws RemoteException {
+        return serverController.chooseNickname(chooser, nickname);
     }
-*/
+
+
+
+
+    /**
+     * This method calls the function into the gameController
+     * @param gamePlayers is the List of players that will be in the Game
+     * @return the event "OK" when the game has been created
+     */
+    public Event createGame (List<Player> gamePlayers) throws RemoteException {
+       return gameController.createGame(gamePlayers);
+    }
+
+
+
+
+    /**
+     * This method calls the function into the gameController
+     * @param player is the player who wants to be added
+     * @return the event "OK" when the player has been successfully added to the game,
+     * instead it returns the event "FULL_LOBBY"
+     */
+    public Event addPlayerToGame (Player player) throws RemoteException {
+        return gameController.addPlayer(player);
+    }
+
+
+
+
+    /**
+     * This method calls the function into the gameController
+     * @return the event "OK" when the game is set to started, otherwise,
+     * if the game is not ready to be started, it returns the event "INVALID_GAME_STATUS"
+     */
+    public Event startGame() throws RemoteException {
+        return gameController.startGame();
+    }
+
+
+
+
+    /**
+     * This method calls the function into the gameController
+     * @param selectedCard the Card the Player wants to play
+     * @param position the position where the Player wants to play the Card
+     * @param orientation the side on which the Player wants to play the Card
+     * @return the event "OK" if the card has been successfully placed, otherwise it
+     * returns the event "UNABLE_TO_PLAY_CARD"
+     */
+    public Event playCard(PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException {
+      return gameController.playCard(selectedCard, position, orientation);
+    }
+
+
+
+
+    /**
+     * This method calls the function into the gameController
+     * @param nickname is the nickname of the player who wants to draw the card
+     * @param selectedCard is the Card the Players wants to draw
+     * @return the event "OK" when the player has drawn the card, otherwise, if
+     * it's not his turn, it returns the event "NOT_YOUR_TURN"
+     */
+    public Event drawCard(String nickname, PlayableCard selectedCard) throws RemoteException {
+        return gameController.drawCard(nickname, selectedCard);
+    }
+
+
+
+
+    /**
+     * This method calls the function into the gameController
+     * @param chooser is the player selecting the ObjectiveCard
+     * @param selectedCard is the ObjectiveCard the player selected
+     * @return the event "OK" if the card is correctly chosen, otherwise it returns
+     * the event "OBJECTIVE_CARD_NOT_OWNED"
+     */
+    public Event chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard) throws RemoteException {
+        return gameController.chooseObjectiveCard(chooser, selectedCard);
+    }
+
+
+
+
+    /**
+     * This method calls the function into the gameController
+     * @param sender is the player sending the message
+     * @param receivers is the list of the players who need to receive this message
+     * @param message is the string sent by the sender to the receivers
+     * @return the event "OK" when the message has been sent successfully
+     */
+    public Event sendMessage(Player sender, List<Player> receivers, String message) throws RemoteException {
+       return gameController.sendMessage(sender, receivers, message);
+    }
+
+
+
+
+    /**
+     * This method calls the function into the gameController
+     * @return the event "OK" when the current player has been changed
+     */
+    public Event nextRound() throws RemoteException {
+       return gameController.nextPhase();
+    }
+
+
+
+
+    /**
+     * This method calls the function into the gameController
+     * @return the event "OK" when all the procedure about the enging of the game has
+     * been successfully completed
+     */
+    public Event endGame() throws RemoteException {
+        return gameController.endGame();
+    }
 
 
 
@@ -454,4 +246,27 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
         static int PORT = 50001; // free ports: from 49152 to 65535
         static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
     }
+
+
+
+
+    /**
+     * Setter method
+     * @param serverController is the general Server Controller
+     */
+    public void setServerController(ServerController serverController){
+        this.serverController = serverController;
+    }
+
+
+
+
+    /**
+     * Setter method
+     * @param gameController is the specific game controller
+     */
+    public void setGameController(GameController gameController) {
+        // PRENDERE GAME CONTROLLER DAL SERVER CONTROLLER
+    }
+
 }

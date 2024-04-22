@@ -16,7 +16,6 @@ public interface ServerRMIInterface extends Remote {
     //void sendEvent(Event event) throws RemoteException;
 
     Event createLobby (Player creator, int numOfPlayers) throws RemoteException;
-   /*
     Event addPlayerToLobby (Player p, int gameId);
     Event chooseNickname (Player chooser, String nickname);
     Event createGame (List<Player> gamePlayers);
@@ -24,10 +23,9 @@ public interface ServerRMIInterface extends Remote {
     Event startGame();
     Event playCard(PlayableCard selectedCard, Coordinates position, boolean orientation);
     Event playBaseCard(PlayableCard selectedCard, Coordinates position, boolean orientation); //necessary adding a method to the controller
-    Event drawCard(PlayableCard selectedCard);
+    Event drawCard(String nickname, PlayableCard selectedCard);
     Event chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard);
     Event sendMessage(Player sender, List<Player> receivers, String message);
     Event nextRound();
     Event endGame();
-    */
 }

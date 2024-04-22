@@ -8,7 +8,6 @@ import java.rmi.RemoteException;
 
 public interface ClientGeneralInterface extends Remote {
     Event createLobby() throws RemoteException, NotBoundException;
-     /*
     Event addPlayerToLobby (Player p, int gameId);
     Event chooseNickname (Player chooser, String nickname);
     Event createGame (List<Player> gamePlayers);
@@ -21,5 +20,4 @@ public interface ClientGeneralInterface extends Remote {
     Event sendMessage(Player sender, List<Player> receivers, String message);
     Event nextRound();
     Event endGame();
-    */
 }
