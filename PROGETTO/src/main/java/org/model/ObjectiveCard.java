@@ -1,9 +1,10 @@
 package org.model;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.zip.CheckedOutputStream;
 
-public class ObjectiveCard extends Card {
+public class ObjectiveCard extends Card implements Serializable {
         private int cardPoints; // points the card gives when the player achieves the goal (only one time)
         private Map<AngleType, Integer> resources; // each resource is associated with an int, which
         // indicates the number of resources needed by the objective card

@@ -1,6 +1,8 @@
 package org.model;
 
-public enum AngleType {
+import java.io.Serializable;
+
+public enum AngleType implements Serializable {
         FUNGI,
         NATURE,
         INSECT,

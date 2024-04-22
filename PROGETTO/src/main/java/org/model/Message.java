@@ -1,4 +1,5 @@
 package org.model;
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -7,7 +8,7 @@ import java.util.*;
  */
 
 
-public class Message {
+public class Message implements Serializable {
     private String message; // in the string it's represented the text of the message
     private Player sender; // who sent the message
     private List<Player> receiver; // it can be a single receiver, or the whole group of players

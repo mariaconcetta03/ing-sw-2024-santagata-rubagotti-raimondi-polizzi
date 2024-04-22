@@ -1,6 +1,8 @@
 package org.model;
 
-public enum Pawn {
+import java.io.Serializable;
+
+public enum Pawn implements Serializable {
     RED,
     GREEN,
     YELLOW,

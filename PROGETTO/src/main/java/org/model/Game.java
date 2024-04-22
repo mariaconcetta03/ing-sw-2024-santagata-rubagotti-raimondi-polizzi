@@ -1,5 +1,6 @@
 package org.model;
 import java.awt.dnd.InvalidDnDOperationException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -10,7 +11,7 @@ import java.util.Scanner;
  */
 
 
-public class Game {
+public class Game implements Serializable {
     private int id; // each Game has a different id
     private int nPlayers; // number of players in this game. It's decided by the lobby-creator
     private List<Player> players; // all the players in the game

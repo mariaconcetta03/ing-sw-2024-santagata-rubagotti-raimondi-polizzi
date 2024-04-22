@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.*;
 
-public abstract class Deck {
+public abstract class Deck implements Serializable {
     private Stack<? extends Card> cards; // all the cards into deck
 
     /**

@@ -1,6 +1,8 @@
 package org.model;
 
-public enum CountingType {
+import java.io.Serializable;
+
+public enum CountingType implements Serializable {
         FUNGI,
         NATURE,
         INSECT,

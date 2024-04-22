@@ -1,6 +1,8 @@
 package org.model;
 
-public enum CentralType {
+import java.io.Serializable;
+
+public enum CentralType implements Serializable {
         FUNGI,
         NATURE,
         INSECT,

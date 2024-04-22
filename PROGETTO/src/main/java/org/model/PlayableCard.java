@@ -1,7 +1,8 @@
 package org.model;
+import java.io.Serializable;
 import java.util.*;
 
-public class PlayableCard extends Card {
+public class PlayableCard extends Card implements Serializable {
     /**
       * we have to add these attributes to PlayableCard because when
       * the Player wants to place a Card, if this is a GoldCard there are

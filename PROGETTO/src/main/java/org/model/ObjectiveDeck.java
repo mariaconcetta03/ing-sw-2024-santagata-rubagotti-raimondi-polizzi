@@ -5,9 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
-public class ObjectiveDeck extends Deck{
+public class ObjectiveDeck extends Deck implements Serializable {
     private Stack<ObjectiveCard> cards; // contains all the cards in this deck
 
 

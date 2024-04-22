@@ -1,12 +1,14 @@
 package org.model;
 
+import java.io.Serializable;
+
 /**
  * This class represents a couple of coordinates: (x,y)
  */
 
 
 
-public class Coordinates {
+public class Coordinates implements Serializable {
     private int x;
     private int y;
 
