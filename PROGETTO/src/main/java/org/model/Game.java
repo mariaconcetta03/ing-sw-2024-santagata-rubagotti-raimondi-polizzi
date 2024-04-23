@@ -1,4 +1,6 @@
 package org.model;
+import utils.Event;
+
 import java.awt.dnd.InvalidDnDOperationException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ public class Game implements Serializable {
     private int id; // each Game has a different id
     private int nPlayers; // number of players in this game. It's decided by the lobby-creator
     private List<Player> players; // all the players in the game
+
     public enum GameState {
         STARTED,
         ENDING,
@@ -43,6 +46,7 @@ public class Game implements Serializable {
 
     private List<Chat> chats; // contains all the chats started during the game
     private List<Pawn> alreadySelectedColors;
+    private Event lastEvent; // this flag gives some essential information about the last event which occurred in this Game
 
 
 
@@ -524,6 +528,16 @@ public class Game implements Serializable {
 
 
     /**
+     * Getter method
+     * @return lastEvent which occurred in this game
+     */
+    public Event getLastEvent() {
+        return lastEvent;
+    }
+
+
+
+    /**
      * Setter method
      * @param id of the game
      */
@@ -553,7 +567,6 @@ public class Game implements Serializable {
 
 
 
-
     /**
      * Setter method
      * @param player which is playing now
@@ -564,6 +577,16 @@ public class Game implements Serializable {
 
     public List<Pawn> getAlreadySelectedColors() {
         return alreadySelectedColors;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param lastEvent which occurred in this game
+     */
+    public void setLastEvent(Event lastEvent) {
+        this.lastEvent = lastEvent;
     }
 
 }
