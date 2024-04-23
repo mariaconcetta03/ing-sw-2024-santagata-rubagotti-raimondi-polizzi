@@ -91,12 +91,6 @@ public class GameTest extends TestCase {
         System.out.println("The 3 card on market has ID: " + game.getGoldCard1().getId());
         System.out.println("The 4 card on market has ID: " + game.getGoldCard2().getId());
 
-        // printing the common objectives
-        System.out.println("The 1st common objective has ID: " + game.getObjectiveCard1().getId());
-        System.out.println("The 2nd common objective has ID: " + game.getObjectiveCard2().getId());
-
-        // printing the used indexes for the Objective deck
-
     }
 
 
@@ -142,6 +136,10 @@ public class GameTest extends TestCase {
             System.out.println("Third card ID: " + game.getPlayers().get(i).getPlayerDeck(3).getId());
             System.out.println("------------------------------------------");
         }
+        // printing the common objectives
+        System.out.println("The 1st common objective has ID: " + game.getObjectiveCard1().getId());
+        System.out.println("The 2nd common objective has ID: " + game.getObjectiveCard2().getId());
+
     }
 
 

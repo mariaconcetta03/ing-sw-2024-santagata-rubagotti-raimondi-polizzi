@@ -251,6 +251,13 @@ public class GameController {
         return Event.OK;
     }
 
+    /**
+     * This method let the player leave the game anytime during the match and also closes the Game itself
+     */
+    public void leaveGame(){
+
+    }
+
 
     /**
      * This method ends the game. It sets the game state to ENDED, checks all the objectives (2 common objs
@@ -281,8 +288,10 @@ public class GameController {
         return game;
     }
 
-    public void setNumberOfPlayers(int numberOfPlayers) {
-        this.numberOfPlayers = numberOfPlayers;
+    public void setNumberOfPlayers(int numberOfPlayers) throws IllegalArgumentException {
+        if ((numberOfPlayers >= 2)&&(numberOfPlayers <= 4)) {
+            this.numberOfPlayers = numberOfPlayers;
+        }else throw new IllegalArgumentException("Wrong number of players!");
     }
 
     public int getId() {

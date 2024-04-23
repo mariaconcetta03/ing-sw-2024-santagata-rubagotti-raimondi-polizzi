@@ -24,11 +24,15 @@ public class ServerController {
     public Event startLobby(Player creator, int numOfPlayers){
         //Creating the specific GameController
         GameController gameController= new GameController();
+        try {
+            gameController.setNumberOfPlayers(numOfPlayers);
+        }catch(IllegalArgumentException e){
+            return Event.WRONG_NUMBER_OF_PLAYERS;
+        }
         //inserting the new gameController in the Map
         int tempId=getFirstAvailableId();
         allGameControllers.put(tempId,gameController);
         gameController.setId(tempId);
-        gameController.setNumberOfPlayers(numOfPlayers);
         //adding the first player
         gameController.addPlayer(creator);
         //we will have to check in the VIEW if the numOfPlayers is between 2 and 4
