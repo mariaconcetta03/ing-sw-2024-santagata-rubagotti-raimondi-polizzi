@@ -33,7 +33,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public static void main( String[] args )
     {
         try {
-            //new RMIClient().createLobby();
+            new RMIClient().createLobby(new Player(), 4);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -52,7 +52,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         Registry registryServer = null;
         Event event;
         registryServer = LocateRegistry.getRegistry(Settings.SERVER_NAME,
-                Settings.PORT);
+                Settings.PORT); // getting the registry
         // Looking up the registry for the remote object
         this.SRMIInterface = (ServerRMIInterface) registryServer.lookup("Server");
         event = this.SRMIInterface.createLobby(creator, numOfPlayers);
@@ -399,10 +399,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     /**
      * Settings class
-     * It is about port and ip address of the client with which the server communicates
+     * It is about port and ip address of the server which the client needs to communicate with
      */
     public static class Settings { //this is an attribute
-        static int PORT = 50001; // free ports: from 49152 to 65535
+        static int PORT = 1099; // free ports: from 49152 to 65535, 1099 standard port for RMI registry
         static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
     }
 

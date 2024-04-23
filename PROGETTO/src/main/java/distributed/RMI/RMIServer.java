@@ -49,7 +49,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      */
     public static void main (String[] args) throws RemoteException {
         try {
-            // new RMIServer().startServer();
+            new RMIServer(new ServerController()).startServer();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,14 +65,14 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      */
     @Override
     public void startServer() throws RemoteException {
-        Registry registry = LocateRegistry.createRegistry(Settings.PORT);
+        Registry registry = LocateRegistry.createRegistry(Settings.PORT); // putting the server into the registry
         try {
-            registry.bind("Server", this);
+            registry.bind("Server", this); // setting the name of the server (remote obj/interface)
         }
         catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("Server ready");
+        System.out.println("Server ready"); // OK
     }
 
 
@@ -274,10 +274,10 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
 
     /**
      * Settings class
-     * It is about port and ip address of the server with which the client communicates
+     * It is about port and ip address of the server
      */
     public static class Settings { //this is an attribute
-        static int PORT = 50001; // free ports: from 49152 to 65535
+        static int PORT = 1099; // free ports: from 49152 to 65535, 1099 default port for RMI registry
         static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
     }
 
@@ -288,7 +288,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * Setter method
      * @param caller is player with a specific associated game, who calls the methods
      */
-    public void setGameController(Player caller) {
+    public void setGameController(Player caller) throws RemoteException {
         this.gameController =
                 this.serverController.getAllGameControllers().get(caller.getGame().getId());
     }
