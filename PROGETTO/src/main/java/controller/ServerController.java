@@ -48,7 +48,8 @@ public class ServerController {
     public Event addPlayerToLobby(Player player, int gameId) {
         if (!allGameControllers.containsKey(gameId)) { //if the game doesn't exist
             System.err.println("The game doesn't exist");
-            return Event.GAME_NOT_EXISTS;
+            return Event.GAME_NOT_EXISTS; // this method must remain EVENT, because it will return the event only to the client who
+                                          // is trying to join a not-existing game
         } else if((allGameControllers.get(gameId).getGame()!=null)&&(!allGameControllers.get(gameId).getGame().getState().equals(Game.GameState.WAITING_FOR_START))) {//if the game is already started
             System.err.println("Game already started!");
             return Event.GAME_ALREADY_STARTED;
