@@ -270,9 +270,21 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
     }
 
 
+
+
+    /**
+     * This method calls the funcition into the gameController
+     * @param //player? check
+     * @return nothing ?
+     * @throws RemoteException
+     * @throws NotBoundException
+     */
     public Event leaveGame() throws RemoteException{
         return gameController.leaveGame();
     }
+
+
+
 
     /**
      * Settings class

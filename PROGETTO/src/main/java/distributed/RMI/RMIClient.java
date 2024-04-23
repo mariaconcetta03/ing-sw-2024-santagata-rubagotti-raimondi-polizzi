@@ -316,6 +316,16 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         return event;
     }
 
+
+
+
+    /**
+     * This method lets a player end the game (volontary action or involontary action - connection loss)
+     * @param //player? check
+     * @return nothing ?
+     * @throws RemoteException
+     * @throws NotBoundException
+     */
     public Event leaveGame() throws RemoteException, NotBoundException{
         SRMIInterfaceFromRegistry();
         Event event;
@@ -323,6 +333,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         event.printEvent();
         return event;
     }
+
+
 
 
     /**
