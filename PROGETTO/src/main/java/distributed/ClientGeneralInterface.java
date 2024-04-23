@@ -23,6 +23,7 @@ public interface ClientGeneralInterface extends Remote {
     Event sendMessage(Player sender, List<Player> receivers, String message) throws RemoteException, NotBoundException;
     Event nextRound() throws RemoteException, NotBoundException;
     Event endGame() throws RemoteException, NotBoundException;
+    public Event leaveGame() throws RemoteException, NotBoundException;
     public void SRMIInterfaceFromRegistry() throws RemoteException, NotBoundException;
 
     }

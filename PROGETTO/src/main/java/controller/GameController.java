@@ -254,8 +254,8 @@ public class GameController {
     /**
      * This method let the player leave the game anytime during the match and also closes the Game itself
      */
-    public void leaveGame(){
-
+    public Event leaveGame(){
+        return Event.OK; //aggiunto questo generico per il momento, dato che non c'è implementazione, ma magari si potrebbe inserire un Event.GAME_LEFT
     }
 
 

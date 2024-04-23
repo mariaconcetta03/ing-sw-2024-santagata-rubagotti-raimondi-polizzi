@@ -316,7 +316,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         return event;
     }
 
-
+    public Event leaveGame() throws RemoteException, NotBoundException{
+        SRMIInterfaceFromRegistry();
+        Event event;
+        event = this.SRMIInterface.leaveGame();
+        event.printEvent();
+        return event;
+    }
 
 
     /**

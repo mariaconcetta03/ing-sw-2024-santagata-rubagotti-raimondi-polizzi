@@ -270,7 +270,9 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
     }
 
 
-
+    public Event leaveGame() throws RemoteException{
+        return gameController.leaveGame();
+    }
 
     /**
      * Settings class

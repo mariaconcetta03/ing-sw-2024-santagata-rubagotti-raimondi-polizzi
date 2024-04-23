@@ -38,5 +38,7 @@ public interface ServerRMIInterface extends Remote {
 
     Event endGame() throws RemoteException;
 
+    Event leaveGame() throws RemoteException;
+
     void setGameController(Player caller) throws RemoteException;
 }
