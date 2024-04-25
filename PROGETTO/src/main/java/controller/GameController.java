@@ -1,4 +1,5 @@
 package controller;
+import Exceptions.CardNotDrawableException;
 import Exceptions.CardNotOwnedException;
 import org.model.*;
 import utils.Event;
@@ -146,7 +147,12 @@ public class GameController {
             System.out.println("NON E IL TUO TURNO, NON PUOI PESCARE");
             return Event.NOT_YOUR_TURN;
         } else {
-            currentPlayer.drawCard(selectedCard);
+            try {
+                currentPlayer.drawCard(selectedCard);
+            }catch (CardNotDrawableException e){
+                game.setLastEvent(Event.CARD_NOT_DRAWN);
+                return Event.CARD_NOT_DRAWN;//ANDRA RIMOSSO e lasciato solo return!!!
+            }
             if ((game.getState() != Game.GameState.ENDING) && ((game.getResourceDeck().isFinished()) && (game.getGoldDeck().isFinished()))) {
                 game.setState(Game.GameState.ENDING);
             } //if the score become higher than 20 there would be only one another turn to be played
@@ -191,25 +197,19 @@ public class GameController {
        receivers.add(sender);
        Chat tmp;
        if(!game.getChats().isEmpty()) {
-           for (Chat chat : game.getChats()) {
-               tmp=chat;
-               for(Player player:receivers){
-                   if(!chat.getUsers().contains(player)){
-                       tmp=null;
-                       break;
-                   }
-               }
-               if((tmp!=null)&&(tmp==chat)){
+           tmp=game.getChatByUsers(receivers);
+               if(tmp!=null){
                    receivers.remove(sender);
                    tmp.sendMessage(new Message(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
+                   return Event.OK;
                }
            }
-       }
-           receivers.remove(sender);
            if (receivers.size() == game.getnPlayers()) {
+               receivers.remove(sender);
                tmp=game.startGeneralChat();
                tmp.sendMessage(new Message(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
            }else {
+               receivers.remove(sender);
                tmp = game.startChat(sender, receivers.get(0));
                tmp.sendMessage(new Message(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
            }
@@ -254,8 +254,27 @@ public class GameController {
     /**
      * This method let the player leave the game anytime during the match and also closes the Game itself
      */
-    public Event leaveGame(){
-        return Event.OK; //aggiunto questo generico per il momento, dato che non c'è implementazione, ma magari si potrebbe inserire un Event.GAME_LEFT
+    public void leaveGame(String nickname) throws IllegalArgumentException{
+        Player tmp=null;
+        for(Player p: game.getPlayers()){
+            if(p.getNickname().equals(nickname)){
+                tmp=p;
+            }
+        }
+        if(tmp==null){
+            throw new IllegalArgumentException("This player is not playing the match");
+        }else{
+            for(Player p: game.getPlayers()){
+                p.setGame(null);
+                p.setBoard(null);
+                p.setIsFirst(false);
+                p.setColor(null);
+            }
+            //this will alert the listeners to notify all the players that the game ended
+            game.setLastEvent(Event.GAME_LEFT);
+            game.setState(Game.GameState.ENDED);//here or in the listeners?
+            ServerController.getAllGameControllers().remove(id); //il gamecontroller si "auto"rimuove dal server controller
+        }
     }
 
 

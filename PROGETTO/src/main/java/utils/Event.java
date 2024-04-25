@@ -23,7 +23,8 @@ public enum Event implements Serializable {
     INVALID_GAME_STATUS,
     UNABLE_TO_PLAY_CARD,
     NOT_YOUR_TURN,
-    WRONG_NUMBER_OF_PLAYERS;
+    WRONG_NUMBER_OF_PLAYERS,
+    GAME_LEFT;
 
     public void printEvent(){
         System.out.println("Questo è l'evento: " + this.toString());

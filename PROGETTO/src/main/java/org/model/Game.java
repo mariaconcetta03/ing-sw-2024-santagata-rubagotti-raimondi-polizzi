@@ -1,4 +1,5 @@
 package org.model;
+import Exceptions.CardNotDrawableException;
 import utils.Event;
 
 import java.awt.dnd.InvalidDnDOperationException;
@@ -147,8 +148,10 @@ public class Game implements Serializable {
         // shuffling the base deck and each player draws a starter card (base card)
         this.baseDeck.shuffleDeck();
         for (int i=0; i<this.players.size(); i++) {
-            this.players.get(i).drawCard(this.baseDeck.getFirstCard());
-        }
+            try {
+                this.players.get(i).drawCard(this.baseDeck.getFirstCard());
+            }catch(CardNotDrawableException ignored) {} //it will never happen here
+            }
 
         // shuffling the objective deck
         this.objectiveDeck.shuffleDeck();
@@ -191,7 +194,7 @@ public class Game implements Serializable {
             newOrder.add(this.players.get(i)); // the game-order positions start from 1. Example: 1,2,3,4
             not_assigned--;
         }
-        this.players = newOrder; // setting the new order NON VA BENE!!!!!!!!!!!!!!!!!!!!!!!!!
+        this.players = newOrder;
     }
 
 
@@ -207,9 +210,11 @@ public class Game implements Serializable {
      */
     public void giveInitialCards () {
         for (int i=0; i<nPlayers; i++) {
-            players.get(i).drawCard(resourceDeck.getFirstCard()); // resource card #1
-            players.get(i).drawCard(resourceDeck.getFirstCard()); // resource card #2
-            players.get(i).drawCard(goldDeck.getFirstCard()); // gold card #1
+            try {
+                players.get(i).drawCard(resourceDeck.getFirstCard()); // resource card #1
+                players.get(i).drawCard(resourceDeck.getFirstCard()); // resource card #2
+                players.get(i).drawCard(goldDeck.getFirstCard()); // gold card #1
+            }catch (CardNotDrawableException ignored){} //it will never happen here
         }
 
         // giving 2 cards to the market as common objective
@@ -321,6 +326,27 @@ public class Game implements Serializable {
         return newChat;
     }
 
+    /**
+     * This method returns the chat given the users
+     * @param users are the users for which I'm looking for the Chat
+     * @return the Chat if found, null otherwise
+     */
+    public Chat getChatByUsers(List<Player> users) {
+        Chat tmp=null;
+        for (Chat chat : chats) {
+            if (!(chat.getUsers().size() == users.size())) {
+                continue;
+            }
+            tmp = chat;
+            for (Player player : users) {
+                if (!chat.getUsers().contains(player)) {
+                    tmp = null;
+                    break;
+                }
+            }
+        }
+        return tmp;
+    }
 
 
 

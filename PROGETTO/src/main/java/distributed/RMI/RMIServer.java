@@ -280,7 +280,9 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @throws NotBoundException
      */
     public Event leaveGame() throws RemoteException{
-        return gameController.leaveGame();
+        String daCambiare="pippo";
+        gameController.leaveGame(daCambiare);  //serve che facciate in modo di passarmi  nickname
+        return Event.OK; //questa funzione, come le altre, non ritorneranno più Event, sono i listeners a notificare!!!
     }
 
 

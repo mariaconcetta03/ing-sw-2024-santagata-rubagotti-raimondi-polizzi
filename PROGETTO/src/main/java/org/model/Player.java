@@ -1,6 +1,7 @@
 package org.model;
 
 
+import Exceptions.CardNotDrawableException;
 import Exceptions.CardNotOwnedException;
 
 import java.io.Serializable;
@@ -102,10 +103,10 @@ public class Player implements Serializable {
      * introduces another card in the player's deck
      * @param card is the card the player has taken from a deck or from the market
      */
-    public void drawCard(PlayableCard card) {
+    public void drawCard(PlayableCard card) throws CardNotDrawableException{
         boolean drawn = false;
 
-        PlayableCard tmp;
+        PlayableDeck baseDeck=PlayableDeck.baseDeck();
 
         PlayableCard resourceCard1 = game.getResourceCard1(); //market
         PlayableCard resourceCard2 = game.getResourceCard2(); //market
@@ -133,6 +134,8 @@ public class Player implements Serializable {
             card= game.getResourceDeck().getFirstCard();
         } else if (card == game.getGoldDeck().checkFirstCard()){
             card= game.getGoldDeck().getFirstCard();
+        }else if(!baseDeck.getCards().contains(card)){
+            throw new CardNotDrawableException("You can't throw this card!");
         }
 
         // where card is null, the new card is placed
@@ -230,6 +233,7 @@ public class Player implements Serializable {
      */
     public void setGame(Game game) {
         this.game = game;
+
     }
 
 

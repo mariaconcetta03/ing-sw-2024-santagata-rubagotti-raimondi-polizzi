@@ -3,12 +3,13 @@ package controller;
 import Exceptions.NicknameAlreadyTakenException;
 import org.model.Game;
 import org.model.Player;
+import utils.ClientChat;
 import utils.Event;
 
 import java.util.*;
 public class ServerController {
     private static int firstAvailableId = -1;
-    private Map<Integer, GameController> allGameControllers;
+    private static Map<Integer, GameController> allGameControllers;
     private static List<Player> allPlayers;
 
     public ServerController() {
@@ -119,7 +120,7 @@ public class ServerController {
         return null;
     }
 
-    public Map<Integer, GameController> getAllGameControllers() {
+    public static Map<Integer, GameController> getAllGameControllers() {
         return allGameControllers;
     }
 

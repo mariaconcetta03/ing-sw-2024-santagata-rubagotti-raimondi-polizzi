@@ -53,6 +53,59 @@ public class PlayableCard extends Card implements Serializable {
         this.orientation=true;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PlayableCard other = (PlayableCard) obj;
+        if ( this.getId()!= other.getId()) {
+            return false;
+        }
+        if (this.get_front_up_right() != other.get_front_up_right()) {
+            return false;
+        }
+        if (this.get_front_down_left() != other.get_front_down_left()) {
+            return false;
+        }
+        if (this.get_front_up_left() != other.get_front_up_left()) {
+            return false;
+        }
+        if (this.get_front_down_right() != other.get_front_down_right()) {
+            return false;
+        }
+        if (this.get_back_up_right() != other.get_back_up_right()) {
+            return false;
+        }
+        if (this.get_back_up_left() != other.get_back_up_left()) {
+            return false;
+        }
+        if (this.get_back_down_left() != other.get_back_down_left()) {
+            return false;
+        }
+        if (this.get_back_down_right() != other.get_back_down_right()) {
+            return false;
+        }
+        if (this.getPoints() != other.getPoints()) {
+            return false;
+        }
+        //andrebbe finito? probabile
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int start=31;
+        int res=1;
+        res=start*res+this.getId();
+        res=start*res+2;
+        return res;
+    }
+
+
 
 
     // these variables contains the type of resource present in a specific corner of the card

@@ -112,6 +112,43 @@ public class GameControllerTest extends TestCase {
     }
 
     public void testPlayCard() {
+        GameController g1 = new GameController();
+        ServerController s1= new ServerController();
+        Player p1 = new Player();
+        p1.setNickname("Pippo");
+        Player p2 = new Player();
+        p2.setNickname("Pluto");
+        Player p3 = new Player();
+        p3.setNickname("Paperino");
+        Player p4 = new Player();
+        p4.setNickname("Topolino");
+
+        //adding the players to the GameController
+        List<Player> players = new ArrayList<>();
+        players.add(p1);
+        players.add(p2);
+        players.add(p3);
+        players.add(p4);
+
+        //adding the players to the ServerController
+        s1.getAllPlayers().add(p1);
+        s1.getAllPlayers().add(p2);
+        s1.getAllPlayers().add(p3);
+        s1.getAllPlayers().add(p4);
+
+        //creating and starting the game
+        g1.createGame(players);
+        g1.startGame();
+
+        //all the players need to play the baseCard first
+        g1.playBaseCard("Pippo", p1.getPlayerDeck(1), true);
+        g1.playBaseCard("Topolino", p4.getPlayerDeck(1), true);
+        g1.playBaseCard("Paperino", p3.getPlayerDeck(1), true);
+        g1.playBaseCard("Pluto", p2.getPlayerDeck(1), true);
+
+    }
+
+    public void testPlayBaseCard(){
 
     }
 
@@ -259,7 +296,17 @@ public class GameControllerTest extends TestCase {
         g1.playBaseCard("Paperino", p3.getPlayerDeck(1), true);
         g1.playBaseCard("Pluto", p2.getPlayerDeck(1), true);
 
-        //da finire
+        g1.choosePawnColor(p1, Pawn.BLUE);
+        g1.choosePawnColor(p2, Pawn.BLUE);
+        System.out.println(p1.getChosenColor());
+        System.out.println(p2.getChosenColor());
+        g1.choosePawnColor(p2, Pawn.YELLOW);
+        g1.choosePawnColor(p3, Pawn.YELLOW);
+        g1.choosePawnColor(p4, Pawn.RED);
+        g1.choosePawnColor(p3, Pawn.GREEN);
+        for(Player p: g1.getGame().getPlayers()){
+            System.out.println(p.getChosenColor());
+        }
     }
 
     public void testSendMessage() {
@@ -293,15 +340,53 @@ public class GameControllerTest extends TestCase {
 
         //all the players need to play the baseCard first
         g1.playBaseCard("Pippo", p1.getPlayerDeck(1), true);
-        g1.playBaseCard("Topolino", p4.getPlayerDeck(1), true);
-        g1.playBaseCard("Paperino", p3.getPlayerDeck(1), true);
         g1.playBaseCard("Pluto", p2.getPlayerDeck(1), true);
+        g1.playBaseCard("Paperino", p3.getPlayerDeck(1), true);
+        g1.playBaseCard("Topolino", p4.getPlayerDeck(1), true);
 
-        //da finire
+        List<Player> receiver=new ArrayList<>();
+        receiver.add(p2);
+        receiver.add(p3);
+        receiver.add(p4);
+        g1.sendMessage(p1, receiver, "ciao");
+
+        System.out.println(g1.getGame().getChats().get(0).messagesReceivedByPlayer(p3).get(0).getMessage());
+
+        List<Player> receiver2=new ArrayList<>();
+        receiver2.add(p1);
+        receiver2.add(p3);
+        receiver2.add(p4);
+        g1.sendMessage(p2, receiver2, "ciao2");
+
+        System.out.println(g1.getGame().getChats().get(0).messagesReceivedByPlayer(p1).get(0).getMessage());
+
+        List <Player> couple=new ArrayList<>();
+        couple.add(p1);
+        g1.sendMessage(p2, couple, "hello Pippo");
+        System.out.println(g1.getGame().getChats().get(1).messagesReceivedByPlayer(p1).get(0).getMessage());
+
+        List <Player> couple2=new ArrayList<>();
+        //The problem is I can't modify the List of receivers as I'm passing it as a parameter
+        List<Player> users= new ArrayList<>();
+        couple2.add(p2);
+        users.add(p1);
+        users.add(p2);
+        g1.sendMessage(p1, couple2, "hello Pluto");
+        System.out.println(g1.getGame().getChatByUsers(users).messagesReceivedByPlayer(p2).get(0).getMessage());
+
+        List <Player> couple3=new ArrayList<>();
+        couple3.add(p3);
+        g1.sendMessage(p1, couple3, "hello Paperino");
+        System.out.println(g1.getGame().getChats().get(2).messagesReceivedByPlayer(p3).get(0).getMessage());
+
+        /**In effetti avere le chat separate è un po' strano, ma quando dovrò stampare avrò una List<Message> temp
+         * che mi permetta di inserire dentro tutti i messaggi delle chat dove lo specifico player è registrato
+         * tra gli users. Stampando magari gli ultimi 20 messaggi per TimeStamp (sort())
+         */
     }
 
     //ok!!
-    public void testNextPhase() {
+    public void testNextPhase_1() {
         GameController g1= new GameController();
         ServerController s1= new ServerController();
         Player p1=new Player();
@@ -423,6 +508,14 @@ public class GameControllerTest extends TestCase {
         System.out.println("Common drawable GOLD card: " + g1.getGame().getGoldCard1().getId() + " " + g1.getGame().getGoldCard2().getId());
         System.out.println("Common drawable RESOURCE card: " + g1.getGame().getResourceCard1().getId() + " " + g1.getGame().getResourceCard2().getId());
         System.out.println("Top of the decks' card: " + g1.getGame().getGoldDeck().checkFirstCard().getId() + " " + g1.getGame().getResourceDeck().checkFirstCard().getId());
+
+    }
+
+    public void testNextPhase_2(){
+
+    }
+
+    public void testLeaveGame(){
 
     }
 

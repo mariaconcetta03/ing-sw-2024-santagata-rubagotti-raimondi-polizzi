@@ -49,5 +49,6 @@ public class ChatTest extends TestCase {
         for(int i=0; i< c1.messagesReceivedByPlayer(p2).size(); i++){
             System.out.println(c1.messagesReceivedByPlayer(p2).get(i).getMessage());
         }
+        System.out.println(c1.messagesReceivedByPlayer(p1).get(0).getMessage());
     }
 }

@@ -1,5 +1,6 @@
 package org.model;
 
+import Exceptions.CardNotDrawableException;
 import com.ctc.wstx.shaded.msv_core.reader.xmlschema.IncludeState;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -8,14 +9,27 @@ import javax.script.AbstractScriptEngine;
 
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class PlayerTest extends TestCase {
 
     public void testDrawCard() {
         // creating the player
         Player p1 = new Player();
-        Game game = new Game(p1, 1);
-        p1.setGame(game);
+        Player p2=new Player();
+        List<Player> players=new ArrayList<>();
+        players.add(p1);
+        players.add(p2);
 
+        Game game= new Game(players, 1);
+        p1.setGame(game);
+        p2.setGame(game);
+        game.setnPlayers(2);
+        game.startGame();
+        p1.playBaseCard(true, p1.getPlayerDeck()[0]);
+        p2.playBaseCard(true, p2.getPlayerDeck()[0]);
+        game.giveInitialCards();
+        /**
         // creating 3 cards (playable card) with ID: 1, 2, 3
         List<AngleType> centralResources = new ArrayList<>();
         centralResources.add (AngleType.INSECT);
@@ -30,14 +44,27 @@ public class PlayerTest extends TestCase {
                 true, false, false, null);
 
         // the player draws each of the 3 cards
-        p1.drawCard(playableCard1);
-        p1.drawCard(playableCard2);
-        p1.drawCard(playableCard3);
+         */
 
+        List<AngleType> centralResources = new ArrayList<>();
+        centralResources.add (AngleType.INSECT);
+
+        p1.getPlayerDeck()[0]=null;
+        p1.getPlayerDeck()[1]=null;
+        p1.getPlayerDeck()[2]=null;
+
+        try {
+            p1.drawCard(game.getGoldCard1());
+            p1.drawCard(game.getGoldCard2());
+            p1.drawCard(game.getGoldDeck().checkFirstCard());
+        }catch (CardNotDrawableException ignored){}
         System.out.println("The 1st card in player's hand has the ID: " + p1.getPlayerDeck(1).getId());
         System.out.println("The 2nd card in player's hand has the ID: " + p1.getPlayerDeck(2).getId());
         System.out.println("The 3rd card in player's hand has the ID: " + p1.getPlayerDeck(3).getId());
 
+        assertThrows(CardNotDrawableException.class, ()->{p1.drawCard(new PlayableCard(3, 2, AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
+                AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE, centralResources, false,
+                true, false, false, null));});
 
 
     }

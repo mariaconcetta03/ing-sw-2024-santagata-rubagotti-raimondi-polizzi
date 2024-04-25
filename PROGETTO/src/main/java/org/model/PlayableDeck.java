@@ -56,16 +56,13 @@ public class PlayableDeck extends Deck implements Serializable {
         cards = null;
     }
 
-
     /**
-     * This method adds a card to the deck
-     * @param card you want to add to the deck
+     * This method return all the card in the deck as a Stack
+     * @return a Stack of PlayableCard
      */
-    public void addCard (PlayableCard card) {
-        cards.add(card);
+    public Stack<PlayableCard> getCards() {
+        return cards;
     }
-
-
 
     /**
      * This method returns the first card in the deck
