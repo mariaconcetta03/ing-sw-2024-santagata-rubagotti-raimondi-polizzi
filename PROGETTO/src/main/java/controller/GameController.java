@@ -30,17 +30,22 @@ public class GameController {
      * This method creates the Game that will be managed by GameController
      * @param gamePlayers is the List of players that will be in the Game
      */
-    public Event createGame (List<Player> gamePlayers){
+    public void createGame (List<Player> gamePlayers){
         game = new Game(gamePlayers, id);
-        return Event.OK;
+        game.setLastEvent(Event.OK);
     }
 
-    public Event addPlayer(Player player) /*throws ArrayIndexOutOfBoundsException*/ {
+    /**
+     *
+     * @param player who wants to add to a game
+     * @throws ArrayIndexOutOfBoundsException when the palyer can't be added
+     */
+    public void addPlayer(Player player) throws ArrayIndexOutOfBoundsException {
         if (gamePlayers.size() < numberOfPlayers) {
             gamePlayers.add(player);
         } else {
-            return Event.FULL_LOBBY;
-            //throw new ArrayIndexOutOfBoundsException("This lobby is already full!"); QUA E IN START GAME SERVONO ECCEZIONI!!!
+            game.setLastEvent(Event.WRONG_NUMBER_OF_PLAYERS);
+            throw new ArrayIndexOutOfBoundsException("This lobby is already full!");
         }
         if (gamePlayers.size() == numberOfPlayers) {
             createGame(gamePlayers);
@@ -48,47 +53,37 @@ public class GameController {
                 startGame();
             } catch (IllegalStateException e) {
                 System.out.println("The game is already started!");
-                return Event.GAME_ALREADY_STARTED;
-            }
+                game.setLastEvent(Event.GAME_ALREADY_STARTED);            }
         }
-        return Event.OK;
+    game.setLastEvent(Event.OK);
     }
 
-    /**
-    public boolean waitingForPlayers(Player player) { //when we call this method we are adding another player
-        game.addPlayer(player);
-        if (game.getPlayers().size() < game.getnPlayers()) {
-            return true; //this method would be called at least another time
-        } else {
-            startGame(); //do we have to use the parameter game.getPlayers() to identify which game we are talking about?
-            return false;
-        }
-    }
-     */
 
     /**
      * This method starts the game. The game state is set to STARTED. 2 objective cards are given to each
      * player, and he will need to choose one of these. Then the market is completed and each player receives
      * 3 cards (2 resource cards and 1 gold card)
+     * @throws IllegalArgumentException if there's an invalid game status
      */
-    public Event startGame() /*throws IllegalStateException */ {
+    public void startGame() throws IllegalStateException  {
         if(game.getState() == Game.GameState.WAITING_FOR_START) {
             game.startGame();
-            return Event.OK;
+            game.setLastEvent(Event.OK);
         } else {
-            return Event.INVALID_GAME_STATUS;
-            ///throw new IllegalStateException();
+            game.setLastEvent(Event.INVALID_GAME_STATUS);
+            throw new IllegalStateException();
         }
     }
+
 
     /**
      * This method let the Player place the baseCard (in an already decided position) and, if all the players
      * have placed their baseCard, it let the game finish the set-up phase giving the last necessary cards
-     * @param nickname
-     * @param baseCard
-     * @param orientation
+     * @param nickname the player who plays the card
+     * @param baseCard the base card played
+     * @param orientation of the played card
      */
-    public Event playBaseCard(String nickname, PlayableCard baseCard, boolean orientation){
+    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation){
         Player player= ServerController.getPlayerByNickname(nickname);
         player.playBaseCard(orientation, baseCard);
         player.getPlayerDeck()[0]=null; //the player played the baseCard
@@ -98,11 +93,11 @@ public class GameController {
             tmp=p1.getBoard().getTable();
             //if the players haven't all played their baseCard
             if(tmp[p1.getBoard().getBoardDimensions()/2][p1.getBoard().getBoardDimensions()/2]==null){
-                return Event.OK;
+                game.setLastEvent(Event.OK);
             }
         }
         game.giveInitialCards();
-        return Event.OK;
+        game.setLastEvent(Event.OK);
     }
 
     /**
@@ -111,36 +106,35 @@ public class GameController {
      * @param selectedCard the Card the Player wants to play
      * @param position the position where the Player wants to play the Card
      * @param orientation the side on which the Player wants to play the Card
-     * @return OK if the card was correctly played, false otherwise
-     * this method should include the case in which the card placed is the base card
      */
-    public Event playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) {
+    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) {
         Player currentPlayer = game.getPlayers().get(0);
         if (!ServerController.getPlayerByNickname(nickname).equals(currentPlayer)) {
             System.out.println("NON E IL TUO TURNO, NON PUOI GIOCARE LA CARTA");
-            return Event.NOT_YOUR_TURN;
+            game.setLastEvent(Event.NOT_YOUR_TURN);
         }else{
             try {
                 currentPlayer.playCard(selectedCard, position, orientation);
                 if ((game.getState() != Game.GameState.ENDING) && (currentPlayer.getPoints() > 20)) {
                     game.setState(Game.GameState.ENDING);
                 }
-                return Event.OK; //happy ending
+                game.setLastEvent(Event.OK);
             } catch (IllegalArgumentException e) {
-                return Event.UNABLE_TO_PLAY_CARD; //error ending. This has to be forwarded to the view.
+                game.setLastEvent(Event.UNABLE_TO_PLAY_CARD);
             }
         }
     }
 
     /**
      * This method allows the currentPlayer to draw a card from the decks or from the unveiled ones
+     * @param nickname of the player who is gonna draw the card
      * @param selectedCard is the Card the Players wants to draw
      */
-    public Event drawCard(String nickname, PlayableCard selectedCard) { //we can draw a card from one of the decks or from the uncovered cards
+    public void drawCard(String nickname, PlayableCard selectedCard) { //we can draw a card from one of the decks or from the uncovered cards
         Player currentPlayer = game.getPlayers().get(0);
         if (!ServerController.getPlayerByNickname(nickname).equals(currentPlayer)) {
             System.out.println("Not your turn, you can't draw!");
-            return Event.NOT_YOUR_TURN;
+            game.setLastEvent(Event.NOT_YOUR_TURN);
         } else {
             boolean draw = false;
             for (int i = 0; i < 3 && !draw; i++) {
@@ -154,21 +148,19 @@ public class GameController {
                 } catch (CardNotDrawableException e) {
                     System.out.println("This card can't be drawn!");
                     game.setLastEvent(Event.CARD_NOT_DRAWN);
-                    return Event.CARD_NOT_DRAWN;//ANDRA RIMOSSO e lasciato solo return!!!
                 }catch(EmptyStackException e){
                     System.out.println(e.getMessage());
                     game.setLastEvent(Event.CARD_NOT_DRAWN);
-                    return Event.CARD_NOT_DRAWN;//ANDRA RIMOSSO e lasciato solo return!!!
+                    return;
                 }
                 if ((game.getState() != Game.GameState.ENDING) && ((game.getResourceDeck().isFinished()) && (game.getGoldDeck().isFinished()))) {
                     game.setState(Game.GameState.ENDING);
                 } //if the score become higher than 20 there would be only one another turn to be played
                 nextPhase();
-                return Event.OK;
+                game.setLastEvent(Event.OK);
             }else{
                 //non hai ancora giocato la carta, non puoi pescare!!!
                 game.setLastEvent(Event.CARD_NOT_DRAWN);
-                return Event.CARD_NOT_DRAWN;
         }
         }
     }
@@ -178,35 +170,43 @@ public class GameController {
      * @param chooser is the player selecting the ObjectiveCard
      * @param selectedCard is the ObjectiveCard the player selected
      */
-    public Event chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard) {
+    public void chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard) {
         try {
             chooser.setPersonalObjective(selectedCard);
-            return Event.OK;
+            game.setLastEvent (Event.OK);
         }catch(CardNotOwnedException ignored){
-            return Event.OBJECTIVE_CARD_NOT_OWNED;
+            game.setLastEvent (Event.OBJECTIVE_CARD_NOT_OWNED);
         }
     }
 
-    public Event choosePawnColor(Player chooser, Pawn selectedColor) {
+
+    /**
+     * This method allows a player to choose a pawn color
+     * @param chooser the player who is gonna select the pawn
+     * @param selectedColor the chosen colour
+     */
+
+    public void choosePawnColor(Player chooser, Pawn selectedColor) {
         synchronized (game.getAlreadySelectedColors()) {
             if (!game.getAlreadySelectedColors().contains(selectedColor)) {
                 chooser.setColor(selectedColor);
                 game.getAlreadySelectedColors().add(selectedColor);
-                return Event.OK;
+                game.setLastEvent(Event.OK);
             } else {
-                return Event.NOT_AVAILABLE_PAWN;
+                game.setLastEvent(Event.NOT_AVAILABLE_PAWN);
             }
         }
     }
 
     /**
      * This method allows the player to send a text message in the chat
-     * @param sender
-     * @param receivers
-     * @param message
+     * @param sender the player who sends the message
+     * @param receivers the players who are gonna receive the message
+     * @param message the string (message) sent
      * @return Event "OK"
      */
-    public Event sendMessage(Player sender, List<Player> receivers, String message){
+
+    public void sendMessage(Player sender, List<Player> receivers, String message){
        receivers.add(sender);
        Chat tmp;
        if(!game.getChats().isEmpty()) {
@@ -214,7 +214,7 @@ public class GameController {
                if(tmp!=null){
                    receivers.remove(sender);
                    tmp.sendMessage(new Message(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
-                   return Event.OK;
+                   game.setLastEvent(Event.OK);
                }
            }
            if (receivers.size() == game.getnPlayers()) {
@@ -226,7 +226,7 @@ public class GameController {
                tmp = game.startChat(sender, receivers.get(0));
                tmp.sendMessage(new Message(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
            }
-           return Event.OK;
+        game.setLastEvent(Event.OK);
     }
 
 
@@ -235,7 +235,7 @@ public class GameController {
      * If the game state is ENDING, then the last rounds are done. After that, endGame is invoked.
      * we have decided that is the controller the one that manages the changing of turn
      */
-    public Event nextPhase(){
+    public void nextPhase(){
 
         if (game.getState() == Game.GameState.ENDING && lastRounds == 10) {
             int firstPlayer = 0;
@@ -261,11 +261,13 @@ public class GameController {
         } else if (game.getState() == Game.GameState.STARTED) {
             game.nextRound(); //the order of the players in the list will be changed
         }
-        return Event.OK;
+        game.setLastEvent(Event.OK);
     }
 
     /**
      * This method let the player leave the game anytime during the match and also closes the Game itself
+     * @param nickname of the player who is gonna leave the game
+     * @throws IllegalArgumentException
      */
     public void leaveGame(String nickname) throws IllegalArgumentException{
         Player tmp=null;
@@ -301,7 +303,7 @@ public class GameController {
      * and 1 personalObj) and adds the points to the correct player.
      * Finally, it checks the winner (or winners) of the game, and puts them in a list called "winners"
      */
-    public Event endGame(){
+    public void endGame(){
         // setting the game state to ENDED
         game.setState(Game.GameState.ENDED);
 
@@ -318,24 +320,45 @@ public class GameController {
 
         // checking the winner(s)
         winners = game.winner();
-        return Event.OK;
+        game.setLastEvent (Event.OK);
     }
 
-    public Game getGame() {
-        return game;
-    }
 
+
+    /**
+     * Setter method
+     * @param numberOfPlayers who are playing
+     * @throws IllegalArgumentException if the number of players is wrong
+     */
     public void setNumberOfPlayers(int numberOfPlayers) throws IllegalArgumentException {
         if ((numberOfPlayers >= 2)&&(numberOfPlayers <= 4)) {
             this.numberOfPlayers = numberOfPlayers;
         }else throw new IllegalArgumentException("Wrong number of players!");
     }
 
+    /**
+     * Setter method
+     * @param id of the game controller
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    /**
+     * Getter method
+     * @return the ID of the gameController
+     */
+
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    /**
+     * Getter method
+     * @return the game of the related gameController
+     */
+    public Game getGame() {
+        return game;
     }
+
 }

@@ -1,6 +1,6 @@
 package Exceptions;
 
-public class DeckIsFinishedException extends Exception{
+public class DeckIsFinishedException extends Exception {
 
     /**
     * Constructor with the specified error message
