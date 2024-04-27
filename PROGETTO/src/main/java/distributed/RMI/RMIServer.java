@@ -87,8 +87,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @return the event "OK" when the lobby has been created on the server
      * @throws RemoteException
      */
-    public Event createLobby (Player creator, int numOfPlayers) throws RemoteException {
-        return serverController.startLobby(creator, numOfPlayers);
+    public void createLobby (Player creator, int numOfPlayers) throws RemoteException {
+        serverController.startLobby(creator, numOfPlayers);
     }
 
 
@@ -104,8 +104,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * returns "GAME_ALREADY_STARTED".
      * @throws RemoteException
      */
-    public Event addPlayerToLobby (Player player, int gameId) throws RemoteException {
-        return serverController.addPlayerToLobby(player, gameId);
+    public void addPlayerToLobby (Player player, int gameId) throws RemoteException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
+        serverController.addPlayerToLobby(player, gameId);
     }
 
 
@@ -118,8 +118,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @return the event "OK" if the nickname doesn't exist yet and so it is set,
      * if the nickname is already used by another player, it returns the event "NICKNAME_ALREADY_USED"
      */
-    public Event chooseNickname (Player chooser, String nickname) throws RemoteException {
-        return serverController.chooseNickname(chooser, nickname);
+    public void chooseNickname (Player chooser, String nickname) throws RemoteException, NicknameAlreadyTakenException {
+        serverController.chooseNickname(chooser, nickname);
     }
 
 
@@ -130,8 +130,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @param gamePlayers is the List of players that will be in the Game
      * @return the event "OK" when the game has been created
      */
-    public Event createGame (List<Player> gamePlayers) throws RemoteException {
-       return gameController.createGame(gamePlayers);
+    public void createGame (List<Player> gamePlayers) throws RemoteException {
+       gameController.createGame(gamePlayers);
     }
 
 
@@ -144,8 +144,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * instead it returns the event "FULL_LOBBY". If the game is already started, it returns
      * "GAME_ALREADY_STARTED"
      */
-    public Event addPlayerToGame (Player player) throws RemoteException {
-        return gameController.addPlayer(player);
+    public void addPlayerToGame (Player player) throws RemoteException, ArrayIndexOutOfBoundsException {
+        gameController.addPlayer(player);
     }
 
 
@@ -156,8 +156,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @return the event "OK" when the game is set to started, otherwise,
      * if the game is not ready to be started, it returns the event "INVALID_GAME_STATUS"
      */
-    public Event startGame() throws RemoteException {
-        return gameController.startGame();
+    public void startGame() throws RemoteException, IllegalStateException {
+        gameController.startGame();
     }
 
 
@@ -170,8 +170,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @param orientation the side on which the Player wants to play the Card
      * @return the event "OK" after the base card has been placed
      */
-    public Event playBaseCard(String nickname, PlayableCard baseCard, boolean orientation){
-        return gameController.playBaseCard(nickname, baseCard, orientation);
+    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException {
+        gameController.playBaseCard(nickname, baseCard, orientation);
     }
 
 
@@ -187,8 +187,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * returns the event "OK" if the card has been successfully placed, otherwise it
      * returns the event "UNABLE_TO_PLAY_CARD"
      */
-    public Event playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException {
-      return gameController.playCard(nickname, selectedCard, position, orientation);
+    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException {
+        gameController.playCard(nickname, selectedCard, position, orientation);
     }
 
 
@@ -201,8 +201,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @return the event "OK" when the player has drawn the card, otherwise, if
      * it's not his turn, it returns the event "NOT_YOUR_TURN"
      */
-    public Event drawCard(String nickname, PlayableCard selectedCard) throws RemoteException {
-        return gameController.drawCard(nickname, selectedCard);
+    public void drawCard(String nickname, PlayableCard selectedCard) throws RemoteException {
+        gameController.drawCard(nickname, selectedCard);
     }
 
 
@@ -215,8 +215,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @return the event "OK" if the card is correctly chosen, otherwise it returns
      * the event "OBJECTIVE_CARD_NOT_OWNED"
      */
-    public Event chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard) throws RemoteException {
-        return gameController.chooseObjectiveCard(chooser, selectedCard);
+    public void chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard) throws RemoteException {
+        gameController.chooseObjectiveCard(chooser, selectedCard);
     }
 
 
@@ -230,8 +230,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * returns the event "OK" if the color is chosen correctly
      * @throws RemoteException
      */
-    public Event choosePawnColor(Player chooser, Pawn selectedColor) throws RemoteException {
-        return gameController.choosePawnColor(chooser, selectedColor);
+    public void choosePawnColor(Player chooser, Pawn selectedColor) throws RemoteException {
+        gameController.choosePawnColor(chooser, selectedColor);
     }
 
 
@@ -244,8 +244,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @param message is the string sent by the sender to the receivers
      * @return the event "OK" when the message has been sent successfully
      */
-   public Event sendMessage(Player sender, List<Player> receivers, String message) throws RemoteException {
-       return gameController.sendMessage(sender, receivers, message);
+   public void sendMessage(Player sender, List<Player> receivers, String message) throws RemoteException {
+       gameController.sendMessage(sender, receivers, message);
    }
 
 
@@ -255,8 +255,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * This method calls the function into the gameController
      * @return the event "OK" when the current player has been changed
      */
-    public Event nextRound() throws RemoteException {
-       return gameController.nextPhase();
+    public void nextRound() throws RemoteException {
+        gameController.nextPhase();
     }
 
 
@@ -267,8 +267,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @return the event "OK" when all the procedure about the ending of the game has
      * been successfully completed
      */
-    public Event endGame() throws RemoteException {
-        return gameController.endGame();
+    public void endGame() throws RemoteException {
+        gameController.endGame();
     }
 
 
@@ -281,10 +281,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @throws RemoteException
      * @throws IllegalArgumentException
      */
-    public Event leaveGame() throws RemoteException{
-        String daCambiare="pippo";
-        gameController.leaveGame(daCambiare);  //serve che facciate in modo di passarmi  nickname
-        return Event.OK; //questa funzione, come le altre, non ritorneranno più Event, sono i listeners a notificare!!!
+    public void leaveGame(String nickname) throws RemoteException, IllegalArgumentException {
+        gameController.leaveGame(nickname);
     }
 
 
