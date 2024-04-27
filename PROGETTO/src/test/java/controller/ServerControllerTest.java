@@ -19,11 +19,10 @@ public class ServerControllerTest extends TestCase {
         s1.startLobby(p1,4);
         s1.startLobby(new Player(), 3);
         s1.startLobby(new Player(), 2);
-        /**assertEquals(s1.startLobby(new Player(), 1), Event.WRONG_NUMBER_OF_PLAYERS);
-        assertEquals(s1.startLobby(new Player(), -50), Event.WRONG_NUMBER_OF_PLAYERS);
-        assertEquals(s1.startLobby(new Player(), 7), Event.WRONG_NUMBER_OF_PLAYERS);
-        */
-        for(GameController gc: s1.getAllGameControllers().values()){
+        assertThrows(IllegalArgumentException.class, ()->{s1.startLobby(new Player(), 1);});
+        assertThrows(IllegalArgumentException.class, ()->{s1.startLobby(new Player(), -50);});
+        assertThrows(IllegalArgumentException.class, ()->{s1.startLobby(new Player(), 7);});
+        for(GameController gc: ServerController.getAllGameControllers().values()){
             System.out.println("Partite create sono quelle con id: "+gc.getId());
         }
     }
@@ -45,17 +44,19 @@ public class ServerControllerTest extends TestCase {
         s1.startLobby(p1, 4);
         s1.startLobby(p2, 3);
         System.out.print("Game you can join: ");
-        for (GameController gc : s1.getAllGameControllers().values()) {
+        for (GameController gc : ServerController.getAllGameControllers().values()) {
             System.out.print(gc.getId()+" ");
         }
         try {
             s1.addPlayerToLobby(p3, 0);
             s1.addPlayerToLobby(p4, 0);
             s1.addPlayerToLobby(p5, 0);
-            s1.addPlayerToLobby(p6, 0);
-            s1.addPlayerToLobby(p6, 2);
             s1.addPlayerToLobby(p6, 1);
         }catch (GameNotExistsException | GameAlreadyStartedException | FullLobbyException ignored){}
+        assertThrows(GameAlreadyStartedException.class, ()->{s1.addPlayerToLobby(p6, 0);});
+        assertThrows(GameNotExistsException.class, ()->{s1.addPlayerToLobby(p6, 2);});
+
+
     }
 
     public void testChooseNickname() {

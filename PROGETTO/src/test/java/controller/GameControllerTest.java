@@ -320,11 +320,16 @@ public class GameControllerTest extends TestCase {
         g1.createGame(players);
         g1.startGame();
 
+        System.out.println( "Remaining gold cards: "+ g1.getGame().getGoldDeck().getCards().size());
+        System.out.println( "Remaining resource cards: "+ g1.getGame().getResourceDeck().getCards().size());
+
         //all the players need to play the baseCard first
         g1.playBaseCard("Pippo", p1.getPlayerDeck(1), true);
         g1.playBaseCard("Pluto", p2.getPlayerDeck(1), true);
         g1.playBaseCard("Paperino", p3.getPlayerDeck(1), true);
         g1.playBaseCard("Topolino", p4.getPlayerDeck(1), true);
+
+        System.err.println("The first player is: "+g1.getGame().getPlayers().get(0).getNickname());
 
         int i=30;
         while(i>0) {
@@ -333,14 +338,16 @@ public class GameControllerTest extends TestCase {
             i--;
         }
 
-        //checking the reset of last card
+        System.out.println( "Remaining gold cards: "+ g1.getGame().getGoldDeck().getCards().size());
+        System.out.println( "Remaining resource cards: "+ g1.getGame().getResourceDeck().getCards().size());
+
+        //checking the reset of last card (GoldCard in ResourceCard1)
         Player currentPlayer= g1.getGame().getCurrentPlayer();
         g1.playCard(currentPlayer.getNickname(), currentPlayer.getPlayerDeck()[0], new Coordinates(19, 19), true);
         g1.drawCard(currentPlayer.getNickname(), g1.getGame().getResourceCard1());
-        assertNull(g1.getGame().getResourceCard1());
 
         //leaving just 1 gold card
-        for(int k=0; k<3; k++){
+        for(int k=0; k<2; k++){
             g1.getGame().getGoldDeck().getFirstCard();
         }
 
@@ -353,13 +360,113 @@ public class GameControllerTest extends TestCase {
         g1.playCard(currentPlayer.getNickname(), currentPlayer.getPlayerDeck()[0], new Coordinates(19, 19), true);
         g1.drawCard(currentPlayer.getNickname(), g1.getGame().getGoldDeck().checkFirstCard());
 
-        //assertEquals(g1.getGame().getState(), Game.GameState.ENDING);
+        System.err.println("The player producing the ENDING condition is: "+currentPlayer.getNickname());
 
         System.out.println( "Remaining gold cards: "+ g1.getGame().getGoldDeck().getCards().size());
         System.out.println( "Remaining resource cards: "+ g1.getGame().getResourceDeck().getCards().size());
 
+        assertEquals(g1.getGame().getState(), Game.GameState.ENDING);
 
-    }
+        currentPlayer= g1.getGame().getCurrentPlayer();
+        g1.playCard(currentPlayer.getNickname(), currentPlayer.getPlayerDeck()[0], new Coordinates(19, 19), true);
+        g1.drawCard(currentPlayer.getNickname(), g1.getGame().getResourceCard1());
+        System.err.println("The CURRENT player is: "+currentPlayer.getNickname());
+
+        currentPlayer= g1.getGame().getCurrentPlayer();
+        g1.playCard(currentPlayer.getNickname(), currentPlayer.getPlayerDeck()[0], new Coordinates(19, 19), true);
+        g1.drawCard(currentPlayer.getNickname(), g1.getGame().getResourceCard2());
+        System.err.println("The CURRENT player is: "+currentPlayer.getNickname());
+
+
+        currentPlayer= g1.getGame().getCurrentPlayer();
+        g1.playCard(currentPlayer.getNickname(), currentPlayer.getPlayerDeck()[0], new Coordinates(21, 21), true);
+        System.err.println("The CURRENT player is: "+currentPlayer.getNickname());
+
+        currentPlayer= g1.getGame().getCurrentPlayer();
+
+        for(AngleType t: currentPlayer.getPlayerDeck()[0].getNeededResources().keySet()) {
+            currentPlayer.getBoard().getNumResources().put(t, currentPlayer.getPlayerDeck()[0].getNeededResources().get(t));
+        }
+
+        g1.playCard(currentPlayer.getNickname(), currentPlayer.getPlayerDeck()[0], new Coordinates(21, 21), true);
+        System.err.println("The CURRENT player is: "+currentPlayer.getNickname());
+
+        currentPlayer= g1.getGame().getCurrentPlayer();
+        System.err.println("The CURRENT player is: "+currentPlayer.getNickname());
+
+        for(AngleType t: currentPlayer.getPlayerDeck()[0].getNeededResources().keySet()) {
+            currentPlayer.getBoard().getNumResources().put(t, currentPlayer.getPlayerDeck()[0].getNeededResources().get(t));
+        }
+            g1.playCard(currentPlayer.getNickname(), currentPlayer.getPlayerDeck()[0], new Coordinates(21, 21), true);
+
+            currentPlayer = g1.getGame().getCurrentPlayer();
+        System.err.println("The CURRENT player is: "+currentPlayer.getNickname());
+
+        //adding the necessary resources
+            for(AngleType t: currentPlayer.getPlayerDeck()[0].getNeededResources().keySet()) {
+                currentPlayer.getBoard().getNumResources().put(t, currentPlayer.getPlayerDeck()[0].getNeededResources().get(t));
+            }
+
+            g1.playCard(currentPlayer.getNickname(), currentPlayer.getPlayerDeck()[0], new Coordinates(21, 21), true);
+            System.out.println(g1.getLastRounds());
+
+            //print the points/objectives completed by player
+            for(Player p: g1.getGame().getPlayers()){
+                System.out.println(p.getNickname()+" managed to score "+p.getPoints()+" points and completed "+p.getNumObjectivesReached()+" objectives!");
+            }
+        }
+
+        public void testPlayCard_20Points(){
+            GameController g1= new GameController();
+            ServerController s1= new ServerController();
+            Player p1=new Player();
+            p1.setNickname("Pippo");
+            Player p2=new Player();
+            p2.setNickname("Pluto");
+            Player p3=new Player();
+            p3.setNickname("Paperino");
+            Player p4= new Player();
+            p4.setNickname("Topolino");
+
+            //adding the players to GameController
+            List<Player> players=new ArrayList<>();
+            players.add(p1);
+            players.add(p2);
+            players.add(p3);
+            players.add(p4);
+
+            //adding players to ServerController
+            s1.getAllPlayers().add(p1);
+            s1.getAllPlayers().add(p2);
+            s1.getAllPlayers().add(p3);
+            s1.getAllPlayers().add(p4);
+
+            //creating and starting the game
+            g1.createGame(players);
+            g1.startGame();
+
+            //all the players need to play the baseCard first
+            g1.playBaseCard("Pippo", p1.getPlayerDeck(1), true);
+            g1.playBaseCard("Pluto", p2.getPlayerDeck(1), true);
+            g1.playBaseCard("Paperino", p3.getPlayerDeck(1), true);
+            g1.playBaseCard("Topolino", p4.getPlayerDeck(1), true);
+
+
+            Player currentPlayer= g1.getGame().getCurrentPlayer();
+            currentPlayer.addPoints(19);
+
+            //adding the needed resources
+            for(AngleType t: currentPlayer.getPlayerDeck()[2].getNeededResources().keySet()) {
+                currentPlayer.getBoard().getNumResources().put(t, currentPlayer.getPlayerDeck()[2].getNeededResources().get(t));
+            }
+            //reaching 20 POINTS
+            g1.playCard(currentPlayer.getNickname(), currentPlayer.getPlayerDeck()[2], new Coordinates(19, 19), true);
+            if(currentPlayer.getPoints()>=20) {
+                assertEquals(7, g1.getLastRounds());
+                assertEquals(4, g1.getLastDrawingRounds());
+            }
+            g1.drawCard(currentPlayer.getNickname(), g1.getGame().getResourceCard1());
+        }
 
     public void testChooseObjectiveCard() {
         ObjectiveDeck obDeck= ObjectiveDeck.objectiveDeck();

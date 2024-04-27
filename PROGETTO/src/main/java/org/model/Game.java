@@ -266,17 +266,21 @@ public class Game implements Serializable {
         if (winners.size() > 1) { // I need to check how many objectives every player has respected
             int maxObjectives = 0;
 
-            for (int i = 0; i < this.players.size(); i++) { // checking the higher number of objectives achieved
-                if (this.players.get(i).getNumObjectivesReached() > maxObjectives) {
-                    maxObjectives = this.players.get(i).getNumObjectivesReached();
+            for (int i = 0; i < winners.size(); i++) { // checking the higher number of objectives achieved
+                if (winners.get(i).getNumObjectivesReached() > maxObjectives) {
+                    maxObjectives = winners.get(i).getNumObjectivesReached();
                 }
             }
 
-
+            int tmp= winners.size();
+            List<Player> toBeRemoved=new ArrayList<>();
             for (int i = 0; i < winners.size(); i++) { // I need to remove the ones who have achieved less objectives
-                if (this.players.get(i).getNumObjectivesReached() < maxObjectives) {
-                    winners.remove(i);
+                if (winners.get(i).getNumObjectivesReached() < maxObjectives) {
+                    toBeRemoved.add(winners.get(i));
                 }
+            }
+            for(Player p: toBeRemoved){
+                winners.remove(p);
             }
         }
         return winners;
@@ -372,33 +376,41 @@ public class Game implements Serializable {
      * The market is formed by 2 gold cards and 2 resource cards, which the player can pick up during the game
      */
     public void resetGoldCard1 ()  {
-        try {
-            this.goldCard1 = this.goldDeck.getFirstCard();
-        }catch (EmptyStackException e){
+        if(!this.goldDeck.isFinished()){
+            this.goldCard1=this.goldDeck.getFirstCard();
+        }else if(!this.resourceDeck.isFinished()){
+            this.goldCard1=this.resourceDeck.getFirstCard();
+        }else{
             this.goldCard1=null;
         }
     }
 
     public void resetGoldCard2 () {
-        try {
-            this.goldCard2 = this.goldDeck.getFirstCard();
-        }catch (EmptyStackException e){
+        if(!this.goldDeck.isFinished()){
+            this.goldCard2=this.goldDeck.getFirstCard();
+        }else if(!this.resourceDeck.isFinished()){
+            this.goldCard2=this.resourceDeck.getFirstCard();
+        }else{
             this.goldCard2=null;
         }
     }
 
     public void resetResourceCard1 () {
-        try {
-            this.resourceCard1 = this.resourceDeck.getFirstCard();
-        }catch (EmptyStackException e){
+        if(!this.resourceDeck.isFinished()){
+            this.resourceCard1=this.resourceDeck.getFirstCard();
+        }else if(!this.goldDeck.isFinished()){
+            this.resourceCard1=this.goldDeck.getFirstCard();
+        }else{
             this.resourceCard1=null;
         }
     }
 
     public void resetResourceCard2 () {
-        try {
-            this.resourceCard2 = this.resourceDeck.getFirstCard();
-        }catch (EmptyStackException e){
+        if(!this.resourceDeck.isFinished()){
+            this.resourceCard2=this.resourceDeck.getFirstCard();
+        }else if(!this.goldDeck.isFinished()){
+            this.resourceCard2=this.goldDeck.getFirstCard();
+        }else{
             this.resourceCard2=null;
         }
     }

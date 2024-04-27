@@ -12,6 +12,7 @@ import java.util.*;
 public class GameController {
     private Game game;
     int lastRounds;
+    int lastDrawingRounds;
     private List<Player> winners;
     private List<Player> gamePlayers;
     private int numberOfPlayers;
@@ -20,6 +21,7 @@ public class GameController {
     public GameController(){
         game=null;
         lastRounds=10;
+        lastDrawingRounds=10;
         winners=new ArrayList<>();
         gamePlayers= new ArrayList<>();
         numberOfPlayers=0;
@@ -44,7 +46,6 @@ public class GameController {
         if (gamePlayers.size() < numberOfPlayers) {
             gamePlayers.add(player);
         } else {
-            game.setLastEvent(Event.WRONG_NUMBER_OF_PLAYERS);
             throw new ArrayIndexOutOfBoundsException("This lobby is already full!");
         }
         if (gamePlayers.size() == numberOfPlayers) {
@@ -53,9 +54,9 @@ public class GameController {
                 startGame();
             } catch (IllegalStateException e) {
                 System.out.println("The game is already started!");
-                game.setLastEvent(Event.GAME_ALREADY_STARTED);            }
+                return;
+            }
         }
-    game.setLastEvent(Event.OK);
     }
 
 
@@ -93,7 +94,8 @@ public class GameController {
             tmp=p1.getBoard().getTable();
             //if the players haven't all played their baseCard
             if(tmp[p1.getBoard().getBoardDimensions()/2][p1.getBoard().getBoardDimensions()/2]==null){
-                game.setLastEvent(Event.OK);
+                game.setLastEvent(Event.OK); //necessario?
+                return;
             }
         }
         game.giveInitialCards();
@@ -115,8 +117,12 @@ public class GameController {
         }else{
             try {
                 currentPlayer.playCard(selectedCard, position, orientation);
-                if ((game.getState() != Game.GameState.ENDING) && (currentPlayer.getPoints() > 20)) {
+                if ((game.getState() != Game.GameState.ENDING) && (currentPlayer.getPoints() >= 20) && (lastRounds==10)) {
                     game.setState(Game.GameState.ENDING);
+                    calculateLastMoves();
+                }
+                if(lastDrawingRounds<=0){
+                    nextPhase();
                 }
                 game.setLastEvent(Event.OK);
             } catch (IllegalArgumentException e) {
@@ -148,6 +154,7 @@ public class GameController {
                 } catch (CardNotDrawableException e) {
                     System.out.println("This card can't be drawn!");
                     game.setLastEvent(Event.CARD_NOT_DRAWN);
+                    return;
                 }catch(EmptyStackException e){
                     System.out.println(e.getMessage());
                     game.setLastEvent(Event.CARD_NOT_DRAWN);
@@ -155,6 +162,7 @@ public class GameController {
                 }
                 if ((game.getState() != Game.GameState.ENDING) && ((game.getResourceDeck().isFinished()) && (game.getGoldDeck().isFinished()))) {
                     game.setState(Game.GameState.ENDING);
+                    calculateLastMoves();
                 } //if the score become higher than 20 there would be only one another turn to be played
                 nextPhase();
                 game.setLastEvent(Event.OK);
@@ -203,7 +211,6 @@ public class GameController {
      * @param sender the player who sends the message
      * @param receivers the players who are gonna receive the message
      * @param message the string (message) sent
-     * @return Event "OK"
      */
 
     public void sendMessage(Player sender, List<Player> receivers, String message){
@@ -215,6 +222,7 @@ public class GameController {
                    receivers.remove(sender);
                    tmp.sendMessage(new Message(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
                    game.setLastEvent(Event.OK);
+                   return;
                }
            }
            if (receivers.size() == game.getnPlayers()) {
@@ -236,25 +244,11 @@ public class GameController {
      * we have decided that is the controller the one that manages the changing of turn
      */
     public void nextPhase(){
-
-        if (game.getState() == Game.GameState.ENDING && lastRounds == 10) {
-            int firstPlayer = 0;
-            lastRounds = game.getnPlayers();
-
-            for (int i = 0; i<game.getnPlayers(); i++) {
-                if (game.getPlayers().get(i).isFirst()) {
-                    firstPlayer = i;
-                }
-            }
-           if (firstPlayer > 0) {
-                lastRounds = lastRounds + firstPlayer;
-            } else if (firstPlayer == 0) {
-                lastRounds = game.getnPlayers();
-            }
-        }
-
         if (game.getState() == Game.GameState.ENDING && lastRounds > 0) {
             lastRounds --;
+            if(lastDrawingRounds>0) {
+                lastDrawingRounds--;
+            }
             game.nextRound();
         } else if (game.getState() == Game.GameState.ENDING && lastRounds == 0) { //20 points reached the players will have only another round
             endGame();
@@ -263,6 +257,28 @@ public class GameController {
         }
         game.setLastEvent(Event.OK);
     }
+
+    /**
+     * This method is called when the ENDING Game condition is produced to calculate how many moves are left and
+     * how many times the Player will draw in the next manches
+     */
+    public void calculateLastMoves(){
+            int firstPlayer = 0;
+            lastRounds = game.getnPlayers();
+
+            for (int i = 0; i<game.getnPlayers(); i++) {
+                if (game.getPlayers().get(i).isFirst()) {
+                    firstPlayer = i;
+                }
+            }
+            if (firstPlayer > 0) {
+                lastRounds = lastRounds + firstPlayer-1; //ok
+                lastDrawingRounds=firstPlayer;
+            } else if (firstPlayer == 0) {
+                lastRounds = game.getnPlayers()*2-1; //se chi innesca ENDING è il firstPlayer
+                lastDrawingRounds=game.getnPlayers();
+            }
+        }
 
     /**
      * This method let the player leave the game anytime during the match and also closes the Game itself
@@ -320,6 +336,14 @@ public class GameController {
 
         // checking the winner(s)
         winners = game.winner();
+        if(winners.size()==1) {
+            System.out.println(winners.get(0).getNickname() + " WON!!!");
+        }else if(winners.size()>1){
+            for (Player p: winners){
+                System.out.print(p.getNickname()+", ");
+            }
+            System.out.println("tied!");
+        }
         game.setLastEvent (Event.OK);
     }
 
@@ -361,4 +385,11 @@ public class GameController {
         return game;
     }
 
+    public int getLastRounds() {
+        return lastRounds;
+    }
+
+    public int getLastDrawingRounds() {
+        return lastDrawingRounds;
+    }
 }

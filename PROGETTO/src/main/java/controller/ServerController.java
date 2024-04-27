@@ -28,14 +28,10 @@ public class ServerController {
      * @param creator is the player who wants to create a new lobby
      * @param numOfPlayers is the number of player the creator decided can play in the lobby
      */
-    public void startLobby(Player creator, int numOfPlayers) {
+    public void startLobby(Player creator, int numOfPlayers) throws IllegalArgumentException{
         //Creating the specific GameController
         GameController gameController= new GameController();
-        try {
             gameController.setNumberOfPlayers(numOfPlayers);
-        }catch(IllegalArgumentException e){
-
-        }
         //inserting the new gameController in the Map
         int tempId=getFirstAvailableId();
         allGameControllers.put(tempId,gameController);
