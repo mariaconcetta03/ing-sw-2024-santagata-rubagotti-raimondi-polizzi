@@ -11,6 +11,7 @@ import java.io.Serializable;
 public abstract class Card implements Serializable {
     private int id; // each card has a different ID
 
+
     /**
      * Getter method
      * @return the id of a card
