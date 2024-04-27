@@ -95,7 +95,7 @@ public class Player implements Serializable {
 
 
 
-
+    //We have to check we are not passing a null card
 
     /**
      * draws a card and if there's an association between game and player then
@@ -114,25 +114,22 @@ public class Player implements Serializable {
         PlayableCard goldCard2 = game.getGoldCard2(); //market
 
         //checking card type then calling reset methods from game to set up market area
-        if (card == goldCard1) {
-            //setting new card of goldCard1 in market
-            game.resetGoldCard1();
+        if (card.equals(goldCard1)) {
+                //setting new card of goldCard1 in market
+                game.resetGoldCard1();
 
-        } else if (card == goldCard2) { //
-            //setting new card of goldCard2 in market
-            game.resetGoldCard2();
-
-        } else if (card == resourceCard1) {
-            //setting new card of resource in market
-            game.resetResourceCard1();
-
-        } else if (card == resourceCard2) {
-            //setting new card of resource in market
-            game.resetResourceCard2();
-
-        } else if (card == game.getResourceDeck().checkFirstCard()){
+        } else if (card.equals(goldCard2)) {
+                //setting new card of goldCard2 in market
+                game.resetGoldCard2();
+        } else if (card.equals(resourceCard1)) {
+                //setting new card of resource in market
+                game.resetResourceCard1();
+        } else if (card.equals(resourceCard2)) {
+                //setting new card of resource in market
+                game.resetResourceCard2();
+        } else if ((!game.getResourceDeck().isFinished())&&(card.equals(game.getResourceDeck().checkFirstCard()))){
             card= game.getResourceDeck().getFirstCard();
-        } else if (card == game.getGoldDeck().checkFirstCard()){
+        } else if ((!game.getGoldDeck().isFinished())&&card.equals(game.getGoldDeck().checkFirstCard())){
             card= game.getGoldDeck().getFirstCard();
         }else if(!baseDeck.getCards().contains(card)){
             throw new CardNotDrawableException("You can't throw this card!");

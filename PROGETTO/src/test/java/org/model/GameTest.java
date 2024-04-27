@@ -365,7 +365,7 @@ public class GameTest extends TestCase {
 
 
         System.out.println("The previous gold card (1) had the ID: " + game.getGoldCard1().getId());
-        game.resetGoldCard1();
+            game.resetGoldCard1();
         System.out.println("the new gold card (1) has the ID " +  game.getGoldCard1().getId());
     }
 
@@ -397,7 +397,8 @@ public class GameTest extends TestCase {
         game.startGame();
 
         System.out.println("The previous gold card (2) had the ID: " + game.getGoldCard2().getId());
-        game.resetGoldCard2();
+            game.resetGoldCard2();
+
         System.out.println("the new gold card (2) has the ID " +  game.getGoldCard2().getId());
     }
 
@@ -429,7 +430,8 @@ public class GameTest extends TestCase {
         game.startGame();
 
         System.out.println("The previous resource card (1) had the ID: " + game.getResourceCard1().getId());
-        game.resetResourceCard1();
+
+            game.resetResourceCard1();
         System.out.println("the new resource card (1) has the ID " +  game.getResourceCard1().getId());
     }
 
@@ -461,7 +463,8 @@ public class GameTest extends TestCase {
         game.startGame();
 
         System.out.println("The previous resource card (2) had the ID: " + game.getResourceCard2().getId());
-        game.resetResourceCard2();
+
+            game.resetResourceCard2();
         System.out.println("the new resource card (2) has the ID " +  game.getResourceCard2().getId());
     }
 

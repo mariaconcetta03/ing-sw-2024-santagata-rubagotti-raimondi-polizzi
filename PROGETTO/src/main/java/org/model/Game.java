@@ -1,13 +1,10 @@
 package org.model;
 import Exceptions.CardNotDrawableException;
+import Exceptions.DeckIsFinishedException;
 import utils.Event;
 
-import java.awt.dnd.InvalidDnDOperationException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * This class represents the instance of a single game started by the Server
@@ -150,7 +147,7 @@ public class Game implements Serializable {
         for (int i=0; i<this.players.size(); i++) {
             try {
                 this.players.get(i).drawCard(this.baseDeck.getFirstCard());
-            }catch(CardNotDrawableException ignored) {} //it will never happen here
+            }catch(CardNotDrawableException | EmptyStackException ignored) {}//it will never happen here
             }
 
         // shuffling the objective deck
@@ -211,10 +208,11 @@ public class Game implements Serializable {
     public void giveInitialCards () {
         for (int i=0; i<nPlayers; i++) {
             try {
-                players.get(i).drawCard(resourceDeck.getFirstCard()); // resource card #1
-                players.get(i).drawCard(resourceDeck.getFirstCard()); // resource card #2
-                players.get(i).drawCard(goldDeck.getFirstCard()); // gold card #1
-            }catch (CardNotDrawableException ignored){} //it will never happen here
+                players.get(i).drawCard(resourceDeck.checkFirstCard()); // resource card #1
+                players.get(i).drawCard(resourceDeck.checkFirstCard()); // resource card #2
+                players.get(i).drawCard(goldDeck.checkFirstCard()); // gold card #1
+            }catch (CardNotDrawableException | EmptyStackException ignored){}
+            //it will never happen here
         }
 
         // giving 2 cards to the market as common objective
@@ -373,20 +371,36 @@ public class Game implements Serializable {
      * These 4 methods are useful to replace a card in the market.
      * The market is formed by 2 gold cards and 2 resource cards, which the player can pick up during the game
      */
-    public void resetGoldCard1 () {
-        this.goldCard1 = this.goldDeck.getFirstCard();
+    public void resetGoldCard1 ()  {
+        try {
+            this.goldCard1 = this.goldDeck.getFirstCard();
+        }catch (EmptyStackException e){
+            this.goldCard1=null;
+        }
     }
 
     public void resetGoldCard2 () {
-        this.goldCard2 = this.goldDeck.getFirstCard();
+        try {
+            this.goldCard2 = this.goldDeck.getFirstCard();
+        }catch (EmptyStackException e){
+            this.goldCard2=null;
+        }
     }
 
     public void resetResourceCard1 () {
-        this.resourceCard1 = this.resourceDeck.getFirstCard();
+        try {
+            this.resourceCard1 = this.resourceDeck.getFirstCard();
+        }catch (EmptyStackException e){
+            this.resourceCard1=null;
+        }
     }
 
     public void resetResourceCard2 () {
-        this.resourceCard2 = this.resourceDeck.getFirstCard();
+        try {
+            this.resourceCard2 = this.resourceDeck.getFirstCard();
+        }catch (EmptyStackException e){
+            this.resourceCard2=null;
+        }
     }
 
 

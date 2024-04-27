@@ -68,16 +68,24 @@ public class PlayableDeck extends Deck implements Serializable {
      * This method returns the first card in the deck
      * @return the first card in the deck
      */
-    public PlayableCard getFirstCard() { // returns the first card on the deck, for example when the player needs to pick it up
-        return cards.pop();
+    public PlayableCard getFirstCard() throws EmptyStackException{// returns the first card on the deck, for example when the player needs to pick it up
+        if(!cards.isEmpty()) {
+            return cards.pop();
+        }else{
+            throw new EmptyStackException();
+        }
     }
 
     /**
      * This method checks which is the first card in the deck
      * @return the first card in the deck
      */
-    public PlayableCard checkFirstCard(){
-        return cards.peek();
+    public PlayableCard checkFirstCard() throws EmptyStackException{
+        if(!cards.isEmpty()) {
+            return cards.peek();
+        }else{
+            throw new EmptyStackException();
+        }
     }
 
     /**

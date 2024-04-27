@@ -28,7 +28,7 @@ public class GameControllerTest extends TestCase {
         players.add(p3);
         players.add(p4);
         g1.createGame(players);
-        assertEquals(g1.getGame().getId(), ServerController.getFirstAvailableId());
+        assertEquals(g1.getGame().getId(), 0);
         assertEquals(g1.getGame().getState(), Game.GameState.WAITING_FOR_START);
     }
 
@@ -146,10 +146,71 @@ public class GameControllerTest extends TestCase {
         g1.playBaseCard("Paperino", p3.getPlayerDeck(1), true);
         g1.playBaseCard("Pluto", p2.getPlayerDeck(1), true);
 
+        //all the players have to choose their Pawn's color and their objectiveCard
+        g1.choosePawnColor(p1, Pawn.BLUE);
+        g1.choosePawnColor(p2, Pawn.GREEN);
+        g1.choosePawnColor(p3, Pawn.YELLOW);
+        g1.choosePawnColor(p4, Pawn.RED);
+
+        g1.chooseObjectiveCard(p1, p1.getPersonalObjective());
+        g1.chooseObjectiveCard(p2, p2.getPersonalObjective());
+        g1.chooseObjectiveCard(p3, p3.getPersonalObjective());
+        g1.chooseObjectiveCard(p4, p4.getPersonalObjective());
+
+        System.out.println(g1.getGame().getCurrentPlayer().getNickname());
+
+        g1.playCard("Pippo", p1.getPlayerDeck()[0], new Coordinates(19, 19), true);
+        g1.drawCard("Pippo", g1.getGame().getResourceCard1());
+
+        g1.playCard("Pluto", p2.getPlayerDeck()[0], new Coordinates(21, 21), true);
+        g1.drawCard("Pluto", g1.getGame().getResourceCard1());
+
+        g1.playCard("Paperino", p3.getPlayerDeck()[0], new Coordinates(19, 21), true);
+        g1.drawCard("Paperino", g1.getGame().getResourceCard1());
+
+        g1.playCard("Topolino", p4.getPlayerDeck()[0], new Coordinates(19, 19), true);
+        g1.drawCard("Topolino", g1.getGame().getResourceCard1());
+
     }
 
     public void testPlayBaseCard(){
+        GameController g1 = new GameController();
+        ServerController s1= new ServerController();
+        Player p1 = new Player();
+        p1.setNickname("Pippo");
+        Player p2 = new Player();
+        p2.setNickname("Pluto");
+        Player p3 = new Player();
+        p3.setNickname("Paperino");
+        Player p4 = new Player();
+        p4.setNickname("Topolino");
 
+        //adding the players to the GameController
+        List<Player> players = new ArrayList<>();
+        players.add(p1);
+        players.add(p2);
+        players.add(p3);
+        players.add(p4);
+
+        //adding the players to the ServerController
+        s1.getAllPlayers().add(p1);
+        s1.getAllPlayers().add(p2);
+        s1.getAllPlayers().add(p3);
+        s1.getAllPlayers().add(p4);
+
+        //creating and starting the game
+        g1.createGame(players);
+        g1.startGame();
+
+        PlayableCard baseCardP1=p1.getPlayerDeck(1);
+
+        //all the players need to play the baseCard first
+        g1.playBaseCard("Pippo", p1.getPlayerDeck(1), true);
+        g1.playBaseCard("Topolino", p4.getPlayerDeck(1), true);
+        g1.playBaseCard("Paperino", p3.getPlayerDeck(1), true);
+        g1.playBaseCard("Pluto", p2.getPlayerDeck(1), true);
+
+        assertEquals(p1.getBoard().getTable()[p1.getBoard().getBoardDimensions()/2][p1.getBoard().getBoardDimensions()/2], baseCardP1);
     }
 
     //problemi in player, non vengono tolte le carte dai deck quando chiamo drawCard().
@@ -207,7 +268,11 @@ public class GameControllerTest extends TestCase {
         System.out.println("Common drawable GOLD card: " + g1.getGame().getGoldCard1().getId() + " " + g1.getGame().getGoldCard2().getId());
         System.out.println("Common drawable RESOURCE card: " + g1.getGame().getResourceCard1().getId() + " " + g1.getGame().getResourceCard2().getId());
         System.out.println("Top of the decks' card: " + g1.getGame().getGoldDeck().checkFirstCard().getId() + " " + g1.getGame().getResourceDeck().checkFirstCard().getId());
+
+        tmp= g1.getGame().getCurrentPlayer();
+        cardsInHand= tmp.getPlayerDeck();
         cardsInHand[1]=null;
+
         System.out.println("Il giocatore corrente è: "+tmp.getNickname());
         g1.drawCard(tmp.getNickname(), g1.getGame().getResourceCard1());
         System.out.println("First card in hand: "+tmp.getPlayerDeck(1).getId());
@@ -216,6 +281,76 @@ public class GameControllerTest extends TestCase {
         System.out.println("Common drawable GOLD card: " + g1.getGame().getGoldCard1().getId() + " " + g1.getGame().getGoldCard2().getId());
         System.out.println("Common drawable RESOURCE card: " + g1.getGame().getResourceCard1().getId() + " " + g1.getGame().getResourceCard2().getId());
         System.out.println("Top of the decks' card: " + g1.getGame().getGoldDeck().checkFirstCard().getId() + " " + g1.getGame().getResourceDeck().checkFirstCard().getId());
+
+    }
+
+    public void testDrawCard_finishDecks(){
+        GameController g1= new GameController();
+        ServerController s1= new ServerController();
+        Player p1=new Player();
+        p1.setNickname("Pippo");
+        Player p2=new Player();
+        p2.setNickname("Pluto");
+        Player p3=new Player();
+        p3.setNickname("Paperino");
+        Player p4= new Player();
+        p4.setNickname("Topolino");
+
+        //adding the players to GameController
+        List<Player> players=new ArrayList<>();
+        players.add(p1);
+        players.add(p2);
+        players.add(p3);
+        players.add(p4);
+
+        //adding players to ServerController
+        s1.getAllPlayers().add(p1);
+        s1.getAllPlayers().add(p2);
+        s1.getAllPlayers().add(p3);
+        s1.getAllPlayers().add(p4);
+
+        //creating and starting the game
+        g1.createGame(players);
+        g1.startGame();
+
+        //all the players need to play the baseCard first
+        g1.playBaseCard("Pippo", p1.getPlayerDeck(1), true);
+        g1.playBaseCard("Pluto", p2.getPlayerDeck(1), true);
+        g1.playBaseCard("Paperino", p3.getPlayerDeck(1), true);
+        g1.playBaseCard("Topolino", p4.getPlayerDeck(1), true);
+
+        int i=30;
+        while(i>0) {
+            g1.getGame().getGoldDeck().getFirstCard();
+            g1.getGame().getResourceDeck().getFirstCard();
+            i--;
+        }
+
+        //checking the reset of last card
+        Player currentPlayer= g1.getGame().getCurrentPlayer();
+        g1.playCard(currentPlayer.getNickname(), currentPlayer.getPlayerDeck()[0], new Coordinates(19, 19), true);
+        g1.drawCard(currentPlayer.getNickname(), g1.getGame().getResourceCard1());
+        assertNull(g1.getGame().getResourceCard1());
+
+        //leaving just 1 gold card
+        for(int k=0; k<3; k++){
+            g1.getGame().getGoldDeck().getFirstCard();
+        }
+
+        System.out.println( "Remaining gold cards: "+ g1.getGame().getGoldDeck().getCards().size());
+        System.out.println( "Remaining resource cards: "+ g1.getGame().getResourceDeck().getCards().size());
+
+
+        //drawing the last gold card
+        currentPlayer= g1.getGame().getCurrentPlayer();
+        g1.playCard(currentPlayer.getNickname(), currentPlayer.getPlayerDeck()[0], new Coordinates(19, 19), true);
+        g1.drawCard(currentPlayer.getNickname(), g1.getGame().getGoldDeck().checkFirstCard());
+
+        //assertEquals(g1.getGame().getState(), Game.GameState.ENDING);
+
+        System.out.println( "Remaining gold cards: "+ g1.getGame().getGoldDeck().getCards().size());
+        System.out.println( "Remaining resource cards: "+ g1.getGame().getResourceDeck().getCards().size());
+
 
     }
 
@@ -441,7 +576,6 @@ public class GameControllerTest extends TestCase {
         System.out.println("Common drawable RESOURCE card: " + g1.getGame().getResourceCard1().getId() + " " + g1.getGame().getResourceCard2().getId());
         System.out.println("Top of the decks' card: " + g1.getGame().getGoldDeck().checkFirstCard().getId() + " " + g1.getGame().getResourceDeck().checkFirstCard().getId());
 
-        g1.nextPhase();
 
         //removing a card from the player hand
         tmp= g1.getGame().getCurrentPlayer();
@@ -458,8 +592,6 @@ public class GameControllerTest extends TestCase {
         System.out.println("Common drawable RESOURCE card: " + g1.getGame().getResourceCard1().getId() + " " + g1.getGame().getResourceCard2().getId());
         System.out.println("Top of the decks' card: " + g1.getGame().getGoldDeck().checkFirstCard().getId() + " " + g1.getGame().getResourceDeck().checkFirstCard().getId());
 
-        g1.nextPhase();
-
         //removing a card from the player hand
         tmp= g1.getGame().getCurrentPlayer();
         cardsInHand= tmp.getPlayerDeck();
@@ -475,8 +607,6 @@ public class GameControllerTest extends TestCase {
         System.out.println("Common drawable RESOURCE card: " + g1.getGame().getResourceCard1().getId() + " " + g1.getGame().getResourceCard2().getId());
         System.out.println("Top of the decks' card: " + g1.getGame().getGoldDeck().checkFirstCard().getId() + " " + g1.getGame().getResourceDeck().checkFirstCard().getId());
 
-        g1.nextPhase();
-
         //removing a card from the player hand
         tmp= g1.getGame().getCurrentPlayer();
         cardsInHand= tmp.getPlayerDeck();
@@ -491,8 +621,6 @@ public class GameControllerTest extends TestCase {
         System.out.println("Common drawable GOLD card: " + g1.getGame().getGoldCard1().getId() + " " + g1.getGame().getGoldCard2().getId());
         System.out.println("Common drawable RESOURCE card: " + g1.getGame().getResourceCard1().getId() + " " + g1.getGame().getResourceCard2().getId());
         System.out.println("Top of the decks' card: " + g1.getGame().getGoldDeck().checkFirstCard().getId() + " " + g1.getGame().getResourceDeck().checkFirstCard().getId());
-
-        g1.nextPhase();
 
         //removing a card from the player hand
         tmp= g1.getGame().getCurrentPlayer();
@@ -511,12 +639,80 @@ public class GameControllerTest extends TestCase {
 
     }
 
+    //test end game
     public void testNextPhase_2(){
+        GameController g1= new GameController();
+        ServerController s1= new ServerController();
+        Player p1=new Player();
+        p1.setNickname("Pippo");
+        Player p2=new Player();
+        p2.setNickname("Pluto");
+        Player p3=new Player();
+        p3.setNickname("Paperino");
+        Player p4= new Player();
+        p4.setNickname("Topolino");
 
+        //adding the players to GameController
+        List<Player> players=new ArrayList<>();
+        players.add(p1);
+        players.add(p2);
+        players.add(p3);
+        players.add(p4);
+
+        //adding players to ServerController
+        s1.getAllPlayers().add(p1);
+        s1.getAllPlayers().add(p2);
+        s1.getAllPlayers().add(p3);
+        s1.getAllPlayers().add(p4);
+
+        //creating and starting the game
+        g1.createGame(players);
+        g1.startGame();
+
+        //all the players need to play the baseCard first
+        g1.playBaseCard("Pippo", p1.getPlayerDeck(1), true);
+        g1.playBaseCard("Topolino", p4.getPlayerDeck(1), true);
+        g1.playBaseCard("Paperino", p3.getPlayerDeck(1), true);
+        g1.playBaseCard("Pluto", p2.getPlayerDeck(1), true);
     }
 
     public void testLeaveGame(){
+        GameController g1= new GameController();
+        ServerController s1= new ServerController();
+        Player p1=new Player();
+        p1.setNickname("Pippo");
+        Player p2=new Player();
+        p2.setNickname("Pluto");
+        Player p3=new Player();
+        p3.setNickname("Paperino");
+        Player p4= new Player();
+        p4.setNickname("Topolino");
 
+        //adding the players to GameController
+        List<Player> players=new ArrayList<>();
+        players.add(p1);
+        players.add(p2);
+        players.add(p3);
+        players.add(p4);
+
+        //adding players to ServerController
+        s1.getAllPlayers().add(p1);
+        s1.getAllPlayers().add(p2);
+        s1.getAllPlayers().add(p3);
+        s1.getAllPlayers().add(p4);
+
+        //creating and starting the game
+        g1.createGame(players);
+        g1.startGame();
+
+        //all the players need to play the baseCard first
+        g1.playBaseCard("Pippo", p1.getPlayerDeck(1), true);
+        g1.playBaseCard("Topolino", p4.getPlayerDeck(1), true);
+        g1.playBaseCard("Paperino", p3.getPlayerDeck(1), true);
+        g1.playBaseCard("Pluto", p2.getPlayerDeck(1), true);
+
+        p1.addPoints(10);
+        g1.leaveGame("Topolino");
     }
 
     public void testEndGame() {
@@ -554,7 +750,19 @@ public class GameControllerTest extends TestCase {
         g1.playBaseCard("Paperino", p3.getPlayerDeck(1), true);
         g1.playBaseCard("Pluto", p2.getPlayerDeck(1), true);
 
-        //da finire
+        //all the players have to choose their Pawn's color and their objectiveCard
+        g1.choosePawnColor(p1, Pawn.BLUE);
+        g1.choosePawnColor(p2, Pawn.GREEN);
+        g1.choosePawnColor(p3, Pawn.YELLOW);
+        g1.choosePawnColor(p4, Pawn.RED);
+
+        g1.chooseObjectiveCard(p1, p1.getPersonalObjective());
+        g1.chooseObjectiveCard(p2, p2.getPersonalObjective());
+        g1.chooseObjectiveCard(p3, p3.getPersonalObjective());
+        g1.chooseObjectiveCard(p4, p4.getPersonalObjective());
+
+        //
+
     }
 
 }

@@ -1,6 +1,7 @@
 package controller;
 import Exceptions.CardNotDrawableException;
 import Exceptions.CardNotOwnedException;
+import Exceptions.DeckIsFinishedException;
 import org.model.*;
 import utils.Event;
 
@@ -39,7 +40,7 @@ public class GameController {
             gamePlayers.add(player);
         } else {
             return Event.FULL_LOBBY;
-            //throw new ArrayIndexOutOfBoundsException("This lobby is already full!");
+            //throw new ArrayIndexOutOfBoundsException("This lobby is already full!"); QUA E IN START GAME SERVONO ECCEZIONI!!!
         }
         if (gamePlayers.size() == numberOfPlayers) {
             createGame(gamePlayers);
@@ -71,13 +72,6 @@ public class GameController {
      * 3 cards (2 resource cards and 1 gold card)
      */
     public Event startGame() /*throws IllegalStateException */ {
-        /**List<Integer> usedIndexes = new ArrayList<>();
-        // crea oggetto Random
-        Random random = new Random();
-        // genera numero casuale tra 0 e 15
-        int number1 = random.nextInt(16);
-        int number2 = random.nextInt(16);
-         */
         if(game.getState() == Game.GameState.WAITING_FOR_START) {
             game.startGame();
             return Event.OK;
@@ -97,6 +91,7 @@ public class GameController {
     public Event playBaseCard(String nickname, PlayableCard baseCard, boolean orientation){
         Player player= ServerController.getPlayerByNickname(nickname);
         player.playBaseCard(orientation, baseCard);
+        player.getPlayerDeck()[0]=null; //the player played the baseCard
         PlayableCard[][] tmp;
         //for all players in the game
         for(Player p1: game.getPlayers()){
@@ -116,7 +111,7 @@ public class GameController {
      * @param selectedCard the Card the Player wants to play
      * @param position the position where the Player wants to play the Card
      * @param orientation the side on which the Player wants to play the Card
-     * @return true if the card was correctly played, false otherwise
+     * @return OK if the card was correctly played, false otherwise
      * this method should include the case in which the card placed is the base card
      */
     public Event playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) {
@@ -144,19 +139,37 @@ public class GameController {
     public Event drawCard(String nickname, PlayableCard selectedCard) { //we can draw a card from one of the decks or from the uncovered cards
         Player currentPlayer = game.getPlayers().get(0);
         if (!ServerController.getPlayerByNickname(nickname).equals(currentPlayer)) {
-            System.out.println("NON E IL TUO TURNO, NON PUOI PESCARE");
+            System.out.println("Not your turn, you can't draw!");
             return Event.NOT_YOUR_TURN;
         } else {
-            try {
-                currentPlayer.drawCard(selectedCard);
-            }catch (CardNotDrawableException e){
-                game.setLastEvent(Event.CARD_NOT_DRAWN);
-                return Event.CARD_NOT_DRAWN;//ANDRA RIMOSSO e lasciato solo return!!!
+            boolean draw = false;
+            for (int i = 0; i < 3 && !draw; i++) {
+                if (currentPlayer.getPlayerDeck()[i] == null) {
+                    draw = true;
+                }
             }
-            if ((game.getState() != Game.GameState.ENDING) && ((game.getResourceDeck().isFinished()) && (game.getGoldDeck().isFinished()))) {
-                game.setState(Game.GameState.ENDING);
-            } //if the score become higher than 20 there would be only one another turn to be played
-            return Event.OK;
+            if (draw) {
+                try {
+                    currentPlayer.drawCard(selectedCard);
+                } catch (CardNotDrawableException e) {
+                    System.out.println("This card can't be drawn!");
+                    game.setLastEvent(Event.CARD_NOT_DRAWN);
+                    return Event.CARD_NOT_DRAWN;//ANDRA RIMOSSO e lasciato solo return!!!
+                }catch(EmptyStackException e){
+                    System.out.println(e.getMessage());
+                    game.setLastEvent(Event.CARD_NOT_DRAWN);
+                    return Event.CARD_NOT_DRAWN;//ANDRA RIMOSSO e lasciato solo return!!!
+                }
+                if ((game.getState() != Game.GameState.ENDING) && ((game.getResourceDeck().isFinished()) && (game.getGoldDeck().isFinished()))) {
+                    game.setState(Game.GameState.ENDING);
+                } //if the score become higher than 20 there would be only one another turn to be played
+                nextPhase();
+                return Event.OK;
+            }else{
+                //non hai ancora giocato la carta, non puoi pescare!!!
+                game.setLastEvent(Event.CARD_NOT_DRAWN);
+                return Event.CARD_NOT_DRAWN;
+        }
         }
     }
 
@@ -264,11 +277,16 @@ public class GameController {
         if(tmp==null){
             throw new IllegalArgumentException("This player is not playing the match");
         }else{
-            for(Player p: game.getPlayers()){
+            for(Player p: game.getPlayers()){ //sarà necessario? occhio differenza tra Player e Client
                 p.setGame(null);
                 p.setBoard(null);
                 p.setIsFirst(false);
+                p.addPoints(-p.getPoints());
                 p.setColor(null);
+                for(int i=0;i<p.getPlayerDeck().length;i++){
+                    p.getPlayerDeck()[i]=null;
+                }
+                //objective card mancano
             }
             //this will alert the listeners to notify all the players that the game ended
             game.setLastEvent(Event.GAME_LEFT);

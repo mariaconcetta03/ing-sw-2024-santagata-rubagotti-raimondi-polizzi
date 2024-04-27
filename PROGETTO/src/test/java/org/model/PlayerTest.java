@@ -1,6 +1,7 @@
 package org.model;
 
 import Exceptions.CardNotDrawableException;
+import Exceptions.DeckIsFinishedException;
 import com.ctc.wstx.shaded.msv_core.reader.xmlschema.IncludeState;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -57,7 +58,7 @@ public class PlayerTest extends TestCase {
             p1.drawCard(game.getGoldCard1());
             p1.drawCard(game.getGoldCard2());
             p1.drawCard(game.getGoldDeck().checkFirstCard());
-        }catch (CardNotDrawableException ignored){}
+        }catch (CardNotDrawableException | EmptyStackException ignored){}
         System.out.println("The 1st card in player's hand has the ID: " + p1.getPlayerDeck(1).getId());
         System.out.println("The 2nd card in player's hand has the ID: " + p1.getPlayerDeck(2).getId());
         System.out.println("The 3rd card in player's hand has the ID: " + p1.getPlayerDeck(3).getId());
