@@ -1,6 +1,9 @@
 package controller;
 
 import Exceptions.CardNotOwnedException;
+import Exceptions.FullLobbyException;
+import Exceptions.GameAlreadyStartedException;
+import Exceptions.GameNotExistsException;
 import junit.framework.TestCase;
 import org.model.*;
 
@@ -52,9 +55,11 @@ public class GameControllerTest extends TestCase {
         s1.getAllPlayers().add(p4);
 
         s1.startLobby(p1,4);
-        s1.addPlayerToLobby(p2, 0);
-        s1.addPlayerToLobby(p3, 0);
-        s1.addPlayerToLobby(p4, 0);
+        try {
+            s1.addPlayerToLobby(p2, 0);
+            s1.addPlayerToLobby(p3, 0);
+            s1.addPlayerToLobby(p4, 0);
+        }catch (GameNotExistsException | GameAlreadyStartedException | FullLobbyException ignored){}
     }
 
     //we will never get too many players because when we reach the correct number the game starts and it isn't accessible anymore
@@ -79,11 +84,13 @@ public class GameControllerTest extends TestCase {
     s1.getAllPlayers().add(p4);
 
     s1.startLobby(p1,4);
-    s1.addPlayerToLobby(p2, 0);
-    s1.addPlayerToLobby(p3, 0);
-    s1.addPlayerToLobby(p4, 0);
-    s1.addPlayerToLobby(p5, 0); //game already started!
-    s1.addPlayerToLobby(p5, 1); //the game doesn't exist!
+    try {
+        s1.addPlayerToLobby(p2, 0);
+        s1.addPlayerToLobby(p3, 0);
+        s1.addPlayerToLobby(p4, 0);
+        s1.addPlayerToLobby(p5, 0); //game already started!
+        s1.addPlayerToLobby(p5, 1); //the game doesn't exist!
+    }catch(GameNotExistsException | GameAlreadyStartedException | FullLobbyException ignored){}
 }
     public void testStartGame() {
         GameController g1= new GameController();

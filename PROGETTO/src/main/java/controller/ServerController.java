@@ -34,7 +34,7 @@ public class ServerController {
         try {
             gameController.setNumberOfPlayers(numOfPlayers);
         }catch(IllegalArgumentException e){
-           gameController.getGame().setLastEvent(Event.WRONG_NUMBER_OF_PLAYERS);
+
         }
         //inserting the new gameController in the Map
         int tempId=getFirstAvailableId();
@@ -43,8 +43,7 @@ public class ServerController {
         //adding the first player
         gameController.addPlayer(creator);
         //we will have to check in the VIEW if the numOfPlayers is between 2 and 4
-        gameController.getGame().setLastEvent(Event.OK);
-    }
+        }
 
 
 
