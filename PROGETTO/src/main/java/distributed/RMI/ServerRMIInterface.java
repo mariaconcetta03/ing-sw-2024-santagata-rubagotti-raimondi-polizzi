@@ -1,7 +1,11 @@
 package distributed.RMI;
 
+import Exceptions.FullLobbyException;
+import Exceptions.GameAlreadyStartedException;
+import Exceptions.GameNotExistsException;
+import Exceptions.NicknameAlreadyTakenException;
 import org.model.*;
-import utils.Event;
+
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -10,35 +14,35 @@ import java.util.List;
 public interface ServerRMIInterface extends Remote {
     void startServer() throws RemoteException;
 
-    Event createLobby(Player creator, int numOfPlayers) throws RemoteException;
+    void createLobby(Player creator, int numOfPlayers) throws RemoteException;
 
-    Event addPlayerToLobby(Player p, int gameId) throws RemoteException;
+    void addPlayerToLobby(Player p, int gameId) throws RemoteException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException;
 
-    Event chooseNickname(Player chooser, String nickname) throws RemoteException;
+    void chooseNickname(Player chooser, String nickname) throws RemoteException, NicknameAlreadyTakenException;
 
-    Event createGame(List<Player> gamePlayers) throws RemoteException;
+    void createGame(List<Player> gamePlayers) throws RemoteException;
 
-    Event addPlayerToGame(Player player) throws RemoteException;
+    void addPlayerToGame(Player player) throws RemoteException, ArrayIndexOutOfBoundsException;
 
-    Event startGame() throws RemoteException;
+    void startGame() throws RemoteException, IllegalStateException;
 
-    Event playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException;
+    void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException;
 
-    Event playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException;
+    void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException;
 
-    Event drawCard(String nickname, PlayableCard selectedCard) throws RemoteException;
+    void drawCard(String nickname, PlayableCard selectedCard) throws RemoteException;
 
-    Event chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard) throws RemoteException;
+    void chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard) throws RemoteException;
 
-    Event choosePawnColor(Player chooser, Pawn selectedColor) throws RemoteException;
+    void choosePawnColor(Player chooser, Pawn selectedColor) throws RemoteException;
 
-    Event sendMessage(Player sender, List<Player> receivers, String message) throws RemoteException;
+    void sendMessage(Player sender, List<Player> receivers, String message) throws RemoteException;
 
-    Event nextRound() throws RemoteException;
+    void nextRound() throws RemoteException;
 
-    Event endGame() throws RemoteException;
+    void endGame() throws RemoteException;
 
-    Event leaveGame() throws RemoteException;
+    void leaveGame(String nickname) throws RemoteException, IllegalArgumentException;
 
     void setGameController(Player caller) throws RemoteException;
 }

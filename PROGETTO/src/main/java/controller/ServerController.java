@@ -12,6 +12,9 @@ public class ServerController {
     private static Map<Integer, GameController> allGameControllers;
     private static List<Player> allPlayers;
 
+    /**
+     * Class constructor
+     */
     public ServerController() {
         allPlayers=new ArrayList();
         allGameControllers=new HashMap<>();
@@ -72,7 +75,7 @@ public class ServerController {
      * @param chooser is the player choosing the nickname
      * @param nickname is the String he wants to put as his nickname
      */
-    public Event chooseNickname(Player chooser, String nickname) /*throws NicknameAlreadyTakenException*/ {
+    public void chooseNickname(Player chooser, String nickname) throws NicknameAlreadyTakenException {
         if(isNicknameAvailable(nickname)){
             chooser.setNickname(nickname);
             return Event.OK;
@@ -120,6 +123,10 @@ public class ServerController {
         return null;
     }
 
+    /**
+     * Getter method
+     * @return allGameControllers which is a map that associate the controller to a specific game
+     */
     public static Map<Integer, GameController> getAllGameControllers() {
         return allGameControllers;
     }

@@ -16,6 +16,9 @@ public class GameController {
     private int numberOfPlayers;
     private int id;
 
+    /**
+     * Class constructor
+     */
     public GameController(){
         game=null;
         lastRounds=10;
@@ -34,7 +37,13 @@ public class GameController {
         return Event.OK;
     }
 
-    public Event addPlayer(Player player) /*throws ArrayIndexOutOfBoundsException*/ {
+
+    /**
+     *
+     * @param player who wants to add to a game
+     * @throws ArrayIndexOutOfBoundsException when the palyer can't be added
+     */
+    public void addPlayer(Player player) throws ArrayIndexOutOfBoundsException {
         if (gamePlayers.size() < numberOfPlayers) {
             gamePlayers.add(player);
         } else {
@@ -69,8 +78,9 @@ public class GameController {
      * This method starts the game. The game state is set to STARTED. 2 objective cards are given to each
      * player, and he will need to choose one of these. Then the market is completed and each player receives
      * 3 cards (2 resource cards and 1 gold card)
+     * @throws IllegalArgumentException if there's an invalid game status
      */
-    public Event startGame() /*throws IllegalStateException */ {
+    public void startGame() throws IllegalStateException {
         /**List<Integer> usedIndexes = new ArrayList<>();
         // crea oggetto Random
         Random random = new Random();
@@ -80,10 +90,10 @@ public class GameController {
          */
         if(game.getState() == Game.GameState.WAITING_FOR_START) {
             game.startGame();
-            return Event.OK;
+            game.setLastEvent(Event.OK);
         } else {
-            return Event.INVALID_GAME_STATUS;
-            ///throw new IllegalStateException();
+            game.setLastEvent(Event.INVALID_GAME_STATUS);
+            throw new IllegalStateException();
         }
     }
 
@@ -94,7 +104,7 @@ public class GameController {
      * @param baseCard
      * @param orientation
      */
-    public Event playBaseCard(String nickname, PlayableCard baseCard, boolean orientation){
+    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation){
         Player player= ServerController.getPlayerByNickname(nickname);
         player.playBaseCard(orientation, baseCard);
         PlayableCard[][] tmp;
@@ -103,11 +113,11 @@ public class GameController {
             tmp=p1.getBoard().getTable();
             //if the players haven't all played their baseCard
             if(tmp[p1.getBoard().getBoardDimensions()/2][p1.getBoard().getBoardDimensions()/2]==null){
-                return Event.OK;
+                game.setLastEvent(Event.OK);
             }
         }
         game.giveInitialCards();
-        return Event.OK;
+        game.setLastEvent(Event.OK);
     }
 
     /**
@@ -119,20 +129,21 @@ public class GameController {
      * @return true if the card was correctly played, false otherwise
      * this method should include the case in which the card placed is the base card
      */
-    public Event playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) {
+    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) {
         Player currentPlayer = game.getPlayers().get(0);
         if (!ServerController.getPlayerByNickname(nickname).equals(currentPlayer)) {
             System.out.println("NON E IL TUO TURNO, NON PUOI GIOCARE LA CARTA");
-            return Event.NOT_YOUR_TURN;
+
+            game.setLastEvent(Event.NOT_YOUR_TURN);
         }else{
             try {
                 currentPlayer.playCard(selectedCard, position, orientation);
                 if ((game.getState() != Game.GameState.ENDING) && (currentPlayer.getPoints() > 20)) {
                     game.setState(Game.GameState.ENDING);
                 }
-                return Event.OK; //happy ending
+                game.setLastEvent(Event.OK); //happy ending
             } catch (IllegalArgumentException e) {
-                return Event.UNABLE_TO_PLAY_CARD; //error ending. This has to be forwarded to the view.
+                game.setLastEvent(Event.UNABLE_TO_PLAY_CARD); //error ending. This has to be forwarded to the view.
             }
         }
     }
@@ -174,14 +185,20 @@ public class GameController {
         }
     }
 
-    public Event choosePawnColor(Player chooser, Pawn selectedColor) {
+
+    /**
+     * This method allows a player to choose a pawn color
+     * @param chooser the player who is gonna select the pawn
+     * @param selectedColor the chosen colour
+     */
+    public void choosePawnColor(Player chooser, Pawn selectedColor) {
         synchronized (game.getAlreadySelectedColors()) {
             if (!game.getAlreadySelectedColors().contains(selectedColor)) {
                 chooser.setColor(selectedColor);
                 game.getAlreadySelectedColors().add(selectedColor);
-                return Event.OK;
+                game.setLastEvent(Event.OK);
             } else {
-                return Event.NOT_AVAILABLE_PAWN;
+                game.setLastEvent(Event.NOT_AVAILABLE_PAWN);
             }
         }
     }
@@ -201,8 +218,7 @@ public class GameController {
                if(tmp!=null){
                    receivers.remove(sender);
                    tmp.sendMessage(new Message(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
-                   return Event.OK;
-               }
+                   game.setLastEvent(Event.OK);               }
            }
            if (receivers.size() == game.getnPlayers()) {
                receivers.remove(sender);
@@ -213,7 +229,7 @@ public class GameController {
                tmp = game.startChat(sender, receivers.get(0));
                tmp.sendMessage(new Message(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
            }
-           return Event.OK;
+        game.setLastEvent(Event.OK);
     }
 
 
@@ -248,7 +264,7 @@ public class GameController {
         } else if (game.getState() == Game.GameState.STARTED) {
             game.nextRound(); //the order of the players in the list will be changed
         }
-        return Event.OK;
+        game.setLastEvent(Event.OK);
     }
 
     /**
@@ -273,7 +289,7 @@ public class GameController {
             //this will alert the listeners to notify all the players that the game ended
             game.setLastEvent(Event.GAME_LEFT);
             game.setState(Game.GameState.ENDED);//here or in the listeners?
-            ServerController.getAllGameControllers().remove(id); //il gamecontroller si "auto"rimuove dal server controller
+            ServerController.getAllGameControllers().remove(id); //il gamecontroller si "auto" rimuove dal server controller
         }
     }
 
@@ -307,17 +323,8 @@ public class GameController {
         return game;
     }
 
-    public void setNumberOfPlayers(int numberOfPlayers) throws IllegalArgumentException {
-        if ((numberOfPlayers >= 2)&&(numberOfPlayers <= 4)) {
-            this.numberOfPlayers = numberOfPlayers;
-        }else throw new IllegalArgumentException("Wrong number of players!");
-    }
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 }

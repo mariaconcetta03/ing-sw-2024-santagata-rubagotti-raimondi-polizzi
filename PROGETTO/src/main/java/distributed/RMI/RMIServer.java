@@ -1,19 +1,21 @@
 package distributed.RMI;
 
+import Exceptions.FullLobbyException;
+import Exceptions.GameAlreadyStartedException;
+import Exceptions.GameNotExistsException;
+import Exceptions.NicknameAlreadyTakenException;
 import controller.GameController;
 import controller.ServerController;
-import distributed.ClientGeneralInterface;
 import org.model.*;
-import utils.*;
+
 
 import java.rmi.NotBoundException;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
-import java.util.Map;
+
 
 
 public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface {
@@ -273,11 +275,11 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
 
 
     /**
-     * This method calls the funcition into the gameController
+     * This method calls the function into the gameController
      * @param //player? check
      * @return nothing ?
      * @throws RemoteException
-     * @throws NotBoundException
+     * @throws IllegalArgumentException
      */
     public Event leaveGame() throws RemoteException{
         String daCambiare="pippo";
@@ -306,7 +308,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      */
     public void setGameController(Player caller) throws RemoteException {
         this.gameController =
-                this.serverController.getAllGameControllers().get(caller.getGame().getId());
+                ServerController.getAllGameControllers().get(caller.getGame().getId());
     }
 
 }

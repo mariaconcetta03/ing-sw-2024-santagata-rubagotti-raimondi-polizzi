@@ -1,8 +1,12 @@
 package distributed.RMI;
 
+import Exceptions.FullLobbyException;
+import Exceptions.GameAlreadyStartedException;
+import Exceptions.GameNotExistsException;
+import Exceptions.NicknameAlreadyTakenException;
 import distributed.ClientGeneralInterface;
 import org.model.*;
-import utils.*;
+
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -68,10 +72,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public Event createLobby(Player creator, int numOfPlayers) throws RemoteException, NotBoundException { //exceptions added automatically
         SRMIInterfaceFromRegistry();
-        Event event;
-        event = this.SRMIInterface.createLobby(creator, numOfPlayers);
-        event.printEvent();
-        return event;
+        this.SRMIInterface.createLobby(creator, numOfPlayers);
     }
 
 
@@ -88,12 +89,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @throws RemoteException
      * @throws NotBoundException
      */
-    public Event addPlayerToLobby (Player player, int gameId) throws RemoteException, NotBoundException {
+    public void addPlayerToLobby (Player player, int gameId) throws RemoteException, NotBoundException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
         SRMIInterfaceFromRegistry();
-        Event event;
-        event = this.SRMIInterface.addPlayerToLobby(player, gameId);
-        event.printEvent();
-        return event;
+        this.SRMIInterface.addPlayerToLobby(player, gameId);
     }
 
 
@@ -140,7 +138,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * instead it returns the event "FULL_LOBBY". If the game is already started, it returns
      * "GAME_ALREADY_STARTED"
      */
-    public Event addPlayerToGame (Player player) throws RemoteException, NotBoundException {
+    public void addPlayerToGame (Player player) throws RemoteException, NotBoundException, ArrayIndexOutOfBoundsException {
         SRMIInterfaceFromRegistry();
         Event event;
         event = this.SRMIInterface.addPlayerToGame(player);
@@ -158,12 +156,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @return the event "OK" when the game is set to started, otherwise,
      * if the game is not ready to be started, it returns the event "INVALID_GAME_STATUS"
      */
-    public Event startGame() throws RemoteException, NotBoundException {
+    public void startGame() throws RemoteException, NotBoundException, IllegalStateException {
         SRMIInterfaceFromRegistry();
-        Event event;
-        event = this.SRMIInterface.startGame();
-        event.printEvent();
-        return event;
+        this.SRMIInterface.startGame();
     }
 
 
@@ -179,10 +174,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public Event playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, NotBoundException {
         SRMIInterfaceFromRegistry();
-        Event event;
-        event = this.SRMIInterface.playCard(nickname, selectedCard, position, orientation);
-        event.printEvent();
-        return event;
+        this.SRMIInterface.playCard(nickname, selectedCard, position, orientation);
     }
 
 
@@ -217,10 +209,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public Event drawCard(String nickname, PlayableCard selectedCard) throws RemoteException, NotBoundException {
         SRMIInterfaceFromRegistry();
-        Event event;
-        event = this.SRMIInterface.drawCard(nickname, selectedCard);
-        event.printEvent();
-        return event;
+        this.SRMIInterface.drawCard(nickname, selectedCard);
     }
 
 
@@ -252,12 +241,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * returns the event "OK" if the color is chosen correctly
      * @throws RemoteException
      */
-    public Event choosePawnColor(Player chooser, Pawn selectedColor) throws RemoteException, NotBoundException {
+    public void choosePawnColor(Player chooser, Pawn selectedColor) throws RemoteException, NotBoundException {
         SRMIInterfaceFromRegistry();
-        Event event;
-        event = this.SRMIInterface.choosePawnColor(chooser, selectedColor);
-        event.printEvent();
-        return event;
+        this.SRMIInterface.choosePawnColor(chooser, selectedColor);
     }
 
 
@@ -275,10 +261,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public Event sendMessage(Player sender, List<Player> receivers, String message) throws RemoteException, NotBoundException {
         SRMIInterfaceFromRegistry();
-        Event event;
-        event = this.SRMIInterface.sendMessage(sender, receivers, message);
-        event.printEvent();
-        return event;
+        this.SRMIInterface.sendMessage(sender, receivers, message);
     }
 
 
