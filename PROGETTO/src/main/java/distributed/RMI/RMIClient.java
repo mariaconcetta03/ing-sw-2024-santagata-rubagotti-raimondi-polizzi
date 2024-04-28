@@ -33,12 +33,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * Main method
      * This method calls the method "startConnectionWithServer()". After the calling of this method the server
      * is able to receive the requests of the clients
-     * @param args none
+     * @param args from CLI
      */
     public static void main( String[] args )
     {
         try {
-            new RMIClient().createLobby(new Player(), 4);
+            new RMIClient().createLobby(new Player(), 4); // OK
+            new RMIClient().createLobby(new Player(), 9); // KO [java.lang.IllegalArgumentException: Wrong number of players!]
         } catch (Exception e) {
             e.printStackTrace();
         }
