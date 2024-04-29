@@ -29,7 +29,7 @@ public class Observable {
     // OBSERVABLE -> OBSERVER -> SERVER -> RMISERVER -> RMICLIENT -> VIEW
     // ------------------------------------------------------------------------------
 
-    //RMI:
+    //RMI: (attenzione: update va chiamato dal server non dal client)
     // se RMISERVER ha una funzione update (del model del client che ha chiamato e del
     // model degli altri client), RMICLIENT può chiamarla tramite invocazione remota.
     // questo update deve contattare la lista listeners presente nell'interfaccia osservable
@@ -40,7 +40,7 @@ public class Observable {
     // questo oggetto observable dobbiamo instaurare la connessione RMI verso i client.
 
 
-    //SOCKET:
+    //SOCKET: (attenzione: update va chiamato dal server non dal client)
     // abbiamo un thread per ogni client e questo thread si trova all'indirizzo IP del server
     // e contiene una copia della socket del vero client (che si trova in un altro indirizzo IP,
     // che sarà incluso nei listeners: quindi il client vero, ClientSCK, avrà degli attributi della
