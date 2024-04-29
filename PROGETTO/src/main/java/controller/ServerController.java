@@ -24,7 +24,7 @@ public class ServerController {
     }
 
     /**
-     * This method creates a new lobby
+     * This method creates a new lobby adding the first player to it.
      * @param creator is the player who wants to create a new lobby
      * @param numOfPlayers is the number of player the creator decided can play in the lobby
      */
@@ -47,9 +47,9 @@ public class ServerController {
      * This method is used to add a single player to an already created lobby
      * @param player is the player who wants to join the lobby
      * @param gameId is the lobby the player wants to join
-     * @throws GameNotExistsException
-     * @throws GameAlreadyStartedException
-     * @throws FullLobbyException
+     * @throws GameNotExistsException if the Game the player wants to join doesn't exist
+     * @throws GameAlreadyStartedException if the Game is not in WAITING_FOR_START condition
+     * @throws FullLobbyException if the lobby has already reached the maximum number of players
      */
     public void addPlayerToLobby(Player player, int gameId) throws GameNotExistsException, GameAlreadyStartedException, FullLobbyException {
         if (!allGameControllers.containsKey(gameId)) { //if the game doesn't exist
@@ -69,10 +69,9 @@ public class ServerController {
 
     /**
      * Once connected the player get to choose his nickname that must be different from all the other presents
-     * I can't throw exceptions through internet connection
      * @param chooser is the player choosing the nickname
      * @param nickname is the String he wants to put as his nickname
-     * @throws NicknameAlreadyTakenException
+     * @throws NicknameAlreadyTakenException if the nickname is already in use
      */
     public void chooseNickname(Player chooser, String nickname) throws NicknameAlreadyTakenException {
         if(isNicknameAvailable(nickname)){
@@ -86,6 +85,7 @@ public class ServerController {
     /**
      * Getter method
      * @return the first available id
+     * INTERNAL USE METHOD
      */
     public static int getFirstAvailableId() {
         firstAvailableId++;
@@ -97,6 +97,7 @@ public class ServerController {
      * This method tells if a nickname is available to be selected by the players
      * @param nickname is the String we want to check
      * @return true if it is available, false instead
+     * INTERNAL USE METHOD
      */
     public boolean isNicknameAvailable(String nickname){
         Player temp=null;

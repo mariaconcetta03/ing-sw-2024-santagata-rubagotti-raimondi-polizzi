@@ -18,6 +18,9 @@ public class GameController {
     private int numberOfPlayers;
     private int id;
 
+    /**
+     * Class constructor, initialises lastRounds and lastDrawingRounds to 10
+     */
     public GameController(){
         game=null;
         lastRounds=10;
@@ -38,9 +41,10 @@ public class GameController {
     }
 
     /**
-     *
-     * @param player who wants to add to a game
-     * @throws ArrayIndexOutOfBoundsException when the palyer can't be added
+     * This method adds a player to the waiting ones in the lobby (gamePlayers)
+     * INTERNAL USE METHOD
+     * @param player is the one player added to the lobby
+     * @throws ArrayIndexOutOfBoundsException if the of players is exceeded
      */
     public void addPlayer(Player player) throws ArrayIndexOutOfBoundsException {
         if (gamePlayers.size() < numberOfPlayers) {
@@ -63,7 +67,8 @@ public class GameController {
     /**
      * This method starts the game. The game state is set to STARTED. 2 objective cards are given to each
      * player, and he will need to choose one of these. Then the market is completed and each player receives
-     * 3 cards (2 resource cards and 1 gold card)
+     * 3 cards (2 resource cards and 1 gold card).
+     * INTERNAL USE METHOD
      * @throws IllegalArgumentException if there's an invalid game status
      */
     public void startGame() throws IllegalStateException  {
@@ -78,8 +83,8 @@ public class GameController {
 
 
     /**
-     * This method let the Player place the baseCard (in an already decided position) and, if all the players
-     * have placed their baseCard, it let the game finish the set-up phase giving the last necessary cards
+     * This method let the Player place the baseCard (in the middle of the table) and, if all the players
+     * have placed their baseCard, it let the Game finish the set-up phase giving the last necessary cards
      * @param nickname the player who plays the card
      * @param baseCard the base card played
      * @param orientation of the played card
@@ -133,7 +138,7 @@ public class GameController {
 
     /**
      * This method allows the currentPlayer to draw a card from the decks or from the unveiled ones
-     * @param nickname of the player who is gonna draw the card
+     * @param nickname of the player who is going to draw the card
      * @param selectedCard is the Card the Players wants to draw
      */
     public void drawCard(String nickname, PlayableCard selectedCard) { //we can draw a card from one of the decks or from the uncovered cards
@@ -189,8 +194,8 @@ public class GameController {
 
 
     /**
-     * This method allows a player to choose a pawn color
-     * @param chooser the player who is gonna select the pawn
+     * This method allows a player to choose a Pawn color
+     * @param chooser the player who is going to select the pawn
      * @param selectedColor the chosen colour
      */
 
@@ -209,7 +214,7 @@ public class GameController {
     /**
      * This method allows the player to send a text message in the chat
      * @param sender the player who sends the message
-     * @param receivers the players who are gonna receive the message
+     * @param receivers the players who are going to receive the message
      * @param message the string (message) sent
      */
 
@@ -239,9 +244,9 @@ public class GameController {
 
 
     /**
-     * This method invokes a method in game, which does the necessary actions for the next round.
-     * If the game state is ENDING, then the last rounds are done. After that, endGame is invoked.
-     * we have decided that is the controller the one that manages the changing of turn
+     * This method is the one setting the right player in turn. If drawCard (decks finished) or playCard (20 points)
+     * have triggered the ENDING condition it decreases our indexes to determine when the Game has to end.
+     * INTERNAL USE METHOD
      */
     public void nextPhase(){
         if (game.getState() == Game.GameState.ENDING && lastRounds > 0) {
@@ -259,8 +264,9 @@ public class GameController {
     }
 
     /**
-     * This method is called when the ENDING Game condition is produced to calculate how many moves are left and
-     * how many times the Player will draw in the next manches
+     * This method is called when the ENDING Game condition is triggered to calculate how many moves are left and
+     * how many times the players will draw in the next plays.
+     * INTERNAL USE METHOD
      */
     public void calculateLastMoves(){
             int firstPlayer = 0;
@@ -282,8 +288,8 @@ public class GameController {
 
     /**
      * This method let the player leave the game anytime during the match and also closes the Game itself
-     * @param nickname of the player who is gonna leave the game
-     * @throws IllegalArgumentException
+     * @param nickname of the player who is going leave the game
+     * @throws IllegalArgumentException if the specific Player is not part of the Game
      */
     public void leaveGame(String nickname) throws IllegalArgumentException{
         Player tmp=null;
@@ -317,7 +323,8 @@ public class GameController {
     /**
      * This method ends the game. It sets the game state to ENDED, checks all the objectives (2 common objs
      * and 1 personalObj) and adds the points to the correct player.
-     * Finally, it checks the winner (or winners) of the game, and puts them in a list called "winners"
+     * Finally, it checks the winner (or winners) of the game, and puts them in a list called "winners".
+     * INTERNAL USE METHOD
      */
     public void endGame(){
         // setting the game state to ENDED
@@ -353,6 +360,7 @@ public class GameController {
      * Setter method
      * @param numberOfPlayers who are playing
      * @throws IllegalArgumentException if the number of players is wrong
+     * INTERNAL USE METHOD
      */
     public void setNumberOfPlayers(int numberOfPlayers) throws IllegalArgumentException {
         if ((numberOfPlayers >= 2)&&(numberOfPlayers <= 4)) {
