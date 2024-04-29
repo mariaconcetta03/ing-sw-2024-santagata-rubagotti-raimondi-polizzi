@@ -8,13 +8,18 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-//to clear the ideas: this class isn't a socket but inside we initialize a ServerSocket and a Socket (the client's one)
+//to clear the ideas: this class isn't a socket but inside we initialize a ServerSocket and a Socket (the representation of the client's one)
+
+//the update method called in the model after every modification should reach the game controller which has saved all the players of that game
+//this server cannot call the update because it doesn't decide to which game each player goes
+//in the game controller we can save the sockets of the players and the update should modify the socket
+//then the class ClientSCK (the real client because it's not on the same virtual machine) reads the modified socket and change its view
 public class ServerSCK extends UnicastRemoteObject { //we can't use the name ServerSocket because it already exists in java.net library
     private final int port;
 
     public ServerSCK (int port) throws RemoteException {
         super();
-        this.port = port;
+        this.port = port; //we can ask the virtual machine which port is available
     }
 
     public void startServer() throws IOException { //when the input/output stream is terminated we have this IOException
