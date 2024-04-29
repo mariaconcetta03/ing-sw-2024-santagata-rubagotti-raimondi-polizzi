@@ -42,5 +42,10 @@ public class ClientHandlerThread implements Runnable { //this is a Thread (it is
         }
     }
     //we can add method in which we can control the status of the connection (asking it to the controller)
+
+ //funzioni che può chiamare il client (tramite la run()) si potrebbero mettere come private perchè non verranno chiamate da fuori
+
+
+
 }
 

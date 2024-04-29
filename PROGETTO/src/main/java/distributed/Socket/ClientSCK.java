@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.io.ObjectInputStream;
 
 //o clear the ideas: this class isn't a socket. We use its methods through the client controller intermediation (which can be called by the ClientHandlerThread)
+// l'update andrà a modificare il flusso (BUFFER) tra server e client che può essere letto dalle socket
 public class ClientSCK {//this class has to be initialized by the client controller
     private final ObjectOutputStream outputStream;
     private final ObjectInputStream inputStream;

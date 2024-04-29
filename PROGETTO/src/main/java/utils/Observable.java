@@ -29,6 +29,30 @@ public class Observable {
     // OBSERVABLE -> OBSERVER -> SERVER -> RMISERVER -> RMICLIENT -> VIEW
     // ------------------------------------------------------------------------------
 
+    //RMI:
+    // se RMISERVER ha una funzione update (del model del client che ha chiamato e del
+    // model degli altri client), RMICLIENT può chiamarla tramite invocazione remota.
+    // questo update deve contattare la lista listeners presente nell'interfaccia osservable
+    // (sono i giocatori in questo caso), quindi la listeners avrà l'indirizzo di rete di
+    // questi giocatori.
+    // quest'update dovrebbe fare uso di un observable (che non è un'interfaccia) che andrà a
+    // modificare la view di ogni client (a diversi indirizzi IP segnati in listeners)->quindi da
+    // questo oggetto observable dobbiamo instaurare la connessione RMI verso i client.
+
+
+    //SOCKET:
+    // abbiamo un thread per ogni client e questo thread si trova all'indirizzo IP del server
+    // e contiene una copia della socket del vero client (che si trova in un altro indirizzo IP,
+    // che sarà incluso nei listeners: quindi il client vero, ClientSCK, avrà degli attributi della
+    // view che potranno subire l'update).
+    // questo Thread ascolta l'input dell'utente (tramite la copia della socket) e da questo input
+    // capisce quali funzioni invocare.
+    // l'update lo possiamo invocare al termine di una funzione chiamata dal client (il thread). Quindi
+    // come prima siamo ancora all'indizzo IP del server che utilizzerà un oggetto observable che aggiornerà
+    // la view di tutti i listeners tramite rete. Per fare tutto questo dobbiamo andare a scrivere nello
+    // stream output della socket (gli observer saranno sempre i client che andranno a leggere lo stream output
+    // appena modicato nella propria socket)
+
 
     /**
      * This method updates a board in the listeners of a specific game
