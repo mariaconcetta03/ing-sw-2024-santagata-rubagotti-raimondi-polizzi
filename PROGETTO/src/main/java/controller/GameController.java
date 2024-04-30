@@ -11,8 +11,8 @@ import java.util.*;
 
 public class GameController {
     private Game game;
-    int lastRounds;
-    int lastDrawingRounds;
+    private int lastRounds;
+    private int lastDrawingRounds;
     private List<Player> winners;
     private List<Player> gamePlayers;
     private int numberOfPlayers;
