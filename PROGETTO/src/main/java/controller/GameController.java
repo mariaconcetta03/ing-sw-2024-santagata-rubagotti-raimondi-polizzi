@@ -268,6 +268,7 @@ public class GameController {
      * how many times the players will draw in the next plays.
      * INTERNAL USE METHOD
      */
+    // ATTENZIONE !!! SE E INTERNO QUESTO NON VA MESSO PRIVATE !?
     public void calculateLastMoves(){
             int firstPlayer = 0;
             lastRounds = game.getnPlayers();
