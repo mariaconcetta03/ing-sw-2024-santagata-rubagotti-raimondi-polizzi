@@ -15,6 +15,20 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
 
+// ----------------------------------- H O W   I T   W O R K S ----------------------------------------
+// RMI CLIENT CALLS THE REMOTE METHODS THROUGH THE RMISERVER INTERFACE (WHICH RMI CLIENT HAS INSIDE)
+// THE RMI SERVER GOES TO MODIFY THE MODEL (UPON CLIENT REQUEST) THROUGH THE CONTROLLER.
+// TO UNDERSTAND WHETHER AN EVENT WAS SUCCESSFUL OR NOT, YOU NEED TO CONSULT THE ATTRIBUTE
+// "lastEvent" PRESENT IN THE GAME CLASS.
+// ----------------------------------------------------------------------------------------------------
+
+
+// ---------------------------------- #  T O   D O ---------------------------------------
+// RIVEDERE I METODI, NON TUTTI POSSONO ESSERE INVOCATI DAL CLIENT, ALCUNI DI QUESTI
+// VERRANNO INVOCATI AUTOMATICAMENTE DAL CONTROLLER, DI CONSEGUENZA DEVONO ESSERE RIMOSSI
+// ---------------------------------------------------------------------------------------
+
+
 public class RMIClient extends UnicastRemoteObject implements ClientGeneralInterface {
     private ServerRMIInterface SRMIInterface; //following the slides' instructions
 
