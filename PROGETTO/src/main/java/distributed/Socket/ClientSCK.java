@@ -21,4 +21,8 @@ public class ClientSCK {//here we can have the view attributes that would be mod
         this.inputStream = new ObjectInputStream(socket.getInputStream()); //that would be the output stream of the server
     }
     //view attributes: ...
+
+    //public SocketMessage receivedMessageC() throws IOException, ClassNotFoundException {
+    //    return (SocketMessage) inputStream.readObject();
+    //}
 }

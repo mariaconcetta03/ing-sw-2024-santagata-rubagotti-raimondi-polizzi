@@ -3,6 +3,7 @@ package org.model;
 
 import Exceptions.CardNotDrawableException;
 import Exceptions.CardNotOwnedException;
+import utils.Observable;
 
 import java.io.Serializable;
 import java.util.*;
@@ -11,7 +12,7 @@ import java.util.*;
  * This class represents a player in a game
  */
 
-public class Player implements Serializable {
+public class Player extends Observable implements Serializable {
     private List<ObjectiveCard> personalObjective; // set a personal objective chosen by a player
 
 
@@ -381,5 +382,8 @@ public class Player implements Serializable {
         }
     }
 
+    public void setState(PlayerState state) {
+        this.state = state;
+    }
 }
 

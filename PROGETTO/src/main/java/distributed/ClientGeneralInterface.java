@@ -5,6 +5,7 @@ import Exceptions.GameAlreadyStartedException;
 import Exceptions.GameNotExistsException;
 import Exceptions.NicknameAlreadyTakenException;
 import org.model.*;
+import utils.Observer;
 
 
 import java.rmi.NotBoundException;

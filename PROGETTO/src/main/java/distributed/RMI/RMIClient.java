@@ -237,4 +237,29 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
     }
 
+    //per creare il riferimento in WrappedObserver tramite RMIServer che potrebbe implementare un Observable come da pdf
+    /*
+    public class RemoteObserverImpl implements RemoteObserver {
+        public void remoteUpdate(Object observable, Object updateMsg) {
+            System.out.println("Got message: " + updateMsg);
+        }
+        public static void main(String[] args) throws Exception {
+            Registry registry = LocateRegistry.getRegistry();
+            RMIObservableService remoteService = (RMIObservableService)    //remoteService è il nostro server
+                    registry.lookup("Observable");
+            RemoteObserver client = new RemoteObserverImpl();
+            RemoteObserver clientStub = (RemoteObserver)
+                    UnicastRemoteObject.exportObject(client, 3949);
+            remoteService.addObserver(clientStub);    //il server è un Observable e quindi ha la lista di listeners (che sono i Wrapped)
+        }
+    }
+
+    //il wrapped inizia ad esistere solo nel momento in cui si crea un istanza di Game e quindi si ha bisogno di notificare i players
+    //quindi non bisogna fare addObserver in questo momento perchè ancora quel client non è diventato un player (e quindi non ha ancora un Game)
+    // diventerà un addToList (per memorizzare i client in attesa)
+    // quando parte tutto abbiamo un Game i wrapped
+
+     */
+
+
 }

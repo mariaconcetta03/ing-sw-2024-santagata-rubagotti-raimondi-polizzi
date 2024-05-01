@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
+// we can have one class for each Game, we can have an attribute observable in Game
+// when a game starts we set this attribute and use the constructor to add the relative RMIlisteners and TCPlisteners
 public class Observable {
 
     // ----------------------------------- A L C U N I   E S E M P I ------------------------------------
@@ -16,8 +19,21 @@ public class Observable {
     // Definire l'Observable (Soggetto): Questa è la classe che tiene traccia degli Observer e notifica
     // loro i cambiamenti. Ad esempio, potrebbe essere il modello nei tuoi termini MVC.
     // --------------------------------------------------------------------------------------------------
+    private List<Observer> RMIlisteners;
+    private List<Observer> TCPlisteners;
 
-    private Map <Game, List<Observer>> listeners;
+    //mi serve un costruttore di default se no ho errori nelle classi che estendono Observable
+    public Observable(){
+        this.RMIlisteners= new ArrayList<>();
+        this.TCPlisteners= new ArrayList<>();
+    }
+    public Observable(List<Observer> RMIlisteners,List<Observer> TCPlisteners){
+        this.RMIlisteners=RMIlisteners;
+        this.TCPlisteners=TCPlisteners;  //Non credo glieli daremo alla creazione degli observable, ma bensì li aggiungeremo
+    }
+
+    //non serve se mettiamo un attributo di tipo Observable in ogni classe Game
+    //private Map <Game, List<Observer>> listeners;
     // this is a map which associates a game with a list of his listeners
 
 
@@ -56,15 +72,16 @@ public class Observable {
 
     /**
      * This method updates a board in the listeners of a specific game
-     * @param game is the game in which the listeners need to be updated
      * @param p is the player who has the new board (which has been changed recently)
      */
-    public void updateBoard(Game game, Player p){
+    public void updateBoard(Player p){
         // getting the list of the observers of the correct game
-        List<Observer> listenersToUpdate = listeners.get(game);
 
         // updating all the boards of the listeners in the correct game
-        for(Observer l: listenersToUpdate) {
+        for(Observer l: TCPlisteners) {
+            l.updateBoard(p.getBoard());
+        }
+        for(Observer l: RMIlisteners) {
             l.updateBoard(p.getBoard());
         }
     }
@@ -73,14 +90,15 @@ public class Observable {
 
     /**
      * This method updates the resource deck in the listeners of that game
-     * @param game is the game in which the listeners need to be updated
      */
-    public void updateResourceDeck(Game game){
+    public void updateResourceDeck(){
         // getting the list of the observers of the correct game
-        List<Observer> listenersToUpdate = listeners.get(game);
 
         // updating all the boards of the listeners in the correct game
-        for(Observer l: listenersToUpdate) {
+        for(Observer l: RMIlisteners) {
+            l.updateResourceDeck();
+        }
+        for(Observer l: TCPlisteners) {
             l.updateResourceDeck();
         }
     }
@@ -89,14 +107,15 @@ public class Observable {
 
     /**
      * This method updates the gold deck in the listeners of that game
-     * @param game is the game in which the listeners need to be updated
      */
     public void updateGoldDeck(Game game){
         // getting the list of the observers of the correct game
-        List<Observer> listenersToUpdate = listeners.get(game);
 
         // updating all the boards of the listeners in the correct game
-        for(Observer l: listenersToUpdate) {
+        for(Observer l: RMIlisteners) {
+            l.updateGoldDeck();
+        }
+        for(Observer l: TCPlisteners) {
             l.updateGoldDeck();
         }
     }
@@ -105,16 +124,17 @@ public class Observable {
 
     /**
      * This method updates a player deck in the listeners of a specific game
-     * @param game is the game in which the listeners need to be updated
      * @param p is the player who has the new deck (which has been changed recently,
      * for example by playing a card or by drawing a card)
      */
-    public void updatePlayerDeck(Game game, Player p){
+    public void updatePlayerDeck(Player p){
         // getting the list of the observers of the correct game
-        List<Observer> listenersToUpdate = listeners.get(game);
 
         // updating all the boards of the listeners in the correct game
-        for(Observer l: listenersToUpdate) {
+        for(Observer l: RMIlisteners) {
+            l.updatePlayerDeck(p);
+        }
+        for(Observer l: TCPlisteners) {
             l.updatePlayerDeck(p);
         }
     }
@@ -130,14 +150,15 @@ public class Observable {
 
     /**
      * This method updates the first resource card in the market of the cards of that game
-     * @param game in which the listeners need to be updated
      */
-    public void updateResourceCard1(Game game){
+    public void updateResourceCard1(){
         // getting the list of the observers of the correct game
-        List<Observer> listenersToUpdate = listeners.get(game);
 
         // updating all the boards of the listeners in the correct game
-        for(Observer l: listenersToUpdate) {
+        for(Observer l: RMIlisteners) {
+            l.updateResourceCard1();
+        }
+        for(Observer l: TCPlisteners) {
             l.updateResourceCard1();
         }
     }
@@ -146,14 +167,15 @@ public class Observable {
 
     /**
      * This method updates the second resource card in the market of the cards of that game
-     * @param game in which the listeners need to be updated
      */
-    public void updateResourceCard2(Game game){
+    public void updateResourceCard2(){
         // getting the list of the observers of the correct game
-        List<Observer> listenersToUpdate = listeners.get(game);
 
         // updating all the boards of the listeners in the correct game
-        for(Observer l: listenersToUpdate) {
+        for(Observer l: RMIlisteners) {
+            l.updateResourceCard2();
+        }
+        for(Observer l: TCPlisteners) {
             l.updateResourceCard2();
         }
     }
@@ -162,14 +184,16 @@ public class Observable {
 
     /**
      * This method updates the first gold card in the market of the cards of that game
-     * @param game in which the listeners need to be updated
      */
-    public void updateGoldCard1(Game game){
+    public void updateGoldCard1(){
         // getting the list of the observers of the correct game
-        List<Observer> listenersToUpdate = listeners.get(game);
+
 
         // updating all the boards of the listeners in the correct game
-        for(Observer l: listenersToUpdate) {
+        for(Observer l: RMIlisteners) {
+            l.updateGoldCard1();
+        }
+        for(Observer l: TCPlisteners) {
             l.updateGoldCard1();
         }
     }
@@ -178,14 +202,15 @@ public class Observable {
 
     /**
      * This method updates the second gold card in the market of the cards of that game
-     * @param game in which the listeners need to be updated
      */
-    public void updateGoldCard2(Game game){
+    public void updateGoldCard2(){
         // getting the list of the observers of the correct game
-        List<Observer> listenersToUpdate = listeners.get(game);
 
         // updating all the boards of the listeners in the correct game
-        for(Observer l: listenersToUpdate) {
+        for(Observer l: RMIlisteners) {
+            l.updateGoldCard2();
+        }
+        for(Observer l: TCPlisteners) {
             l.updateGoldCard2();
         }
     }
@@ -194,15 +219,16 @@ public class Observable {
 
     /**
      * This method updates a specific chat (with his id) of that game
-     * @param game in which the listeners need to be updated
      * @param chatID the ID of the chat which needs to be updated
      */
-    public void updateChat(Game game, int chatID){
+    public void updateChat(int chatID){
         // getting the list of the observers of the correct game
-        List<Observer> listenersToUpdate = listeners.get(game);
 
         // updating all the boards of the listeners in the correct game
-        for(Observer l: listenersToUpdate) {
+        for(Observer l: RMIlisteners) {
+            l.updateChat(chatID);
+        }
+        for(Observer l: TCPlisteners) {
             l.updateChat(chatID);
         }
     }
@@ -212,14 +238,15 @@ public class Observable {
     /**
      * This method updates all the pawns in a specific game. This method is
      * called after all the players have deided their own pawn color.
-     * @param game in which the listeners need to be updated
      */
-    public void updatePawns(Game game){
+    public void updatePawns(){
         // getting the list of the observers of the correct game
-        List<Observer> listenersToUpdate = listeners.get(game);
 
         // updating all the boards of the listeners in the correct game
-        for(Observer l: listenersToUpdate) {
+        for(Observer l: RMIlisteners) {
+            l.updatePawns();
+        }
+        for(Observer l: TCPlisteners) {
             l.updatePawns();
         }
     }
@@ -229,14 +256,16 @@ public class Observable {
     /**
      * This method updates all the nicknames in a specific game. This method is
      * called after all the players have joined the lobby, and when it is started.
-     * @param game in which the listeners need to be updated
      */
     public void updateNickname(Game game){
         // getting the list of the observers of the correct game
-        List<Observer> listenersToUpdate = listeners.get(game);
+
 
         // updating all the boards of the listeners in the correct game
-        for(Observer l: listenersToUpdate) {
+        for(Observer l: RMIlisteners) {
+            l.updateNickname();
+        }
+        for(Observer l: TCPlisteners) {
             l.updateNickname();
         }
     }
@@ -246,58 +275,59 @@ public class Observable {
     /**
      * This method updates the round in a specific game. Thanks to this method it will be possible
      * to display the player which needs to play now
-     * @param game in which the listeners need to be updated
      */
     public void updateRound(Game game){
         // getting the list of the observers of the correct game
-        List<Observer> listenersToUpdate = listeners.get(game);
 
         // updating all the boards of the listeners in the correct game
-        for(Observer l: listenersToUpdate) {
+        for(Observer l: RMIlisteners) {
+            l.updateRound();
+        }
+        for(Observer l: RMIlisteners) {
             l.updateRound();
         }
     }
 
 
-
+    //se creiamo la lista di osservatori solo quando la partita inizia non abbiamo bisogno di questo metodo
     /**
      * This method adds a listener to the list (in the correct game)
      * @param listener to add to the list
      */
-    public void addListener(Game game, Observer listener) {
-        this.listeners.get(game).add(listener);
-    }
+    //public void addListener(Game game, Observer listener) {
+    //    this.listeners.get(game).add(listener);
+    //}
 
 
-
+    //non ci serve se abbiamo un attributo Observable per ogni Game
     /**
      * This method adds a new game to the map. After this method, we will need to call
      * "addListener" to add all the listener in this game
      * @param game is the game we want to add to the map
      */
-    public void addGame (Game game) {
-        this.listeners.put(game, new ArrayList<>());
-    }
+    //public void addGame (Game game) {
+    //    this.listeners.put(game, new ArrayList<>());
+    //}
 
 
-
+    //non ci serve perchè se un giocatore si disconnette finisce la partita (dobbiamo usare messaggi di ping per capire se tutti sono ancora connessi)
     /**
      * This method removes a listener from the list
      * @param listener to remove from the list
      */
-    public void removeListener(Game game, Observer listener){
-        this.listeners.get(game).remove(listener);
-    }
+    //public void removeListener(Game game, Observer listener){
+    //    this.listeners.get(game).remove(listener);
+    //}
 
 
-
+    //non ci serve se abbiamo un attributo Observable per ogni Game
     /**
      * Getter method
      * @param game the game which contains the listeners
      * @return the list of the listeners of that game
      */
-    public List<Observer> getListeners(Game game) {
-        return listeners.get(game);
-    }
+    //public List<Observer> getListeners(Game game) {
+    //    return listeners.get(game);
+    //}
 
 }

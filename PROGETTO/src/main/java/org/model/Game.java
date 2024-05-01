@@ -2,6 +2,7 @@ package org.model;
 import Exceptions.CardNotDrawableException;
 import Exceptions.DeckIsFinishedException;
 import utils.Event;
+import utils.Observable;
 
 import java.io.Serializable;
 import java.util.*;
@@ -11,7 +12,7 @@ import java.util.*;
  */
 
 
-public class Game implements Serializable {
+public class Game extends Observable implements Serializable {
     private int id; // each Game has a different id
     private int nPlayers; // number of players in this game. It's decided by the lobby-creator
     private List<Player> players; // all the players in the game
@@ -45,7 +46,6 @@ public class Game implements Serializable {
     private List<Chat> chats; // contains all the chats started during the game
     private List<Pawn> alreadySelectedColors;
     private Event lastEvent; // this flag gives some essential information about the last event which occurred in this Game
-
 
 
 //maybe we can make the GameController check if the numPlayer is okay, and pass to Game a List with all the players
@@ -192,6 +192,7 @@ public class Game implements Serializable {
             not_assigned--;
         }
         this.players = newOrder;
+        players.get(0).setState(Player.PlayerState.IS_PLAYING);
     }
 
 
@@ -360,9 +361,11 @@ public class Game implements Serializable {
      *  @return the next player is who will play soon
      */
     public Player nextRound() {
+        this.players.get(0).setState(Player.PlayerState.IS_WAITING);
         this.players.add(this.players.get(0));
         this.players.remove(0);
         this.currentPlayer = this.players.get(0);
+        this.players.get(0).setState(Player.PlayerState.IS_PLAYING);
         return this.currentPlayer;
     }
 

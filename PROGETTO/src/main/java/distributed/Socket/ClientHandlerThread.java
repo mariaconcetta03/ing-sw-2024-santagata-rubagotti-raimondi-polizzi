@@ -6,6 +6,7 @@ import Exceptions.GameNotExistsException;
 import Exceptions.NicknameAlreadyTakenException;
 import controller.GameController;
 import controller.ServerController;
+import distributed.ClientGeneralInterface;
 import org.model.*;
 
 import java.io.IOException;
@@ -14,9 +15,10 @@ import java.net.Socket;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
+import utils.Observer;
 import java.util.Scanner;
 
-public class ClientHandlerThread implements Runnable { //this is a Thread (it isn't blocking)
+public class ClientHandlerThread implements Runnable, Observer { //this is a Thread (it isn't blocking)
 
     //if we memorize the nickname in our personal player we should obtain some errors if we call together addPlayerToGame, addPlayerToLobby, createLobby
     //because we use the same personalPlayer that has a unique nickname.
@@ -191,6 +193,20 @@ public class ClientHandlerThread implements Runnable { //this is a Thread (it is
     // we should call the server controller which has tha Map with all game controllers saved and can call it by himself)
     private void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException{}
 
+    //methods to be implemented to have a class tha implements Observer: (invece in RMI avremo una classe intermedia la WrappedObserver che implementerà Observer)
+    public void updateBoard(Board board){
 
+    }
+    public void updateResourceDeck(){}
+    public void updateGoldDeck(){}
+    public void updatePlayerDeck(Player player){}
+    public void updateResourceCard1(){}
+    public void updateResourceCard2(){}
+    public void updateGoldCard2(){}
+    public void updateGoldCard1(){}
+    public void updateChat(int chatID){}
+    public void updatePawns(){}
+    public void updateNickname(){}
+    public void updateRound(){}
 }
 
