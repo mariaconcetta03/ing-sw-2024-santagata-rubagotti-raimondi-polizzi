@@ -27,8 +27,9 @@ public class ServerController {
      * This method creates a new lobby adding the first player to it.
      * @param creator is the player who wants to create a new lobby
      * @param numOfPlayers is the number of player the creator decided can play in the lobby
+     * @return gameController is the game controller of this match, we need to pass this to the client
      */
-    public void startLobby(Player creator, int numOfPlayers) throws IllegalArgumentException{
+    public GameController startLobby(Player creator, int numOfPlayers) throws IllegalArgumentException{
         //Creating the specific GameController
         GameController gameController= new GameController();
             gameController.setNumberOfPlayers(numOfPlayers);
@@ -39,6 +40,7 @@ public class ServerController {
         //adding the first player
         gameController.addPlayer(creator);
         //we will have to check in the VIEW if the numOfPlayers is between 2 and 4
+        return gameController;
         }
 
 
@@ -50,8 +52,9 @@ public class ServerController {
      * @throws GameNotExistsException if the Game the player wants to join doesn't exist
      * @throws GameAlreadyStartedException if the Game is not in WAITING_FOR_START condition
      * @throws FullLobbyException if the lobby has already reached the maximum number of players
+     * @return allGameControllers.get(gameId) is the game controller of this match, we need to pass this to the client
      */
-    public void addPlayerToLobby(Player player, int gameId) throws GameNotExistsException, GameAlreadyStartedException, FullLobbyException {
+    public GameController addPlayerToLobby(Player player, int gameId) throws GameNotExistsException, GameAlreadyStartedException, FullLobbyException {
         if (!allGameControllers.containsKey(gameId)) { //if the game doesn't exist
             throw new GameNotExistsException("The game doesn't exist");
         } else if((allGameControllers.get(gameId).getGame()!=null)&&(!allGameControllers.get(gameId).getGame().getState().equals(Game.GameState.WAITING_FOR_START))) {//if the game is already started
@@ -64,6 +67,7 @@ public class ServerController {
                 throw new FullLobbyException("Choose another lobby or create a new one!");
             }
         }
+        return allGameControllers.get(gameId);
     }
 
 
