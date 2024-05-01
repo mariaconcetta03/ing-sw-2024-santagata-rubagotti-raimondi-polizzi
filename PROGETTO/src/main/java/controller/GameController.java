@@ -5,13 +5,14 @@ import Exceptions.DeckIsFinishedException;
 import org.model.*;
 import utils.Event;
 
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.server.RemoteObject;
 import java.sql.Timestamp;
 import java.util.*;
 
 
-public class GameController implements Remote {
+public class GameController implements Remote, Serializable {
     private Game game;
     private int lastRounds;
     private int lastDrawingRounds;
