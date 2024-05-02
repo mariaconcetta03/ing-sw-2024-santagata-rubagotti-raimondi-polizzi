@@ -50,11 +50,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * is able to receive the requests of the clients
      * @param args from CLI
      */
-    public static void main( String[] args )
-    {
+    public static void main( String[] args ) {
+
         try {
-            new RMIClient().createLobby(new Player(), 4); // OK
-            new RMIClient().createLobby(new Player(), 9); // KO [java.lang.IllegalArgumentException: Wrong number of players!]
+            new RMIClient().createLobby("Pippo", 4); // OK
+            new RMIClient().createLobby("Pluto", 9); // KO [java.lang.IllegalArgumentException: Wrong number of players!]
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -82,21 +82,21 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     /**
      * This method calls the function into the ServerController
-     * @param creator is the player who wants to create a new lobby
+     * @param creatorNickname is the nickname of the player who wants to create a new lobby
      * @param numOfPlayers is the number of player the creator decided can play in the lobby
      * @throws RemoteException
      * @throws NotBoundException
      */
-    public void createLobby(Player creator, int numOfPlayers) throws RemoteException, NotBoundException { //exceptions added automatically
+    public void createLobby(String creatorNickname, int numOfPlayers) throws RemoteException, NotBoundException { //exceptions added automatically
         SRMIInterfaceFromRegistry();
-        this.gameController = this.SRMIInterface.createLobby(creator, numOfPlayers);
+        this.gameController = this.SRMIInterface.createLobby(creatorNickname, numOfPlayers);
     }
 
 
 
     /**
      * This method is used to add a single player to an already created lobby
-     * @param player is the player who wants to join the lobby
+     * @param playerNickname is the nickname of the player who wants to join the lobby
      * @param gameId is the lobby the player wants to join
      * @throws RemoteException
      * @throws NotBoundException
@@ -104,9 +104,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @throws FullLobbyException
      * @throws GameNotExistsException
      */
-    public void addPlayerToLobby (Player player, int gameId) throws RemoteException, NotBoundException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
+    public void addPlayerToLobby (String playerNickname, int gameId) throws RemoteException, NotBoundException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
         SRMIInterfaceFromRegistry();
-        this.gameController = this.SRMIInterface.addPlayerToLobby(player, gameId);
+        this.gameController = this.SRMIInterface.addPlayerToLobby(playerNickname, gameId);
     }
 
 
@@ -114,14 +114,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     /**
      * Once connected the player get to choose his nickname that must be different from all the other presents
-     * @param chooser is the player choosing the nickname
      * @param nickname is the String he wants to put as his nickname
      * @throws RemoteException
      * @throws NotBoundException
      */
-    public void chooseNickname (Player chooser, String nickname) throws RemoteException, NotBoundException, NicknameAlreadyTakenException {
+    public void chooseNickname (String nickname) throws RemoteException, NotBoundException, NicknameAlreadyTakenException {
         SRMIInterfaceFromRegistry();
-        this.SRMIInterface.chooseNickname(chooser, nickname);
+        this.SRMIInterface.chooseNickname(nickname);
     }
 
 
@@ -174,13 +173,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     /**
      * This method allows the chooser Player to select his personal ObjectiveCard
-     * @param chooser is the player selecting the ObjectiveCard
+     * @param chooserNickname is the nickname of the player selecting the ObjectiveCard
      * @param selectedCard is the ObjectiveCard the player selected
      * @throws RemoteException
      * @throws NotBoundException
      */
-    public void chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard) throws RemoteException, NotBoundException {
-        this.gameController.chooseObjectiveCard(chooser, selectedCard);
+    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) throws RemoteException, NotBoundException {
+        this.gameController.chooseObjectiveCard(chooserNickname, selectedCard);
     }
 
 
@@ -188,27 +187,27 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     /**
      * This method allows a player to choose the color of his pawn
-     * @param chooser is the player who needs to choose the color
+     * @param chooserNickname is the nickname of the player who needs to choose the color
      * @param selectedColor is the color chosen by the player
      * @throws RemoteException
      * @throws NotBoundException
      */
-    public void choosePawnColor(Player chooser, Pawn selectedColor) throws RemoteException, NotBoundException {
-        this.gameController.choosePawnColor(chooser, selectedColor);
+    public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, NotBoundException {
+        this.gameController.choosePawnColor(chooserNickname, selectedColor);
     }
 
 
 
     /**
      * This method sends a message from the sender to the receiver
-     * @param sender is the player sending the message
-     * @param receivers is the list of the players who need to receive this message
+     * @param senderNickname is the nickname of the player sending the message
+     * @param receiversNicknames is the list of nicknames of the players who need to receive this message
      * @param message is the string sent by the sender to the receivers
      * @throws RemoteException
      * @throws NotBoundException
      */
-    public void sendMessage(Player sender, List<Player> receivers, String message) throws RemoteException, NotBoundException {
-        this.gameController.sendMessage(sender, receivers, message);
+    public void sendMessage(String senderNickname, List<String> receiversNicknames, String message) throws RemoteException, NotBoundException {
+        this.gameController.sendMessage(senderNickname, receiversNicknames, message);
     }
 
 

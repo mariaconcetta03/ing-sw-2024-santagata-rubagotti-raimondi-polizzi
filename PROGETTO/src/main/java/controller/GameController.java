@@ -93,7 +93,7 @@ public class GameController implements Remote, Serializable {
      * @param orientation of the played card
      */
     public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation){
-        Player player= ServerController.getPlayerByNickname(nickname);
+        Player player= getPlayerByNickname(nickname);
         player.playBaseCard(orientation, baseCard);
         player.getPlayerDeck()[0]=null; //the player played the baseCard
         PlayableCard[][] tmp;
@@ -119,7 +119,7 @@ public class GameController implements Remote, Serializable {
      */
     public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) {
         Player currentPlayer = game.getPlayers().get(0);
-        if (!ServerController.getPlayerByNickname(nickname).equals(currentPlayer)) {
+        if (!getPlayerByNickname(nickname).equals(currentPlayer)) {
             System.out.println("NON E IL TUO TURNO, NON PUOI GIOCARE LA CARTA");
             game.setLastEvent(Event.NOT_YOUR_TURN);
         }else{
@@ -146,7 +146,7 @@ public class GameController implements Remote, Serializable {
      */
     public void drawCard(String nickname, PlayableCard selectedCard) { //we can draw a card from one of the decks or from the uncovered cards
         Player currentPlayer = game.getPlayers().get(0);
-        if (!ServerController.getPlayerByNickname(nickname).equals(currentPlayer)) {
+        if (!getPlayerByNickname(nickname).equals(currentPlayer)) {
             System.out.println("Not your turn, you can't draw!");
             game.setLastEvent(Event.NOT_YOUR_TURN);
         } else {
@@ -183,10 +183,11 @@ public class GameController implements Remote, Serializable {
 
     /**
      * This method allows the chooser Player to select his personal ObjectiveCard
-     * @param chooser is the player selecting the ObjectiveCard
+     * @param chooserNickname is the nickname of the player selecting the ObjectiveCard
      * @param selectedCard is the ObjectiveCard the player selected
      */
-    public void chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard) {
+    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) {
+        Player chooser= getPlayerByNickname(chooserNickname);
         try {
             chooser.setPersonalObjective(selectedCard);
             game.setLastEvent (Event.OK);
@@ -198,11 +199,12 @@ public class GameController implements Remote, Serializable {
 
     /**
      * This method allows a player to choose a Pawn color
-     * @param chooser the player who is going to select the pawn
+     * @param chooserNickname is the nickname of the player who is going to select the Pawn
      * @param selectedColor the chosen colour
      */
 
-    public void choosePawnColor(Player chooser, Pawn selectedColor) {
+    public void choosePawnColor(String chooserNickname, Pawn selectedColor) {
+        Player chooser= getPlayerByNickname(chooserNickname);
         synchronized (game.getAlreadySelectedColors()) {
             if (!game.getAlreadySelectedColors().contains(selectedColor)) {
                 chooser.setColor(selectedColor);
@@ -216,12 +218,17 @@ public class GameController implements Remote, Serializable {
 
     /**
      * This method allows the player to send a text message in the chat
-     * @param sender the player who sends the message
-     * @param receivers the players who are going to receive the message
+     * @param senderNickname is the nickname of the player who sends the message
+     * @param receiversNicknames are the nickname of the players who are going to receive the message
      * @param message the string (message) sent
      */
 
-    public void sendMessage(Player sender, List<Player> receivers, String message){
+    public void sendMessage(String senderNickname, List<String> receiversNicknames, String message){
+        Player sender = getPlayerByNickname(senderNickname);
+        List<Player> receivers= new ArrayList<>();
+        for (String nick : receiversNicknames){
+            receivers.add(getPlayerByNickname(nick));
+        }
        receivers.add(sender);
        Chat tmp;
        if(!game.getChats().isEmpty()) {
@@ -403,5 +410,22 @@ public class GameController implements Remote, Serializable {
 
     public int getLastDrawingRounds() {
         return lastDrawingRounds;
+    }
+
+    public Player getPlayerByNickname(String Nickname){
+        for(Player player : gamePlayers){
+            if(player.getNickname().equals(Nickname)){
+                return player;
+            }
+        }
+        return null;
+    }
+
+    public List<Player> getGamePlayers() {
+        return gamePlayers;
+    }
+
+    public int getNumberOfPlayers() {
+        return numberOfPlayers;
     }
 }

@@ -4,6 +4,8 @@ import Exceptions.FullLobbyException;
 import Exceptions.GameAlreadyStartedException;
 import Exceptions.GameNotExistsException;
 import Exceptions.NicknameAlreadyTakenException;
+import distributed.RMI.WrappedObserver;
+import distributed.Socket.ClientHandlerThread;
 import org.model.Game;
 import org.model.Player;
 import utils.ClientChat;
@@ -13,30 +15,40 @@ import java.util.*;
 public class ServerController {
     private static int firstAvailableId = -1;
     private static Map<Integer, GameController> allGameControllers;
-    private static List<Player> allPlayers;
+    private static List<String> allNicknames;
+
+    //these 2 are the List that will contains the Client not yet connected to a specific Game (GC)
+    private List<WrappedObserver> lobbyRMIClient;
+    private List<ClientHandlerThread> lobbyTCPClient;
 
     /**
      * Class constructor
      */
     public ServerController() {
-        allPlayers=new ArrayList();
+        allNicknames=new ArrayList();
         allGameControllers=new HashMap<>();
+        lobbyRMIClient=new ArrayList<>();
+        lobbyTCPClient=new ArrayList<>();
     }
 
+    //we will have a Player Object in ClientRMI and ClientHandlerThread: NOT GOOD BECAUSE OF POSSIBLE CHEATERS
     /**
      * This method creates a new lobby adding the first player to it.
-     * @param creator is the player who wants to create a new lobby
+     * @param creatorNickname is the nickname of the player who wants to create a new lobby
      * @param numOfPlayers is the number of player the creator decided can play in the lobby
      * @return gameController is the game controller of this match, we need to pass this to the client
      */
-    public GameController startLobby(Player creator, int numOfPlayers) throws IllegalArgumentException{
+    public GameController startLobby(String creatorNickname, int numOfPlayers) throws IllegalArgumentException{
         //Creating the specific GameController
         GameController gameController= new GameController();
-            gameController.setNumberOfPlayers(numOfPlayers);
+        gameController.setNumberOfPlayers(numOfPlayers);
         //inserting the new gameController in the Map
         int tempId=getFirstAvailableId();
         allGameControllers.put(tempId,gameController);
         gameController.setId(tempId);
+        //added to use only nickname to call the functions
+        Player creator=new Player();
+        creator.setNickname(creatorNickname);
         //adding the first player
         gameController.addPlayer(creator);
         //we will have to check in the VIEW if the numOfPlayers is between 2 and 4
@@ -47,20 +59,23 @@ public class ServerController {
 
     /**
      * This method is used to add a single player to an already created lobby
-     * @param player is the player who wants to join the lobby
+     * @param playerNickname is the nickname of the player who wants to join the lobby
      * @param gameId is the lobby the player wants to join
      * @throws GameNotExistsException if the Game the player wants to join doesn't exist
      * @throws GameAlreadyStartedException if the Game is not in WAITING_FOR_START condition
      * @throws FullLobbyException if the lobby has already reached the maximum number of players
      * @return allGameControllers.get(gameId) is the game controller of this match, we need to pass this to the client
      */
-    public GameController addPlayerToLobby(Player player, int gameId) throws GameNotExistsException, GameAlreadyStartedException, FullLobbyException {
+    public GameController addPlayerToLobby(String playerNickname, int gameId) throws GameNotExistsException, GameAlreadyStartedException, FullLobbyException {
         if (!allGameControllers.containsKey(gameId)) { //if the game doesn't exist
             throw new GameNotExistsException("The game doesn't exist");
         } else if((allGameControllers.get(gameId).getGame()!=null)&&(!allGameControllers.get(gameId).getGame().getState().equals(Game.GameState.WAITING_FOR_START))) {//if the game is already started
             throw new GameAlreadyStartedException("Game already started!");
         }else {
             GameController temp = allGameControllers.get(gameId);
+            //added to use only nickname to call the functions
+            Player player=new Player();
+            player.setNickname(playerNickname);
             try {
                 temp.addPlayer(player);
             } catch (ArrayIndexOutOfBoundsException e) {
@@ -73,13 +88,12 @@ public class ServerController {
 
     /**
      * Once connected the player get to choose his nickname that must be different from all the other presents
-     * @param chooser is the player choosing the nickname
      * @param nickname is the String he wants to put as his nickname
      * @throws NicknameAlreadyTakenException if the nickname is already in use
      */
-    public void chooseNickname(Player chooser, String nickname) throws NicknameAlreadyTakenException {
+    public void chooseNickname(String nickname) throws NicknameAlreadyTakenException {
         if(isNicknameAvailable(nickname)){
-            chooser.setNickname(nickname);
+            allNicknames.add(nickname);
         }else{
             throw new NicknameAlreadyTakenException("The selected nickname is not available");
         }
@@ -104,9 +118,8 @@ public class ServerController {
      * INTERNAL USE METHOD
      */
     public boolean isNicknameAvailable(String nickname){
-        Player temp=null;
-        for (Player player : allPlayers) {
-            if ((player.getNickname()!=null)&&(player.getNickname().equals(nickname))) {
+        for (String nick : allNicknames) {
+            if (nick.equals(nickname)) {
                 return false;
             }
         }
@@ -118,7 +131,7 @@ public class ServerController {
      * This method returns the player given his nickname
      * @param Nickname is the nickname we are using to search for a player
      * @return the player if found, null otherwise
-     */
+
     public static Player getPlayerByNickname(String Nickname){
         for(Player player : allPlayers){
             if(player.getNickname().equals(Nickname)){
@@ -127,7 +140,7 @@ public class ServerController {
         }
         return null;
     }
-
+    */
 
     /**
      * Getter method
@@ -140,9 +153,9 @@ public class ServerController {
 
     /**
      * Getter method
-     * @return allPlayers of the game
+     * @return allNicknames of the game
      */
-    public List<Player> getAllPlayers() {
-        return allPlayers;
+    public List<String> getAllNicknames() {
+        return allNicknames;
     }
 }

@@ -73,7 +73,7 @@ public class Player extends Observable implements Serializable {
         this.isFirst = false;
         this.color = null;
         this.personalObjective = new ArrayList<>();
-        this.state = null;
+        this.state = PlayerState.IS_WAITING;
     }
 
 

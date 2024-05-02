@@ -15,9 +15,9 @@ import java.util.List;
 public interface ServerRMIInterface extends Remote {
     void startServer() throws RemoteException;
 
-    GameController createLobby(Player creator, int numOfPlayers) throws RemoteException;
+    GameController createLobby(String creatorNickname, int numOfPlayers) throws RemoteException;
 
-    GameController addPlayerToLobby(Player p, int gameId) throws RemoteException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException;
+    GameController addPlayerToLobby(String playerNickname, int gameId) throws RemoteException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException;
 
-    void chooseNickname(Player chooser, String nickname) throws RemoteException, NicknameAlreadyTakenException;
+    void chooseNickname(String nickname) throws RemoteException, NicknameAlreadyTakenException;
 }

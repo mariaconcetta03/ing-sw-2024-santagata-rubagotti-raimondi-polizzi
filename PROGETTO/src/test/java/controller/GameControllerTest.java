@@ -48,17 +48,17 @@ public class GameControllerTest extends TestCase {
         Player p4= new Player();
         p4.setNickname("Topolino");
 
-        //adding players to ServerController
-        s1.getAllPlayers().add(p1);
-        s1.getAllPlayers().add(p2);
-        s1.getAllPlayers().add(p3);
-        s1.getAllPlayers().add(p4);
+        //adding players to ServerController (NOT NECESSARY)
+        s1.getAllNicknames().add(p1.getNickname());
+        s1.getAllNicknames().add(p2.getNickname());
+        s1.getAllNicknames().add(p3.getNickname());
+        s1.getAllNicknames().add(p4.getNickname());
 
-        s1.startLobby(p1,4);
+        s1.startLobby(p1.getNickname(),4);
         try {
-            s1.addPlayerToLobby(p2, 0);
-            s1.addPlayerToLobby(p3, 0);
-            s1.addPlayerToLobby(p4, 0);
+            s1.addPlayerToLobby(p2.getNickname(), 0);
+            s1.addPlayerToLobby(p3.getNickname(), 0);
+            s1.addPlayerToLobby(p4.getNickname(), 0);
         }catch (GameNotExistsException | GameAlreadyStartedException | FullLobbyException ignored){}
     }
 
@@ -77,19 +77,21 @@ public class GameControllerTest extends TestCase {
     Player p5= new Player();
     p5.setNickname("Minnie");
 
+    /*
     //adding players to ServerController
     s1.getAllPlayers().add(p1);
     s1.getAllPlayers().add(p2);
     s1.getAllPlayers().add(p3);
     s1.getAllPlayers().add(p4);
+     */
 
-    s1.startLobby(p1,4);
+    s1.startLobby(p1.getNickname(),4);
     try {
-        s1.addPlayerToLobby(p2, 0);
-        s1.addPlayerToLobby(p3, 0);
-        s1.addPlayerToLobby(p4, 0);
-        s1.addPlayerToLobby(p5, 0); //game already started!
-        s1.addPlayerToLobby(p5, 1); //the game doesn't exist!
+        s1.addPlayerToLobby(p2.getNickname(), 0);
+        s1.addPlayerToLobby(p3.getNickname(), 0);
+        s1.addPlayerToLobby(p4.getNickname(), 0);
+        s1.addPlayerToLobby(p5.getNickname(), 0); //game already started!
+        s1.addPlayerToLobby(p5.getNickname(), 1); //the game doesn't exist!
     }catch(GameNotExistsException | GameAlreadyStartedException | FullLobbyException ignored){}
 }
     public void testStartGame() {
@@ -137,11 +139,19 @@ public class GameControllerTest extends TestCase {
         players.add(p3);
         players.add(p4);
 
-        //adding the players to the ServerController
-        s1.getAllPlayers().add(p1);
-        s1.getAllPlayers().add(p2);
-        s1.getAllPlayers().add(p3);
-        s1.getAllPlayers().add(p4);
+        /*
+    //adding players to ServerController
+    s1.getAllPlayers().add(p1);
+    s1.getAllPlayers().add(p2);
+    s1.getAllPlayers().add(p3);
+    s1.getAllPlayers().add(p4);
+     */
+
+        //adding players to GameController (action performed by ServerController usually)
+        g1.getGamePlayers().add(p1);
+        g1.getGamePlayers().add(p2);
+        g1.getGamePlayers().add(p3);
+        g1.getGamePlayers().add(p4);
 
         //creating and starting the game
         g1.createGame(players);
@@ -154,15 +164,15 @@ public class GameControllerTest extends TestCase {
         g1.playBaseCard("Pluto", p2.getPlayerDeck(1), true);
 
         //all the players have to choose their Pawn's color and their objectiveCard
-        g1.choosePawnColor(p1, Pawn.BLUE);
-        g1.choosePawnColor(p2, Pawn.GREEN);
-        g1.choosePawnColor(p3, Pawn.YELLOW);
-        g1.choosePawnColor(p4, Pawn.RED);
+        g1.choosePawnColor(p1.getNickname(), Pawn.BLUE);
+        g1.choosePawnColor(p2.getNickname(), Pawn.GREEN);
+        g1.choosePawnColor(p3.getNickname(), Pawn.YELLOW);
+        g1.choosePawnColor(p4.getNickname(), Pawn.RED);
 
-        g1.chooseObjectiveCard(p1, p1.getPersonalObjective());
-        g1.chooseObjectiveCard(p2, p2.getPersonalObjective());
-        g1.chooseObjectiveCard(p3, p3.getPersonalObjective());
-        g1.chooseObjectiveCard(p4, p4.getPersonalObjective());
+        g1.chooseObjectiveCard(p1.getNickname(), p1.getPersonalObjective());
+        g1.chooseObjectiveCard(p2.getNickname(), p2.getPersonalObjective());
+        g1.chooseObjectiveCard(p3.getNickname(), p3.getPersonalObjective());
+        g1.chooseObjectiveCard(p4.getNickname(), p4.getPersonalObjective());
 
         System.out.println(g1.getGame().getCurrentPlayer().getNickname());
 
@@ -199,11 +209,18 @@ public class GameControllerTest extends TestCase {
         players.add(p3);
         players.add(p4);
 
-        //adding the players to the ServerController
-        s1.getAllPlayers().add(p1);
-        s1.getAllPlayers().add(p2);
-        s1.getAllPlayers().add(p3);
-        s1.getAllPlayers().add(p4);
+        /*
+    //adding players to ServerController
+    s1.getAllPlayers().add(p1);
+    s1.getAllPlayers().add(p2);
+    s1.getAllPlayers().add(p3);
+    s1.getAllPlayers().add(p4);
+     */
+        //adding players to GameController (action performed by ServerController usually)
+        g1.getGamePlayers().add(p1);
+        g1.getGamePlayers().add(p2);
+        g1.getGamePlayers().add(p3);
+        g1.getGamePlayers().add(p4);
 
         //creating and starting the game
         g1.createGame(players);
@@ -242,11 +259,18 @@ public class GameControllerTest extends TestCase {
         players.add(p3);
         players.add(p4);
 
-        //adding the players to the ServerController
-        s1.getAllPlayers().add(p1);
-        s1.getAllPlayers().add(p2);
-        s1.getAllPlayers().add(p3);
-        s1.getAllPlayers().add(p4);
+        /*
+    //adding players to ServerController
+    s1.getAllPlayers().add(p1);
+    s1.getAllPlayers().add(p2);
+    s1.getAllPlayers().add(p3);
+    s1.getAllPlayers().add(p4);
+     */
+        //adding players to GameController (action performed by ServerController usually)
+        g1.getGamePlayers().add(p1);
+        g1.getGamePlayers().add(p2);
+        g1.getGamePlayers().add(p3);
+        g1.getGamePlayers().add(p4);
 
         //creating and starting the game
         g1.createGame(players);
@@ -310,11 +334,18 @@ public class GameControllerTest extends TestCase {
         players.add(p3);
         players.add(p4);
 
-        //adding players to ServerController
-        s1.getAllPlayers().add(p1);
-        s1.getAllPlayers().add(p2);
-        s1.getAllPlayers().add(p3);
-        s1.getAllPlayers().add(p4);
+        /*
+    //adding players to ServerController
+    s1.getAllPlayers().add(p1);
+    s1.getAllPlayers().add(p2);
+    s1.getAllPlayers().add(p3);
+    s1.getAllPlayers().add(p4);
+     */
+        //adding players to GameController (action performed by ServerController usually)
+        g1.getGamePlayers().add(p1);
+        g1.getGamePlayers().add(p2);
+        g1.getGamePlayers().add(p3);
+        g1.getGamePlayers().add(p4);
 
         //creating and starting the game
         g1.createGame(players);
@@ -435,11 +466,18 @@ public class GameControllerTest extends TestCase {
             players.add(p3);
             players.add(p4);
 
-            //adding players to ServerController
-            s1.getAllPlayers().add(p1);
-            s1.getAllPlayers().add(p2);
-            s1.getAllPlayers().add(p3);
-            s1.getAllPlayers().add(p4);
+            /*
+    //adding players to ServerController
+    s1.getAllPlayers().add(p1);
+    s1.getAllPlayers().add(p2);
+    s1.getAllPlayers().add(p3);
+    s1.getAllPlayers().add(p4);
+     */
+            //adding players to GameController (action performed by ServerController usually)
+            g1.getGamePlayers().add(p1);
+            g1.getGamePlayers().add(p2);
+            g1.getGamePlayers().add(p3);
+            g1.getGamePlayers().add(p4);
 
             //creating and starting the game
             g1.createGame(players);
@@ -488,11 +526,18 @@ public class GameControllerTest extends TestCase {
         players.add(p3);
         players.add(p4);
 
-        //adding players to ServerController
-        s1.getAllPlayers().add(p1);
-        s1.getAllPlayers().add(p2);
-        s1.getAllPlayers().add(p3);
-        s1.getAllPlayers().add(p4);
+        /*
+    //adding players to ServerController
+    s1.getAllPlayers().add(p1);
+    s1.getAllPlayers().add(p2);
+    s1.getAllPlayers().add(p3);
+    s1.getAllPlayers().add(p4);
+     */
+        //adding players to GameController (action performed by ServerController usually)
+        g1.getGamePlayers().add(p1);
+        g1.getGamePlayers().add(p2);
+        g1.getGamePlayers().add(p3);
+        g1.getGamePlayers().add(p4);
 
         //creating and starting the game
         g1.createGame(players);
@@ -506,7 +551,7 @@ public class GameControllerTest extends TestCase {
 
         //testing if the objective card is chosen correctly
         ObjectiveCard cardToBeSelected= p1.getPersonalObjective();
-        g1.chooseObjectiveCard(p1, cardToBeSelected);
+        g1.chooseObjectiveCard(p1.getNickname(), cardToBeSelected);
         assertEquals(cardToBeSelected,p1.getPersonalObjective());
     }
 
@@ -529,11 +574,18 @@ public class GameControllerTest extends TestCase {
         players.add(p3);
         players.add(p4);
 
-        //adding players to ServerController
-        s1.getAllPlayers().add(p1);
-        s1.getAllPlayers().add(p2);
-        s1.getAllPlayers().add(p3);
-        s1.getAllPlayers().add(p4);
+        /*
+    //adding players to ServerController
+    s1.getAllPlayers().add(p1);
+    s1.getAllPlayers().add(p2);
+    s1.getAllPlayers().add(p3);
+    s1.getAllPlayers().add(p4);
+     */
+        //adding players to GameController (action performed by ServerController usually)
+        g1.getGamePlayers().add(p1);
+        g1.getGamePlayers().add(p2);
+        g1.getGamePlayers().add(p3);
+        g1.getGamePlayers().add(p4);
 
         //creating and starting the game
         g1.createGame(players);
@@ -545,14 +597,14 @@ public class GameControllerTest extends TestCase {
         g1.playBaseCard("Paperino", p3.getPlayerDeck(1), true);
         g1.playBaseCard("Pluto", p2.getPlayerDeck(1), true);
 
-        g1.choosePawnColor(p1, Pawn.BLUE);
-        g1.choosePawnColor(p2, Pawn.BLUE);
+        g1.choosePawnColor(p1.getNickname(), Pawn.BLUE);
+        g1.choosePawnColor(p2.getNickname(), Pawn.BLUE);
         System.out.println(p1.getChosenColor());
         System.out.println(p2.getChosenColor());
-        g1.choosePawnColor(p2, Pawn.YELLOW);
-        g1.choosePawnColor(p3, Pawn.YELLOW);
-        g1.choosePawnColor(p4, Pawn.RED);
-        g1.choosePawnColor(p3, Pawn.GREEN);
+        g1.choosePawnColor(p2.getNickname(), Pawn.YELLOW);
+        g1.choosePawnColor(p3.getNickname(), Pawn.YELLOW);
+        g1.choosePawnColor(p4.getNickname(), Pawn.RED);
+        g1.choosePawnColor(p3.getNickname(), Pawn.GREEN);
         for(Player p: g1.getGame().getPlayers()){
             System.out.println(p.getChosenColor());
         }
@@ -577,11 +629,18 @@ public class GameControllerTest extends TestCase {
         players.add(p3);
         players.add(p4);
 
-        //adding players to ServerController
-        s1.getAllPlayers().add(p1);
-        s1.getAllPlayers().add(p2);
-        s1.getAllPlayers().add(p3);
-        s1.getAllPlayers().add(p4);
+       /*
+    //adding players to ServerController
+    s1.getAllPlayers().add(p1);
+    s1.getAllPlayers().add(p2);
+    s1.getAllPlayers().add(p3);
+    s1.getAllPlayers().add(p4);
+     */
+        //adding players to GameController (action performed by ServerController usually)
+        g1.getGamePlayers().add(p1);
+        g1.getGamePlayers().add(p2);
+        g1.getGamePlayers().add(p3);
+        g1.getGamePlayers().add(p4);
 
         //creating and starting the game
         g1.createGame(players);
@@ -593,39 +652,39 @@ public class GameControllerTest extends TestCase {
         g1.playBaseCard("Paperino", p3.getPlayerDeck(1), true);
         g1.playBaseCard("Topolino", p4.getPlayerDeck(1), true);
 
-        List<Player> receiver=new ArrayList<>();
-        receiver.add(p2);
-        receiver.add(p3);
-        receiver.add(p4);
-        g1.sendMessage(p1, receiver, "ciao");
+        List<String> receiver=new ArrayList<>();
+        receiver.add(p2.getNickname());
+        receiver.add(p3.getNickname());
+        receiver.add(p4.getNickname());
+        g1.sendMessage(p1.getNickname(), receiver, "ciao");
 
         System.out.println(g1.getGame().getChats().get(0).messagesReceivedByPlayer(p3).get(0).getMessage());
 
-        List<Player> receiver2=new ArrayList<>();
-        receiver2.add(p1);
-        receiver2.add(p3);
-        receiver2.add(p4);
-        g1.sendMessage(p2, receiver2, "ciao2");
+        List<String> receiver2=new ArrayList<>();
+        receiver2.add(p1.getNickname());
+        receiver2.add(p3.getNickname());
+        receiver2.add(p4.getNickname());
+        g1.sendMessage(p2.getNickname(), receiver2, "ciao2");
 
         System.out.println(g1.getGame().getChats().get(0).messagesReceivedByPlayer(p1).get(0).getMessage());
 
-        List <Player> couple=new ArrayList<>();
-        couple.add(p1);
-        g1.sendMessage(p2, couple, "hello Pippo");
+        List <String> couple=new ArrayList<>();
+        couple.add(p1.getNickname());
+        g1.sendMessage(p2.getNickname(), couple, "hello Pippo");
         System.out.println(g1.getGame().getChats().get(1).messagesReceivedByPlayer(p1).get(0).getMessage());
 
-        List <Player> couple2=new ArrayList<>();
+        List <String> couple2=new ArrayList<>();
         //The problem is I can't modify the List of receivers as I'm passing it as a parameter
         List<Player> users= new ArrayList<>();
-        couple2.add(p2);
+        couple2.add(p2.getNickname());
         users.add(p1);
         users.add(p2);
-        g1.sendMessage(p1, couple2, "hello Pluto");
+        g1.sendMessage(p1.getNickname(), couple2, "hello Pluto");
         System.out.println(g1.getGame().getChatByUsers(users).messagesReceivedByPlayer(p2).get(0).getMessage());
 
-        List <Player> couple3=new ArrayList<>();
-        couple3.add(p3);
-        g1.sendMessage(p1, couple3, "hello Paperino");
+        List <String> couple3=new ArrayList<>();
+        couple3.add(p3.getNickname());
+        g1.sendMessage(p1.getNickname(), couple3, "hello Paperino");
         System.out.println(g1.getGame().getChats().get(2).messagesReceivedByPlayer(p3).get(0).getMessage());
 
         /**In effetti avere le chat separate è un po' strano, ma quando dovrò stampare avrò una List<Message> temp
@@ -654,11 +713,18 @@ public class GameControllerTest extends TestCase {
         players.add(p3);
         players.add(p4);
 
-        //adding players to ServerController
-        s1.getAllPlayers().add(p1);
-        s1.getAllPlayers().add(p2);
-        s1.getAllPlayers().add(p3);
-        s1.getAllPlayers().add(p4);
+      /*
+    //adding players to ServerController
+    s1.getAllPlayers().add(p1);
+    s1.getAllPlayers().add(p2);
+    s1.getAllPlayers().add(p3);
+    s1.getAllPlayers().add(p4);
+     */
+        //adding players to GameController (action performed by ServerController usually)
+        g1.getGamePlayers().add(p1);
+        g1.getGamePlayers().add(p2);
+        g1.getGamePlayers().add(p3);
+        g1.getGamePlayers().add(p4);
 
         //creating and starting the game
         g1.createGame(players);
@@ -772,12 +838,18 @@ public class GameControllerTest extends TestCase {
         players.add(p2);
         players.add(p3);
         players.add(p4);
-
-        //adding players to ServerController
-        s1.getAllPlayers().add(p1);
-        s1.getAllPlayers().add(p2);
-        s1.getAllPlayers().add(p3);
-        s1.getAllPlayers().add(p4);
+/*
+    //adding players to ServerController
+    s1.getAllPlayers().add(p1);
+    s1.getAllPlayers().add(p2);
+    s1.getAllPlayers().add(p3);
+    s1.getAllPlayers().add(p4);
+     */
+        //adding players to GameController (action performed by ServerController usually)
+        g1.getGamePlayers().add(p1);
+        g1.getGamePlayers().add(p2);
+        g1.getGamePlayers().add(p3);
+        g1.getGamePlayers().add(p4);
 
         //creating and starting the game
         g1.createGame(players);
@@ -809,11 +881,18 @@ public class GameControllerTest extends TestCase {
         players.add(p3);
         players.add(p4);
 
-        //adding players to ServerController
-        s1.getAllPlayers().add(p1);
-        s1.getAllPlayers().add(p2);
-        s1.getAllPlayers().add(p3);
-        s1.getAllPlayers().add(p4);
+       /*
+    //adding players to ServerController
+    s1.getAllPlayers().add(p1);
+    s1.getAllPlayers().add(p2);
+    s1.getAllPlayers().add(p3);
+    s1.getAllPlayers().add(p4);
+     */
+        //adding players to GameController (action performed by ServerController usually)
+        g1.getGamePlayers().add(p1);
+        g1.getGamePlayers().add(p2);
+        g1.getGamePlayers().add(p3);
+        g1.getGamePlayers().add(p4);
 
         //creating and starting the game
         g1.createGame(players);
@@ -848,11 +927,18 @@ public class GameControllerTest extends TestCase {
         players.add(p3);
         players.add(p4);
 
-        //adding players to ServerController
-        s1.getAllPlayers().add(p1);
-        s1.getAllPlayers().add(p2);
-        s1.getAllPlayers().add(p3);
-        s1.getAllPlayers().add(p4);
+        /*
+    //adding players to ServerController
+    s1.getAllPlayers().add(p1);
+    s1.getAllPlayers().add(p2);
+    s1.getAllPlayers().add(p3);
+    s1.getAllPlayers().add(p4);
+     */
+        //adding players to GameController (action performed by ServerController usually)
+        g1.getGamePlayers().add(p1);
+        g1.getGamePlayers().add(p2);
+        g1.getGamePlayers().add(p3);
+        g1.getGamePlayers().add(p4);
 
         //creating and starting the game
         g1.createGame(players);
@@ -865,15 +951,15 @@ public class GameControllerTest extends TestCase {
         g1.playBaseCard("Pluto", p2.getPlayerDeck(1), true);
 
         //all the players have to choose their Pawn's color and their objectiveCard
-        g1.choosePawnColor(p1, Pawn.BLUE);
-        g1.choosePawnColor(p2, Pawn.GREEN);
-        g1.choosePawnColor(p3, Pawn.YELLOW);
-        g1.choosePawnColor(p4, Pawn.RED);
+        g1.choosePawnColor(p1.getNickname(), Pawn.BLUE);
+        g1.choosePawnColor(p2.getNickname(), Pawn.GREEN);
+        g1.choosePawnColor(p3.getNickname(), Pawn.YELLOW);
+        g1.choosePawnColor(p4.getNickname(), Pawn.RED);
 
-        g1.chooseObjectiveCard(p1, p1.getPersonalObjective());
-        g1.chooseObjectiveCard(p2, p2.getPersonalObjective());
-        g1.chooseObjectiveCard(p3, p3.getPersonalObjective());
-        g1.chooseObjectiveCard(p4, p4.getPersonalObjective());
+        g1.chooseObjectiveCard(p1.getNickname(), p1.getPersonalObjective());
+        g1.chooseObjectiveCard(p2.getNickname(), p2.getPersonalObjective());
+        g1.chooseObjectiveCard(p3.getNickname(), p3.getPersonalObjective());
+        g1.chooseObjectiveCard(p4.getNickname(), p4.getPersonalObjective());
 
         //
 

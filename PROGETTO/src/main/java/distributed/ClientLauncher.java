@@ -1,4 +1,5 @@
 package distributed;
+import view.TUI.ANSIFormatter;
 
 import java.util.*;
 
@@ -8,7 +9,7 @@ public class ClientLauncher {
         int protocol=0;
         Scanner sc=new Scanner(System.in);
 
-        System.out.println("Choose a connection protocol: \n-Type 1 for RMI\n-Type 2 for TCP");
+        System.out.println(ANSIFormatter.ANSI_BLUE+"Choose a connection protocol"+ANSIFormatter.ANSI_RESET+": \n-Type 1 for RMI\n-Type 2 for TCP");
         do{
             try {
                 protocol = sc.nextInt();
@@ -21,7 +22,8 @@ public class ClientLauncher {
             }else{
                 System.out.println("Please type 1 (RMI) or 2 (TCP)");
             }
-            }catch (IllegalArgumentException e){
+            }catch (InputMismatchException e){
+                sc.next();
                 System.out.println("Please type 1 (RMI) or 2 (TCP)");
             }
         }while(!selected);

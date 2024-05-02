@@ -60,7 +60,7 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
                             try {
                                 int gameId = 1;
                                 //we should do personalPlayer.getGame() but it return a Game not its id....
-                                addPlayerToLobby(personalPlayer, gameId); //what we want the client decide about his player in this stage
+                                addPlayerToLobby(personalPlayer.getNickname(), gameId); //what we want the client decide about his player in this stage
                                 hasAlreadyAGame = true;
                             } catch (Exception e) {
                                 String message = e.getMessage();
@@ -75,7 +75,7 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
                         out.flush();
                         line = in.nextLine();
                         try{
-                            chooseNickname (personalPlayer, line);
+                            chooseNickname (line);
                             //if there are no errors we can set our personPlayer nickname to the one contains in 'line'
                         }catch (Exception e){
                             String message = e.getMessage();
@@ -88,7 +88,7 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
                                 out.println("Insert the number of players: ");
                                 out.flush();
                                 line = in.nextLine();
-                                createLobby(personalPlayer, Integer.parseInt(line));
+                                createLobby(personalPlayer.getNickname(), Integer.parseInt(line));
                             } catch (Exception e) {
                                 String message = e.getMessage();
                                 out.println(message);
@@ -116,7 +116,7 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
                                 selectedColor = Pawn.BLUE;
                             }
                             try{
-                                choosePawnColor(personalPlayer, selectedColor);
+                                choosePawnColor(personalPlayer.getNickname(), selectedColor);
                             }catch (Exception e){
                                 String message = e.getMessage();
                                 out.println(message);
@@ -140,16 +140,16 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
  //funzioni che può chiamare il client (tramite la run()) si potrebbero mettere come private perchè non verranno chiamate da fuori
 
     //if this method doesn't give errors we can save the gameId (if we want to use it)
-    private void addPlayerToLobby (Player p, int gameId) throws RemoteException, NotBoundException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException{
-       serverController.addPlayerToLobby(p, gameId);
+    private void addPlayerToLobby (String playerNickname, int gameId) throws RemoteException, NotBoundException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException{
+       serverController.addPlayerToLobby(playerNickname, gameId);
    }
-    private void chooseNickname (Player chooser, String nickname) throws RemoteException, NotBoundException, NicknameAlreadyTakenException{
-        serverController.chooseNickname(chooser, nickname);
+    private void chooseNickname (String nickname) throws RemoteException, NotBoundException, NicknameAlreadyTakenException{
+        serverController.chooseNickname(nickname);
     }
 
     //here the ServerController creates a new instance of GameController
-    private void createLobby (Player creator, int numOfPlayers) throws RemoteException, NotBoundException{
-        serverController.startLobby(creator, numOfPlayers);
+    private void createLobby (String creatorNickname, int numOfPlayers) throws RemoteException, NotBoundException{
+        serverController.startLobby(creatorNickname, numOfPlayers);
     }
 
     //internal use? this method should create the association between the client and the game (memorized in a Map in the ServerController)
@@ -176,8 +176,8 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
     //how do we select the card without the view?
     private void chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard) throws RemoteException, NotBoundException{}
 
-    private void choosePawnColor(Player chooser, Pawn selectedColor) throws RemoteException, NotBoundException{
-        gameController.choosePawnColor(chooser, selectedColor);
+    private void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, NotBoundException{
+        gameController.choosePawnColor(chooserNickname, selectedColor);
     }
 
     //how the client know the receivers?
