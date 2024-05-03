@@ -1,4 +1,4 @@
-package distributed.Socket.messages;
+package distributed.messages;
 import utils.Event;
 
 import java.io.Serializable;
