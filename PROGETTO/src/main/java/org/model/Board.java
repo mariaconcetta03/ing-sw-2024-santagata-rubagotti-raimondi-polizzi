@@ -1,7 +1,9 @@
 package org.model;
 import java.io.Serializable;
 import java.util.*;
-public class Board implements Serializable {
+import utils.Observable;
+
+public class Board extends Observable implements Serializable  {
     private static final int numCarte=80;
     private Set<Coordinates> playablePositions;
     private Set<Coordinates> unPlayablePositions;

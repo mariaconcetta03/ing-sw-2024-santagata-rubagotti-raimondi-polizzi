@@ -7,13 +7,15 @@ import Exceptions.NicknameAlreadyTakenException;
 import controller.GameController;
 import distributed.ClientGeneralInterface;
 import org.model.*;
+import utils.Event;
+import utils.Observable;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
+import java.util.*;
 
 
 // ----------------------------------- H O W   I T   W O R K S ----------------------------------------
@@ -226,6 +228,139 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
 
 
+    public void updateBoard (Board board, Player player) {
+        for (int i = 0; i<gameController.getGamePlayers().size(); i++) {
+            if (gameController.getGamePlayers().get(i).equals(player)) {
+                gameController.getGamePlayers().get(i).setBoard(board);
+            }
+        }
+    }
+
+
+    public void updateResourceDeck (PlayableDeck resourceDeck) {
+        gameController.getGame().setResourceDeck(resourceDeck);
+    }
+
+
+    public void updateGoldDeck (PlayableDeck goldDeck) {
+        gameController.getGame().setGoldDeck(goldDeck);
+    }
+
+
+
+    public void updatePlayerDeck (Player player, PlayableCard[] playerDeck) {
+        for (int i = 0; i<gameController.getGamePlayers().size(); i++) {
+            if (gameController.getGamePlayers().get(i).equals(player)) {
+                gameController.getGamePlayers().get(i).setPlayerDeck(playerDeck);
+            }
+        }
+    }
+
+
+    void updateResourceCard1() {
+        gameController.getGame().resetResourceCard1();
+    }
+
+    void updateResourceCard2() {
+        gameController.getGame().resetResourceCard2();
+    }
+
+    void updateGoldCard2(){
+        gameController.getGame().resetGoldCard1();
+    }
+
+    void updateGoldCard1(){
+        gameController.getGame().resetGoldCard2();
+    }
+
+    void updateChat(Chat chat){
+        for (int i = 0; i<gameController.getGame().getChats().size(); i++) {
+            if (gameController.getGame().getChats().get(i).getId() == chat.getId()) {
+                gameController.getGame().getChats().remove(i);
+                gameController.getGame().getChats().add(chat);
+            }
+        }
+    }
+
+    void updatePawns(Player player, Pawn pawn){
+        for (int i = 0; i<gameController.getGamePlayers().size(); i++) {
+            if (gameController.getGamePlayers().get(i).equals(player)) {
+                gameController.getGamePlayers().get(i).setColor(pawn);
+            }
+        }
+    }
+
+    void updateNickname(Player player, String nickname){
+        for (int i = 0; i<gameController.getGamePlayers().size(); i++) {
+            if (gameController.getGamePlayers().get(i).equals(player)) {
+                gameController.getGamePlayers().get(i).setNickname(nickname);
+            }
+        }
+    }
+
+
+    void updateRound() {
+            gameController.nextPhase();
+    }
+
+
+//    public void update(Event e, Observable obs) {
+//        switch (e) {
+//            case UPDATED_BOARD: // LIST: PLAYER PLAYER - BOARD NEWBOARD
+////                for(int i = 0; i < get
+////                if((gameController.getGame().getPlayers().get(i)).equals.obs))
+////               gameController.getGame()
+//
+//                for (int i = 0; i<gameController.getGamePlayers().size(); i++) {
+//                    if ((obs.getPlayer()).equals(gameController.getGamePlayers().get(i).getBoard())) {
+//                        gameController.getGamePlayers().get(i).setBoard(obs);
+//                    }
+//                }
+//                break;
+//
+//            case UPDATED_RESOURCE_DECK:
+//                break;
+//
+//            case UPDATED_GOLD_DECK:
+//                break;
+//
+//            case UPDATED_PLAYER_DECK:
+//                break;
+//
+//            case UPDATED_RESOURCE_CARD_1:
+//                break;
+//
+//            case UPDATED_RESOURCE_CARD_2:
+//                break;
+//
+//            case UPDATED_GOLD_CARD_1:
+//                break;
+//
+//            case UPDATED_GOLD_CARD_2:
+//                break;
+//
+//            case UPDATED_CHAT:
+//                break;
+//
+//            case UPDATED_PAWNS:
+//                break;
+//
+//            case UPDATED_NICKNAME:
+//                break;
+//
+//            case UPDATED_ROUND:
+//                break;
+//
+//            default:
+//                break;
+//
+//        }
+//    }
+
+
+
+
+
 
     /**
      * Settings class
@@ -235,6 +370,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         static int PORT = 1099; // free ports: from 49152 to 65535, 1099 standard port for RMI registry
         static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
     }
+
+
 
     //per creare il riferimento in WrappedObserver tramite RMIServer che potrebbe implementare un Observable come da pdf
     /*

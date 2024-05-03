@@ -561,6 +561,17 @@ public class Game extends Observable implements Serializable {
     }
 
 
+    public void setResourceDeck (PlayableDeck resourceDeck) {
+        this.resourceDeck = resourceDeck;
+    }
+
+    public void setGoldDeck (PlayableDeck goldDeck) {
+        this.goldDeck = goldDeck;
+    }
+
+
+
+
 
     /**
      * Getter method

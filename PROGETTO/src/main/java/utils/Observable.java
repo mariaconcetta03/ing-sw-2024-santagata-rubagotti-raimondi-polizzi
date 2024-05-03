@@ -1,7 +1,6 @@
 package utils;
 
-import org.model.Game;
-import org.model.Player;
+import org.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,10 +78,10 @@ public class Observable {
 
         // updating all the boards of the listeners in the correct game
         for(Observer l: TCPlisteners) {
-            l.updateBoard(p.getBoard());
+            l.updateBoard(p.getBoard(), p);
         }
         for(Observer l: RMIlisteners) {
-            l.updateBoard(p.getBoard());
+            l.updateBoard(p.getBoard(), p);
         }
     }
 
@@ -91,15 +90,15 @@ public class Observable {
     /**
      * This method updates the resource deck in the listeners of that game
      */
-    public void updateResourceDeck(){
+    public void updateResourceDeck(PlayableDeck deck){
         // getting the list of the observers of the correct game
 
         // updating all the boards of the listeners in the correct game
         for(Observer l: RMIlisteners) {
-            l.updateResourceDeck();
+            l.updateResourceDeck(deck);
         }
         for(Observer l: TCPlisteners) {
-            l.updateResourceDeck();
+            l.updateResourceDeck(deck);
         }
     }
 
@@ -108,15 +107,15 @@ public class Observable {
     /**
      * This method updates the gold deck in the listeners of that game
      */
-    public void updateGoldDeck(Game game){
+    public void updateGoldDeck(PlayableDeck deck){
         // getting the list of the observers of the correct game
 
         // updating all the boards of the listeners in the correct game
         for(Observer l: RMIlisteners) {
-            l.updateGoldDeck();
+            l.updateGoldDeck(deck);
         }
         for(Observer l: TCPlisteners) {
-            l.updateGoldDeck();
+            l.updateGoldDeck(deck);
         }
     }
 
@@ -124,18 +123,17 @@ public class Observable {
 
     /**
      * This method updates a player deck in the listeners of a specific game
-     * @param p is the player who has the new deck (which has been changed recently,
-     * for example by playing a card or by drawing a card)
+     *
      */
-    public void updatePlayerDeck(Player p){
+    public void updatePlayerDeck(Player player, PlayableCard[] playerDeck){
         // getting the list of the observers of the correct game
 
         // updating all the boards of the listeners in the correct game
         for(Observer l: RMIlisteners) {
-            l.updatePlayerDeck(p);
+            l.updatePlayerDeck(player, playerDeck);
         }
         for(Observer l: TCPlisteners) {
-            l.updatePlayerDeck(p);
+            l.updatePlayerDeck(player, playerDeck);
         }
     }
 
@@ -219,17 +217,17 @@ public class Observable {
 
     /**
      * This method updates a specific chat (with his id) of that game
-     * @param chatID the ID of the chat which needs to be updated
+     * @param chat the ID of the chat which needs to be updated
      */
-    public void updateChat(int chatID){
+    public void updateChat(Chat chat){
         // getting the list of the observers of the correct game
 
         // updating all the boards of the listeners in the correct game
         for(Observer l: RMIlisteners) {
-            l.updateChat(chatID);
+            l.updateChat(chat);
         }
         for(Observer l: TCPlisteners) {
-            l.updateChat(chatID);
+            l.updateChat(chat);
         }
     }
 
@@ -239,15 +237,15 @@ public class Observable {
      * This method updates all the pawns in a specific game. This method is
      * called after all the players have deided their own pawn color.
      */
-    public void updatePawns(){
+    public void updatePawns(Player player, Pawn pawn){
         // getting the list of the observers of the correct game
 
         // updating all the boards of the listeners in the correct game
         for(Observer l: RMIlisteners) {
-            l.updatePawns();
+            l.updatePawns(player, pawn);
         }
         for(Observer l: TCPlisteners) {
-            l.updatePawns();
+            l.updatePawns(player, pawn);
         }
     }
 
@@ -263,10 +261,10 @@ public class Observable {
 
         // updating all the boards of the listeners in the correct game
         for(Observer l: RMIlisteners) {
-            l.updateNickname();
+            l.updateNickname(player, nickname);
         }
         for(Observer l: TCPlisteners) {
-            l.updateNickname();
+            l.updateNickname(player, nickname);
         }
     }
 
@@ -276,7 +274,7 @@ public class Observable {
      * This method updates the round in a specific game. Thanks to this method it will be possible
      * to display the player which needs to play now
      */
-    public void updateRound(Game game){
+    public void updateRound(){
         // getting the list of the observers of the correct game
 
         // updating all the boards of the listeners in the correct game

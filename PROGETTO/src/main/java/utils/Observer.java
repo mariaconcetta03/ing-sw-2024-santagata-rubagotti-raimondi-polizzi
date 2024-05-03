@@ -19,16 +19,17 @@ public interface Observer {
 //    ----------------------------------------------------------------------------------------------------------------
 
 
-    void updateBoard(Board board);
-    void updateResourceDeck();
-    void updateGoldDeck();
-    void updatePlayerDeck(Player player);
+
+    void updateBoard(Board board, Player player);
+    void updateResourceDeck(PlayableDeck resourceDeck);
+    void updateGoldDeck(PlayableDeck goldDeck);
+    void updatePlayerDeck(Player player, PlayableCard[] playerDeck);
     void updateResourceCard1();
     void updateResourceCard2();
     void updateGoldCard2();
     void updateGoldCard1();
-    void updateChat(int chatID);
-    void updatePawns();
-    void updateNickname();
+    void updateChat(Chat chat);
+    void updatePawns(Player player, Pawn pawn);
+    void updateNickname(Player player, String nickname);
     void updateRound();
 }
