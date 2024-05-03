@@ -1,5 +1,7 @@
 package distributed.Socket;
 
+import distributed.messages.SCKMessage;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -35,7 +37,7 @@ public class ServerSCK extends UnicastRemoteObject { //we can't use the name Ser
         while (true) {
             Socket client = serverSocket.accept(); //accept() returns the client just accepted
             //if we create a constructor of ClientHandlerThread by which we pass the serverSocket then the thread can send messages to the server
-            executor.submit(new ClientHandlerThread(client));
+            executor.submit(new ClientHandlerThread(client,this)); //we also pass a pointer to the server
         }
     }
     //we can add a method receiveMessage by which the ClientHandlerThread can send messages to the server (if we give the thread the server address as a parameter of the constructor)
@@ -44,5 +46,24 @@ public class ServerSCK extends UnicastRemoteObject { //we can't use the name Ser
         ServerSCK serverSCK = new ServerSCK(1234); //that is the port found in the slides
         serverSCK.startServer();
     }
+
+    /*
+    public Object askTheServer(SCKMessage sckMessage) throws IOException, ClassNotFoundException {
+        Object obj;
+        if(sckMessage.getObj()==Event.CHECK_MY_TURN){
+            return controller.getServerModel(sckMessage.getMatchIndex(), sckMessage.getMessageEvent(), sckMessage.getClientIndex());
+        } else{
+            if(sckMessage.getObj()==Event.ASK_MODEL){
+                obj = controller.getServerModel(sckMessage.getMatchIndex(), sckMessage.getMessageEvent(), sckMessage.getClientIndex());
+            } else if(sckMessage.getMessageEvent()==Event.ASK_NUM_PLAYERS){
+                obj = askMyIndex();
+            } else {
+                obj = controller.sendServerMessage(sckMessage.getMatchIndex(), sckMessage.getObj(), sckMessage.getMessageEvent());
+            }
+            return obj;
+        }
+    }
+
+     */
 
 }

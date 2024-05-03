@@ -4,8 +4,8 @@ import utils.Event;
 import java.io.Serializable;
 
 public abstract class Message implements Serializable {
-        private final Event event;
-        private final Object obj; //that is what is being sent
+        protected final Event event;
+        protected final Object obj; //that is what is being sent
 
 
     /**

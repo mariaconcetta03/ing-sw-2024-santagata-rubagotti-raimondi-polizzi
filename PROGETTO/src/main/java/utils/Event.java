@@ -36,10 +36,20 @@ public enum Event implements Serializable {
     UPDATED_CHAT,
     UPDATED_PAWNS,
     UPDATED_NICKNAME,
-    UPDATED_ROUND;
+    UPDATED_ROUND,
+
+    //some new events to be used in SCKMessage to tell the server what the client want to do
+    ALL_CONNECTED, //è un per avere un esempio (possiamo modificarlo)
+    START, //per dire che il client TCP ha caricato localmente una copia dell'intero model
+
+    ASK_SERVER_MODEL,  //per inizializzare il model del client usando quello del server
+    GAME_BOARD,
+
+    GAME_PLAYERS;
 
     public void printEvent(){
         System.out.println("Questo è l'evento: " + this.toString());
     }
+
 
 }
