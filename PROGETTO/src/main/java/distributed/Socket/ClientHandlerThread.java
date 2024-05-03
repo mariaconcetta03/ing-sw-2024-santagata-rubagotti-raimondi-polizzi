@@ -208,5 +208,12 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
     public void updatePawns(){}
     public void updateNickname(){}
     public void updateRound(){}
+    public void updateBoard(Board board, Player player){}
+    public void updateChat(Chat chat){};
+    public void updatePawns(Player player, Pawn pawn){};
+    public void updateNickname(Player player, String nickname){};
+    public void updateResourceDeck(PlayableDeck resourceDeck){};
+    public void updateGoldDeck(PlayableDeck goldDeck){};
+    public void updatePlayerDeck(Player player, PlayableCard[] playerDeck){};
 }
 
