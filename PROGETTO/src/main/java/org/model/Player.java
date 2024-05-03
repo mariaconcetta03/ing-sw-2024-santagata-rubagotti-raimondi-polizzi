@@ -385,5 +385,9 @@ public class Player extends Observable implements Serializable {
     public void setState(PlayerState state) {
         this.state = state;
     }
+
+    public void setPlayerDeck(PlayableCard[] playerDeck){
+        this.playerDeck = playerDeck;
+    }
 }
 

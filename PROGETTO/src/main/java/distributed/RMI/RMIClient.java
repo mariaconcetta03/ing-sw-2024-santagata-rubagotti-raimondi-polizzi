@@ -376,7 +376,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     //per creare il riferimento in WrappedObserver tramite RMIServer che potrebbe implementare un Observable come da pdf
     /*
     public class RemoteObserverImpl implements RemoteObserver {
-        public void remoteUpdate(Object observable, Object updateMsg) {
+        public void remoteUpdate(Object observable, Event updateMsg) {
             System.out.println("Got message: " + updateMsg);
         }
         public static void main(String[] args) throws Exception {

@@ -255,7 +255,7 @@ public class Observable {
      * This method updates all the nicknames in a specific game. This method is
      * called after all the players have joined the lobby, and when it is started.
      */
-    public void updateNickname(Game game){
+    public void updateNickname(Player player, String nickname){
         // getting the list of the observers of the correct game
 
 

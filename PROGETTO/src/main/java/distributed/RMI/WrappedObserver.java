@@ -21,16 +21,16 @@ public class WrappedObserver implements Observer {
     public void updateBoard(Board board, Player player){
 
     }
-    public void updateResourceDeck(){}
-    public void updateGoldDeck(){}
-    public void updatePlayerDeck(Player player){}
+    public void updateResourceDeck(PlayableDeck resourceDeck){}
+    public void updateGoldDeck(PlayableDeck goldDeck){}
+    public void updatePlayerDeck(Player player, PlayableCard[] playerDeck){}
     public void updateResourceCard1(){}
     public void updateResourceCard2(){}
     public void updateGoldCard2(){}
     public void updateGoldCard1(){}
-    public void updateChat(int chatID){}
-    public void updatePawns(){}
-    public void updateNickname(){}
+    public void updateChat(Chat chat){}
+    public void updatePawns(Player player, Pawn pawn){}
+    public void updateNickname(Player player, String nickname){}
     public void updateRound(){}
 
     //copia incolla da pdf:
