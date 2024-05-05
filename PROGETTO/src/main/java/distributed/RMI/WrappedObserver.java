@@ -2,6 +2,7 @@ package distributed.RMI;
 
 import distributed.messages.Message;
 import org.model.*;
+import org.model.Game.GameState;
 import utils.Observable;
 import utils.*;
 
@@ -21,8 +22,32 @@ public class WrappedObserver implements Observer {
     @Override
     public void update(Observable obs, Message arg) {
         switch(arg.getMessageEvent()){
-            case UPDATED_GOLD_CARD_1 -> remoteClient.updateGoldCard1((PlayableCard)(arg.getObj()));
-            case UPDATED_GOLD_CARD_2 -> remoteClient.updateGoldCard2((PlayableCard)(arg.getObj()));
+            case UPDATED_BOARD: remoteClient.updateBoard((Board)(arg.getObj()));
+                break;
+            case UPDATED_GOLD_DECK: remoteClient.updateGoldDeck((PlayableDeck)(arg.getObj()));
+                break;
+            case UPDATED_PLAYER_DECK: remoteClient.updatePlayerDeck((Player) (arg.getObj().get(0)), (PlayableCard[])(arg.getObj().get(1)));
+                break;
+            case UPDATED_RESOURCE_CARD_1: remoteClient.updateResourceCard1((PlayableCard)(arg.getObj()));
+                break;
+            case UPDATED_RESOURCE_CARD_2: remoteClient.updateResourceCard2((PlayableCard)(arg.getObj()));
+                break;
+            case UPDATED_GOLD_CARD_1: remoteClient.updateGoldCard1((PlayableCard)(arg.getObj()));
+                break;
+            case UPDATED_GOLD_CARD_2: remoteClient.updateGoldCard2((PlayableCard)(arg.getObj()));
+                break;
+            case UPDATED_CHAT: remoteClient.updateChat((Chat) (arg.getObj()));
+                break;
+            case UPDATED_PAWNS: remoteClient.updatePawns((Player) (arg.getObj().get(0)), (Pawn)(arg.getObj().get(1)));
+                break;
+            case UPDATED_NICKNAME: remoteClient.updateNickname((Player) (arg.getObj().get(0)), (arg.getObj().get(1)).toString());
+                break;
+            case UPDATED_ROUND: remoteClient.updateRound((Player) (arg.getObj()));
+                break;
+            case GAME_STATE_CHANGED: remoteClient.updateGameState((Game)(arg.getObj()));
+                break;
+            // SETUP PHASE 1 E 2 CHE COSA SONO ? VANNO MESSI ?
+            default: throw new IllegalStateException("Unexpected message event: " + arg.getMessageEvent().toString());
         }
     }
 

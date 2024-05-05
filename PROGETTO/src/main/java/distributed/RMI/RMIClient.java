@@ -236,11 +236,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
 
 
-    public void updateBoard (Board board, Player player) {
-        for (int i = 0; i<gameController.getGamePlayers().size(); i++) {
-            if (gameController.getGamePlayers().get(i).equals(player)) {
-                gameController.getGamePlayers().get(i).setBoard(board);
-            }
+    public void updateBoard (Board board) {
+        if (selectedView == 1) {
+            //tuiView.updateBoard(board)
+        } else if (selectedView == 2) {
+            //guiView.updateBoard(board)
         }
     }
 
@@ -269,8 +269,12 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         gameController.getGame().resetResourceCard1();
     }
 
-    void updateResourceCard2() {
-        gameController.getGame().resetResourceCard2();
+    void updateResourceCard2(PlayableCard card){
+        if (selectedView == 1) {
+            //tuiView.updateResourceCard2(card)
+        } else if (selectedView == 2) {
+            //guiView.updateResourceCard2(card)
+        }
     }
 
     void updateGoldCard2(PlayableCard goldCard){
@@ -281,20 +285,19 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
     }
 
-    void updateGoldCard1(PlayableCard goldCard){
-        if(selectedView==2){
-            //gui
-        }else{
-
+    void updateGoldCard2(PlayableCard Card){
+        if (selectedView == 1) {
+            //tuiView.updateGoldCard2(card)
+        } else if (selectedView == 2) {
+            //guiView.updateGoldCard2(card)
         }
     }
 
     void updateChat(Chat chat){
-        for (int i = 0; i<gameController.getGame().getChats().size(); i++) {
-            if (gameController.getGame().getChats().get(i).getId() == chat.getId()) {
-                gameController.getGame().getChats().remove(i);
-                gameController.getGame().getChats().add(chat);
-            }
+        if (selectedView == 1) {
+            //tuiView.updateChat(chat)
+        } else if (selectedView == 2) {
+            //guiView.updateChat(chat)
         }
     }
 
@@ -319,6 +322,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             gameController.nextPhase();
     }
 
+    void updateGameState(Game game){
+        if (selectedView == 1) {
+            //tuiView.updateGameState(game)
+        } else if (selectedView == 2) {
+            //guiView.updateGameState(game)
+        }
+    }
 
 //    public void update(Event e, Observable obs) {
 //        switch (e) {
