@@ -13,10 +13,9 @@ import java.util.concurrent.Executors;
 //to clear the ideas: this class isn't a socket but inside we initialize a ServerSocket and a Socket (the representation of the client's one)
 
 //the update method called in the model after every modification should reach the game controller which has saved all the players of that game
-//this server cannot call the update because it doesn't decide to which game each player goes
-//in the game controller we can save the sockets of the players and the update should modify the socket
+//in the game controller we can save the clientHandlerThread (socket) of the players and the update should modify the socket
 //then the class ClientSCK (the real client because it's not on the same virtual machine) reads the modified socket and change its view
-public class ServerSCK extends UnicastRemoteObject { //we can't use the name ServerSocket because it already exists in java.net library
+public class ServerSCK extends UnicastRemoteObject {
     private final int port;
 
     public ServerSCK (int port) throws RemoteException {

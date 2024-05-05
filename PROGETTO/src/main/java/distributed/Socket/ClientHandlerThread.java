@@ -23,19 +23,20 @@ import utils.Observable;
 import utils.Observer;
 import java.util.Scanner;
 
-public class ClientHandlerThread implements Runnable, Observer { //this is a Thread (it isn't blocking)
-
-    //if we memorize the nickname in our personal player we should obtain some errors if we call together addPlayerToGame, addPlayerToLobby, createLobby
-    //because we use the same personalPlayer that has a unique nickname.
+/**
+ * This class represents the Client (server-side) who chose TCP as network protocol
+ * It is notified of all the changes in the model and forwards them, using its socket attribute,
+ * to ClientSCK. It is a thread, so we will not have problems related to congestion (as we could have had in RMI).
+ */
+public class ClientHandlerThread implements Runnable, Observer { //this is a Thread
+    private final Socket socket;
+    GameController associatedGameController; //returned by ServerController' startlobby()/addPlayerToLobby()
     boolean hasAlreadyAGame=false; //this flag is necessary if we don't want to generate some avoidable errors (see the explanation above)
     private String nickname = null;
     Player personalPlayer= new Player(); //it could be properly initialized with the method addPlayerToGame or addPlayerToLobby or createLobby
     ServerController serverController;
-    GameController gameController; //this has to be set through the help of serverController (or even better we can use only serverController and this one calls the associated gameController)
-    private final Socket socket;
-    //what is the difference with Scanner and Printer? (can we use the print function with these below?)
-    //private final ObjectOutputStream output; //used to send
-    //private final ObjectInputStream input; //used to receive
+
+    //what is the difference with Scanner and Printer?
     ClientSCK clientSCK= null; //that's not a real socket but contains all the implemented method of the ClientGeneralInterface
 
     private final Thread threadCheckUpdates;
@@ -45,10 +46,14 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
     private final ObjectInputStream input;
     private final ObjectOutputStream output;
 
+    /**
+     * Constructor method
+     * @param client
+     * @param serverSCK
+     * @throws IOException
+     */
     public ClientHandlerThread(Socket client,ServerSCK serverSCK) throws IOException {
-
         this.serverSCK=serverSCK;
-
         this.socket = client; //the client can communicate with the server by this thread using this socket
 
         this.output = new ObjectOutputStream(client.getOutputStream());
@@ -67,7 +72,7 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
                     } catch (IOException | ClassNotFoundException | InterruptedException e) {}*/
                 }
             }
-        },"CheckUpdateBoard");
+        },"CheckUpdateBoard"); //manca run?
 
 
     }
@@ -172,54 +177,56 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
  //funzioni che può chiamare il client (tramite la run()) si potrebbero mettere come private perchè non verranno chiamate da fuori
 
     //if this method doesn't give errors we can save the gameId (if we want to use it)
+
+    /**
+     * This method, will be used to call the ServerController method
+     * @param playerNickname
+     * @param gameId
+     * @throws RemoteException
+     * @throws NotBoundException
+     * @throws GameAlreadyStartedException
+     * @throws FullLobbyException
+     * @throws GameNotExistsException
+     */
     private void addPlayerToLobby (String playerNickname, int gameId) throws RemoteException, NotBoundException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException{
        serverController.addPlayerToLobby(playerNickname, gameId);
    }
+
+    /**
+     * This method, will be used to call the ServerController method
+     * @param nickname
+     * @throws RemoteException
+     * @throws NotBoundException
+     * @throws NicknameAlreadyTakenException
+     */
     private void chooseNickname (String nickname) throws RemoteException, NotBoundException, NicknameAlreadyTakenException{
         serverController.chooseNickname(nickname);
     }
 
-    //here the ServerController creates a new instance of GameController
+    /**
+     * This method, will be used to call the ServerController method
+     * @param creatorNickname
+     * @param numOfPlayers
+     * @throws RemoteException
+     * @throws NotBoundException
+     */
     private void createLobby (String creatorNickname, int numOfPlayers) throws RemoteException, NotBoundException{
         serverController.startLobby(creatorNickname, numOfPlayers);
     }
 
-    //internal use? this method should create the association between the client and the game (memorized in a Map in the ServerController)
-    private void createGame (List<Player> gamePlayers) throws RemoteException, NotBoundException{}
-
-    // if we call this method we should already have the attribute gameController memorized in this thread...because it use gameController (but the game id is set in this function)-> IMPOSSIBLE
-    // solution: we always call the serverController that recognise the client and calls the associated came controller
-    private void addPlayerToGame (Player player) throws RemoteException, NotBoundException, ArrayIndexOutOfBoundsException{
-        //gameController.addPlayer(player); //that's the code in RMIServer but I don't know how to make it work
-    }
-
-    //internal use?
-    private void startGame() throws RemoteException, NotBoundException, IllegalStateException{}
-
-    //how do we select the card without the view?
     private void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, NotBoundException{}
 
-    //how do we select the card without the view?
     private void playBaseCard (String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException, NotBoundException{}
 
-    //how do we select the card without the view?
     private void drawCard(String nickname, PlayableCard selectedCard) throws RemoteException, NotBoundException{}
 
-    //how do we select the card without the view?
     private void chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard) throws RemoteException, NotBoundException{}
 
     private void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, NotBoundException{
-        gameController.choosePawnColor(chooserNickname, selectedColor);
+        associatedGameController.choosePawnColor(chooserNickname, selectedColor);
     }
 
-    //how the client know the receivers?
     private void sendMessage(Player sender, List<Player> receivers, String message) throws RemoteException, NotBoundException{}
-
-    //internal use?
-    private void nextRound() throws RemoteException, NotBoundException{}
-
-    //internal use?
-    private void endGame() throws RemoteException, NotBoundException{}
 
     //we have the nickname saved in personalPlayer but we don't have the game controller used in thi method (as suggested
     // we should call the server controller which has tha Map with all game controllers saved and can call it by himself)
@@ -229,17 +236,6 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
     public void updateBoard(Board board){
 
     }
-    public void updateResourceDeck(){}
-    public void updateGoldDeck(){}
-    public void updatePlayerDeck(Player player){}
-    public void updateResourceCard1(){}
-    public void updateResourceCard2(){}
-    public void updateGoldCard2(){}
-    public void updateGoldCard1(){}
-    public void updateChat(int chatID){}
-    public void updatePawns(){}
-    public void updateNickname(){}
-    public void updateRound(){}
 
     @Override
     public void update(Observable obs, Message arg) {
@@ -255,14 +251,6 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
     public String getNickname() {
         return null;
     }
-
-    public void updateBoard(Board board, Player player){}
-    public void updateChat(Chat chat){};
-    public void updatePawns(Player player, Pawn pawn){};
-    public void updateNickname(Player player, String nickname){};
-    public void updateResourceDeck(PlayableDeck resourceDeck){};
-    public void updateGoldDeck(PlayableDeck goldDeck){};
-    public void updatePlayerDeck(Player player, PlayableCard[] playerDeck){};
 
 
     //codice da cui prendere spunto (anche in ServerSCK è stato aggiunto askTheServer commentato)

@@ -17,11 +17,13 @@ import org.model.Player;
 import utils.Event;
 
 
-
-
-//to clear the ideas: this class isn't a socket but has a socket inside.
-// l'update andrà a modificare il flusso (BUFFER) tra server e client che può essere letto dalla socket di questa classe
-public class ClientSCK {//here we can have the view attributes that would be modified after we read the buffer
+/**
+ * This class represents the Client who chose TCP as network protocol.
+ * It listens to the SCKMessage sent by the ClientHandlerThread through the socket
+ * and performs action to update the view. It also sends User input to the ClientHandlerThread
+ * through the socket to be processed
+ */
+public class ClientSCK {
 
     private Board board;
     private ArrayList<Player> listOfPlayers;
@@ -29,9 +31,7 @@ public class ClientSCK {//here we can have the view attributes that would be mod
     private ObjectInputStream inputStream;
 
     public ClientSCK(String address, int port) throws IOException, ClassNotFoundException { //we call this constructor after we ask the IP address and the port of the server
-
         Socket socket = new Socket();
-        //when we connect the class ServerSCK can accept our connection and then create a thread (ClientHandlerThread)
         socket.connect(new InetSocketAddress(address, port), 1000); //the address and the port of the server
 
         //in this way we are not using the real streams but copies of them: we can not write on the real input stream if we use its copy (the communication doesn't work)
@@ -110,16 +110,19 @@ public class ClientSCK {//here we can have the view attributes that would be mod
 
     }
 
-    // qualunque sia update da fare dovrebbe venire chiamata senMessage per dire al server tutto okay.
-    // sendMessage la utilizziamo anche per comunicare le scelte del client al server
-    public void sendMessage(SCKMessage sckMessage) throws IOException { //we write the socket so that if the Thread reads this stream, it can receive the message
+    /**
+     * This method allows the Client to send, through the socket, a message to be read by the ClientHandlerThread.
+     * @param sckMessage is the message containing objects and Event relative to the action to perform
+     * @throws IOException in case the Server is unreachable we shut down the Client.
+     */
+    public void sendMessage(SCKMessage sckMessage) throws IOException {
         try {
-            outputStream.writeObject(sckMessage); //here we are writing sckMessage in a buffer
+            outputStream.writeObject(sckMessage);
             outputStream.flush();
             outputStream.reset();
         } catch (IOException e) {
-            System.err.println("\n\nServer crashed!");
-            System.exit(-1);
+            System.err.println("Server not available!");
+            System.exit(-1); //this is a shutdown of the VirtualMachine
         }
     }
 
