@@ -75,6 +75,22 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
 
     /**
+     * Settings class
+     * It is about port and ip address of the server which the client needs to communicate with
+     */
+    public static class Settings { //this is an attribute
+        static int PORT = 1099; // free ports: from 49152 to 65535, 1099 standard port for RMI registry
+        static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
+    }
+
+
+
+
+
+
+    // ---- M E T H O D S   F R O M   C L I E N T   T O   S E R V E R ----
+
+    /**
      * This method gets the SRMIInterface from the registryServer
      * @throws RemoteException
      * @throws NotBoundException
@@ -238,8 +254,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
 
 
-    // ---- M E T O D I   D I   U P D A T E ----
+    // ------- M E T H O D S   F O R   U P D A T E -------
+    // ---- F R O M   S E R V E R   T O   C L I E N T ----
 
+    /**
+     * This is an update method
+     * @param board the new board we want to update
+     */
     public void updateBoard (Board board) {
         if (selectedView == 1) {
             //tuiView.updateBoard(board)
@@ -249,6 +270,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     }
 
 
+
+    /**
+     * This is an update method
+     * @param resourceDeck the new deck we want to update
+     */
     public void updateResourceDeck (PlayableDeck resourceDeck) {
         if (selectedView == 1) {
             //tuiView.updateResourceDeck (resourceDeck)
@@ -258,6 +284,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     }
 
 
+
+    /**
+     * This is an update method
+     * @param goldDeck the new deck we want to update
+     */
     public void updateGoldDeck (PlayableDeck goldDeck) {
         if (selectedView == 1) {
             //tuiView.updateGoldDeck(goldDeck)
@@ -268,6 +299,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
 
 
+    /**
+     * This is an update method
+     * @param player the player which deck is updated
+     * @param playerDeck the new deck we want to update
+     */
     public void updatePlayerDeck (Player player, PlayableCard[] playerDeck) {
         if (selectedView == 1) {
             //tuiView.updatePlayerDeck(player, playerDeck)
@@ -277,7 +313,12 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     }
 
 
-    void updateResourceCard1(PlayableCard card) {
+
+    /**
+     * This is an update method
+     * @param card which needs to be updated
+     */
+    public void updateResourceCard1(PlayableCard card) {
         if (selectedView == 1) {
             //tuiView.updateResourceCard1(card)
         } else if (selectedView == 2) {
@@ -285,7 +326,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
     }
 
-    void updateResourceCard2(PlayableCard card){
+
+
+    /**
+     * This is an update method
+     * @param card which needs to be updated
+     */
+   public void updateResourceCard2(PlayableCard card){
         if (selectedView == 1) {
             //tuiView.updateResourceCard2(card)
         } else if (selectedView == 2) {
@@ -293,7 +340,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
     }
 
-    void updateGoldCard1(PlayableCard Card){
+
+
+    /**
+     * This is an update method
+     * @param card which needs to be updated
+     */
+    public void updateGoldCard1(PlayableCard card){
         if (selectedView == 1) {
             //tuiView.updateGoldCard1(card)
         } else if (selectedView == 2) {
@@ -301,7 +354,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
     }
 
-    void updateGoldCard2(PlayableCard Card){
+
+
+    /**
+     * This is an update method
+     * @param card which needs to be updated
+     */
+    public void updateGoldCard2(PlayableCard card){
         if (selectedView == 1) {
             //tuiView.updateGoldCard2(card)
         } else if (selectedView == 2) {
@@ -309,7 +368,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
     }
 
-    void updateChat(Chat chat){
+
+
+    /**
+     * This is an update method
+     * @param chat which needs to be updated
+     */
+    public void updateChat(Chat chat){
         if (selectedView == 1) {
             //tuiView.updateChat(chat)
         } else if (selectedView == 2) {
@@ -317,7 +382,14 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
     }
 
-    void updatePawns(Player player, Pawn pawn){
+
+
+    /**
+     * This is an update method
+     * @param player which selected a new pawn color
+     * @param pawn selected color
+     */
+    public void updatePawns(Player player, Pawn pawn){
         if (selectedView == 1) {
             //tuiView.updatePawns(player, pawn)
         } else if (selectedView == 2) {
@@ -325,7 +397,14 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
     }
 
-    void updateNickname(Player player, String nickname){
+
+
+    /**
+     * This is an update method
+     * @param player which selected a new nickname
+     * @param nickname chosen nickname string
+     */
+    public void updateNickname(Player player, String nickname){
         if (selectedView == 1) {
             //tuiView.updateNickname(player, nickname)
         } else if (selectedView == 2) {
@@ -334,7 +413,12 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     }
 
 
-    void updateRound(Player newCurrentPlayer) {
+
+    /**
+     * This is an update method
+     * @param newCurrentPlayer which needs to play now
+     */
+    public void updateRound(Player newCurrentPlayer) {
         if (selectedView == 1) {
             //tuiView.updateRound(newCurrentPlayer)
         } else if (selectedView == 2) {
@@ -342,13 +426,54 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
     }
 
-    void updateGameState(Game game){
+
+
+    /**
+     * This is an update method
+     * @param game which needs to update his state (WAITING_FOR_START -> STARTED -> ENDING -> ENDED)
+     */
+    public void updateGameState(Game game){
         if (selectedView == 1) {
             //tuiView.updateGameState(game)
         } else if (selectedView == 2) {
             //guiView.updateGameState(game)
         }
     }
+}
+
+
+
+
+
+
+
+
+
+// OLD COMMENTS
+
+//per creare il riferimento in WrappedObserver tramite RMIServer che potrebbe implementare un Observable come da pdf
+    /*
+    public class RemoteObserverImpl implements RemoteObserver {
+        public void remoteUpdate(Object observable, Event updateMsg) {
+            System.out.println("Got message: " + updateMsg);
+        }
+        public static void main(String[] args) throws Exception {
+            Registry registry = LocateRegistry.getRegistry();
+            RMIObservableService remoteService = (RMIObservableService)    //remoteService è il nostro server
+                    registry.lookup("Observable");
+            RemoteObserver client = new RemoteObserverImpl();
+            RemoteObserver clientStub = (RemoteObserver)
+                    UnicastRemoteObject.exportObject(client, 3949);
+            remoteService.addObserver(clientStub);    //il server è un Observable e quindi ha la lista di listeners (che sono i Wrapped)
+        }
+    }
+
+    //il wrapped inizia ad esistere solo nel momento in cui si crea un istanza di Game e quindi si ha bisogno di notificare i players
+    //quindi non bisogna fare addObserver in questo momento perchè ancora quel client non è diventato un player (e quindi non ha ancora un Game)
+    // diventerà un addToList (per memorizzare i client in attesa)
+    // quando parte tutto abbiamo un Game i wrapped
+
+     */
 
 //    public void update(Event e, Observable obs) {
 //        switch (e) {
@@ -402,46 +527,3 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 //
 //        }
 //    }
-
-
-
-
-
-
-    /**
-     * Settings class
-     * It is about port and ip address of the server which the client needs to communicate with
-     */
-    public static class Settings { //this is an attribute
-        static int PORT = 1099; // free ports: from 49152 to 65535, 1099 standard port for RMI registry
-        static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
-    }
-
-
-
-    //per creare il riferimento in WrappedObserver tramite RMIServer che potrebbe implementare un Observable come da pdf
-    /*
-    public class RemoteObserverImpl implements RemoteObserver {
-        public void remoteUpdate(Object observable, Event updateMsg) {
-            System.out.println("Got message: " + updateMsg);
-        }
-        public static void main(String[] args) throws Exception {
-            Registry registry = LocateRegistry.getRegistry();
-            RMIObservableService remoteService = (RMIObservableService)    //remoteService è il nostro server
-                    registry.lookup("Observable");
-            RemoteObserver client = new RemoteObserverImpl();
-            RemoteObserver clientStub = (RemoteObserver)
-                    UnicastRemoteObject.exportObject(client, 3949);
-            remoteService.addObserver(clientStub);    //il server è un Observable e quindi ha la lista di listeners (che sono i Wrapped)
-        }
-    }
-
-    //il wrapped inizia ad esistere solo nel momento in cui si crea un istanza di Game e quindi si ha bisogno di notificare i players
-    //quindi non bisogna fare addObserver in questo momento perchè ancora quel client non è diventato un player (e quindi non ha ancora un Game)
-    // diventerà un addToList (per memorizzare i client in attesa)
-    // quando parte tutto abbiamo un Game i wrapped
-
-     */
-
-
-}

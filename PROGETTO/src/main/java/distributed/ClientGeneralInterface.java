@@ -25,5 +25,19 @@ public interface ClientGeneralInterface extends Remote {
     void sendMessage(String senderNickname, List<String> receiversNickname, String message) throws RemoteException, NotBoundException;
     void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException;
     void SRMIInterfaceFromRegistry() throws RemoteException, NotBoundException;
+    void updateBoard (Board board);
+    void updateResourceDeck (PlayableDeck resourceDeck);
+    void updateGoldDeck (PlayableDeck goldDeck);
+    void updatePlayerDeck (Player player, PlayableCard[] playerDeck);
+    void updateResourceCard1(PlayableCard card);
+    void updateResourceCard2(PlayableCard card);
+    void updateGoldCard1(PlayableCard card);
+    void updateGoldCard2(PlayableCard card);
+    void updateChat(Chat chat);
+    void updatePawns(Player player, Pawn pawn);
+    void updateNickname(Player player, String nickname);
+    void updateRound(Player newCurrentPlayer);
+    void updateGameState(Game game);
 
-    }
+
+}

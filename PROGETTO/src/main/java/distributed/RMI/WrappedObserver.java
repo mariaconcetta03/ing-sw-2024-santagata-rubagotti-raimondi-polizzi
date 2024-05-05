@@ -6,9 +6,14 @@ import org.model.Game.GameState;
 import utils.Observable;
 import utils.*;
 
+
+/**
+ * This class represents a CLIENT as an OBSERVER
+ */
 public class WrappedObserver implements Observer {
     private RMIClient remoteClient;
     private String nickname;
+
 
     // ----------------- C O M E   A V V I E N E   L' U P D A T E ? --------------------
     // OBSERVABLE SI ACCORGE DEL CAMBIAMENTO (CHE PASSA DALLA VIEW, AL CONTROLLER, AL
@@ -18,10 +23,22 @@ public class WrappedObserver implements Observer {
     // ---------------------------------------------------------------------------------
 
 
+
+    /**
+     * Class constructor
+     * @param ro the RMIClient
+     */
     public WrappedObserver(RMIClient ro) {
         remoteClient = ro;
     }
 
+
+
+    /**
+     * This is an update method
+     * @param obs the observable
+     * @param arg the message which contains the event
+     */
     @Override
     public void update(Observable obs, Message arg) {
         switch(arg.getMessageEvent()){
@@ -58,19 +75,41 @@ public class WrappedObserver implements Observer {
         }
     }
 
+
+
+    /**
+     * Setter method
+     * @param nickname of the WrappedObserver
+     */
     @Override
     public void setNickname(String nickname) {
        this.nickname = nickname;
     }
 
+
+
+    /**
+     * Getter method
+     * @return nickname of the WrappedObserver
+     */
     @Override
     public String getNickname() {
         return this.nickname;
     }
 
-    // DA IMPLEMENTARE
+}
 
-    //copia incolla da pdf:
+
+
+
+
+
+
+
+
+// OLD COMMENTS
+// avremo come listeners in observable una lista di clientHandler(thread) per TCP e wrappedObserver per RMI
+// copia incolla da pdf:
     /*
     private final RMIClient remoteClient;
     public WrappedObserver(RMIClient ro) {
@@ -88,8 +127,3 @@ public class WrappedObserver implements Observer {
     }
 
 */
-
-
-
-
-} //avremo come listeners in observable una lista di clientHandler(thread) per TCP e wrappedObserver per RMI
