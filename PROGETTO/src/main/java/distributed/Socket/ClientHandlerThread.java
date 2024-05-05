@@ -30,14 +30,14 @@ import java.util.Scanner;
  */
 public class ClientHandlerThread implements Runnable, Observer { //this is a Thread
     private final Socket socket;
-    GameController associatedGameController; //returned by ServerController' startlobby()/addPlayerToLobby()
-    boolean hasAlreadyAGame=false; //this flag is necessary if we don't want to generate some avoidable errors (see the explanation above)
+    private GameController associatedGameController; //returned by ServerController' startlobby()/addPlayerToLobby()
+    private boolean hasAlreadyAGame=false; //this flag is necessary if we don't want to generate some avoidable errors (see the explanation above)
     private String nickname = null;
-    Player personalPlayer= new Player(); //it could be properly initialized with the method addPlayerToGame or addPlayerToLobby or createLobby
-    ServerController serverController;
+    private Player personalPlayer= new Player(); //it could be properly initialized with the method addPlayerToGame or addPlayerToLobby or createLobby
+    private ServerController serverController;
 
     //what is the difference with Scanner and Printer?
-    ClientSCK clientSCK= null; //that's not a real socket but contains all the implemented method of the ClientGeneralInterface
+    private ClientSCK clientSCK= null; //that's not a real socket but contains all the implemented method of the ClientGeneralInterface
 
     private final Thread threadCheckUpdates;
     private final Object updatesLock;
@@ -286,7 +286,7 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
     }
     */
 
-    public void writheTheStream(SCKMessage message){ //this is the stream the real client can read
+    public void writeTheStream(SCKMessage message){ //this is the stream the real client can read
         try {
             output.writeObject(message);
             output.flush();

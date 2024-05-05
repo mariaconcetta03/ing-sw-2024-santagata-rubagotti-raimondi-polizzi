@@ -23,7 +23,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
     // permette di dare il turno ai giocatori di un Game (senza unire giocatori di
     // più Game)
 
-    ServerController serverController;
+    private ServerController serverController;
 
 
     /**
