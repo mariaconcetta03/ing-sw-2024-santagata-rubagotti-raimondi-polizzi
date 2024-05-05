@@ -10,7 +10,7 @@ import java.util.*;
  * the client, after a taken action.
  */
 public enum Event implements Serializable {
-    //ERRORS
+    // ERRORS
     OK,
     CARD_NOT_DRAWN,
     GAME_NOT_EXISTS,
@@ -27,7 +27,7 @@ public enum Event implements Serializable {
     WRONG_NUMBER_OF_PLAYERS,
     GAME_LEFT,
 
-    //updates
+    // UPDATES
     UPDATED_BOARD,
     UPDATED_RESOURCE_DECK,
     UPDATED_GOLD_DECK,

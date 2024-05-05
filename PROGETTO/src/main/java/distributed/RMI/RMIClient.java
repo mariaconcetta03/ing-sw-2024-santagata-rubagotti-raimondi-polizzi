@@ -37,9 +37,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private GameController gameController = null;
     // given to the client when the game is started (lobby created or player joined to a lobby))
 
-    private int selectedView; //1==TUI, 2==GUI
+    private int selectedView; // 1==TUI, 2==GUI
     private InterfaceTUI tuiView;
-    //private GUI;
+    //private GUI; :O INTERFACCIA PERò...
     private Board personalBoard;
     private PlayableCard playerDeck[];
 
@@ -236,6 +236,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
 
 
+
+
+    // ---- M E T O D I   D I   U P D A T E ----
+
     public void updateBoard (Board board) {
         if (selectedView == 1) {
             //tuiView.updateBoard(board)
@@ -246,27 +250,39 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
 
     public void updateResourceDeck (PlayableDeck resourceDeck) {
-        gameController.getGame().setResourceDeck(resourceDeck);
+        if (selectedView == 1) {
+            //tuiView.updateResourceDeck (resourceDeck)
+        } else if (selectedView == 2) {
+            //guiView.updateBoard(board)
+        }
     }
 
 
     public void updateGoldDeck (PlayableDeck goldDeck) {
-        gameController.getGame().setGoldDeck(goldDeck);
+        if (selectedView == 1) {
+            //tuiView.updateGoldDeck(goldDeck)
+        } else if (selectedView == 2) {
+            //guiView.updateGoldDeck(goldDeck)
+        }
     }
 
 
 
     public void updatePlayerDeck (Player player, PlayableCard[] playerDeck) {
-        for (int i = 0; i<gameController.getGamePlayers().size(); i++) {
-            if (gameController.getGamePlayers().get(i).equals(player)) {
-                gameController.getGamePlayers().get(i).setPlayerDeck(playerDeck);
-            }
+        if (selectedView == 1) {
+            //tuiView.updatePlayerDeck(player, playerDeck)
+        } else if (selectedView == 2) {
+            //guiView.updatePlayerDeck(player, playerDeck)
         }
     }
 
 
-    void updateResourceCard1() {
-        gameController.getGame().resetResourceCard1();
+    void updateResourceCard1(PlayableCard card) {
+        if (selectedView == 1) {
+            //tuiView.updateResourceCard1(card)
+        } else if (selectedView == 2) {
+            //guiView.updateResourceCard1(card)
+        }
     }
 
     void updateResourceCard2(PlayableCard card){
@@ -277,11 +293,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
     }
 
-    void updateGoldCard2(PlayableCard goldCard){
-        if(selectedView==2){
-            //gui
-        }else{
-
+    void updateGoldCard1(PlayableCard Card){
+        if (selectedView == 1) {
+            //tuiView.updateGoldCard1(card)
+        } else if (selectedView == 2) {
+            //guiView.updateGoldCard1(card)
         }
     }
 
@@ -302,24 +318,28 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     }
 
     void updatePawns(Player player, Pawn pawn){
-        for (int i = 0; i<gameController.getGamePlayers().size(); i++) {
-            if (gameController.getGamePlayers().get(i).equals(player)) {
-                gameController.getGamePlayers().get(i).setColor(pawn);
-            }
+        if (selectedView == 1) {
+            //tuiView.updatePawns(player, pawn)
+        } else if (selectedView == 2) {
+            //guiView.updatePawns(player, pawn)
         }
     }
 
     void updateNickname(Player player, String nickname){
-        for (int i = 0; i<gameController.getGamePlayers().size(); i++) {
-            if (gameController.getGamePlayers().get(i).equals(player)) {
-                gameController.getGamePlayers().get(i).setNickname(nickname);
-            }
+        if (selectedView == 1) {
+            //tuiView.updateNickname(player, nickname)
+        } else if (selectedView == 2) {
+            //guiView.updateNickname(player, nickname)
         }
     }
 
 
-    void updateRound() {
-            gameController.nextPhase();
+    void updateRound(Player newCurrentPlayer) {
+        if (selectedView == 1) {
+            //tuiView.updateRound(newCurrentPlayer)
+        } else if (selectedView == 2) {
+            //guiView.updateRound(newCurrentPlayer)
+        }
     }
 
     void updateGameState(Game game){
