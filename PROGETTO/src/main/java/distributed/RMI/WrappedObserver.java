@@ -27,6 +27,8 @@ public class WrappedObserver implements Observer {
         switch(arg.getMessageEvent()){
             case UPDATED_BOARD: remoteClient.updateBoard((Board)(arg.getObj()));
                 break;
+            case UPDATED_RESOURCE_DECK: remoteClient.updateResourceDeck((PlayableDeck)(arg.getObj()));
+                break;
             case UPDATED_GOLD_DECK: remoteClient.updateGoldDeck((PlayableDeck)(arg.getObj()));
                 break;
             case UPDATED_PLAYER_DECK: remoteClient.updatePlayerDeck((Player)(arg.getObj().get(0)), (PlayableCard[])(arg.getObj().get(1)));
@@ -63,7 +65,7 @@ public class WrappedObserver implements Observer {
 
     @Override
     public String getNickname() {
-        return null;
+        return this.nickname;
     }
 
     // DA IMPLEMENTARE
