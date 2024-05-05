@@ -1,11 +1,12 @@
 package distributed.RMI;
 
+import distributed.messages.Message;
 import org.model.*;
 import utils.Observable;
 import utils.*;
 
 public class WrappedObserver implements Observer {
-
+    RMIClient remoteClient;
 
     // ----------------- C O M E   A V V I E N E   L' U P D A T E ? --------------------
     // OBSERVABLE SI ACCORGE DEL CAMBIAMENTO (CHE PASSA DALLA VIEW, AL CONTROLLER, AL
@@ -13,9 +14,27 @@ public class WrappedObserver implements Observer {
     // OBSERVERS. QUESTI IN RMI, GRAZIE ALLA CLASSE WRAPPED OBSERVER, VANNO AD INVOCARE
     // DEI METODI DI CLIENTRMI CHE RICEVONO L'OGGETTO AGGIORNATO
     // ---------------------------------------------------------------------------------
+    public WrappedObserver(RMIClient ro) {
+        remoteClient = ro;
+    }
 
+    @Override
+    public void update(Observable obs, Message arg) {
+        switch(arg.getMessageEvent()){
+            case UPDATED_GOLD_CARD_1 -> remoteClient.updateGoldCard1((PlayableCard)(arg.getObj()));
+            case UPDATED_GOLD_CARD_2 -> remoteClient.updateGoldCard2((PlayableCard)(arg.getObj()));
+        }
+    }
 
-    RMIClient client;
+    @Override
+    public void setNickname() {
+
+    }
+
+    @Override
+    public String getNickname() {
+        return null;
+    }
 
     // DA IMPLEMENTARE
     public void updateBoard(Board board, Player player){

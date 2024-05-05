@@ -137,9 +137,9 @@ public class ClientSCK {//here we can have the view attributes that would be mod
     }
 
     public void getModel() throws IOException, ClassNotFoundException {
-        sendMessage(new SCKMessage(Event.ASK_SERVER_MODEL, Event.GAME_BOARD));
+        //sendMessage(new SCKMessage(Event.ASK_SERVER_MODEL, Event.GAME_BOARD)); il 1 parametro è una List di Object non evento!
         this.board = (Board) this.inputStream.getObjectInputFilter(); // we need a filter because we may obtain a SCKMessage instead of a Board
-        sendMessage(new SCKMessage(Event.ASK_SERVER_MODEL, Event.GAME_PLAYERS));
+        //sendMessage(new SCKMessage(Event.ASK_SERVER_MODEL, Event.GAME_PLAYERS));
         this.listOfPlayers = (ArrayList<Player>) this.inputStream.getObjectInputFilter(); //da riguardare bene filter (è da usare anche per l'estrazione di SCKMessage?)
         // e altro.... come i goal comuni
     }

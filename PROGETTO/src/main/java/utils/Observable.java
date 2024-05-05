@@ -1,10 +1,10 @@
 package utils;
 
+import distributed.messages.Message;
 import org.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 // we can have one class for each Game, we can have an attribute observable in Game
@@ -18,18 +18,13 @@ public class Observable {
     // Definire l'Observable (Soggetto): Questa è la classe che tiene traccia degli Observer e notifica
     // loro i cambiamenti. Ad esempio, potrebbe essere il modello nei tuoi termini MVC.
     // --------------------------------------------------------------------------------------------------
-    private List<Observer> RMIlisteners;
-    private List<Observer> TCPlisteners;
+    private List<Observer> observers;
 
     //mi serve un costruttore di default se no ho errori nelle classi che estendono Observable
     public Observable(){
-        this.RMIlisteners= new ArrayList<>();
-        this.TCPlisteners= new ArrayList<>();
+        this.observers= new ArrayList<>();
     }
-    public Observable(List<Observer> RMIlisteners,List<Observer> TCPlisteners){
-        this.RMIlisteners=RMIlisteners;
-        this.TCPlisteners=TCPlisteners;  //Non credo glieli daremo alla creazione degli observable, ma bensì li aggiungeremo
-    }
+
 
     //non serve se mettiamo un attributo di tipo Observable in ogni classe Game
     //private Map <Game, List<Observer>> listeners;
@@ -70,221 +65,26 @@ public class Observable {
 
 
     /**
-     * This method updates a board in the listeners of a specific game
-     * @param p is the player who has the new board (which has been changed recently)
+     * This method will be called at the end of the model's methods that "modify" something.
+     * It will inform the Observers to perform an update action contacting the Client related to them.
+     * @param notification is the message containing the Event that caused the modification
      */
-    public void updateBoard(Player p){
-        // getting the list of the observers of the correct game
-
-        // updating all the boards of the listeners in the correct game
-        for(Observer l: TCPlisteners) {
-            l.updateBoard(p.getBoard(), p);
-        }
-        for(Observer l: RMIlisteners) {
-            l.updateBoard(p.getBoard(), p);
+    public void notifyObservers(Message notification){
+        for(Observer obs: observers) {
+            obs.update(this, notification);
         }
     }
-
-
 
     /**
-     * This method updates the resource deck in the listeners of that game
+     * This method add an Observer to the Observable.
+     * @param obs is the Observer we are adding.
      */
-    public void updateResourceDeck(PlayableDeck deck){
-        // getting the list of the observers of the correct game
-
-        // updating all the boards of the listeners in the correct game
-        for(Observer l: RMIlisteners) {
-            l.updateResourceDeck(deck);
-        }
-        for(Observer l: TCPlisteners) {
-            l.updateResourceDeck(deck);
+    public void addObserver(Observer obs) { //synchronized?
+        if (!this.observers.contains(obs)) {
+            this.observers.add(obs);
         }
     }
 
-
-
-    /**
-     * This method updates the gold deck in the listeners of that game
-     */
-    public void updateGoldDeck(PlayableDeck deck){
-        // getting the list of the observers of the correct game
-
-        // updating all the boards of the listeners in the correct game
-        for(Observer l: RMIlisteners) {
-            l.updateGoldDeck(deck);
-        }
-        for(Observer l: TCPlisteners) {
-            l.updateGoldDeck(deck);
-        }
-    }
-
-
-
-    /**
-     * This method updates a player deck in the listeners of a specific game
-     *
-     */
-    public void updatePlayerDeck(Player player, PlayableCard[] playerDeck){
-        // getting the list of the observers of the correct game
-
-        // updating all the boards of the listeners in the correct game
-        for(Observer l: RMIlisteners) {
-            l.updatePlayerDeck(player, playerDeck);
-        }
-        for(Observer l: TCPlisteners) {
-            l.updatePlayerDeck(player, playerDeck);
-        }
-    }
-
-
-
-    // ----------------------------- A T T E N Z I O N E ------------------------------
-    // DOMANDA !?
-    // MEGLIO FARE UNA FUNZIONE UNICA PER TUTTE LE CARTE DEL MERCATO? OPPURE PIU FUNZIONI?
-    // SE FACCIAMO UNA FUNZIONE UNICA OVVIAMENTE BISOGNA AVERE QUALCHE PARAMETRO IN PIU
-    // MA FORSE è PIU ELEGANTE ?
-    // --------------------------------------------------------------------------------
-
-    /**
-     * This method updates the first resource card in the market of the cards of that game
-     */
-    public void updateResourceCard1(){
-        // getting the list of the observers of the correct game
-
-        // updating all the boards of the listeners in the correct game
-        for(Observer l: RMIlisteners) {
-            l.updateResourceCard1();
-        }
-        for(Observer l: TCPlisteners) {
-            l.updateResourceCard1();
-        }
-    }
-
-
-
-    /**
-     * This method updates the second resource card in the market of the cards of that game
-     */
-    public void updateResourceCard2(){
-        // getting the list of the observers of the correct game
-
-        // updating all the boards of the listeners in the correct game
-        for(Observer l: RMIlisteners) {
-            l.updateResourceCard2();
-        }
-        for(Observer l: TCPlisteners) {
-            l.updateResourceCard2();
-        }
-    }
-
-
-
-    /**
-     * This method updates the first gold card in the market of the cards of that game
-     */
-    public void updateGoldCard1(){
-        // getting the list of the observers of the correct game
-
-
-        // updating all the boards of the listeners in the correct game
-        for(Observer l: RMIlisteners) {
-            l.updateGoldCard1();
-        }
-        for(Observer l: TCPlisteners) {
-            l.updateGoldCard1();
-        }
-    }
-
-
-
-    /**
-     * This method updates the second gold card in the market of the cards of that game
-     */
-    public void updateGoldCard2(){
-        // getting the list of the observers of the correct game
-
-        // updating all the boards of the listeners in the correct game
-        for(Observer l: RMIlisteners) {
-            l.updateGoldCard2();
-        }
-        for(Observer l: TCPlisteners) {
-            l.updateGoldCard2();
-        }
-    }
-
-
-
-    /**
-     * This method updates a specific chat (with his id) of that game
-     * @param chat the ID of the chat which needs to be updated
-     */
-    public void updateChat(Chat chat){
-        // getting the list of the observers of the correct game
-
-        // updating all the boards of the listeners in the correct game
-        for(Observer l: RMIlisteners) {
-            l.updateChat(chat);
-        }
-        for(Observer l: TCPlisteners) {
-            l.updateChat(chat);
-        }
-    }
-
-
-
-    /**
-     * This method updates all the pawns in a specific game. This method is
-     * called after all the players have deided their own pawn color.
-     */
-    public void updatePawns(Player player, Pawn pawn){
-        // getting the list of the observers of the correct game
-
-        // updating all the boards of the listeners in the correct game
-        for(Observer l: RMIlisteners) {
-            l.updatePawns(player, pawn);
-        }
-        for(Observer l: TCPlisteners) {
-            l.updatePawns(player, pawn);
-        }
-    }
-
-
-
-    /**
-     * This method updates all the nicknames in a specific game. This method is
-     * called after all the players have joined the lobby, and when it is started.
-     */
-    public void updateNickname(Player player, String nickname){
-        // getting the list of the observers of the correct game
-
-
-        // updating all the boards of the listeners in the correct game
-        for(Observer l: RMIlisteners) {
-            l.updateNickname(player, nickname);
-        }
-        for(Observer l: TCPlisteners) {
-            l.updateNickname(player, nickname);
-        }
-    }
-
-
-
-    /**
-     * This method updates the round in a specific game. Thanks to this method it will be possible
-     * to display the player which needs to play now
-     */
-    public void updateRound(){
-        // getting the list of the observers of the correct game
-
-        // updating all the boards of the listeners in the correct game
-        for(Observer l: RMIlisteners) {
-            l.updateRound();
-        }
-        for(Observer l: RMIlisteners) {
-            l.updateRound();
-        }
-    }
 
 
     //se creiamo la lista di osservatori solo quando la partita inizia non abbiamo bisogno di questo metodo

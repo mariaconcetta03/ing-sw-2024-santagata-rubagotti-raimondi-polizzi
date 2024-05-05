@@ -5,6 +5,8 @@ import junit.framework.TestCase;
 import java.sql.Timestamp;
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class ChatTest extends TestCase {
     List<Player> users=new ArrayList<>();
     public void testSendMessage() {
@@ -23,7 +25,7 @@ public class ChatTest extends TestCase {
         receiver.add(p2);
         receiver.add(p3);
         Timestamp t1= new Timestamp(System.currentTimeMillis());
-        Message m=new Message("Ciao", p1, receiver, t1);
+        ChatMessage m=new ChatMessage("Ciao", p1, receiver, t1);
         c1.sendMessage(m);
     }
 
@@ -43,12 +45,12 @@ public class ChatTest extends TestCase {
         receiver.add(p2);
         receiver.add(p3);
         for(int i=0;i<200; i++) {
-            Message m = new Message("Ciao sono il messaggio "+i, p1, receiver, t1);
+            ChatMessage m = new ChatMessage("Ciao sono il messaggio "+i, p1, receiver, t1);
             c1.sendMessage(m);
         }
         for(int i=0; i< c1.messagesReceivedByPlayer(p2).size(); i++){
             System.out.println(c1.messagesReceivedByPlayer(p2).get(i).getMessage());
         }
-        System.out.println(c1.messagesReceivedByPlayer(p1).get(0).getMessage());
+        assertThrows(IndexOutOfBoundsException.class, ()->{System.out.println(c1.messagesReceivedByPlayer(p1).get(0).getMessage());}); //no message here!
     }
 }

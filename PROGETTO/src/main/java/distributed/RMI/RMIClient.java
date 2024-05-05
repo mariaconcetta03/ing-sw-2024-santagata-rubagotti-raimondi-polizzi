@@ -9,6 +9,7 @@ import distributed.ClientGeneralInterface;
 import org.model.*;
 import utils.Event;
 import utils.Observable;
+import view.TUI.InterfaceTUI;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -35,6 +36,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     private GameController gameController = null;
     // given to the client when the game is started (lobby created or player joined to a lobby))
+
+    private int selectedView; //1==TUI, 2==GUI
+    private InterfaceTUI tuiView;
+    //private GUI;
+    private Board personalBoard;
+    private PlayableCard playerDeck[];
+
 
     /**
      * Class constructor
@@ -265,12 +273,20 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         gameController.getGame().resetResourceCard2();
     }
 
-    void updateGoldCard2(){
-        gameController.getGame().resetGoldCard1();
+    void updateGoldCard2(PlayableCard goldCard){
+        if(selectedView==2){
+            //gui
+        }else{
+
+        }
     }
 
-    void updateGoldCard1(){
-        gameController.getGame().resetGoldCard2();
+    void updateGoldCard1(PlayableCard goldCard){
+        if(selectedView==2){
+            //gui
+        }else{
+
+        }
     }
 
     void updateChat(Chat chat){

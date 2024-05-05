@@ -8,7 +8,7 @@ import java.util.*;
  */
 
 
-public class Message implements Serializable {
+public class ChatMessage implements Serializable {
     private String message; // in the string it's represented the text of the message
     private Player sender; // who sent the message
     private List<Player> receiver; // it can be a single receiver, or the whole group of players
@@ -24,7 +24,7 @@ public class Message implements Serializable {
      * @param receiver
      * @param timestamp
      */
-    public Message (String message, Player sender, List<Player> receiver, Timestamp timestamp) {
+    public ChatMessage(String message, Player sender, List<Player> receiver, Timestamp timestamp) {
         this.message = message;
         this.sender = sender;
         this.receiver = receiver;

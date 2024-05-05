@@ -1,6 +1,7 @@
 package org.model;
 import Exceptions.CardNotDrawableException;
 import Exceptions.DeckIsFinishedException;
+import distributed.messages.Message;
 import utils.Event;
 import utils.Observable;
 
@@ -193,6 +194,7 @@ public class Game extends Observable implements Serializable {
         }
         this.players = newOrder;
         players.get(0).setState(Player.PlayerState.IS_PLAYING);
+        notifyObservers(new Message(null, Event.SETUP_PHASE_1));
     }
 
 
@@ -225,6 +227,7 @@ public class Game extends Observable implements Serializable {
             this.players.get(i).addPersonalObjective(objectiveDeck.getFirstCard());
             this.players.get(i).addPersonalObjective(objectiveDeck.getFirstCard());
         }
+        notifyObservers(new Message(null, Event.SETUP_PHASE_2));
     }
 
 
@@ -246,8 +249,10 @@ public class Game extends Observable implements Serializable {
 
 
     /**
-     * This method returns a list with the player who won the match. If there are 2 or more winners, it returns a list with more players
-     * @return winner
+     * This method returns a List with the player who won the match.
+     * If there are 2 or more winners, it returns a List with the players
+     * with the same "Points & Objectives completed" situation.
+     * @return winner is the List containing the winner or the players who tied
      */
     public List<Player> winner () {
         List<Player> winners = new ArrayList<>();
@@ -294,7 +299,8 @@ public class Game extends Observable implements Serializable {
 
 
     /**
-     * This method adds a new chat to the List chat in this game. P1 and P2 are the 2 players the chat is composed by
+     * This method adds a new chat to the List chat in this game.
+     * P1 and P2 are the 2 players the chat is composed by
      * @param p1 first player in the chat
      * @param p2 second player in the chat
      */
@@ -386,6 +392,7 @@ public class Game extends Observable implements Serializable {
         }else{
             this.goldCard1=null;
         }
+        notifyObservers(new Message(this.goldCard1, Event.UPDATED_GOLD_CARD_1)); //maybe we can create just one Event?
     }
 
     public void resetGoldCard2 () {
@@ -396,6 +403,7 @@ public class Game extends Observable implements Serializable {
         }else{
             this.goldCard2=null;
         }
+        notifyObservers(new Message(this.goldCard2, Event.UPDATED_GOLD_CARD_2));
     }
 
     public void resetResourceCard1 () {
@@ -406,6 +414,7 @@ public class Game extends Observable implements Serializable {
         }else{
             this.resourceCard1=null;
         }
+        notifyObservers(new Message(this.goldCard1, Event.UPDATED_RESOURCE_CARD_1));
     }
 
     public void resetResourceCard2 () {
@@ -416,6 +425,7 @@ public class Game extends Observable implements Serializable {
         }else{
             this.resourceCard2=null;
         }
+        notifyObservers(new Message(this.goldCard2, Event.UPDATED_RESOURCE_CARD_2));
     }
 
 
@@ -629,6 +639,7 @@ public class Game extends Observable implements Serializable {
      */
     public void setState (GameState state) {
         this.state = state;
+        notifyObservers(new Message(null, Event.GAME_STATE_CHANGED)); //we'll look into it
     }
 
 

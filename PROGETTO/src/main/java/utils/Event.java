@@ -10,6 +10,7 @@ import java.util.*;
  * the client, after a taken action.
  */
 public enum Event implements Serializable {
+    //ERRORS
     OK,
     CARD_NOT_DRAWN,
     GAME_NOT_EXISTS,
@@ -25,6 +26,8 @@ public enum Event implements Serializable {
     NOT_YOUR_TURN,
     WRONG_NUMBER_OF_PLAYERS,
     GAME_LEFT,
+
+    //updates
     UPDATED_BOARD,
     UPDATED_RESOURCE_DECK,
     UPDATED_GOLD_DECK,
@@ -37,10 +40,14 @@ public enum Event implements Serializable {
     UPDATED_PAWNS,
     UPDATED_NICKNAME,
     UPDATED_ROUND,
+    GAME_STATE_CHANGED,
+    SETUP_PHASE_1,
+    SETUP_PHASE_2,
 
     //some new events to be used in SCKMessage to tell the server what the client want to do
     ALL_CONNECTED, //è un per avere un esempio (possiamo modificarlo)
     START, //per dire che il client TCP ha caricato localmente una copia dell'intero model
+
 
     ASK_SERVER_MODEL,  //per inizializzare il model del client usando quello del server
     GAME_BOARD,

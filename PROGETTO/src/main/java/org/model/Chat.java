@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Chat implements Serializable { //implements Serializable because has to use the net
     private List<Player> users; //these are the players which can communicate in the chat
-    private List<Message> messages; // all the messages which have been sent in this chat
+    private List<ChatMessage> messages; // all the messages which have been sent in this chat
     private final int id; // every chat has a different ID. That means that there is a way to select the players we're chatting with?
 
 
@@ -32,7 +32,7 @@ public class Chat implements Serializable { //implements Serializable because ha
      * This method add a new message to the chat ("sending" it)
      * @param mess It's the message sent by the player
      */
-    public void sendMessage (Message mess) {
+    public void sendMessage (ChatMessage mess) {
         this.messages.add(mess);
     }
 
@@ -43,9 +43,9 @@ public class Chat implements Serializable { //implements Serializable because ha
      * @param p is the player we're interested in
      * @return an ArrayList containing all the messages received from p
      */
-    public List<Message> messagesReceivedByPlayer(Player p){
-        List<Message> messageReceived= new ArrayList<>();
-        for(Message m : this.messages){
+    public List<ChatMessage> messagesReceivedByPlayer(Player p){
+        List<ChatMessage> messageReceived= new ArrayList<>();
+        for(ChatMessage m : this.messages){
             if(m.getReceiver().contains(p)){
                 messageReceived.add(m);
             }
@@ -59,7 +59,7 @@ public class Chat implements Serializable { //implements Serializable because ha
      * Getter method
      * @return the entire list of messages
      */
-    public List<Message> getMessages() {
+    public List<ChatMessage> getMessages() {
         return this.messages;
     }
 

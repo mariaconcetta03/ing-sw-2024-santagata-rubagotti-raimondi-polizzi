@@ -865,6 +865,8 @@ public class GameControllerTest extends TestCase {
     public void testLeaveGame(){
         GameController g1= new GameController();
         ServerController s1= new ServerController();
+        s1.getAllGameControllers().put(0, g1);
+        g1.setServerController(s1);
         Player p1=new Player();
         p1.setNickname("Pippo");
         Player p2=new Player();

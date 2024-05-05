@@ -6,6 +6,7 @@ import Exceptions.GameNotExistsException;
 import Exceptions.NicknameAlreadyTakenException;
 import distributed.RMI.WrappedObserver;
 import distributed.Socket.ClientHandlerThread;
+import distributed.messages.Message;
 import org.model.Game;
 import org.model.Player;
 import utils.ClientChat;
@@ -14,12 +15,11 @@ import utils.Event;
 import java.util.*;
 public class ServerController {
     private static int firstAvailableId = -1;
-    private static Map<Integer, GameController> allGameControllers;
+    private Map<Integer, GameController> allGameControllers;
     private static List<String> allNicknames;
 
-    //these 2 are the List that will contains the Client not yet connected to a specific Game (GC)
-    private List<WrappedObserver> lobbyRMIClient;
-    private List<ClientHandlerThread> lobbyTCPClient;
+    //this is the List that will contain the Clients not yet connected to a specific Game (GC)
+    private List<Observer> lobbyClients; //we will have to give them the same methods
 
     /**
      * Class constructor
@@ -27,8 +27,7 @@ public class ServerController {
     public ServerController() {
         allNicknames=new ArrayList();
         allGameControllers=new HashMap<>();
-        lobbyRMIClient=new ArrayList<>();
-        lobbyTCPClient=new ArrayList<>();
+        lobbyClients=new ArrayList<>();
     }
 
     //we will have a Player Object in ClientRMI and ClientHandlerThread: NOT GOOD BECAUSE OF POSSIBLE CHEATERS
@@ -41,6 +40,7 @@ public class ServerController {
     public GameController startLobby(String creatorNickname, int numOfPlayers) throws IllegalArgumentException{
         //Creating the specific GameController
         GameController gameController= new GameController();
+        gameController.setServerController(this);
         gameController.setNumberOfPlayers(numOfPlayers);
         //inserting the new gameController in the Map
         int tempId=getFirstAvailableId();
@@ -146,7 +146,7 @@ public class ServerController {
      * Getter method
      * @return allGameControllers which is a map that associate the controller to a specific game
      */
-    public static Map<Integer, GameController> getAllGameControllers() {
+    public Map<Integer, GameController> getAllGameControllers() {
         return allGameControllers;
     }
 
@@ -157,5 +157,17 @@ public class ServerController {
      */
     public List<String> getAllNicknames() {
         return allNicknames;
+    }
+
+    /**
+     * This method will be called when a new Client connects and when a
+     * game ends: it traces all the clients connected: that's useful to send
+     * them notifications and messages.
+     * @param client is the client we are adding.
+     */
+    public void addLobbyClient(Observer client){
+        if (!lobbyClients.contains(client)){
+            lobbyClients.add(client);
+        }
     }
 }

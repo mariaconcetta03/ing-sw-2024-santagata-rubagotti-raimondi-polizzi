@@ -1,18 +1,17 @@
 package controller;
 import Exceptions.CardNotDrawableException;
 import Exceptions.CardNotOwnedException;
-import Exceptions.DeckIsFinishedException;
 import org.model.*;
 import utils.Event;
 
 import java.io.Serializable;
 import java.rmi.Remote;
-import java.rmi.server.RemoteObject;
 import java.sql.Timestamp;
 import java.util.*;
-
+import utils.Observer;
 
 public class GameController implements Remote, Serializable {
+    private ServerController serverController;
     private Game game;
     private int lastRounds;
     private int lastDrawingRounds;
@@ -20,6 +19,7 @@ public class GameController implements Remote, Serializable {
     private List<Player> gamePlayers;
     private int numberOfPlayers;
     private int id;
+    private List<Observer> clientsConnected;
 
     /**
      * Class constructor, initialises lastRounds and lastDrawingRounds to 10
@@ -30,6 +30,7 @@ public class GameController implements Remote, Serializable {
         lastDrawingRounds=10;
         winners=new ArrayList<>();
         gamePlayers= new ArrayList<>();
+        clientsConnected= new ArrayList<>();
         numberOfPlayers=0;
         id=0;
     }
@@ -40,6 +41,9 @@ public class GameController implements Remote, Serializable {
      */
     public void createGame (List<Player> gamePlayers){
         game = new Game(gamePlayers, id);
+        for(Observer obs: clientsConnected){
+            game.addObserver(obs);
+        }
         game.setLastEvent(Event.OK);
     }
 
@@ -61,7 +65,6 @@ public class GameController implements Remote, Serializable {
                 startGame();
             } catch (IllegalStateException e) {
                 System.out.println("The game is already started!");
-                return;
             }
         }
     }
@@ -235,7 +238,7 @@ public class GameController implements Remote, Serializable {
            tmp=game.getChatByUsers(receivers);
                if(tmp!=null){
                    receivers.remove(sender);
-                   tmp.sendMessage(new Message(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
+                   tmp.sendMessage(new ChatMessage(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
                    game.setLastEvent(Event.OK);
                    return;
                }
@@ -243,11 +246,11 @@ public class GameController implements Remote, Serializable {
            if (receivers.size() == game.getnPlayers()) {
                receivers.remove(sender);
                tmp=game.startGeneralChat();
-               tmp.sendMessage(new Message(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
+               tmp.sendMessage(new ChatMessage(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
            }else {
                receivers.remove(sender);
                tmp = game.startChat(sender, receivers.get(0));
-               tmp.sendMessage(new Message(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
+               tmp.sendMessage(new ChatMessage(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
            }
         game.setLastEvent(Event.OK);
     }
@@ -311,22 +314,30 @@ public class GameController implements Remote, Serializable {
         }
         if(tmp==null){
             throw new IllegalArgumentException("This player is not playing the match");
-        }else{
-            for(Player p: game.getPlayers()){ //sarà necessario? occhio differenza tra Player e Client
-                p.setGame(null);
-                p.setBoard(null);
-                p.setIsFirst(false);
-                p.addPoints(-p.getPoints());
-                p.setColor(null);
-                for(int i=0;i<p.getPlayerDeck().length;i++){
-                    p.getPlayerDeck()[i]=null;
-                }
-                //objective card mancano
+        }else {
+            if (!(game.getState() == Game.GameState.ENDED)) { //se è durante la partita ATTIVA
+                /**for (Player p : game.getPlayers()) { //non serve più: il player viene generato alla richiesta di accesso in lobby
+                    p.setGame(null);
+                    p.setBoard(null);
+                    p.setIsFirst(false);
+                    p.addPoints(-p.getPoints());
+                    p.setColor(null);
+                    for (int i = 0; i < p.getPlayerDeck().length; i++) {
+                        p.getPlayerDeck()[i] = null;
+                    }
+                    //objective card mancano
+                }*/
+                //this will alert the listeners to notify all the players that the game has ENDED
+                game.setLastEvent(Event.GAME_LEFT);
+                game.setState(Game.GameState.ENDED);//here or in the listeners?
+                //if(richiesta volontaria non causata da una disconnessione){ //potrei lasciarli tutti in server
+                //senza bisogno di "passarseli"
+                //
+                //
+                serverController.getAllGameControllers().remove(id); //il gamecontroller si "auto"rimuove dal server controller
+            } else { //se è dopo la fine del gioco deve solo "tornare alla lobby"
+
             }
-            //this will alert the listeners to notify all the players that the game ended
-            game.setLastEvent(Event.GAME_LEFT);
-            game.setState(Game.GameState.ENDED);//here or in the listeners?
-            ServerController.getAllGameControllers().remove(id); //il gamecontroller si "auto"rimuove dal server controller
         }
     }
 
@@ -339,7 +350,7 @@ public class GameController implements Remote, Serializable {
      */
     public void endGame(){
         // setting the game state to ENDED
-        game.setState(Game.GameState.ENDED);
+        game.endGame();
 
         // checking the objectives and adding the points to the correct player
         ObjectiveCard commonObj1 = game.getObjectiveCard1();
@@ -354,7 +365,7 @@ public class GameController implements Remote, Serializable {
 
         // checking the winner(s)
         winners = game.winner();
-        if(winners.size()==1) {
+        if(winners.size()==1) { //just for testing
             System.out.println(winners.get(0).getNickname() + " WON!!!");
         }else if(winners.size()>1){
             for (Player p: winners){
@@ -381,7 +392,7 @@ public class GameController implements Remote, Serializable {
 
     /**
      * Setter method
-     * @param id of the game controller
+     * @param id of the Game controller
      */
     public void setId(int id) {
         this.id = id;
@@ -427,5 +438,19 @@ public class GameController implements Remote, Serializable {
 
     public int getNumberOfPlayers() {
         return numberOfPlayers;
+    }
+
+    public void setServerController(ServerController serverController) {
+        this.serverController = serverController;
+    }
+
+    /**
+     * This method allows the ServerController to add a Client connected to the specific GameController
+     * @param client is the new added Client
+     */
+    public void addClient(Observer client){
+        if(!clientsConnected.contains(client)){
+            clientsConnected.add(client);
+        }
     }
 }

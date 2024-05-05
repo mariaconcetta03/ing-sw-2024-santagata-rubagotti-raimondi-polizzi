@@ -6,7 +6,7 @@ import Exceptions.GameNotExistsException;
 import Exceptions.NicknameAlreadyTakenException;
 import controller.GameController;
 import controller.ServerController;
-import distributed.ClientGeneralInterface;
+import distributed.messages.Message;
 import distributed.messages.SCKMessage;
 import org.model.*;
 
@@ -19,10 +19,9 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import utils.Event;
+import utils.Observable;
 import utils.Observer;
 import java.util.Scanner;
-import java.util.concurrent.locks.Lock;
 
 public class ClientHandlerThread implements Runnable, Observer { //this is a Thread (it isn't blocking)
 
@@ -62,10 +61,10 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
         //siamo noi che dobbiamo chiedere al server gli aggiornamenti o è il server che chiama noi?
         threadCheckUpdates = new Thread(()-> {
             synchronized (updatesLock) {
-                while (!Thread.currentThread().isInterrupted()) {
+                while (!Thread.currentThread().isInterrupted()) {/* commentato al volo
                     try {
                         askControllerBoardUpdate();
-                    } catch (IOException | ClassNotFoundException | InterruptedException e) {}
+                    } catch (IOException | ClassNotFoundException | InterruptedException e) {}*/
                 }
             }
         },"CheckUpdateBoard");
@@ -241,6 +240,21 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
     public void updatePawns(){}
     public void updateNickname(){}
     public void updateRound(){}
+
+    @Override
+    public void update(Observable obs, Message arg) {
+        //switch(arg.get)
+    }
+
+    @Override
+    public void setNickname() {
+    }
+
+    @Override
+    public String getNickname() {
+        return null;
+    }
+
     public void updateBoard(Board board, Player player){}
     public void updateChat(Chat chat){};
     public void updatePawns(Player player, Pawn pawn){};

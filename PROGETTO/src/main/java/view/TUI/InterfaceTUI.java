@@ -3,15 +3,23 @@ package view.TUI;
 import utils.Observable;
 
 import java.io.Serializable;
+import java.util.*;
 
-public class InterfaceTUI extends Observable implements Serializable {
+public class InterfaceTUI implements Serializable { //I don't think it has to extend 
+    Scanner sc=new Scanner(System.in);
     public void askNickname(){
+        sc=new Scanner(System.in);
 
     }
 
-    public void askNumPlayers(){}
+    public void askNumPlayers(){
+        sc=new Scanner(System.in);
+
+    }
 
     public void askCardToDraw(){
+        sc=new Scanner(System.in);
+
     }
 
     public void askCardToPlay(){

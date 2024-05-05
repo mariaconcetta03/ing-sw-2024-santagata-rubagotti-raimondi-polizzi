@@ -1,6 +1,6 @@
 package utils;
+import distributed.messages.Message;
 import org.model.*;
-import distributed.Server;
 
 
 //this object represents a player to put into the object Observable with maybe other player to define a group of player that can access a single instance of Observable
@@ -9,6 +9,7 @@ import distributed.Server;
 
 
 public interface Observer {
+    String nickname = null;
 
 //    ---------------------------- QUESTI SONO PARAMETRI CHE VERRANNO MESSI NELLA VIEW -------------------------------
 //    Board b1, b2, b3, b4; // the boards of the 4 players
@@ -19,6 +20,10 @@ public interface Observer {
 //    ----------------------------------------------------------------------------------------------------------------
 
 
+    void update(Observable obs, Message arg);
+
+    void setNickname();
+    String getNickname();
 
     void updateBoard(Board board, Player player);
     void updateResourceDeck(PlayableDeck resourceDeck);

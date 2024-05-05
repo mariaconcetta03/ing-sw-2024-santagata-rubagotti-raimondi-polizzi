@@ -22,7 +22,7 @@ public class ServerControllerTest extends TestCase {
         assertThrows(IllegalArgumentException.class, ()->{s1.startLobby("Orango", 1);});
         assertThrows(IllegalArgumentException.class, ()->{s1.startLobby("MacchiaNera", -50);});
         assertThrows(IllegalArgumentException.class, ()->{s1.startLobby("Ciccio", 7);});
-        for(GameController gc: ServerController.getAllGameControllers().values()){
+        for(GameController gc: s1.getAllGameControllers().values()){
             System.out.println("Available games are the ones with id: "+gc.getId());
         }
     }
@@ -44,7 +44,7 @@ public class ServerControllerTest extends TestCase {
         s1.startLobby(p1.getNickname(), 4);
         s1.startLobby(p2.getNickname(), 3);
         System.out.print("Game you can join: ");
-        for (GameController gc : ServerController.getAllGameControllers().values()) {
+        for (GameController gc : s1.getAllGameControllers().values()) {
             System.out.print(gc.getId()+" ");
         }
         try {
