@@ -46,7 +46,9 @@ public class WrappedObserver implements Observer {
                 break;
             case GAME_STATE_CHANGED: remoteClient.updateGameState((Game)(arg.getObj()));
                 break;
-            // SETUP PHASE 1 E 2 CHE COSA SONO ? VANNO MESSI ?
+            case SETUP_PHASE_1, SETUP_PHASE_2: remoteClient.updatePlayerDeck((Player)(arg.getObj().get(0)), (PlayableCard[])(arg.getObj().get(1)));
+                break;
+                // SETUP PHASE 1 E 2: potremmo forse evitare di metterli e fare l'update del mazzo appena viene pescata la carta?
             default: throw new IllegalStateException("Unexpected message event: " + arg.getMessageEvent().toString());
         }
     }
