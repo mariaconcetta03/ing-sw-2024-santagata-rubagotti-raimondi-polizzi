@@ -13,15 +13,17 @@ import org.model.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import utils.Event;
 import utils.Observable;
 import utils.Observer;
-import java.util.Scanner;
+
+//the server communicates with the clients calling their method update, the clients communicate with the server (better->the model) using
+//first the attribute serverController and then the attribute gameController (when the game is created)
 
 /**
  * This class represents the Client (server-side) who chose TCP as network protocol
@@ -34,14 +36,12 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
     private boolean hasAlreadyAGame=false; //this flag is necessary if we don't want to generate some avoidable errors (see the explanation above)
     private String nickname = null;
     private Player personalPlayer= new Player(); //it could be properly initialized with the method addPlayerToGame or addPlayerToLobby or createLobby
-    private ServerController serverController;
+    private ServerController serverController; //to be passed as parameter in the constructor method
 
-    //what is the difference with Scanner and Printer?
     private ClientSCK clientSCK= null; //that's not a real socket but contains all the implemented method of the ClientGeneralInterface
 
-    private final Thread threadCheckUpdates;
-    private final Object updatesLock;
-    private final ServerSCK serverSCK;
+    private final Thread threadCheckMSG;
+    private final Object inputLock;
 
     private final ObjectInputStream input;
     private final ObjectOutputStream output;
@@ -49,34 +49,42 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
     /**
      * Constructor method
      * @param client
-     * @param serverSCK
+     * @param serverController
      * @throws IOException
      */
-    public ClientHandlerThread(Socket client,ServerSCK serverSCK) throws IOException {
-        this.serverSCK=serverSCK;
+    public ClientHandlerThread(Socket client,ServerController serverController) throws IOException {
+        this.serverController=serverController;
         this.socket = client; //the client can communicate with the server by this thread using this socket
 
         this.output = new ObjectOutputStream(client.getOutputStream());
         this.input = new ObjectInputStream(client.getInputStream());
 
 
-        this.updatesLock = new Object();
+        this.inputLock = new Object();
 
         //qui dovremmo far partire il thread (non bloccante) che continua a fare update
         //siamo noi che dobbiamo chiedere al server gli aggiornamenti o è il server che chiama noi?
-        threadCheckUpdates = new Thread(()-> {
-            synchronized (updatesLock) {
-                while (!Thread.currentThread().isInterrupted()) {/* commentato al volo
+        threadCheckMSG = new Thread(()-> {
+            synchronized (inputLock) {
+                while (!Thread.currentThread().isInterrupted()) {
                     try {
-                        askControllerBoardUpdate();
-                    } catch (IOException | ClassNotFoundException | InterruptedException e) {}*/
+                        SCKMessage sckMessage = (SCKMessage) this.input.readObject(); //messaggi scritti dal Client vero
+                        react(sckMessage);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
-        },"CheckUpdateBoard"); //manca run?
+        },"CheckUpdateBoard"); //to be started when all the players are connected
 
 
     }
-    //to decide what to do we can ask the client controller (which is the one who have to initialize ClientSCK)
+
+
+    //il medoto run va rifatto basandosi sui Message.
+    /*
     public void run() { //that's not the only method we can have in this thread
         try { //here we can match the user requests with the ClientSCK methods
             Scanner in = new Scanner(socket.getInputStream());
@@ -172,6 +180,33 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
             System.err.println(e.getMessage());
         }
     }
+
+     */
+
+
+    public void run() { //ci sono altre cose da aggiungere tipo chiamare i metodi della ClientGeneralInterface in base al messaggio ricevuto
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
+                synchronized (inputLock) {
+                    SCKMessage message = (SCKMessage) this.input.readObject();
+                    Object obj = null;
+                    if (message.getMessageEvent() == Event.START) {
+                        if (!threadCheckMSG.isAlive()) {
+                            threadCheckMSG.start();
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void react(SCKMessage sckMessage){
+        //legge il messaggio e fa qualcosa
+    }
+
+
     //we can add method in which we can control the status of the connection (asking it to the controller)
 
  //funzioni che può chiamare il client (tramite la run()) si potrebbero mettere come private perchè non verranno chiamate da fuori
@@ -232,13 +267,13 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
     // we should call the server controller which has tha Map with all game controllers saved and can call it by himself)
     private void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException{}
 
-    //methods to be implemented to have a class tha implements Observer: (invece in RMI avremo una classe intermedia la WrappedObserver che implementerà Observer)
+    //methods to be implemented to have a class that implements Observer: (invece in RMI avremo una classe intermedia la WrappedObserver che implementerà Observer)
     public void updateBoard(Board board){
 
     }
 
     @Override
-    public void update(Observable obs, Message arg) {
+    public void update(Observable obs, Message arg) { //here we call writeTheStream
         //switch(arg.get)
     }
 
@@ -252,39 +287,6 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
         return null;
     }
 
-
-    //codice da cui prendere spunto (anche in ServerSCK è stato aggiunto askTheServer commentato)
-    /*
-    private void askControllerBoardUpdate() throws IOException, ClassNotFoundException, InterruptedException {
-
-        do {
-            Event e = (Event) this.serverSCK.askTheServer(new SCKMessage(clientIndex, SET_UP_BOARD));
-            Event e2 = (Event) this.serverSCK.askTheServer(new SCKMessage(clientIndex,UPDATE_SCORINGTOKEN));
-            Event e3 = (Event) this.serverSCK.askTheServer(new SCKMessage(clientIndex, UPDATED_SCORE));
-            Event e4 = (Event) this.serverSCK.askTheServer(new SCKMessage(clientIndex,END));
-            if (e == SET_UP_BOARD) {
-                Board board = (Board) serverSCK.askTheServer(new SCKMessage(clientIndex, matchIndex, ASK_MODEL, GAME_BOARD));
-                writheTheStream(new SCKMessage(clientIndex, matchIndex, board, UPDATED_GAME_BOARD));
-            }
-            if(e2 == UPDATE_SCORINGTOKEN_1) {
-                ArrayList<CommonGoalCard> commonGoalCards = (ArrayList<CommonGoalCard>) serverSCK.askTheServer(new SCKMessage(clientIndex, matchIndex, ASK_MODEL, GAME_CGC));
-                writheTheStream((new SCKMessage(clientIndex, matchIndex, commonGoalCards.get(0),UPDATE_SCORINGTOKEN_1)));
-            }
-            if(e2==UPDATE_SCORINGTOKEN_2) {
-                ArrayList<CommonGoalCard> commonGoalCards = (ArrayList<CommonGoalCard>) serverSCK.askTheServer(new SCKMessage(clientIndex, matchIndex, ASK_MODEL, GAME_CGC));
-                writheTheStream((new SCKMessage(clientIndex, matchIndex, commonGoalCards.get(1),UPDATE_SCORINGTOKEN_2)));
-            }
-            if(e3==UPDATED_SCORE){
-                ArrayList<Player> listOfPlayers = (ArrayList<Player>) serverSCK.askTheServer(new SCKMessage(clientIndex, matchIndex, ASK_MODEL, GAME_PLAYERS));
-                writheTheStream((new SCKMessage(clientIndex, matchIndex, listOfPlayers, UPDATED_SCORE)));
-            }
-            if(e4==END)
-                writheTheStream(new SCKMessage(clientIndex,matchIndex,END,END));
-            Thread.sleep(500);
-        } while(!stopModelUpdate);
-        upLock.wait();
-    }
-    */
 
     public void writeTheStream(SCKMessage message){ //this is the stream the real client can read
         try {

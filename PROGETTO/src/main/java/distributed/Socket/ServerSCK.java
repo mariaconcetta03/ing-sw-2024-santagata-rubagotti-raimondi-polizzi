@@ -1,5 +1,6 @@
 package distributed.Socket;
 
+import controller.ServerController;
 import distributed.messages.SCKMessage;
 
 import java.io.IOException;
@@ -17,10 +18,12 @@ import java.util.concurrent.Executors;
 //then the class ClientSCK (the real client because it's not on the same virtual machine) reads the modified socket and change its view
 public class ServerSCK extends UnicastRemoteObject {
     private final int port;
+    private final ServerController serverController;
 
-    public ServerSCK (int port) throws RemoteException {
+    public ServerSCK (int port,ServerController serverController) throws RemoteException {
         super();
         this.port = port; //we can ask the virtual machine which port is available
+        this.serverController=serverController;
     }
 
     public void startServer() throws IOException { //when the input/output stream is terminated we have this IOException
@@ -36,33 +39,15 @@ public class ServerSCK extends UnicastRemoteObject {
         while (true) {
             Socket client = serverSocket.accept(); //accept() returns the client just accepted
             //if we create a constructor of ClientHandlerThread by which we pass the serverSocket then the thread can send messages to the server
-            executor.submit(new ClientHandlerThread(client,this)); //we also pass a pointer to the server
+            executor.submit(new ClientHandlerThread(client,serverController)); //we also pass a pointer to the server
         }
     }
     //we can add a method receiveMessage by which the ClientHandlerThread can send messages to the server (if we give the thread the server address as a parameter of the constructor)
 
     public static void main(String[] args) throws IOException {
-        ServerSCK serverSCK = new ServerSCK(1234); //that is the port found in the slides
+        ServerSCK serverSCK = new ServerSCK(1234,null); //that is the port found in the slides
         serverSCK.startServer();
     }
 
-    /*
-    public Object askTheServer(SCKMessage sckMessage) throws IOException, ClassNotFoundException {
-        Object obj;
-        if(sckMessage.getObj()==Event.CHECK_MY_TURN){
-            return controller.getServerModel(sckMessage.getMatchIndex(), sckMessage.getMessageEvent(), sckMessage.getClientIndex());
-        } else{
-            if(sckMessage.getObj()==Event.ASK_MODEL){
-                obj = controller.getServerModel(sckMessage.getMatchIndex(), sckMessage.getMessageEvent(), sckMessage.getClientIndex());
-            } else if(sckMessage.getMessageEvent()==Event.ASK_NUM_PLAYERS){
-                obj = askMyIndex();
-            } else {
-                obj = controller.sendServerMessage(sckMessage.getMatchIndex(), sckMessage.getObj(), sckMessage.getMessageEvent());
-            }
-            return obj;
-        }
-    }
-
-     */
 
 }
