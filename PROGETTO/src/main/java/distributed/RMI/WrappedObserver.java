@@ -7,7 +7,8 @@ import utils.Observable;
 import utils.*;
 
 public class WrappedObserver implements Observer {
-    RMIClient remoteClient;
+    private RMIClient remoteClient;
+    private String nickname;
 
     // ----------------- C O M E   A V V I E N E   L' U P D A T E ? --------------------
     // OBSERVABLE SI ACCORGE DEL CAMBIAMENTO (CHE PASSA DALLA VIEW, AL CONTROLLER, AL
@@ -15,6 +16,8 @@ public class WrappedObserver implements Observer {
     // OBSERVERS. QUESTI IN RMI, GRAZIE ALLA CLASSE WRAPPED OBSERVER, VANNO AD INVOCARE
     // DEI METODI DI CLIENTRMI CHE RICEVONO L'OGGETTO AGGIORNATO
     // ---------------------------------------------------------------------------------
+
+
     public WrappedObserver(RMIClient ro) {
         remoteClient = ro;
     }
@@ -26,7 +29,7 @@ public class WrappedObserver implements Observer {
                 break;
             case UPDATED_GOLD_DECK: remoteClient.updateGoldDeck((PlayableDeck)(arg.getObj()));
                 break;
-            case UPDATED_PLAYER_DECK: remoteClient.updatePlayerDeck((Player) (arg.getObj().get(0)), (PlayableCard[])(arg.getObj().get(1)));
+            case UPDATED_PLAYER_DECK: remoteClient.updatePlayerDeck((Player)(arg.getObj().get(0)), (PlayableCard[])(arg.getObj().get(1)));
                 break;
             case UPDATED_RESOURCE_CARD_1: remoteClient.updateResourceCard1((PlayableCard)(arg.getObj()));
                 break;
@@ -54,8 +57,8 @@ public class WrappedObserver implements Observer {
     }
 
     @Override
-    public void setNickname() {
-
+    public void setNickname(String nickname) {
+       this.nickname = nickname;
     }
 
     @Override
@@ -64,20 +67,6 @@ public class WrappedObserver implements Observer {
     }
 
     // DA IMPLEMENTARE
-    public void updateBoard(Board board, Player player){
-
-    }
-    public void updateResourceDeck(PlayableDeck resourceDeck){}
-    public void updateGoldDeck(PlayableDeck goldDeck){}
-    public void updatePlayerDeck(Player player, PlayableCard[] playerDeck){}
-    public void updateResourceCard1(){}
-    public void updateResourceCard2(){}
-    public void updateGoldCard2(){}
-    public void updateGoldCard1(){}
-    public void updateChat(Chat chat){}
-    public void updatePawns(Player player, Pawn pawn){}
-    public void updateNickname(Player player, String nickname){}
-    public void updateRound(){}
 
     //copia incolla da pdf:
     /*

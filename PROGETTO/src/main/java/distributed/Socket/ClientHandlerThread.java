@@ -28,7 +28,7 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
     //if we memorize the nickname in our personal player we should obtain some errors if we call together addPlayerToGame, addPlayerToLobby, createLobby
     //because we use the same personalPlayer that has a unique nickname.
     boolean hasAlreadyAGame=false; //this flag is necessary if we don't want to generate some avoidable errors (see the explanation above)
-
+    private String nickname = null;
     Player personalPlayer= new Player(); //it could be properly initialized with the method addPlayerToGame or addPlayerToLobby or createLobby
     ServerController serverController;
     GameController gameController; //this has to be set through the help of serverController (or even better we can use only serverController and this one calls the associated gameController)
@@ -247,7 +247,8 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
     }
 
     @Override
-    public void setNickname() {
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     @Override
