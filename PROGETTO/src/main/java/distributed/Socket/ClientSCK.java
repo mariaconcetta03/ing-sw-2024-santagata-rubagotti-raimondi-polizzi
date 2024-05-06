@@ -7,12 +7,14 @@ import java.net.Socket;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import distributed.messages.*;
 import org.model.Board;
+import org.model.ObjectiveCard;
 import org.model.Player;
 import utils.Event;
 
@@ -26,10 +28,12 @@ import utils.Event;
 public class ClientSCK {
 
     private Board board;
-    private ArrayList<Player> listOfPlayers;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
     private final Thread threadCheckConnection;
+    private Player player;
+    private List<Player> playersInTheGame;
+    private ObjectiveCard commonObjective1, commonObjective2;
 
     public ClientSCK(String address, int port) throws IOException, ClassNotFoundException { //we call this constructor after we ask the IP address and the port of the server
         Socket socket = new Socket();
@@ -106,7 +110,7 @@ public class ClientSCK {
         //sendMessage(new SCKMessage(Event.ASK_SERVER_MODEL, Event.GAME_BOARD)); il 1 parametro è una List di Object non evento!
         this.board = (Board) this.inputStream.getObjectInputFilter(); // we need a filter because we may obtain a SCKMessage instead of a Board
         //sendMessage(new SCKMessage(Event.ASK_SERVER_MODEL, Event.GAME_PLAYERS));
-        this.listOfPlayers = (ArrayList<Player>) this.inputStream.getObjectInputFilter(); //da riguardare bene filter (è da usare anche per l'estrazione di SCKMessage?)
+        this.playersInTheGame = (List<Player>) this.inputStream.getObjectInputFilter(); //da riguardare bene filter (è da usare anche per l'estrazione di SCKMessage?)
         // e altro.... come i goal comuni
     }
 

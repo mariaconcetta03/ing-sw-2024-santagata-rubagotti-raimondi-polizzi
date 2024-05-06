@@ -38,10 +38,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     // given to the client when the game is started (lobby created or player joined to a lobby))
 
     private int selectedView; // 1==TUI, 2==GUI
-//    private InterfaceTUI tuiView;
-//    //private GUI; :O INTERFACCIA PERò...
-//    private Board personalBoard;
-//    private PlayableCard playerDeck[];
+    private InterfaceTUI tuiView;
+    //private GUI; :O INTERFACCIA PERò...
+    private Board personalBoard;
+    private PlayableCard playerDeck[];
+    private Player player;
+    private List<Player> playersInTheGame;
+    private ObjectiveCard commonObjective1, commonObjective2;
 
 
     /**
