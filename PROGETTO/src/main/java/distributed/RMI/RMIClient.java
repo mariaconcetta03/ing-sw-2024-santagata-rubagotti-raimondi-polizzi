@@ -75,8 +75,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             rmiC.addPlayerToLobby("Topolino", rmiC.gameController.getId());
             rmiC.sendMessage("Pippo", rc, "Hello!");
 
+            // OK, BUT WE NEED A TUI OR A GUI TO COMPLETE THE WHOLE TEST. NOW IT ONLY JUMPS INTO THE METHOD "updateChat"
+            rmiC.updateChat(rmiC.gameController.getGame().getChats().get(0));
+
             // KO
-            rmiC.createLobby("Pluto", 9); // KO [java.lang.IllegalArgumentException: Wrong number of players!]
+            // rmiC.createLobby("Pluto", 9); // KO [java.lang.IllegalArgumentException: Wrong number of players!]
 
         } catch (Exception e) {
             e.printStackTrace();
