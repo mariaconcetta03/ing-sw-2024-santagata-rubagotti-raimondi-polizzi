@@ -40,6 +40,7 @@ public class ServerSCK extends UnicastRemoteObject {
             Socket client = serverSocket.accept(); //accept() returns the client just accepted
             //if we create a constructor of ClientHandlerThread by which we pass the serverSocket then the thread can send messages to the server
             executor.submit(new ClientHandlerThread(client,serverController)); //we also pass a pointer to the server
+            //when a Thread starts it's called its method run
         }
     }
     //we can add a method receiveMessage by which the ClientHandlerThread can send messages to the server (if we give the thread the server address as a parameter of the constructor)

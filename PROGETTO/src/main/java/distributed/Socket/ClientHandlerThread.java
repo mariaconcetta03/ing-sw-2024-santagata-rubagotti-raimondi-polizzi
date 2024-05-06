@@ -6,7 +6,9 @@ import Exceptions.GameNotExistsException;
 import Exceptions.NicknameAlreadyTakenException;
 import controller.GameController;
 import controller.ServerController;
+import distributed.ClientGeneralInterface;
 import distributed.messages.Message;
+import distributed.messages.PingMessage;
 import distributed.messages.SCKMessage;
 import org.model.*;
 
@@ -30,17 +32,20 @@ import utils.Observer;
  * It is notified of all the changes in the model and forwards them, using its socket attribute,
  * to ClientSCK. It is a thread, so we will not have problems related to congestion (as we could have had in RMI).
  */
-public class ClientHandlerThread implements Runnable, Observer { //this is a Thread
+public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInterface { //this is a Thread
     private final Socket socket;
     private GameController associatedGameController; //returned by ServerController' startlobby()/addPlayerToLobby()
-    private boolean hasAlreadyAGame=false; //this flag is necessary if we don't want to generate some avoidable errors (see the explanation above)
+
+    // private boolean hasAlreadyAGame=false; //this flag is necessary if we don't want to generate some avoidable errors (see the explanation above)
     private String nickname = null;
     private Player personalPlayer= new Player(); //it could be properly initialized with the method addPlayerToGame or addPlayerToLobby or createLobby
     private ServerController serverController; //to be passed as parameter in the constructor method
 
-    private ClientSCK clientSCK= null; //that's not a real socket but contains all the implemented method of the ClientGeneralInterface
+    private ClientSCK clientSCK= null; //this class writes what the client wants in the stream and it's local to the client
 
     private final Thread threadCheckMSG;
+
+    private final Thread threadCheckConnection;
     private final Object inputLock;
 
     private final ObjectInputStream input;
@@ -62,10 +67,9 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
 
         this.inputLock = new Object();
 
-        //qui dovremmo far partire il thread (non bloccante) che continua a fare update
-        //siamo noi che dobbiamo chiedere al server gli aggiornamenti o è il server che chiama noi?
-        threadCheckMSG = new Thread(()-> {
-            synchronized (inputLock) {
+        //this Thread is needed because some actions of the client can't be predicted and isolated in the question-response pattern
+        threadCheckMSG = new Thread(()-> { //ci serve qualcosa su cui fare la syn?
+            synchronized (inputLock) { //ci serve qualcosa su cui fare la syn?
                 while (!Thread.currentThread().isInterrupted()) {
                     try {
                         SCKMessage sckMessage = (SCKMessage) this.input.readObject(); //messaggi scritti dal Client vero
@@ -77,9 +81,31 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
                     }
                 }
             }
-        },"CheckUpdateBoard"); //to be started when all the players are connected
+        },"CheckMSG"); //to be started when all the players are connected
 
+        //to control the status of the connection (a player can leave the game without any advice)
+        threadCheckConnection= new Thread(()-> { //ci serve qualcosa su cui fare la syn?
+                while (!Thread.currentThread().isInterrupted()) {
+                    try { //dobbiamo usare il filter?? per leggere il PingMessage
+                        output.writeObject(PingMessage.ARE_YOU_STILL_CONNECTED);
+                        output.flush();
+                        output.reset();
+                    } catch (IOException e) {
+                    }
+                    // here we set a timeout and then we check the response, if there is no response we declared the connection dead
+                    // we set the timeout
+                    // we check the response
+                    try {
+                        PingMessage pingMessage = (PingMessage) this.input.readObject();
+                    } catch (IOException e) { //no response
+                        //we free the thread and we end the game
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e); //we free the thread and we end the game
+                    }
+                }
 
+        },"CheckConnection"); //to be started when ClientHandlerThread stars because we need n clients to create a game and we want to be sure the all the clients are still connected
+        threadCheckConnection.start();
     }
 
 
@@ -184,13 +210,14 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
      */
 
 
+    //when a Thread starts, run is automatically called
     public void run() { //ci sono altre cose da aggiungere tipo chiamare i metodi della ClientGeneralInterface in base al messaggio ricevuto
         try {
-            while (!Thread.currentThread().isInterrupted()) {
+            while (!Thread.currentThread().isInterrupted()) { //questo while dovrebbe servere nel caso in cui non vogliamo che il Thread venga interrotto mentre fa quello dentro il while
                 synchronized (inputLock) {
-                    SCKMessage message = (SCKMessage) this.input.readObject();
+                    SCKMessage message = (SCKMessage) this.input.readObject(); //here we write the messages received before START (when we meet START, ThreadCheckMSG would continue to read the other messages)
                     Object obj = null;
-                    if (message.getMessageEvent() == Event.START) {
+                    if (message.getMessageEvent() == Event.START) { //from this moment the client can start sending msg to the server (they would be read by ThreadCheckMSG)
                         if (!threadCheckMSG.isAlive()) {
                             threadCheckMSG.start();
                         }
@@ -202,75 +229,12 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
         }
     }
 
-    private void react(SCKMessage sckMessage){
-        //legge il messaggio e fa qualcosa
+    private void react(SCKMessage sckMessage){ //qui in base al messaggio letto chiamiamo il giusto metodo della ClientGeneralInterface
+        //legge il messaggio e fa qualcosa (si può prendere spunto dalla run commentata che leggeva testo dagli stream)
     }
 
-
-    //we can add method in which we can control the status of the connection (asking it to the controller)
-
- //funzioni che può chiamare il client (tramite la run()) si potrebbero mettere come private perchè non verranno chiamate da fuori
-
-    //if this method doesn't give errors we can save the gameId (if we want to use it)
-
-    /**
-     * This method, will be used to call the ServerController method
-     * @param playerNickname
-     * @param gameId
-     * @throws RemoteException
-     * @throws NotBoundException
-     * @throws GameAlreadyStartedException
-     * @throws FullLobbyException
-     * @throws GameNotExistsException
-     */
-    private void addPlayerToLobby (String playerNickname, int gameId) throws RemoteException, NotBoundException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException{
-       serverController.addPlayerToLobby(playerNickname, gameId);
-   }
-
-    /**
-     * This method, will be used to call the ServerController method
-     * @param nickname
-     * @throws RemoteException
-     * @throws NotBoundException
-     * @throws NicknameAlreadyTakenException
-     */
-    private void chooseNickname (String nickname) throws RemoteException, NotBoundException, NicknameAlreadyTakenException{
-        serverController.chooseNickname(nickname);
-    }
-
-    /**
-     * This method, will be used to call the ServerController method
-     * @param creatorNickname
-     * @param numOfPlayers
-     * @throws RemoteException
-     * @throws NotBoundException
-     */
-    private void createLobby (String creatorNickname, int numOfPlayers) throws RemoteException, NotBoundException{
-        serverController.startLobby(creatorNickname, numOfPlayers);
-    }
-
-    private void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, NotBoundException{}
-
-    private void playBaseCard (String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException, NotBoundException{}
-
-    private void drawCard(String nickname, PlayableCard selectedCard) throws RemoteException, NotBoundException{}
-
-    private void chooseObjectiveCard(Player chooser, ObjectiveCard selectedCard) throws RemoteException, NotBoundException{}
-
-    private void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, NotBoundException{
-        associatedGameController.choosePawnColor(chooserNickname, selectedColor);
-    }
-
-    private void sendMessage(Player sender, List<Player> receivers, String message) throws RemoteException, NotBoundException{}
-
-    //we have the nickname saved in personalPlayer but we don't have the game controller used in thi method (as suggested
-    // we should call the server controller which has tha Map with all game controllers saved and can call it by himself)
-    private void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException{}
 
     //methods to be implemented to have a class that implements Observer: (invece in RMI avremo una classe intermedia la WrappedObserver che implementerà Observer)
-    public void updateBoard(Board board){
-
-    }
 
     @Override
     public void update(Observable obs, Message arg) { //here we call writeTheStream
@@ -284,17 +248,214 @@ public class ClientHandlerThread implements Runnable, Observer { //this is a Thr
 
     @Override
     public String getNickname() {
-        return null;
+        return this.nickname;
     }
 
+//end of methods to be implemented taken from Observer interface
 
-    public void writeTheStream(SCKMessage message){ //this is the stream the real client can read
+    //writeTheStream will be called in the method react (maybe inside the methods of the ClientControllerInterface) to tell the client what the controller has effectively done
+    //writeTheStream will also be called in the method update (we have it because ClientHandlerThread is a listener) to tell the client what is changed in the model
+    public void writeTheStream(SCKMessage sckMessage){ //this is the stream the real client can read
         try {
-            output.writeObject(message);
+            output.writeObject(sckMessage);
             output.flush();
             output.reset();
         } catch (IOException e) {
         }
     }
+
+    //methods to be implemented to have a class that implements ClientGeneralInterface
+
+    //these methods should be private because they will never be called from the outside
+
+    /**
+     * This method, will be used to call the ServerController method
+     * @param playerNickname
+     * @param gameId
+     * @throws RemoteException
+     * @throws NotBoundException
+     * @throws GameAlreadyStartedException
+     * @throws FullLobbyException
+     * @throws GameNotExistsException
+     */
+    @Override
+    public void addPlayerToLobby(String playerNickname, int gameId) throws RemoteException, NotBoundException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+
+    /**
+     * This method, will be used to call the ServerController method
+     * @param nickname
+     * @throws RemoteException
+     * @throws NotBoundException
+     * @throws NicknameAlreadyTakenException
+     */
+    @Override
+    public void chooseNickname(String nickname) throws RemoteException, NotBoundException, NicknameAlreadyTakenException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+
+    /**
+     * This method, will be used to call the ServerController method
+     * @param creatorNickname
+     * @param numOfPlayers
+     * @throws RemoteException
+     * @throws NotBoundException
+     */
+    @Override
+    public void createLobby(String creatorNickname, int numOfPlayers) throws RemoteException, NotBoundException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, NotBoundException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException, NotBoundException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void drawCard(String nickname, PlayableCard selectedCard) throws RemoteException, NotBoundException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) throws RemoteException, NotBoundException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, NotBoundException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+
+    //that's a method to be used to communicate between the players
+    @Override
+    public void sendMessage(String senderNickname, List<String> receiversNickname, String message) throws RemoteException, NotBoundException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void updateBoard(Board board) throws RemoteException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void updateResourceDeck(PlayableDeck resourceDeck) throws RemoteException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void updateGoldDeck(PlayableDeck goldDeck) throws RemoteException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void updatePlayerDeck(Player player, PlayableCard[] playerDeck) throws RemoteException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void updateResourceCard1(PlayableCard card) throws RemoteException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void updateResourceCard2(PlayableCard card) throws RemoteException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void updateGoldCard1(PlayableCard card) throws RemoteException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void updateGoldCard2(PlayableCard card) throws RemoteException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void updateChat(Chat chat) throws RemoteException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void updatePawns(Player player, Pawn pawn) throws RemoteException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void updateNickname(Player player, String nickname) throws RemoteException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void updateRound(Player newCurrentPlayer) throws RemoteException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+
+    @Override
+    public void updateGameState(Game game) throws RemoteException {
+        SCKMessage sckMessage=null;
+        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        writeTheStream(sckMessage);
+    }
+    //end of methods to be implemented taken from ClientGeneralInterface
 }
 

@@ -29,6 +29,7 @@ public class ClientSCK {
     private ArrayList<Player> listOfPlayers;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
+    private final Thread threadCheckConnection;
 
     public ClientSCK(String address, int port) throws IOException, ClassNotFoundException { //we call this constructor after we ask the IP address and the port of the server
         Socket socket = new Socket();
@@ -38,7 +39,20 @@ public class ClientSCK {
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
         this.inputStream = new ObjectInputStream(socket.getInputStream()); //what ClientHandlerThread writes in its socket's output stream ends up here
 
-
+        //to control the status of the connection (a player can leave the game without any advice)
+        threadCheckConnection= new Thread(()-> { //ci serve qualcosa su cui fare la syn?
+            try { //dobbiamo usare il filter?? per leggere il PingMessage
+                PingMessage pingMessage = (PingMessage) this.inputStream.readObject(); //we receive 'ARE_YOU_STILL_CONNECTED'
+                outputStream.writeObject(PingMessage.YES_STILL_CONNECTED);
+                outputStream.flush();
+                outputStream.reset();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        },"CheckConnection"); //to be started when ClientHandlerThread stars because we need n clients to create a game and we want to be sure the all the clients are still connected
+        threadCheckConnection.start();
 
 
         while (true) {

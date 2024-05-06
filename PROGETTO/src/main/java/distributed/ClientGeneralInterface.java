@@ -24,7 +24,6 @@ public interface ClientGeneralInterface extends Remote {
     void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, NotBoundException;
     void sendMessage(String senderNickname, List<String> receiversNickname, String message) throws RemoteException, NotBoundException;
     void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException;
-    void SRMIInterfaceFromRegistry() throws RemoteException, NotBoundException;
     void updateBoard (Board board) throws RemoteException;
     void updateResourceDeck (PlayableDeck resourceDeck) throws RemoteException;
     void updateGoldDeck (PlayableDeck goldDeck) throws RemoteException;
