@@ -12,8 +12,10 @@ import org.model.Player;
 import utils.ClientChat;
 import utils.Event;
 
+import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.*;
-public class ServerController {
+public class ServerController implements Serializable {
     private static int firstAvailableId = -1;
     private Map<Integer, GameController> allGameControllers;
     private static List<String> allNicknames;
@@ -37,7 +39,7 @@ public class ServerController {
      * @param numOfPlayers is the number of player the creator decided can play in the lobby
      * @return gameController is the game controller of this match, we need to pass this to the client
      */
-    public GameController startLobby(String creatorNickname, int numOfPlayers) throws IllegalArgumentException{
+    public GameController startLobby(String creatorNickname, int numOfPlayers) throws IllegalArgumentException, RemoteException {
         //Creating the specific GameController
         GameController gameController= new GameController();
         gameController.setServerController(this);
@@ -66,7 +68,7 @@ public class ServerController {
      * @throws FullLobbyException if the lobby has already reached the maximum number of players
      * @return allGameControllers.get(gameId) is the game controller of this match, we need to pass this to the client
      */
-    public GameController addPlayerToLobby(String playerNickname, int gameId) throws GameNotExistsException, GameAlreadyStartedException, FullLobbyException {
+    public GameController addPlayerToLobby(String playerNickname, int gameId) throws GameNotExistsException, GameAlreadyStartedException, FullLobbyException, RemoteException {
         if (!allGameControllers.containsKey(gameId)) { //if the game doesn't exist
             throw new GameNotExistsException("The game doesn't exist");
         } else if((allGameControllers.get(gameId).getGame()!=null)&&(!allGameControllers.get(gameId).getGame().getState().equals(Game.GameState.WAITING_FOR_START))) {//if the game is already started
@@ -91,7 +93,7 @@ public class ServerController {
      * @param nickname is the String he wants to put as his nickname
      * @throws NicknameAlreadyTakenException if the nickname is already in use
      */
-    public void chooseNickname(String nickname) throws NicknameAlreadyTakenException {
+    public void chooseNickname(String nickname) throws NicknameAlreadyTakenException, RemoteException {
         if(isNicknameAvailable(nickname)){
             allNicknames.add(nickname);
         }else{
@@ -146,7 +148,7 @@ public class ServerController {
      * Getter method
      * @return allGameControllers which is a map that associate the controller to a specific game
      */
-    public Map<Integer, GameController> getAllGameControllers() {
+    public Map<Integer, GameController> getAllGameControllers() throws RemoteException {
         return allGameControllers;
     }
 
@@ -165,7 +167,7 @@ public class ServerController {
      * them notifications and messages.
      * @param client is the client we are adding.
      */
-    public void addLobbyClient(Observer client){
+    public void addLobbyClient(Observer client) {
         if (!lobbyClients.contains(client)){
             lobbyClients.add(client);
         }

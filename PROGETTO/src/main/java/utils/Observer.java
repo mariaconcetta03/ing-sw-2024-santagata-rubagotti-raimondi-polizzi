@@ -2,6 +2,8 @@ package utils;
 import distributed.messages.Message;
 import org.model.*;
 
+import java.rmi.RemoteException;
+
 
 //this object represents a player to put into the object Observable with maybe other player to define a group of player that can access a single instance of Observable
 //example of use: a group of players takes part to a single chat
@@ -20,7 +22,7 @@ public interface Observer {
 //    ----------------------------------------------------------------------------------------------------------------
 
 
-    void update(Observable obs, Message arg);
-    void setNickname(String nick);
-    String getNickname();
+    void update(Observable obs, Message arg) throws RemoteException;
+    void setNickname(String nick) throws RemoteException;
+    String getNickname() throws RemoteException;
 }

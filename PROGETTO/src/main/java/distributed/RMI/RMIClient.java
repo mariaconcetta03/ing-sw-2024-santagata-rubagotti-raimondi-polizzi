@@ -38,10 +38,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     // given to the client when the game is started (lobby created or player joined to a lobby))
 
     private int selectedView; // 1==TUI, 2==GUI
-    private InterfaceTUI tuiView;
-    //private GUI; :O INTERFACCIA PERò...
-    private Board personalBoard;
-    private PlayableCard playerDeck[];
+//    private InterfaceTUI tuiView;
+//    //private GUI; :O INTERFACCIA PERò...
+//    private Board personalBoard;
+//    private PlayableCard playerDeck[];
 
 
     /**
@@ -63,8 +63,21 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public static void main( String[] args ) {
 
         try {
-            new RMIClient().createLobby("Pippo", 4); // OK
-            new RMIClient().createLobby("Pluto", 9); // KO [java.lang.IllegalArgumentException: Wrong number of players!]
+            RMIClient rmiC = new RMIClient();
+            GameController gc;
+            List <String> rc = new ArrayList<String>();
+            rc.add("Minnie");
+
+            // OK
+            rmiC.createLobby("Pippo", 4); // OK
+            rmiC.addPlayerToLobby("Papero", rmiC.gameController.getId());
+            rmiC.addPlayerToLobby("Minnie", rmiC.gameController.getId());
+            rmiC.addPlayerToLobby("Topolino", rmiC.gameController.getId());
+            rmiC.sendMessage("Pippo", rc, "Hello!");
+
+            // KO
+            rmiC.createLobby("Pluto", 9); // KO [java.lang.IllegalArgumentException: Wrong number of players!]
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -261,7 +274,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This is an update method
      * @param board the new board we want to update
      */
-    public void updateBoard (Board board) {
+    public void updateBoard (Board board) throws RemoteException {
         if (selectedView == 1) {
             //tuiView.updateBoard(board)
         } else if (selectedView == 2) {
@@ -275,7 +288,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This is an update method
      * @param resourceDeck the new deck we want to update
      */
-    public void updateResourceDeck (PlayableDeck resourceDeck) {
+    public void updateResourceDeck (PlayableDeck resourceDeck) throws RemoteException {
         if (selectedView == 1) {
             //tuiView.updateResourceDeck (resourceDeck)
         } else if (selectedView == 2) {
@@ -289,7 +302,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This is an update method
      * @param goldDeck the new deck we want to update
      */
-    public void updateGoldDeck (PlayableDeck goldDeck) {
+    public void updateGoldDeck (PlayableDeck goldDeck) throws RemoteException {
         if (selectedView == 1) {
             //tuiView.updateGoldDeck(goldDeck)
         } else if (selectedView == 2) {
@@ -304,7 +317,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @param player the player which deck is updated
      * @param playerDeck the new deck we want to update
      */
-    public void updatePlayerDeck (Player player, PlayableCard[] playerDeck) {
+    public void updatePlayerDeck (Player player, PlayableCard[] playerDeck) throws RemoteException {
         if (selectedView == 1) {
             //tuiView.updatePlayerDeck(player, playerDeck)
         } else if (selectedView == 2) {
@@ -318,7 +331,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This is an update method
      * @param card which needs to be updated
      */
-    public void updateResourceCard1(PlayableCard card) {
+    public void updateResourceCard1(PlayableCard card) throws RemoteException {
         if (selectedView == 1) {
             //tuiView.updateResourceCard1(card)
         } else if (selectedView == 2) {
@@ -332,7 +345,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This is an update method
      * @param card which needs to be updated
      */
-   public void updateResourceCard2(PlayableCard card){
+   public void updateResourceCard2(PlayableCard card) throws RemoteException {
         if (selectedView == 1) {
             //tuiView.updateResourceCard2(card)
         } else if (selectedView == 2) {
@@ -346,7 +359,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This is an update method
      * @param card which needs to be updated
      */
-    public void updateGoldCard1(PlayableCard card){
+    public void updateGoldCard1(PlayableCard card) throws RemoteException {
         if (selectedView == 1) {
             //tuiView.updateGoldCard1(card)
         } else if (selectedView == 2) {
@@ -360,7 +373,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This is an update method
      * @param card which needs to be updated
      */
-    public void updateGoldCard2(PlayableCard card){
+    public void updateGoldCard2(PlayableCard card) throws RemoteException {
         if (selectedView == 1) {
             //tuiView.updateGoldCard2(card)
         } else if (selectedView == 2) {
@@ -374,7 +387,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This is an update method
      * @param chat which needs to be updated
      */
-    public void updateChat(Chat chat){
+    public void updateChat(Chat chat) throws RemoteException {
         if (selectedView == 1) {
             //tuiView.updateChat(chat)
         } else if (selectedView == 2) {
@@ -389,7 +402,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @param player which selected a new pawn color
      * @param pawn selected color
      */
-    public void updatePawns(Player player, Pawn pawn){
+    public void updatePawns(Player player, Pawn pawn) throws RemoteException {
         if (selectedView == 1) {
             //tuiView.updatePawns(player, pawn)
         } else if (selectedView == 2) {
@@ -404,7 +417,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @param player which selected a new nickname
      * @param nickname chosen nickname string
      */
-    public void updateNickname(Player player, String nickname){
+    public void updateNickname(Player player, String nickname) throws RemoteException {
         if (selectedView == 1) {
             //tuiView.updateNickname(player, nickname)
         } else if (selectedView == 2) {
@@ -418,7 +431,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This is an update method
      * @param newCurrentPlayer which needs to play now
      */
-    public void updateRound(Player newCurrentPlayer) {
+    public void updateRound(Player newCurrentPlayer) throws RemoteException {
         if (selectedView == 1) {
             //tuiView.updateRound(newCurrentPlayer)
         } else if (selectedView == 2) {
@@ -432,7 +445,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This is an update method
      * @param game which needs to update his state (WAITING_FOR_START -> STARTED -> ENDING -> ENDED)
      */
-    public void updateGameState(Game game){
+    public void updateGameState(Game game) throws RemoteException {
         if (selectedView == 1) {
             //tuiView.updateGameState(game)
         } else if (selectedView == 2) {

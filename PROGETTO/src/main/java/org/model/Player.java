@@ -6,6 +6,7 @@ import Exceptions.CardNotOwnedException;
 import utils.Observable;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.*;
 
 /**
@@ -104,7 +105,7 @@ public class Player extends Observable implements Serializable {
      * introduces another card in the player's deck
      * @param card is the card the player has taken from a deck or from the market
      */
-    public void drawCard(PlayableCard card) throws CardNotDrawableException{
+    public void drawCard(PlayableCard card) throws CardNotDrawableException, RemoteException {
         boolean drawn = false;
 
         PlayableDeck baseDeck=PlayableDeck.baseDeck();

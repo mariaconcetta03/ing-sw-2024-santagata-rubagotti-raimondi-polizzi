@@ -6,6 +6,8 @@ import org.model.Game.GameState;
 import utils.Observable;
 import utils.*;
 
+import java.rmi.RemoteException;
+
 
 /**
  * This class represents a CLIENT as an OBSERVER
@@ -40,7 +42,7 @@ public class WrappedObserver implements Observer {
      * @param arg the message which contains the event
      */
     @Override
-    public void update(Observable obs, Message arg) {
+    public void update(Observable obs, Message arg) throws RemoteException {
         switch(arg.getMessageEvent()){
             case UPDATED_BOARD: remoteClient.updateBoard((Board)(arg.getObj()));
                 break;
@@ -82,7 +84,7 @@ public class WrappedObserver implements Observer {
      * @param nickname of the WrappedObserver
      */
     @Override
-    public void setNickname(String nickname) {
+    public void setNickname(String nickname) throws RemoteException  {
        this.nickname = nickname;
     }
 
@@ -93,7 +95,7 @@ public class WrappedObserver implements Observer {
      * @return nickname of the WrappedObserver
      */
     @Override
-    public String getNickname() {
+    public String getNickname() throws RemoteException {
         return this.nickname;
     }
 

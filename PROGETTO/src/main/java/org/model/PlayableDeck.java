@@ -95,7 +95,7 @@ public class PlayableDeck extends Deck implements Serializable {
     public static PlayableDeck goldDeck(){
         Stack<PlayableCard> goldDeck = new Stack<>();
         ObjectMapper objectMapper = new ObjectMapper();
-        File file= new File("src/main/java/org/model/jsons/goldCards.json");
+        File file= new File("PROGETTO/src/main/java/org/model/jsons/goldCards.json");
         try{
             goldDeck=objectMapper.readValue(file, new TypeReference<Stack<PlayableCard>>() {});
         }catch (IOException e){
@@ -112,7 +112,7 @@ public class PlayableDeck extends Deck implements Serializable {
     public static PlayableDeck resourceDeck(){
         Stack<PlayableCard> resourceDeck = new Stack<>();
         ObjectMapper objectMapper = new ObjectMapper();
-        File file= new File("src/main/java/org/model/jsons/resourceCards.json");
+        File file= new File("PROGETTO/src/main/java/org/model/jsons/resourceCards.json");
         try{
             resourceDeck=objectMapper.readValue(file, new TypeReference<Stack<PlayableCard>>() {});
         }catch (IOException e){
@@ -129,7 +129,7 @@ public class PlayableDeck extends Deck implements Serializable {
     public static PlayableDeck baseDeck() {
         Stack<PlayableCard> baseDeck = new Stack<>();
         ObjectMapper objectMapper = new ObjectMapper();
-        File file= new File("src/main/java/org/model/jsons/baseCards.json");
+        File file= new File("PROGETTO/src/main/java/org/model/jsons/baseCards.json");
         try{
             baseDeck=objectMapper.readValue(file, new TypeReference<Stack<PlayableCard>>() {});
         } catch (IOException e){

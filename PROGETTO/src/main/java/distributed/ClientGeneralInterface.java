@@ -25,19 +25,19 @@ public interface ClientGeneralInterface extends Remote {
     void sendMessage(String senderNickname, List<String> receiversNickname, String message) throws RemoteException, NotBoundException;
     void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException;
     void SRMIInterfaceFromRegistry() throws RemoteException, NotBoundException;
-    void updateBoard (Board board);
-    void updateResourceDeck (PlayableDeck resourceDeck);
-    void updateGoldDeck (PlayableDeck goldDeck);
-    void updatePlayerDeck (Player player, PlayableCard[] playerDeck);
-    void updateResourceCard1(PlayableCard card);
-    void updateResourceCard2(PlayableCard card);
-    void updateGoldCard1(PlayableCard card);
-    void updateGoldCard2(PlayableCard card);
-    void updateChat(Chat chat);
-    void updatePawns(Player player, Pawn pawn);
-    void updateNickname(Player player, String nickname);
-    void updateRound(Player newCurrentPlayer);
-    void updateGameState(Game game);
+    void updateBoard (Board board) throws RemoteException;
+    void updateResourceDeck (PlayableDeck resourceDeck) throws RemoteException;
+    void updateGoldDeck (PlayableDeck goldDeck) throws RemoteException;
+    void updatePlayerDeck (Player player, PlayableCard[] playerDeck)  throws RemoteException;
+    void updateResourceCard1(PlayableCard card) throws RemoteException;
+    void updateResourceCard2(PlayableCard card) throws RemoteException ;
+    void updateGoldCard1(PlayableCard card) throws RemoteException;
+    void updateGoldCard2(PlayableCard card) throws RemoteException;
+    void updateChat(Chat chat) throws RemoteException;
+    void updatePawns(Player player, Pawn pawn) throws RemoteException;
+    void updateNickname(Player player, String nickname) throws RemoteException;
+    void updateRound(Player newCurrentPlayer) throws RemoteException;
+    void updateGameState(Game game) throws RemoteException;
 
 
 }

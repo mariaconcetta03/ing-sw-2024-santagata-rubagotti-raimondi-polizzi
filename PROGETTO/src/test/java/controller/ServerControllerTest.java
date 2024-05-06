@@ -8,11 +8,13 @@ import junit.framework.TestCase;
 import org.model.Player;
 import utils.Event;
 
+import java.rmi.RemoteException;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ServerControllerTest extends TestCase {
 
-    public void testStartLobby() {
+    public void testStartLobby() throws RemoteException {
         ServerController s1=new ServerController();
         Player p1= new Player();
         p1.setNickname("Pippo");
@@ -27,7 +29,7 @@ public class ServerControllerTest extends TestCase {
         }
     }
     //Bisogna impedire ad un giocatore gia in una partita di entrare in un'altra?
-    public void testAddPlayerToLobby() {
+    public void testAddPlayerToLobby() throws RemoteException {
         ServerController s1 = new ServerController();
         Player p1 = new Player();
         p1.setNickname("Pippo");
@@ -59,7 +61,7 @@ public class ServerControllerTest extends TestCase {
 
     }
 
-    public void testChooseNickname() {
+    public void testChooseNickname() throws RemoteException {
         ServerController s1= new ServerController();
         try {
             s1.chooseNickname("Pluto");

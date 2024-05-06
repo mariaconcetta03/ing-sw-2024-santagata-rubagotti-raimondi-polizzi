@@ -6,6 +6,7 @@ import utils.Event;
 
 import java.io.Serializable;
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.*;
 import utils.Observer;
@@ -39,7 +40,7 @@ public class GameController implements Remote, Serializable {
      * This method creates the Game that will be managed by GameController
      * @param gamePlayers is the List of players that will be in the Game
      */
-    public void createGame (List<Player> gamePlayers){
+    public void createGame (List<Player> gamePlayers) throws RemoteException  {
         game = new Game(gamePlayers, id);
         for(Observer obs: clientsConnected){
             game.addObserver(obs);
@@ -53,7 +54,7 @@ public class GameController implements Remote, Serializable {
      * @param player is the one player added to the lobby
      * @throws ArrayIndexOutOfBoundsException if the of players is exceeded
      */
-    public void addPlayer(Player player) throws ArrayIndexOutOfBoundsException {
+    public void addPlayer(Player player) throws ArrayIndexOutOfBoundsException, RemoteException  {
         if (gamePlayers.size() < numberOfPlayers) {
             gamePlayers.add(player);
         } else {
@@ -77,7 +78,7 @@ public class GameController implements Remote, Serializable {
      * INTERNAL USE METHOD
      * @throws IllegalArgumentException if there's an invalid game status
      */
-    public void startGame() throws IllegalStateException  {
+    public void startGame() throws IllegalStateException, RemoteException {
         if(game.getState() == Game.GameState.WAITING_FOR_START) {
             game.startGame();
             game.setLastEvent(Event.OK);
@@ -95,7 +96,7 @@ public class GameController implements Remote, Serializable {
      * @param baseCard the base card played
      * @param orientation of the played card
      */
-    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation){
+    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException {
         Player player= getPlayerByNickname(nickname);
         player.playBaseCard(orientation, baseCard);
         player.getPlayerDeck()[0]=null; //the player played the baseCard
@@ -120,7 +121,7 @@ public class GameController implements Remote, Serializable {
      * @param position the position where the Player wants to play the Card
      * @param orientation the side on which the Player wants to play the Card
      */
-    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) {
+    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException  {
         Player currentPlayer = game.getPlayers().get(0);
         if (!getPlayerByNickname(nickname).equals(currentPlayer)) {
             System.out.println("NON E IL TUO TURNO, NON PUOI GIOCARE LA CARTA");
@@ -147,7 +148,7 @@ public class GameController implements Remote, Serializable {
      * @param nickname of the player who is going to draw the card
      * @param selectedCard is the Card the Players wants to draw
      */
-    public void drawCard(String nickname, PlayableCard selectedCard) { //we can draw a card from one of the decks or from the uncovered cards
+    public void drawCard(String nickname, PlayableCard selectedCard) throws RemoteException { //we can draw a card from one of the decks or from the uncovered cards
         Player currentPlayer = game.getPlayers().get(0);
         if (!getPlayerByNickname(nickname).equals(currentPlayer)) {
             System.out.println("Not your turn, you can't draw!");
@@ -189,7 +190,7 @@ public class GameController implements Remote, Serializable {
      * @param chooserNickname is the nickname of the player selecting the ObjectiveCard
      * @param selectedCard is the ObjectiveCard the player selected
      */
-    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) {
+    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) throws RemoteException  {
         Player chooser= getPlayerByNickname(chooserNickname);
         try {
             chooser.setPersonalObjective(selectedCard);
@@ -206,7 +207,7 @@ public class GameController implements Remote, Serializable {
      * @param selectedColor the chosen colour
      */
 
-    public void choosePawnColor(String chooserNickname, Pawn selectedColor) {
+    public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException {
         Player chooser= getPlayerByNickname(chooserNickname);
         synchronized (game.getAlreadySelectedColors()) {
             if (!game.getAlreadySelectedColors().contains(selectedColor)) {
@@ -226,7 +227,7 @@ public class GameController implements Remote, Serializable {
      * @param message the string (message) sent
      */
 
-    public void sendMessage(String senderNickname, List<String> receiversNicknames, String message){
+    public void sendMessage(String senderNickname, List<String> receiversNicknames, String message)throws RemoteException {
         Player sender = getPlayerByNickname(senderNickname);
         List<Player> receivers= new ArrayList<>();
         for (String nick : receiversNicknames){
@@ -261,7 +262,7 @@ public class GameController implements Remote, Serializable {
      * have triggered the ENDING condition it decreases our indexes to determine when the Game has to end.
      * INTERNAL USE METHOD
      */
-    public void nextPhase(){
+    public void nextPhase()throws RemoteException, RemoteException {
         if (game.getState() == Game.GameState.ENDING && lastRounds > 0) {
             lastRounds --;
             if(lastDrawingRounds>0) {
@@ -282,7 +283,7 @@ public class GameController implements Remote, Serializable {
      * INTERNAL USE METHOD
      */
     // ATTENZIONE !!! SE E INTERNO QUESTO NON VA MESSO PRIVATE !?
-    public void calculateLastMoves(){
+    public void calculateLastMoves() throws RemoteException {
             int firstPlayer = 0;
             lastRounds = game.getnPlayers();
 
@@ -305,7 +306,7 @@ public class GameController implements Remote, Serializable {
      * @param nickname of the player who is going leave the game
      * @throws IllegalArgumentException if the specific Player is not part of the Game
      */
-    public void leaveGame(String nickname) throws IllegalArgumentException{
+    public void leaveGame(String nickname) throws IllegalArgumentException, RemoteException {
         Player tmp=null;
         for(Player p: game.getPlayers()){
             if(p.getNickname().equals(nickname)){
@@ -348,7 +349,7 @@ public class GameController implements Remote, Serializable {
      * Finally, it checks the winner (or winners) of the game, and puts them in a list called "winners".
      * INTERNAL USE METHOD
      */
-    public void endGame(){
+    public void endGame() throws RemoteException {
         // setting the game state to ENDED
         game.endGame();
 
@@ -384,7 +385,7 @@ public class GameController implements Remote, Serializable {
      * @throws IllegalArgumentException if the number of players is wrong
      * INTERNAL USE METHOD
      */
-    public void setNumberOfPlayers(int numberOfPlayers) throws IllegalArgumentException {
+    public void setNumberOfPlayers(int numberOfPlayers) throws IllegalArgumentException, RemoteException {
         if ((numberOfPlayers >= 2)&&(numberOfPlayers <= 4)) {
             this.numberOfPlayers = numberOfPlayers;
         }else throw new IllegalArgumentException("Wrong number of players!");
@@ -423,7 +424,7 @@ public class GameController implements Remote, Serializable {
         return lastDrawingRounds;
     }
 
-    public Player getPlayerByNickname(String Nickname){
+    public Player getPlayerByNickname(String Nickname) throws RemoteException {
         for(Player player : gamePlayers){
             if(player.getNickname().equals(Nickname)){
                 return player;
@@ -440,7 +441,7 @@ public class GameController implements Remote, Serializable {
         return numberOfPlayers;
     }
 
-    public void setServerController(ServerController serverController) {
+    public void setServerController(ServerController serverController) throws RemoteException {
         this.serverController = serverController;
     }
 

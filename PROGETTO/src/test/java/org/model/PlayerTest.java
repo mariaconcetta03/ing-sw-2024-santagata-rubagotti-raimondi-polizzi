@@ -8,13 +8,14 @@ import org.junit.jupiter.api.DisplayNameGenerator;
 
 import javax.script.AbstractScriptEngine;
 
+import java.rmi.RemoteException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PlayerTest extends TestCase {
 
-    public void testDrawCard() {
+    public void testDrawCard() throws RemoteException  {
         // creating the player
         Player p1 = new Player();
         Player p2=new Player();
@@ -73,7 +74,7 @@ public class PlayerTest extends TestCase {
 
 
 
-    public void testPlayCard() {
+    public void testPlayCard() throws RemoteException {
         // creating the structures
         Player p1 = new Player();
         Player p2 = new Player();
@@ -125,7 +126,7 @@ public class PlayerTest extends TestCase {
 
 
 
-    public void testPlayBaseCard() {
+    public void testPlayBaseCard() throws RemoteException {
 
         // creating the structures
         Player p1 = new Player();

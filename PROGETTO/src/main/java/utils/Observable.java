@@ -3,6 +3,7 @@ package utils;
 import distributed.messages.Message;
 import org.model.*;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +70,7 @@ public class Observable {
      * It will inform the Observers to perform an update action contacting the Client related to them.
      * @param notification is the message containing the Event that caused the modification
      */
-    public void notifyObservers(Message notification){
+    public void notifyObservers(Message notification) throws RemoteException {
         for(Observer obs: observers) {
             obs.update(this, notification);
         }
@@ -79,7 +80,7 @@ public class Observable {
      * This method add an Observer to the Observable.
      * @param obs is the Observer we are adding.
      */
-    public void addObserver(Observer obs) { //synchronized?
+    public void addObserver(Observer obs) throws RemoteException { //synchronized?
         if (!this.observers.contains(obs)) {
             this.observers.add(obs);
         }

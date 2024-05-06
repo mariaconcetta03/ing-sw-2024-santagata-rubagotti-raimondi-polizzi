@@ -2,6 +2,7 @@ package org.model;
 
 import junit.framework.TestCase;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class GameTest extends TestCase {
 
 
 
-    public void testStartGame() {
+    public void testStartGame() throws RemoteException  {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
         Player p2 = new Player(game);
@@ -116,7 +117,7 @@ public class GameTest extends TestCase {
         }
     }
 
-    public void testGiveInitialCards() {
+    public void testGiveInitialCards() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1,1);
         Player p = new Player(game);
@@ -338,7 +339,7 @@ public class GameTest extends TestCase {
 
 
 
-    public void testResetGoldCard1() {
+    public void testResetGoldCard1() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
         Player p2 = new Player(game);
@@ -371,7 +372,7 @@ public class GameTest extends TestCase {
 
 
 
-    public void testResetGoldCard2() {
+    public void testResetGoldCard2() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
         Player p2 = new Player(game);
@@ -404,7 +405,7 @@ public class GameTest extends TestCase {
 
 
 
-    public void testResetResourceCard1() {
+    public void testResetResourceCard1() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
         Player p2 = new Player(game);
@@ -437,7 +438,7 @@ public class GameTest extends TestCase {
 
 
 
-    public void testResetResourceCard2() {
+    public void testResetResourceCard2() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
         Player p2 = new Player(game);

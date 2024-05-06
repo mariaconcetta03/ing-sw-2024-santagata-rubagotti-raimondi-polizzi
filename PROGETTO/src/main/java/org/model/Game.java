@@ -6,6 +6,7 @@ import utils.Event;
 import utils.Observable;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.*;
 
 /**
@@ -126,7 +127,7 @@ public class Game extends Observable implements Serializable {
      * it sets the game-order of the players
      * @throws IllegalArgumentException if players are less than 2 or more than 4
      */
-    public void startGame () throws IllegalArgumentException {
+    public void startGame () throws IllegalArgumentException, RemoteException {
         if((players.size()<2)||(players.size()>4)){
             throw new IllegalArgumentException("Incorrect number of players");}
 
@@ -208,7 +209,7 @@ public class Game extends Observable implements Serializable {
      * It gives to each Player (2 resourceCards + 1 goldCard). It also reveals the common ObjectiveCards
      * and gives 2 ObjectiveCards per Player to be selected later
      */
-    public void giveInitialCards () {
+    public void giveInitialCards () throws RemoteException {
         for (int i=0; i<nPlayers; i++) {
             try {
                 players.get(i).drawCard(resourceDeck.checkFirstCard()); // resource card #1
@@ -384,7 +385,7 @@ public class Game extends Observable implements Serializable {
      * These 4 methods are useful to replace a card in the market.
      * The market is formed by 2 gold cards and 2 resource cards, which the player can pick up during the game
      */
-    public void resetGoldCard1 ()  {
+    public void resetGoldCard1 ()  throws RemoteException {
         if(!this.goldDeck.isFinished()){
             this.goldCard1=this.goldDeck.getFirstCard();
         }else if(!this.resourceDeck.isFinished()){
@@ -395,7 +396,7 @@ public class Game extends Observable implements Serializable {
         notifyObservers(new Message(this.goldCard1, Event.UPDATED_GOLD_CARD_1)); //maybe we can create just one Event?
     }
 
-    public void resetGoldCard2 () {
+    public void resetGoldCard2 () throws RemoteException {
         if(!this.goldDeck.isFinished()){
             this.goldCard2=this.goldDeck.getFirstCard();
         }else if(!this.resourceDeck.isFinished()){
@@ -406,7 +407,7 @@ public class Game extends Observable implements Serializable {
         notifyObservers(new Message(this.goldCard2, Event.UPDATED_GOLD_CARD_2));
     }
 
-    public void resetResourceCard1 () {
+    public void resetResourceCard1 () throws RemoteException {
         if(!this.resourceDeck.isFinished()){
             this.resourceCard1=this.resourceDeck.getFirstCard();
         }else if(!this.goldDeck.isFinished()){
@@ -417,7 +418,7 @@ public class Game extends Observable implements Serializable {
         notifyObservers(new Message(this.goldCard1, Event.UPDATED_RESOURCE_CARD_1));
     }
 
-    public void resetResourceCard2 () {
+    public void resetResourceCard2 () throws RemoteException {
         if(!this.resourceDeck.isFinished()){
             this.resourceCard2=this.resourceDeck.getFirstCard();
         }else if(!this.goldDeck.isFinished()){
@@ -637,7 +638,7 @@ public class Game extends Observable implements Serializable {
      * Setter method
      * @param state of the game
      */
-    public void setState (GameState state) {
+    public void setState (GameState state) throws RemoteException {
         this.state = state;
         notifyObservers(new Message(null, Event.GAME_STATE_CHANGED)); //we'll look into it
     }
