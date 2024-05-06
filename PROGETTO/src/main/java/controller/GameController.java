@@ -27,6 +27,7 @@ public class GameController implements Remote, Serializable {
      */
     public GameController(){
         game=null;
+        serverController=null;
         lastRounds=10;
         lastDrawingRounds=10;
         winners=new ArrayList<>();
@@ -262,7 +263,7 @@ public class GameController implements Remote, Serializable {
      * have triggered the ENDING condition it decreases our indexes to determine when the Game has to end.
      * INTERNAL USE METHOD
      */
-    public void nextPhase()throws RemoteException, RemoteException {
+    private void nextPhase()throws RemoteException, RemoteException {
         if (game.getState() == Game.GameState.ENDING && lastRounds > 0) {
             lastRounds --;
             if(lastDrawingRounds>0) {
@@ -282,8 +283,7 @@ public class GameController implements Remote, Serializable {
      * how many times the players will draw in the next plays.
      * INTERNAL USE METHOD
      */
-    // ATTENZIONE !!! SE E INTERNO QUESTO NON VA MESSO PRIVATE !?
-    public void calculateLastMoves() throws RemoteException {
+    private void calculateLastMoves() throws RemoteException {
             int firstPlayer = 0;
             lastRounds = game.getnPlayers();
 
@@ -317,17 +317,6 @@ public class GameController implements Remote, Serializable {
             throw new IllegalArgumentException("This player is not playing the match");
         }else {
             if (!(game.getState() == Game.GameState.ENDED)) { //se è durante la partita ATTIVA
-                /**for (Player p : game.getPlayers()) { //non serve più: il player viene generato alla richiesta di accesso in lobby
-                    p.setGame(null);
-                    p.setBoard(null);
-                    p.setIsFirst(false);
-                    p.addPoints(-p.getPoints());
-                    p.setColor(null);
-                    for (int i = 0; i < p.getPlayerDeck().length; i++) {
-                        p.getPlayerDeck()[i] = null;
-                    }
-                    //objective card mancano
-                }*/
                 //this will alert the listeners to notify all the players that the game has ENDED
                 game.setLastEvent(Event.GAME_LEFT);
                 game.setState(Game.GameState.ENDED);//here or in the listeners?
@@ -349,7 +338,7 @@ public class GameController implements Remote, Serializable {
      * Finally, it checks the winner (or winners) of the game, and puts them in a list called "winners".
      * INTERNAL USE METHOD
      */
-    public void endGame() throws RemoteException {
+    private void endGame() throws RemoteException {
         // setting the game state to ENDED
         game.endGame();
 
@@ -424,6 +413,11 @@ public class GameController implements Remote, Serializable {
         return lastDrawingRounds;
     }
 
+    /**
+     * This method returns the player given his nickname
+     * @param Nickname is the nickname we are using to search for a player
+     * @return the player if found, null otherwise
+     */
     public Player getPlayerByNickname(String Nickname) throws RemoteException {
         for(Player player : gamePlayers){
             if(player.getNickname().equals(Nickname)){

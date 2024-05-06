@@ -18,7 +18,7 @@ import java.util.*;
 public class ServerController implements Serializable {
     private static int firstAvailableId = -1;
     private Map<Integer, GameController> allGameControllers;
-    private static List<String> allNicknames;
+    private List<String> allNicknames;
 
     //this is the List that will contain the Clients not yet connected to a specific Game (GC)
     private List<Observer> lobbyClients; //we will have to give them the same methods
@@ -128,21 +128,6 @@ public class ServerController implements Serializable {
         return true;
     }
 
-
-    /**
-     * This method returns the player given his nickname
-     * @param Nickname is the nickname we are using to search for a player
-     * @return the player if found, null otherwise
-
-    public static Player getPlayerByNickname(String Nickname){
-        for(Player player : allPlayers){
-            if(player.getNickname().equals(Nickname)){
-                return player;
-            }
-        }
-        return null;
-    }
-    */
 
     /**
      * Getter method
