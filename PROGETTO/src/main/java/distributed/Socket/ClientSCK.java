@@ -62,7 +62,7 @@ public class ClientSCK implements ClientGeneralInterface{
         threadCheckConnection= new Thread(()-> { //ci serve qualcosa su cui fare la syn?
             try { //dobbiamo usare il filter?? per leggere il PingMessage
                 PingMessage pingMessage = (PingMessage) this.inputStream.readObject(); //we receive 'ARE_YOU_STILL_CONNECTED'
-                outputStream.writeObject(PingMessage.YES_STILL_CONNECTED);
+                outputStream.writeObject(new PingMessage());
                 outputStream.flush();
                 outputStream.reset();
             } catch (IOException e) {
@@ -70,8 +70,8 @@ public class ClientSCK implements ClientGeneralInterface{
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-        },"CheckConnection"); //to be started when ClientHandlerThread stars because we need n clients to create a game and we want to be sure the all the clients are still connected
-        threadCheckConnection.start();
+        },"CheckConnection"); //to be started when a Game is created (when we receive the msg ALL_CONNNECTED)
+
 
 
         while (true) {
@@ -115,8 +115,54 @@ public class ClientSCK implements ClientGeneralInterface{
     public void modifyClientSide(SCKMessage sckMessage) throws IOException, ClassNotFoundException {
         switch (sckMessage.getMessageEvent()) {
             case ALL_CONNECTED -> {
-                getModel();
+                getModel(); //local copy of the model
                 sendMessage(new SCKMessage(null, Event.START)); //null is referred to the objects sent. 'START' to tell the server that this client is ready
+                threadCheckConnection.start(); //now if a player doesn't reply to a ping message the Game ends
+            }
+            case UPDATED_BOARD -> {
+                //we have to change the view and the local model
+            }
+            case UPDATED_RESOURCE_DECK -> {
+                //we have to change the view and the local model
+            }
+            case UPDATED_GOLD_DECK->{
+                //we have to change the view and the local model
+            }
+            case UPDATED_PLAYER_DECK->{
+                //we have to change the view and the local model
+            }
+            case UPDATED_RESOURCE_CARD_1->{
+                //we have to change the view and the local model
+            }
+            case UPDATED_RESOURCE_CARD_2->{
+                //we have to change the view and the local model
+            }
+            case UPDATED_GOLD_CARD_1->{
+                //we have to change the view and the local model
+            }
+            case UPDATED_GOLD_CARD_2->{
+                //we have to change the view and the local model
+            }
+            case UPDATED_CHAT->{
+                //we have to change the view and the local model
+            }
+            case UPDATED_PAWNS->{
+                //we have to change the view and the local model
+            }
+            case UPDATED_NICKNAME->{
+                //we have to change the view and the local model
+            }
+            case UPDATED_ROUND->{
+                //we have to change the view and the local model
+            }
+            case GAME_STATE_CHANGED->{
+                //we have to change the view and the local model
+            }
+            case SETUP_PHASE_1->{
+                //we have to change the view and the local model
+            }
+            case SETUP_PHASE_2->{
+                //we have to change the view and the local model
             }
         }
     }

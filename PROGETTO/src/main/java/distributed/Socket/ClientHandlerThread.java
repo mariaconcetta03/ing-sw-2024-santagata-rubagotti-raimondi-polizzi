@@ -19,6 +19,7 @@ import java.net.Socket;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Timer;
 
 import utils.Event;
 import utils.Observable;
@@ -50,6 +51,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
 
     private final ObjectInputStream input;
     private final ObjectOutputStream output;
+    private GameController gameController;
 
     /**
      * Constructor method
@@ -68,26 +70,20 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
         this.inputLock = new Object();
 
         //this Thread is needed because some actions of the client can't be predicted and isolated in the question-response pattern
-        threadCheckMSG = new Thread(()-> { //ci serve qualcosa su cui fare la syn?
-            synchronized (inputLock) { //ci serve qualcosa su cui fare la syn?
+        threadCheckMSG = new Thread(()-> {
+            synchronized (inputLock) {
                 while (!Thread.currentThread().isInterrupted()) {
-                    try {
-                        SCKMessage sckMessage = (SCKMessage) this.input.readObject(); //messaggi scritti dal Client vero
+                        SCKMessage sckMessage = (SCKMessage) this.input.getObjectInputFilter(); //messaggi scritti dal Client vero
                         react(sckMessage);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    } catch (ClassNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
                 }
             }
         },"CheckMSG"); //to be started when all the players are connected
 
         //to control the status of the connection (a player can leave the game without any advice)
-        threadCheckConnection= new Thread(()-> { //ci serve qualcosa su cui fare la syn?
-                while (!Thread.currentThread().isInterrupted()) {
-                    try { //dobbiamo usare il filter?? per leggere il PingMessage
-                        output.writeObject(PingMessage.ARE_YOU_STILL_CONNECTED);
+        threadCheckConnection= new Thread(()-> {
+                while (!Thread.currentThread().isInterrupted()) { //we enter here every time this ClientHandlerThread is not interrupted by other ClientHandlerThread
+                    try {
+                        output.writeObject(new PingMessage());
                         output.flush();
                         output.reset();
                     } catch (IOException e) {
@@ -96,16 +92,18 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
                     // we set the timeout
                     // we check the response
                     try {
-                        PingMessage pingMessage = (PingMessage) this.input.readObject();
-                    } catch (IOException e) { //no response
-                        //we free the thread and we end the game
-                    } catch (ClassNotFoundException e) {
-                        throw new RuntimeException(e); //we free the thread and we end the game
-                    }
+                        Timer t = new Timer();
+                        synchronized (inputLock) {
+                            t.wait(2000);
+                            PingMessage pingMessage = (PingMessage) this.input.getObjectInputFilter();
+                        }
+                        } catch (InterruptedException e) { //no response-> we free the thread and we end the game
+                        //Game.GameState.ENDED
+                        throw new RuntimeException(e);
+                        }
                 }
 
-        },"CheckConnection"); //to be started when ClientHandlerThread stars because we need n clients to create a game and we want to be sure the all the clients are still connected
-        threadCheckConnection.start();
+        },"CheckConnection"); //to be started when a Game is created (when we receive START from ClientSCK)
     }
 
 
@@ -214,13 +212,12 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
     public void run() { //ci sono altre cose da aggiungere tipo chiamare i metodi della ClientGeneralInterface in base al messaggio ricevuto
         try {
             while (!Thread.currentThread().isInterrupted()) { //questo while dovrebbe servere nel caso in cui non vogliamo che il Thread venga interrotto mentre fa quello dentro il while
-                synchronized (inputLock) {
+                synchronized (inputLock) { //we use the inputLock to write the stream not simultaneously
                     SCKMessage message = (SCKMessage) this.input.readObject(); //here we write the messages received before START (when we meet START, ThreadCheckMSG would continue to read the other messages)
                     Object obj = null;
                     if (message.getMessageEvent() == Event.START) { //from this moment the client can start sending msg to the server (they would be read by ThreadCheckMSG)
-                        if (!threadCheckMSG.isAlive()) {
-                            threadCheckMSG.start();
-                        }
+                            threadCheckMSG.start(); // we start to read the msg sent by ClientSCK
+                            threadCheckConnection.start(); // we start to check if the ClientSCK is still connected
                     }
                 }
             }
@@ -231,6 +228,79 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
 
     private void react(SCKMessage sckMessage){ //qui in base al messaggio letto chiamiamo il giusto metodo della ClientGeneralInterface
         //legge il messaggio e fa qualcosa (si può prendere spunto dalla run commentata che leggeva testo dagli stream)
+        switch (sckMessage.getMessageEvent()) {
+            case ADD_PLAYER_TO_LOBBY->{
+                try {
+                    addPlayerToLobby((String) sckMessage.getObj().get(0), (Integer) sckMessage.getObj().get(1));
+                }catch (Exception e){
+
+                }
+            }
+            case CHOOSE_NICKNAME->{
+                try {
+                    chooseNickname((String)sckMessage.getObj().get(0));
+                }catch (Exception e){
+
+                }
+            }
+            case CREATE_LOBBY->{
+                try {
+                    createLobby((String)sckMessage.getObj().get(0),(int) sckMessage.getObj().get(1));
+                }catch (Exception e){
+
+                }
+            }
+            case PLAY_CARD->{
+                try {
+                    playCard((String) sckMessage.getObj().get(0), (PlayableCard) sckMessage.getObj().get(1), (Coordinates) sckMessage.getObj().get(2), (boolean) sckMessage.getObj().get(3));
+                 }catch (Exception e){
+
+                 }
+            }
+            case PLAY_BASE_CARD->{
+                try {
+                    playBaseCard((String) sckMessage.getObj().get(0), (PlayableCard) sckMessage.getObj().get(1), (boolean) sckMessage.getObj().get(2));
+                }catch (Exception e){
+
+                }
+            }
+            case DRAW_CARD->{
+                try {
+                    drawCard((String) sckMessage.getObj().get(0), (PlayableCard) sckMessage.getObj().get(1));
+                }catch (Exception e){
+
+                }
+            }
+            case CHOOSE_OBJECTIVE_CARD->{
+                try {
+                    chooseObjectiveCard((String) sckMessage.getObj().get(0), (ObjectiveCard) sckMessage.getObj().get(1));
+                }catch (Exception e){
+
+                }
+            }
+            case CHOOSE_PAWN_COLOR->{
+                try {
+                    choosePawnColor((String) sckMessage.getObj().get(0), (Pawn) sckMessage.getObj().get(1));
+                }catch (Exception e){
+
+                }
+            }
+            case SEND_MESSAGE->{
+                try {
+                    sendMessage((String) sckMessage.getObj().get(0), (List<String>) sckMessage.getObj().get(0), (String) sckMessage.getObj().get(0));
+                }catch (Exception e){
+
+                }
+            }
+            case LEAVE_GAME->{
+                try {
+                    leaveGame((String) sckMessage.getObj().get(0));
+                }catch (Exception e){
+
+                }
+            }
+        }
+
     }
 
 
@@ -282,6 +352,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
     public void addPlayerToLobby(String playerNickname, int gameId) throws RemoteException, NotBoundException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        this.gameController=serverController.addPlayerToLobby(playerNickname, gameId);
         writeTheStream(sckMessage);
     }
 
@@ -297,6 +368,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
     public void chooseNickname(String nickname) throws RemoteException, NotBoundException, NicknameAlreadyTakenException {
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        serverController.chooseNickname(nickname);
         writeTheStream(sckMessage);
     }
 
@@ -312,6 +384,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
     public void createLobby(String creatorNickname, int numOfPlayers) throws RemoteException, NotBoundException {
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        this.gameController=serverController.startLobby(creatorNickname, numOfPlayers);
         writeTheStream(sckMessage);
     }
 
@@ -319,6 +392,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
     public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, NotBoundException {
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        this.gameController.playCard(nickname, selectedCard, position, orientation);
         writeTheStream(sckMessage);
     }
 
@@ -326,6 +400,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
     public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException, NotBoundException {
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        this.gameController.playBaseCard(nickname, baseCard, orientation);
         writeTheStream(sckMessage);
     }
 
@@ -333,6 +408,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
     public void drawCard(String nickname, PlayableCard selectedCard) throws RemoteException, NotBoundException {
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        this.gameController.drawCard(nickname, selectedCard);
         writeTheStream(sckMessage);
     }
 
@@ -340,6 +416,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
     public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) throws RemoteException, NotBoundException {
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        this.gameController.chooseObjectiveCard(chooserNickname, selectedCard);
         writeTheStream(sckMessage);
     }
 
@@ -347,6 +424,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
     public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, NotBoundException {
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        this.gameController.choosePawnColor(chooserNickname, selectedColor);
         writeTheStream(sckMessage);
     }
 
@@ -356,6 +434,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
     public void sendMessage(String senderNickname, List<String> receiversNickname, String message) throws RemoteException, NotBoundException {
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        this.gameController.sendMessage(senderNickname, receiversNickname, message);
         writeTheStream(sckMessage);
     }
 
@@ -363,8 +442,12 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
     public void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException {
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        this.gameController.leaveGame(nickname);
         writeTheStream(sckMessage);
     }
+
+
+    //update function (taken from ClientGeneralInterface)
 
     @Override
     public void updateBoard(Board board) throws RemoteException {
