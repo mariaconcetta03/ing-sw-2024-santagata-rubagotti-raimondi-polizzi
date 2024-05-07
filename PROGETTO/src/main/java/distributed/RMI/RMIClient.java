@@ -9,6 +9,7 @@ import distributed.ClientGeneralInterface;
 import org.model.*;
 import utils.Event;
 import utils.Observable;
+import view.TUI.ANSIFormatter;
 import view.TUI.InterfaceTUI;
 
 import java.rmi.NotBoundException;
@@ -40,9 +41,14 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private int selectedView; // 1==TUI, 2==GUI
     private InterfaceTUI tuiView;
     //private GUI; :O INTERFACCIA PERò...
-    private Board personalBoard;
-    private PlayableCard playerDeck[];
-    private Player player;
+    private Board personalBoard; //magari gli attributi personali, non sono necessari se teniamo playersInTheGame
+    private PlayableDeck goldDeck;
+    private PlayableDeck resourceDeck;
+    private PlayableCard goldCard1;
+    private PlayableCard goldCard2;
+    private PlayableCard resourceCard1;
+    private PlayableCard resourceCard2;
+    private Player personalPlayer;
     private List<Player> playersInTheGame;
     private ObjectiveCard commonObjective1, commonObjective2;
 
@@ -51,7 +57,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * Class constructor
      * @throws RemoteException
      */
-    protected RMIClient() throws RemoteException {
+    public RMIClient() throws RemoteException {
     }
 
 
@@ -269,9 +275,20 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         this.gameController.leaveGame(nickname);
     }
 
-
-
-
+    /**
+     * This method is called when the client is created. Absolves the function of helping the player to select
+     * his nickname and to choose if he wants to join an already started Game or create a new one.
+     */
+    public void waitingRoom(){
+        if(selectedView==1){
+            tuiView=new InterfaceTUI();
+            tuiView.askNickname();
+        }else{
+            System.out.println(ANSIFormatter.ANSI_RED+"GUI will be implemented with the next update!");
+            System.exit(-1);
+            //guiView= new InterfaceGUI();
+        }
+    }
 
     // ------- M E T H O D S   F O R   U P D A T E -------
     // ---- F R O M   S E R V E R   T O   C L I E N T ----
@@ -281,10 +298,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @param board the new board we want to update
      */
     public void updateBoard (Board board) throws RemoteException {
+        personalPlayer.setBoard(board);
         if (selectedView == 1) {
-            //tuiView.updateBoard(board)
+            //tuiView.showBoard(board)
         } else if (selectedView == 2) {
-            //guiView.updateBoard(board)
+            //guiView.showBoard(board)
         }
     }
 
@@ -295,10 +313,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @param resourceDeck the new deck we want to update
      */
     public void updateResourceDeck (PlayableDeck resourceDeck) throws RemoteException {
+        this.resourceDeck=resourceDeck;
         if (selectedView == 1) {
-            //tuiView.updateResourceDeck (resourceDeck)
+            //tuiView.showResourceDeck (resourceDeck) ?
         } else if (selectedView == 2) {
-            //guiView.updateBoard(board)
+            //guiView.showUpdatedResourceDeck(this.resourceDeck)
         }
     }
 
@@ -324,6 +343,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @param playerDeck the new deck we want to update
      */
     public void updatePlayerDeck (Player player, PlayableCard[] playerDeck) throws RemoteException {
+        for(Player p: playersInTheGame){
+            if(player.getNickname().equals(p.getNickname())){
+                p.setPlayerDeck(playerDeck);
+            }
+        }
         if (selectedView == 1) {
             //tuiView.updatePlayerDeck(player, playerDeck)
         } else if (selectedView == 2) {
@@ -458,7 +482,19 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             //guiView.updateGameState(game)
         }
     }
+
+    //GETTER & SETTER
+
+    public int getSelectedView() {
+        return selectedView;
+    }
+
+    public void setSelectedView(int selectedView) {
+        this.selectedView = selectedView;
+    }
 }
+
+
 
 
 

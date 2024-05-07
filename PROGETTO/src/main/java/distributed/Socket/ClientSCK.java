@@ -12,11 +12,13 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import distributed.ClientGeneralInterface;
 import distributed.messages.*;
 import org.model.Board;
 import org.model.ObjectiveCard;
 import org.model.Player;
 import utils.Event;
+import view.TUI.InterfaceTUI;
 
 
 /**
@@ -25,8 +27,10 @@ import utils.Event;
  * and performs action to update the view. It also sends User input to the ClientHandlerThread
  * through the socket to be processed
  */
-public class ClientSCK {
-
+public class ClientSCK{
+    private int selectedView;
+    private InterfaceTUI tuiView;
+    //private InterfaceGUI guiView;
     private Board board;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
@@ -35,7 +39,14 @@ public class ClientSCK {
     private List<Player> playersInTheGame;
     private ObjectiveCard commonObjective1, commonObjective2;
 
-    public ClientSCK(String address, int port) throws IOException, ClassNotFoundException { //we call this constructor after we ask the IP address and the port of the server
+    //ho rimosso eccezione ClassNotFound, non veniva mai lanciata secondo l'IDE
+    /**
+     * Constructor method
+     * @param address
+     * @param port
+     * @throws IOException
+     */
+    public ClientSCK(String address, int port) throws IOException { //we call this constructor after we ask the IP address and the port of the server
         Socket socket = new Socket();
         socket.connect(new InetSocketAddress(address, port), 1000); //the address and the port of the server
 
@@ -114,6 +125,30 @@ public class ClientSCK {
         // e altro.... come i goal comuni
     }
 
+    /**
+     * This method is called when the client is created. Absolves the function of helping the player to select
+     * his nickname and to choose if he wants to join an already started Game or create a new one.
+     */
+    public void waitingRoom(){
+        if(selectedView==1){
+            tuiView=new InterfaceTUI();
+        }else{
+            //guiView= new InterfaceGUI();
+        }
+        tuiView.askNickname();
+    }
+
+
+
+
+    //GETTER & SETTER
+    public int getSelectedView() {
+        return selectedView;
+    }
+
+    public void setSelectedView(int selectedView) {
+        this.selectedView = selectedView;
+    }
 }
 
 

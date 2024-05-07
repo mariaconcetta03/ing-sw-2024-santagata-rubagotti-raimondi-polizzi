@@ -38,7 +38,7 @@ public class WrappedObserver implements Observer {
 
     /**
      * This is an update method
-     * @param obs the observable
+     * @param obs is the observable who called the notify
      * @param arg the message which contains the event
      */
     @Override
