@@ -48,12 +48,13 @@ public enum Event implements Serializable {
     ALL_CONNECTED, //è un per avere un esempio (possiamo modificarlo)
     START, //per dire che il client TCP ha caricato localmente una copia dell'intero model
 
-
     ASK_SERVER_MODEL,  //per inizializzare il model del client usando quello del server
     GAME_BOARD,
 
-    GAME_PLAYERS;
+    GAME_PLAYERS,
 
+    //SELECTIONS
+    NICKNAME_SELECTION;
     public void printEvent(){
         System.out.println("Questo è l'evento: " + this.toString());
     }

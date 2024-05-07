@@ -280,9 +280,27 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * his nickname and to choose if he wants to join an already started Game or create a new one.
      */
     public void waitingRoom(){
+        boolean ok=false;
+        int errorCounter=0;
         if(selectedView==1){
             tuiView=new InterfaceTUI();
-            tuiView.askNickname();
+            while(!ok) {
+                if(errorCounter==3){
+                    System.out.println("Unable to communicate with the server! Shutting down.");
+                    System.exit(-1);
+                }
+                String nickname = tuiView.askNickname();
+                try {
+                    this.chooseNickname(nickname);
+                    ok=true;
+                } catch (RemoteException | NotBoundException e) {
+                    errorCounter++;
+                    System.out.println();
+                } catch (NicknameAlreadyTakenException ex) {
+                    System.out.println("Nickname is already taken! Please try again.");
+                }
+            }
+            System.out.println("Nickname correctly selected!");
         }else{
             System.out.println(ANSIFormatter.ANSI_RED+"GUI will be implemented with the next update!");
             System.exit(-1);

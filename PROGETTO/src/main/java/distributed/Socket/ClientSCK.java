@@ -129,13 +129,17 @@ public class ClientSCK{
      * This method is called when the client is created. Absolves the function of helping the player to select
      * his nickname and to choose if he wants to join an already started Game or create a new one.
      */
-    public void waitingRoom(){
-        if(selectedView==1){
-            tuiView=new InterfaceTUI();
-        }else{
+    public void waitingRoom() {
+        if (selectedView == 1) {
+            tuiView = new InterfaceTUI();
+        } else {
             //guiView= new InterfaceGUI();
         }
-        tuiView.askNickname();
+        String nickname = tuiView.askNickname();
+        try {
+            this.sendMessage(new SCKMessage(nickname, Event.NICKNAME_SELECTION));
+        } catch (IOException ignored) {
+        }
     }
 
 
