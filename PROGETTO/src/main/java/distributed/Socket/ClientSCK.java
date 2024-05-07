@@ -6,17 +6,21 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import Exceptions.FullLobbyException;
+import Exceptions.GameAlreadyStartedException;
+import Exceptions.GameNotExistsException;
+import Exceptions.NicknameAlreadyTakenException;
 import distributed.ClientGeneralInterface;
 import distributed.messages.*;
-import org.model.Board;
-import org.model.ObjectiveCard;
-import org.model.Player;
+import org.model.*;
 import utils.Event;
 import view.TUI.InterfaceTUI;
 
@@ -27,7 +31,7 @@ import view.TUI.InterfaceTUI;
  * and performs action to update the view. It also sends User input to the ClientHandlerThread
  * through the socket to be processed
  */
-public class ClientSCK{
+public class ClientSCK implements ClientGeneralInterface{
     private int selectedView;
     private InterfaceTUI tuiView;
     //private InterfaceGUI guiView;
@@ -153,6 +157,280 @@ public class ClientSCK{
     public void setSelectedView(int selectedView) {
         this.selectedView = selectedView;
     }
+
+
+    //this class implements clientGeneralInterface
+    @Override
+    public void addPlayerToLobby(String playerNickname, int gameId) throws RemoteException, NotBoundException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
+        List<Object> list=new ArrayList<>();
+        list.add(playerNickname);
+        list.add(gameId);
+        try {
+            sendMessage(new SCKMessage(list,Event.ADD_PLAYER_TO_LOBBY));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void chooseNickname(String nickname) throws RemoteException, NotBoundException, NicknameAlreadyTakenException {
+        List<Object> list=new ArrayList<>();
+        list.add(nickname);
+        try {
+            sendMessage(new SCKMessage(list,Event.CHOOSE_NICKNAME));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void createLobby(String creatorNickname, int numOfPlayers) throws RemoteException, NotBoundException {
+        List<Object> list=new ArrayList<>();
+        list.add(creatorNickname);
+        list.add(numOfPlayers);
+        try {
+            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, NotBoundException {
+        List<Object> list=new ArrayList<>();
+        list.add(nickname);
+        list.add(selectedCard);
+        list.add(position);
+        list.add(orientation);
+        try {
+            sendMessage(new SCKMessage(list,Event.PLAY_CARD));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException, NotBoundException {
+        List<Object> list=new ArrayList<>();
+        list.add(nickname);
+        list.add(baseCard);
+        list.add(orientation);
+        try {
+            sendMessage(new SCKMessage(list,Event.PLAY_BASE_CARD));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void drawCard(String nickname, PlayableCard selectedCard) throws RemoteException, NotBoundException {
+        List<Object> list=new ArrayList<>();
+        list.add(nickname);
+        list.add(selectedCard);
+        try {
+            sendMessage(new SCKMessage(list,Event.DRAW_CARD));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) throws RemoteException, NotBoundException {
+        List<Object> list=new ArrayList<>();
+        list.add(chooserNickname);
+        list.add(selectedCard);
+        try {
+            sendMessage(new SCKMessage(list,Event.CHOOSE_OBJECTIVE_CARD));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, NotBoundException {
+        List<Object> list=new ArrayList<>();
+        list.add(chooserNickname);
+        list.add(selectedColor);
+        try {
+            sendMessage(new SCKMessage(list,Event.CHOOSE_PAWN_COLOR));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void sendMessage(String senderNickname, List<String> receiversNickname, String message) throws RemoteException, NotBoundException {
+        List<Object> list=new ArrayList<>();
+        list.add(senderNickname);
+        list.add(receiversNickname);
+        list.add(message);
+        try {
+            sendMessage(new SCKMessage(list,Event.SEND_MESSAGE));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException {
+        List<Object> list=new ArrayList<>();
+        list.add(nickname);
+        try {
+            sendMessage(new SCKMessage(list,Event.LEAVE_GAME));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+ //gli update vanno tolti dalla ClientGeneralInterface e da qui: ClientSCK non è un Observer
+    @Override
+    public void updateBoard(Board board) throws RemoteException {
+        List<Object> list=new ArrayList<>();
+        list.add(board);
+        try {
+            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateResourceDeck(PlayableDeck resourceDeck) throws RemoteException {
+        List<Object> list=new ArrayList<>();
+        list.add(resourceDeck);
+        try {
+            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateGoldDeck(PlayableDeck goldDeck) throws RemoteException {
+        List<Object> list=new ArrayList<>();
+        list.add(goldDeck);
+        try {
+            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updatePlayerDeck(Player player, PlayableCard[] playerDeck) throws RemoteException {
+        List<Object> list=new ArrayList<>();
+        list.add(player);
+        list.add(playerDeck);
+        try {
+            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateResourceCard1(PlayableCard card) throws RemoteException {
+        List<Object> list=new ArrayList<>();
+        list.add(card);
+        try {
+            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateResourceCard2(PlayableCard card) throws RemoteException {
+        List<Object> list=new ArrayList<>();
+        list.add(card);
+        try {
+            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateGoldCard1(PlayableCard card) throws RemoteException {
+        List<Object> list=new ArrayList<>();
+        list.add(card);
+        try {
+            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateGoldCard2(PlayableCard card) throws RemoteException {
+        List<Object> list=new ArrayList<>();
+        list.add(card);
+        try {
+            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateChat(Chat chat) throws RemoteException {
+        List<Object> list=new ArrayList<>();
+        list.add(chat);
+        try {
+            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updatePawns(Player player, Pawn pawn) throws RemoteException {
+        List<Object> list=new ArrayList<>();
+        list.add(player);
+        list.add(pawn);
+        try {
+            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateNickname(Player player, String nickname) throws RemoteException {
+        List<Object> list=new ArrayList<>();
+        list.add(player);
+        list.add(nickname);
+        try {
+            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateRound(Player newCurrentPlayer) throws RemoteException {
+        List<Object> list=new ArrayList<>();
+        list.add(newCurrentPlayer);
+        try {
+            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateGameState(Game game) throws RemoteException {
+        List<Object> list=new ArrayList<>();
+        list.add(game);
+        try {
+            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    //fine di update (che vanno tolti)
+
+    //end of implementation of ClientGeneralInterface
 }
 
 
