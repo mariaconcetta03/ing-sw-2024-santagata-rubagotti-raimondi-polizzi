@@ -307,8 +307,8 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
     //methods to be implemented to have a class that implements Observer: (invece in RMI avremo una classe intermedia la WrappedObserver che implementerà Observer)
 
     @Override
-    public void update(Observable obs, Message arg) { //here we call writeTheStream
-        //switch(arg.get)
+    public void update(Observable obs, Message arg) { //here we call writeTheStream (the switch case is already in ClientSCK)
+        //writeTheStream(message);
     }
 
     @Override
@@ -447,8 +447,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
     }
 
 
-    //update function (taken from ClientGeneralInterface)
+    //update function (taken from ClientGeneralInterface) (da cancellare perchè ci sono già in ClientSCK...quindi ClientHandlerThread non dovrà più implementare ClientGeneralInterface)
 
+    //update da cancellare
     @Override
     public void updateBoard(Board board) throws RemoteException {
         SCKMessage sckMessage=null;
@@ -539,6 +540,8 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
         writeTheStream(sckMessage);
     }
+    //fine di update da cancellare
+
     //end of methods to be implemented taken from ClientGeneralInterface
 }
 

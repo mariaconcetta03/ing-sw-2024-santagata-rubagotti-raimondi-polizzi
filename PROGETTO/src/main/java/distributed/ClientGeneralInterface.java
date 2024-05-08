@@ -25,7 +25,7 @@ public interface ClientGeneralInterface extends Remote {
     void sendMessage(String senderNickname, List<String> receiversNickname, String message) throws RemoteException, NotBoundException;
     void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException;
 
-    //bisogna spostare gli update in Observer
+    //inizio update
     void updateBoard (Board board) throws RemoteException;
     void updateResourceDeck (PlayableDeck resourceDeck) throws RemoteException;
     void updateGoldDeck (PlayableDeck goldDeck) throws RemoteException;

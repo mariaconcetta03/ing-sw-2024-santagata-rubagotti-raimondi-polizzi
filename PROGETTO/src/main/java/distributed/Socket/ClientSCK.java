@@ -121,48 +121,55 @@ public class ClientSCK implements ClientGeneralInterface{
             }
             case UPDATED_BOARD -> {
                 //we have to change the view and the local model
+                updateBoard((Board) sckMessage.getObj().get(0));
             }
             case UPDATED_RESOURCE_DECK -> {
                 //we have to change the view and the local model
+                updateResourceDeck((PlayableDeck) sckMessage.getObj().get(0));
             }
             case UPDATED_GOLD_DECK->{
                 //we have to change the view and the local model
+                updateGoldDeck((PlayableDeck) sckMessage.getObj().get(0));
             }
-            case UPDATED_PLAYER_DECK->{
+            case UPDATED_PLAYER_DECK,SETUP_PHASE_1,SETUP_PHASE_2->{
                 //we have to change the view and the local model
+                updatePlayerDeck((Player) sckMessage.getObj().get(0), (PlayableCard[]) sckMessage.getObj().get(1));
             }
             case UPDATED_RESOURCE_CARD_1->{
                 //we have to change the view and the local model
+                updateResourceCard1((PlayableCard) sckMessage.getObj().get(0));
             }
             case UPDATED_RESOURCE_CARD_2->{
                 //we have to change the view and the local model
+                updateResourceCard2((PlayableCard) sckMessage.getObj().get(0));
             }
             case UPDATED_GOLD_CARD_1->{
                 //we have to change the view and the local model
+                updateGoldCard1((PlayableCard) sckMessage.getObj().get(0));
             }
             case UPDATED_GOLD_CARD_2->{
                 //we have to change the view and the local model
+                updateGoldCard2((PlayableCard) sckMessage.getObj().get(0));
             }
             case UPDATED_CHAT->{
                 //we have to change the view and the local model
+                updateChat((Chat) sckMessage.getObj().get(0));
             }
             case UPDATED_PAWNS->{
                 //we have to change the view and the local model
+                updatePawns((Player) sckMessage.getObj().get(0), (Pawn) sckMessage.getObj().get(1));
             }
             case UPDATED_NICKNAME->{
                 //we have to change the view and the local model
+                updateNickname((Player) sckMessage.getObj().get(0), (String) sckMessage.getObj().get(1));
             }
             case UPDATED_ROUND->{
                 //we have to change the view and the local model
+                updateRound((Player) sckMessage.getObj().get(0));
             }
             case GAME_STATE_CHANGED->{
                 //we have to change the view and the local model
-            }
-            case SETUP_PHASE_1->{
-                //we have to change the view and the local model
-            }
-            case SETUP_PHASE_2->{
-                //we have to change the view and the local model
+                updateGameState((Game) sckMessage.getObj().get(0));
             }
         }
     }
@@ -328,153 +335,72 @@ public class ClientSCK implements ClientGeneralInterface{
         }
     }
 
- //gli update vanno tolti dalla ClientGeneralInterface e da qui: ClientSCK non è un Observer
+ //update
     @Override
     public void updateBoard(Board board) throws RemoteException {
-        List<Object> list=new ArrayList<>();
-        list.add(board);
-        try {
-            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        //we have to change the view and the local model
     }
 
     @Override
     public void updateResourceDeck(PlayableDeck resourceDeck) throws RemoteException {
-        List<Object> list=new ArrayList<>();
-        list.add(resourceDeck);
-        try {
-            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        //we have to change the view and the local model
     }
 
     @Override
     public void updateGoldDeck(PlayableDeck goldDeck) throws RemoteException {
-        List<Object> list=new ArrayList<>();
-        list.add(goldDeck);
-        try {
-            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        //we have to change the view and the local model
     }
 
     @Override
     public void updatePlayerDeck(Player player, PlayableCard[] playerDeck) throws RemoteException {
-        List<Object> list=new ArrayList<>();
-        list.add(player);
-        list.add(playerDeck);
-        try {
-            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        //we have to change the view and the local model
     }
 
     @Override
     public void updateResourceCard1(PlayableCard card) throws RemoteException {
-        List<Object> list=new ArrayList<>();
-        list.add(card);
-        try {
-            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        //we have to change the view and the local model
     }
 
     @Override
     public void updateResourceCard2(PlayableCard card) throws RemoteException {
-        List<Object> list=new ArrayList<>();
-        list.add(card);
-        try {
-            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        //we have to change the view and the local model
     }
 
     @Override
     public void updateGoldCard1(PlayableCard card) throws RemoteException {
-        List<Object> list=new ArrayList<>();
-        list.add(card);
-        try {
-            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        //we have to change the view and the local model
     }
 
     @Override
     public void updateGoldCard2(PlayableCard card) throws RemoteException {
-        List<Object> list=new ArrayList<>();
-        list.add(card);
-        try {
-            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        //we have to change the view and the local model
     }
 
     @Override
     public void updateChat(Chat chat) throws RemoteException {
-        List<Object> list=new ArrayList<>();
-        list.add(chat);
-        try {
-            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        //we have to change the view and the local model
     }
 
     @Override
     public void updatePawns(Player player, Pawn pawn) throws RemoteException {
-        List<Object> list=new ArrayList<>();
-        list.add(player);
-        list.add(pawn);
-        try {
-            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        //we have to change the view and the local model
     }
 
     @Override
     public void updateNickname(Player player, String nickname) throws RemoteException {
-        List<Object> list=new ArrayList<>();
-        list.add(player);
-        list.add(nickname);
-        try {
-            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        //we have to change the view and the local model
     }
 
     @Override
     public void updateRound(Player newCurrentPlayer) throws RemoteException {
-        List<Object> list=new ArrayList<>();
-        list.add(newCurrentPlayer);
-        try {
-            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        //we have to change the view and the local model
     }
 
     @Override
     public void updateGameState(Game game) throws RemoteException {
-        List<Object> list=new ArrayList<>();
-        list.add(game);
-        try {
-            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        //we have to change the view and the local model
     }
-    //fine di update (che vanno tolti)
+    //fine update
 
     //end of implementation of ClientGeneralInterface
 }
