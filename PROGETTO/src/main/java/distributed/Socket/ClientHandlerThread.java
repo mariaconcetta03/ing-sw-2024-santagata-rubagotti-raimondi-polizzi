@@ -6,6 +6,7 @@ import Exceptions.GameNotExistsException;
 import Exceptions.NicknameAlreadyTakenException;
 import controller.GameController;
 import controller.ServerController;
+import distributed.ClientActionsInterface;
 import distributed.ClientGeneralInterface;
 import distributed.messages.Message;
 import distributed.messages.PingMessage;
@@ -33,7 +34,7 @@ import utils.Observer;
  * It is notified of all the changes in the model and forwards them, using its socket attribute,
  * to ClientSCK. It is a thread, so we will not have problems related to congestion (as we could have had in RMI).
  */
-public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInterface { //this is a Thread
+public class ClientHandlerThread implements Runnable, Observer, ClientActionsInterface { //this is a Thread
     private final Socket socket;
     private GameController associatedGameController; //returned by ServerController' startlobby()/addPlayerToLobby()
 
@@ -107,103 +108,17 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
     }
 
 
-    //il medoto run va rifatto basandosi sui Message.
-    /*
-    public void run() { //that's not the only method we can have in this thread
-        try { //here we can match the user requests with the ClientSCK methods
-            Scanner in = new Scanner(socket.getInputStream());
-            PrintWriter out = new PrintWriter(socket.getOutputStream());
-            out.println("Select the number:\n 1 to addPlayerToLobby\n 2 to chooseNickname\n 3 to createLobby\n 4 to createGame\n 5 to addPlayerToGame\n " +
-                    "6 to startGame\n 7 to playCard\n 8 to playBaseCard\n 9 to drawCard\n 10 to chooseObjectiveCard\n 11 to choosePawnColor\n " +
-                    "12 to sendMessage\n 13 to nextRound\n 14 to endGame\n 15 to leaveGame\n");
-            // Leggo e scrivo nella connessione finche' non ricevo "quit"
-            while (true) {
-                String line = in.nextLine();
-                if (line.equals("quit")) {
-                    break;
-                } else {
-                    out.println("Received: " + line);
-                    out.flush();
-                    if(line.equals("1")){
-                        if(!hasAlreadyAGame) {
-                            try {
-                                int gameId = 1;
-                                //we should do personalPlayer.getGame() but it return a Game not its id....
-                                addPlayerToLobby(personalPlayer.getNickname(), gameId); //what we want the client decide about his player in this stage
-                                hasAlreadyAGame = true;
-                            } catch (Exception e) {
-                                String message = e.getMessage();
-                                out.println(message); //in this way the user can understand why there is an error
-                            }
-                        }else {
-                            out.println("You have already a game");
-                        }
-                    } //this has to be done with all the methods and we have to ask the client to insert the parameters
-                    if(line.equals("2")){
-                        out.println("Insert your nickname: ");
-                        out.flush();
-                        line = in.nextLine();
-                        try{
-                            chooseNickname (line);
-                            //if there are no errors we can set our personPlayer nickname to the one contains in 'line'
-                        }catch (Exception e){
-                            String message = e.getMessage();
-                            out.println(message);
-                        }
-                    }
-                    if(line.equals("3")){
-                        if(!hasAlreadyAGame) {
-                            try {
-                                out.println("Insert the number of players: ");
-                                out.flush();
-                                line = in.nextLine();
-                                createLobby(personalPlayer.getNickname(), Integer.parseInt(line));
-                            } catch (Exception e) {
-                                String message = e.getMessage();
-                                out.println(message);
-                            }
-                        }else {
-                            out.println("You have already a game");
-                        }
-                    }
-                    if(line.equals("11")){
-                        out.println("Select the number:\n 1 to have red\n 2 to have green\n 3 to have yellow\n 4 to have blue");
-                        out.flush();
-                        line = in.nextLine();
-                        if(line.equals("1")||line.equals("2")||line.equals("3")||line.equals("4")) {
-                            Pawn selectedColor= Pawn.RED; //to have it initialized
-                            if (line.equals("1")) {
-                                selectedColor = Pawn.RED;
-                            }
-                            if (line.equals("2")) {
-                                selectedColor = Pawn.GREEN;
-                            }
-                            if (line.equals("3")) {
-                                selectedColor = Pawn.YELLOW;
-                            }
-                            if (line.equals("4")) {
-                                selectedColor = Pawn.BLUE;
-                            }
-                            try{
-                                choosePawnColor(personalPlayer.getNickname(), selectedColor);
-                            }catch (Exception e){
-                                String message = e.getMessage();
-                                out.println(message);
-                            }
-                        }else{
-                            out.println("the selected number is invalid");
-                        }
-                    }
-                }
-            }
-            // Chiudo gli stream e il socket
+
+
+      /*
+            // alla fine devo chiudere gli stream e il socket
             in.close();
             out.close();
             socket.close();
-        } catch (IOException e) {
+        } catch (IOException e) {  //bisogna notificare se è andato tutto a buon fine?
             System.err.println(e.getMessage());
         }
-    }
+
 
      */
 
@@ -323,7 +238,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
 
 //end of methods to be implemented taken from Observer interface
 
-    //writeTheStream will be called in the method react (maybe inside the methods of the ClientControllerInterface) to tell the client what the controller has effectively done
+    //writeTheStream will be called in the method react (maybe inside the methods of the ClientActionsInterface) to tell the client what the controller has effectively done
     //writeTheStream will also be called in the method update (we have it because ClientHandlerThread is a listener) to tell the client what is changed in the model
     public void writeTheStream(SCKMessage sckMessage){ //this is the stream the real client can read
         try {
@@ -334,7 +249,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
         }
     }
 
-    //methods to be implemented to have a class that implements ClientGeneralInterface
+    //methods to be implemented to have a class that implements ClientActionsInterface
 
     //these methods should be private because they will never be called from the outside
 
@@ -447,101 +362,6 @@ public class ClientHandlerThread implements Runnable, Observer, ClientGeneralInt
     }
 
 
-    //update function (taken from ClientGeneralInterface) (da cancellare perchè ci sono già in ClientSCK...quindi ClientHandlerThread non dovrà più implementare ClientGeneralInterface)
-
-    //update da cancellare
-    @Override
-    public void updateBoard(Board board) throws RemoteException {
-        SCKMessage sckMessage=null;
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        writeTheStream(sckMessage);
-    }
-
-    @Override
-    public void updateResourceDeck(PlayableDeck resourceDeck) throws RemoteException {
-        SCKMessage sckMessage=null;
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        writeTheStream(sckMessage);
-    }
-
-    @Override
-    public void updateGoldDeck(PlayableDeck goldDeck) throws RemoteException {
-        SCKMessage sckMessage=null;
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        writeTheStream(sckMessage);
-    }
-
-    @Override
-    public void updatePlayerDeck(Player player, PlayableCard[] playerDeck) throws RemoteException {
-        SCKMessage sckMessage=null;
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        writeTheStream(sckMessage);
-    }
-
-    @Override
-    public void updateResourceCard1(PlayableCard card) throws RemoteException {
-        SCKMessage sckMessage=null;
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        writeTheStream(sckMessage);
-    }
-
-    @Override
-    public void updateResourceCard2(PlayableCard card) throws RemoteException {
-        SCKMessage sckMessage=null;
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        writeTheStream(sckMessage);
-    }
-
-    @Override
-    public void updateGoldCard1(PlayableCard card) throws RemoteException {
-        SCKMessage sckMessage=null;
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        writeTheStream(sckMessage);
-    }
-
-    @Override
-    public void updateGoldCard2(PlayableCard card) throws RemoteException {
-        SCKMessage sckMessage=null;
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        writeTheStream(sckMessage);
-    }
-
-    @Override
-    public void updateChat(Chat chat) throws RemoteException {
-        SCKMessage sckMessage=null;
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        writeTheStream(sckMessage);
-    }
-
-    @Override
-    public void updatePawns(Player player, Pawn pawn) throws RemoteException {
-        SCKMessage sckMessage=null;
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        writeTheStream(sckMessage);
-    }
-
-    @Override
-    public void updateNickname(Player player, String nickname) throws RemoteException {
-        SCKMessage sckMessage=null;
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        writeTheStream(sckMessage);
-    }
-
-    @Override
-    public void updateRound(Player newCurrentPlayer) throws RemoteException {
-        SCKMessage sckMessage=null;
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        writeTheStream(sckMessage);
-    }
-
-    @Override
-    public void updateGameState(Game game) throws RemoteException {
-        SCKMessage sckMessage=null;
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        writeTheStream(sckMessage);
-    }
-    //fine di update da cancellare
-
-    //end of methods to be implemented taken from ClientGeneralInterface
+    //end of methods to be implemented taken from ClientActionsInterface
 }
 
