@@ -46,13 +46,11 @@ public class ClientSCK implements ClientGeneralInterface{
     //ho rimosso eccezione ClassNotFound, non veniva mai lanciata secondo l'IDE
     /**
      * Constructor method
-     * @param address
-     * @param port
      * @throws IOException
      */
-    public ClientSCK(String address, int port) throws IOException { //we call this constructor after we ask the IP address and the port of the server
+    public ClientSCK() throws IOException { //we call this constructor after we ask the IP address and the port of the server
         Socket socket = new Socket();
-        socket.connect(new InetSocketAddress(address, port), 1000); //the address and the port of the server
+        socket.connect(new InetSocketAddress(Settings.SERVER_NAME, Settings.PORT), 1000); //the address and the port of the server
 
         //in this way the stream is converted into objects
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -403,6 +401,11 @@ public class ClientSCK implements ClientGeneralInterface{
     //fine update
 
     //end of implementation of ClientGeneralInterface
+
+    public static class Settings { //this is an attribute. (qui ci sono indirizzo e porta del server locale
+        static int PORT = 50000; // free ports: from 49152 to 65535, 1099 default port for RMI registry
+        static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
+    }
 }
 
 

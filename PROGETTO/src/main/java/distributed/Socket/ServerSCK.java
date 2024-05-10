@@ -26,6 +26,13 @@ public class ServerSCK extends UnicastRemoteObject {
         this.serverController=serverController;
     }
 
+    //costruttore per testare la prima versione TCP locale
+    public ServerSCK (ServerController serverController) throws RemoteException {
+        super();
+        this.port=Settings.PORT;
+        this.serverController=serverController;
+    }
+
     public void startServer() throws IOException { //when the input/output stream is terminated we have this IOException
         ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket;
@@ -48,6 +55,10 @@ public class ServerSCK extends UnicastRemoteObject {
     public static void main(String[] args) throws IOException {
         ServerSCK serverSCK = new ServerSCK(1234,null); //that is the port found in the slides
         serverSCK.startServer();
+    }
+    public static class Settings { //this is an attribute
+        static int PORT = 50000; // free ports: from 49152 to 65535, 1099 default port for RMI registry
+        static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
     }
 
 

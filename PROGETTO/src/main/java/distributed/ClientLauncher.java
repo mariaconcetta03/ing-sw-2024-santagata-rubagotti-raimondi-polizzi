@@ -34,7 +34,7 @@ public class ClientLauncher {
             }else if(selection>=3&&selection<=4){
                 selected=true;
                 try {
-                    ClientSCK clientSCK = new ClientSCK("address", 2); //li dobbiamo chiedere ?
+                    ClientSCK clientSCK = new ClientSCK(); //per TCP dobbiamo solo chiedere porte disponibili lato client
                     if(selection==3){
                         clientSCK.setSelectedView(1);
                     }else{
