@@ -49,7 +49,17 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
 
     }
 
-    public void askCardOrientation(){}
+    public void askCardOrientation(){
+    }
 
+    /**
+     * 🪶 feather
+     * 🫙 jar
+     * 📃 scroll
+     * 🍄 fungi
+     * 🦋 insect
+     * 🐺 animal
+     * 🌿 plant
+     */
 
 }

@@ -10,7 +10,7 @@ import org.model.*;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.List;
+import java.util.*;
 
 public interface ServerRMIInterface extends Remote {
     void startServer() throws RemoteException;
@@ -20,4 +20,6 @@ public interface ServerRMIInterface extends Remote {
     GameController addPlayerToLobby(String playerNickname, int gameId) throws RemoteException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException;
 
     void chooseNickname(String nickname) throws RemoteException, NicknameAlreadyTakenException;
+
+    Map<Integer, GameController> getAllGameControllers() throws RemoteException;
 }

@@ -15,7 +15,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
-
+import java.util.Map;
 
 
 public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface {
@@ -117,7 +117,10 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
         serverController.chooseNickname(nickname);
     }
 
-
+    @Override
+    public Map<Integer, GameController> getAllGameControllers() throws RemoteException {
+        return serverController.getAllGameControllers();
+    }
 
 
     /**
