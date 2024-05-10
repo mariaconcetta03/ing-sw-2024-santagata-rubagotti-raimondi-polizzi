@@ -45,7 +45,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
 
     private ClientSCK clientSCK= null; //this class writes what the client wants in the stream and it's local to the client
 
-    private final Thread threadCheckMSG;
+
 
     private final Thread threadCheckConnection;
     private final Object inputLock;
@@ -53,6 +53,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     private final ObjectInputStream input;
     private final ObjectOutputStream output;
     private GameController gameController;
+
+    private Boolean running; //it is initialized true, when becomes false the while in run and threadCheckConnection terminate.
+
 
     /**
      * Constructor method
@@ -70,38 +73,56 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
 
         this.inputLock = new Object();
 
+        this.running=true;
+
+        /*
+
+        //potremmo far fare questo lavoro al Thread principale (la run del thread principale se no si interrompe dopo il messaggio di START
+
         //this Thread is needed because some actions of the client can't be predicted and isolated in the question-response pattern
-        threadCheckMSG = new Thread(()-> {
+        threadCheckMSG = new Thread(()-> { //dopo il messaggio di START ricevuto dal client è questo thread che si occupa di leggere i messaggi
             synchronized (inputLock) {
-                while (!Thread.currentThread().isInterrupted()) {
+                while (!Thread.currentThread().isInterrupted()&&running) {
                         SCKMessage sckMessage = (SCKMessage) this.input.getObjectInputFilter(); //messaggi scritti dal Client vero
                         react(sckMessage);
                 }
             }
         },"CheckMSG"); //to be started when all the players are connected
 
+         */
+
         //to control the status of the connection (a player can leave the game without any advice)
         threadCheckConnection= new Thread(()-> {
-                while (!Thread.currentThread().isInterrupted()) { //we enter here every time this ClientHandlerThread is not interrupted by other ClientHandlerThread
+                while (!Thread.currentThread().isInterrupted()&&running) { //we enter here every time this ClientHandlerThread is not interrupted by other ClientHandlerThread
                     try {
                         output.writeObject(new PingMessage());
                         output.flush();
                         output.reset();
                     } catch (IOException e) {
+                        System.out.println(e.getMessage());
                     }
                     // here we set a timeout and then we check the response, if there is no response we declared the connection dead
                     // we set the timeout
                     // we check the response
                     try {
                         Timer t = new Timer();
-                        synchronized (inputLock) {
+                        synchronized (inputLock) { //non ci deve essere lo stesso lock anche a lato ClientSCK perchè ClientSCK scrive questo stream, ClientHandlerThread lo legge solo
                             t.wait(2000);
                             PingMessage pingMessage = (PingMessage) this.input.getObjectInputFilter();
                         }
                         } catch (InterruptedException e) { //no response-> we free the thread and we end the game
                         //Game.GameState.ENDED
-                        throw new RuntimeException(e);
+                        System.out.println(e.getMessage()); //per adesso lasciamo così poi va sostituito con qualcosa che avvisa tutti i giocatori che il gioco è terminato
+                        try { //devo fermare i thread lanciati all'interno di questo thread
+                            input.close();
+                            output.close();
+                            socket.close(); //the ClientSCK will receive an exception
+                            running=false;
+                            this.gameController.leaveGame(nickname); //questo metodo prima di aggiornare gli altri giocatori dovrebbe togliere dalla lista di listeners quello che l'ha chiamato
+                        } catch (IOException ex) { //this catch is needed for the close statements
+                            throw new RuntimeException(ex);
                         }
+                    }
                 }
 
         },"CheckConnection"); //to be started when a Game is created (when we receive START from ClientSCK)
@@ -112,8 +133,8 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
 
       /*
             // alla fine devo chiudere gli stream e il socket
-            in.close();
-            out.close();
+            input.close();
+            output.close();
             socket.close();
         } catch (IOException e) {  //bisogna notificare se è andato tutto a buon fine?
             System.err.println(e.getMessage());
@@ -124,16 +145,12 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
 
 
     //when a Thread starts, run is automatically called
-    public void run() { //ci sono altre cose da aggiungere tipo chiamare i metodi della ClientGeneralInterface in base al messaggio ricevuto
+    public void run() { //questo metodo viene chiamato in automatico quando si fa submit alla thread pool. Lo uso per fare start dei thread interni a questo ClientHandlerThread
         try {
-            while (!Thread.currentThread().isInterrupted()) { //questo while dovrebbe servere nel caso in cui non vogliamo che il Thread venga interrotto mentre fa quello dentro il while
+            while (!Thread.currentThread().isInterrupted()&&running) { //questo while dovrebbe servere nel caso in cui non vogliamo che il Thread venga interrotto mentre fa quello dentro il while
                 synchronized (inputLock) { //we use the inputLock to write the stream not simultaneously
-                    SCKMessage message = (SCKMessage) this.input.readObject(); //here we write the messages received before START (when we meet START, ThreadCheckMSG would continue to read the other messages)
-                    Object obj = null;
-                    if (message.getMessageEvent() == Event.START) { //from this moment the client can start sending msg to the server (they would be read by ThreadCheckMSG)
-                            threadCheckMSG.start(); // we start to read the msg sent by ClientSCK
-                            threadCheckConnection.start(); // we start to check if the ClientSCK is still connected
-                    }
+                    SCKMessage sckMessage = (SCKMessage) this.input.getObjectInputFilter(); //messaggi scritti dal Client vero
+                    react(sckMessage);
                 }
             }
         } catch (Exception e) {
@@ -144,6 +161,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     private void react(SCKMessage sckMessage){ //qui in base al messaggio letto chiamiamo il giusto metodo della ClientGeneralInterface
         //legge il messaggio e fa qualcosa (si può prendere spunto dalla run commentata che leggeva testo dagli stream)
         switch (sckMessage.getMessageEvent()) {
+            case START -> { //this message is sent by ClientSCK in response to ALL_CONNECTED (sent by the server)
+                threadCheckConnection.start(); // we start to check if the ClientSCK is still connected
+            }
             case ADD_PLAYER_TO_LOBBY->{
                 try {
                     addPlayerToLobby((String) sckMessage.getObj().get(0), (Integer) sckMessage.getObj().get(1));
@@ -210,6 +230,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             case LEAVE_GAME->{
                 try {
                     leaveGame((String) sckMessage.getObj().get(0));
+                    //running=false;
                 }catch (Exception e){
 
                 }
@@ -224,6 +245,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     @Override
     public void update(Observable obs, Message arg) { //here we call writeTheStream (the switch case is already in ClientSCK)
         //writeTheStream(message);
+        writeTheStream(new SCKMessage(arg.getObj(),arg.getMessageEvent())); //qui dobbiamo vedere se far diventare Message e SCKMessage la stessa cosa
     }
 
     @Override
@@ -268,7 +290,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
         this.gameController=serverController.addPlayerToLobby(playerNickname, gameId);
-        writeTheStream(sckMessage);
+        writeTheStream(sckMessage); //ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
     }
 
 
@@ -284,7 +306,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
         serverController.chooseNickname(nickname);
-        writeTheStream(sckMessage);
+        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
     }
 
 
@@ -300,7 +322,8 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
         this.gameController=serverController.startLobby(creatorNickname, numOfPlayers);
-        writeTheStream(sckMessage);
+        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
+        //probabilmente questo messaggio ci serve per rendere TCP sincrono come RMI (il client aspetta che gli venga detto è andato tutto a buon fine)
     }
 
     @Override
@@ -308,7 +331,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
         this.gameController.playCard(nickname, selectedCard, position, orientation);
-        writeTheStream(sckMessage);
+        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
     }
 
     @Override
@@ -316,7 +339,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
         this.gameController.playBaseCard(nickname, baseCard, orientation);
-        writeTheStream(sckMessage);
+        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
     }
 
     @Override
@@ -324,7 +347,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
         this.gameController.drawCard(nickname, selectedCard);
-        writeTheStream(sckMessage);
+        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
     }
 
     @Override
@@ -332,7 +355,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
         this.gameController.chooseObjectiveCard(chooserNickname, selectedCard);
-        writeTheStream(sckMessage);
+        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
     }
 
     @Override
@@ -340,7 +363,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
         this.gameController.choosePawnColor(chooserNickname, selectedColor);
-        writeTheStream(sckMessage);
+        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
     }
 
 
@@ -350,15 +373,23 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
         this.gameController.sendMessage(senderNickname, receiversNickname, message);
-        writeTheStream(sckMessage);
+        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
     }
 
     @Override
     public void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException {
         SCKMessage sckMessage=null;
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        this.gameController.leaveGame(nickname);
-        writeTheStream(sckMessage);
+        this.gameController.leaveGame(nickname);  //questo metodo prima di aggiornare gli altri giocatori dovrebbe togliere dalla lista di listeners quello che l'ha chiamato
+        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
+        running=false; //così mi si fermano i thread interni
+        try {
+            input.close();
+            output.close();
+            socket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

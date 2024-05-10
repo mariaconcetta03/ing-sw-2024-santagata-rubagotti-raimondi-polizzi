@@ -21,14 +21,12 @@ public class ServerSCK extends UnicastRemoteObject {
     private final ServerController serverController;
 
     public ServerSCK (int port,ServerController serverController) throws RemoteException {
-        super();
         this.port = port; //we can ask the virtual machine which port is available
         this.serverController=serverController;
     }
 
     //costruttore per testare la prima versione TCP locale
     public ServerSCK (ServerController serverController) throws RemoteException {
-        super();
         this.port=Settings.PORT;
         this.serverController=serverController;
     }
@@ -37,25 +35,30 @@ public class ServerSCK extends UnicastRemoteObject {
         ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket;
         try {
-            serverSocket = new ServerSocket(port);
+            serverSocket = new ServerSocket(port); //This port number can then be retrieved by calling getLocalPort
         } catch (IOException e) {
             System.err.println(e.getMessage()); // Porta non disponibile
             return;
         }
         System.out.println("Server ready");
+        //The maximum queue length for incoming connection indications (a request to connect) is set to 50.
+        //If a connection indication arrives when the queue is full, the connection is refused
         while (true) {
             Socket client = serverSocket.accept(); //accept() returns the client just accepted
-            //if we create a constructor of ClientHandlerThread by which we pass the serverSocket then the thread can send messages to the server
+            //serverController will be called only by ClientHandlerThread
             executor.submit(new ClientHandlerThread(client,serverController)); //we also pass a pointer to the server
             //when a Thread starts it's called its method run
         }
     }
-    //we can add a method receiveMessage by which the ClientHandlerThread can send messages to the server (if we give the thread the server address as a parameter of the constructor)
 
-    public static void main(String[] args) throws IOException {
-        ServerSCK serverSCK = new ServerSCK(1234,null); //that is the port found in the slides
-        serverSCK.startServer();
-    }
+
+    //il main è da cancellare perchè il serverSCK viene fatto partire dalla classe Server che gli passa anche il serverController
+    //public static void main(String[] args) throws IOException {
+    //    ServerSCK serverSCK = new ServerSCK(serverController);
+    //    serverSCK.startServer();
+    //}
+
+
     public static class Settings { //this is an attribute
         static int PORT = 50000; // free ports: from 49152 to 65535, 1099 default port for RMI registry
         static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
