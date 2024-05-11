@@ -137,6 +137,16 @@ public class ServerController implements Serializable {
         return allGameControllers;
     }
 
+    public Set<Integer> getAvailableGameControllersId() throws RemoteException{
+        Set<Integer> tmp= new HashSet<>();
+        for(Integer i: allGameControllers.keySet()){
+            if(allGameControllers.get(i).getGame()==null){
+                tmp.add(i);
+            }
+        }
+        return tmp;
+    }
+
 
     /**
      * Getter method

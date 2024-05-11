@@ -4,6 +4,7 @@ import Exceptions.DeckIsFinishedException;
 import distributed.messages.Message;
 import utils.Event;
 import utils.Observable;
+import utils.Observer;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -57,6 +58,7 @@ public class Game extends Observable implements Serializable {
      * @param id each game has a different id
      */
     public Game (List<Player> gamePlayers, int id) {
+        super();
         this.id = id;
         this.players = gamePlayers;
         this.nPlayers=gamePlayers.size();
@@ -132,17 +134,23 @@ public class Game extends Observable implements Serializable {
             throw new IllegalArgumentException("Incorrect number of players");}
 
         // setting the state of the game to STARTED
-        this.state = GameState.STARTED;
+        setState(GameState.STARTED);
 
         // shuffling the resource deck and giving 2 cards to the market
         this.resourceDeck.shuffleDeck();
         this.resourceCard1 = this.resourceDeck.getFirstCard();
+        notifyObservers(new Message(resourceCard1, Event.UPDATED_RESOURCE_CARD_1));
         this.resourceCard2 = this.resourceDeck.getFirstCard();
+        notifyObservers(new Message(resourceCard2, Event.UPDATED_RESOURCE_CARD_2));
+
 
         // shuffling the gold deck and giving 2 cards to the market
         this.goldDeck.shuffleDeck();
         this.goldCard1 = this.goldDeck.getFirstCard();
+        notifyObservers(new Message(goldCard1, Event.UPDATED_GOLD_CARD_1));
         this.goldCard2 = this.goldDeck.getFirstCard();
+        notifyObservers(new Message(goldCard2, Event.UPDATED_GOLD_CARD_2));
+
 
         // shuffling the base deck and each player draws a starter card (base card)
         this.baseDeck.shuffleDeck();
@@ -195,6 +203,9 @@ public class Game extends Observable implements Serializable {
         }
         this.players = newOrder;
         players.get(0).setState(Player.PlayerState.IS_PLAYING);
+
+
+
         notifyObservers(new Message(null, Event.SETUP_PHASE_1));
     }
 
@@ -665,6 +676,9 @@ public class Game extends Observable implements Serializable {
      */
     public void setLastEvent(Event lastEvent) {
         this.lastEvent = lastEvent;
+        try {
+            notifyObservers(new Message(null, this.lastEvent));
+        }catch (RemoteException e){}
     }
 
 }

@@ -1,17 +1,32 @@
 package controller;
 import Exceptions.CardNotDrawableException;
 import Exceptions.CardNotOwnedException;
+import distributed.RMI.ClientRMIInterface;
+import distributed.RMI.GameControllerInterface;
+import distributed.RMI.RMIClient;
+import distributed.RMI.WrappedObserver;
+import distributed.messages.Message;
 import org.model.*;
 import utils.Event;
 
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.sql.Timestamp;
 import java.util.*;
 import utils.Observer;
 
-public class GameController implements Remote, Serializable {
+public class GameController extends UnicastRemoteObject implements GameControllerInterface {
+
+    private int check;
+    public void setCheck(int check){
+        this.check=check;
+    }
+    public int getCheck(){
+        return this.check;
+    }
+
     private ServerController serverController;
     private Game game;
     private int lastRounds;
@@ -25,7 +40,8 @@ public class GameController implements Remote, Serializable {
     /**
      * Class constructor, initialises lastRounds and lastDrawingRounds to 10
      */
-    public GameController(){
+    public GameController() throws RemoteException {
+        super();
         game=null;
         serverController=null;
         lastRounds=10;
@@ -446,6 +462,17 @@ public class GameController implements Remote, Serializable {
     public void addClient(Observer client){
         if(!clientsConnected.contains(client)){
             clientsConnected.add(client);
+        }
+    }
+
+    /**
+     * This method is called remotely by the RMIClient when he asks to create a Lobby or join a Lobby
+     * @param ro is the client who is joining the game
+     */
+    public void addRMIClient(ClientRMIInterface ro){
+        WrappedObserver wrapObs= new WrappedObserver(ro);
+        if(!clientsConnected.contains(wrapObs)){
+            clientsConnected.add(wrapObs);
         }
     }
 }

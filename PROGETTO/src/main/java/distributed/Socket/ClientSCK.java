@@ -33,6 +33,7 @@ import view.TUI.InterfaceTUI;
  */
 public class ClientSCK implements ClientGeneralInterface{
     private final Socket socket;
+    private Player personalPlayer;
     private int selectedView;
     private InterfaceTUI tuiView;
     //private InterfaceGUI guiView;
@@ -54,6 +55,8 @@ public class ClientSCK implements ClientGeneralInterface{
     public ClientSCK() throws IOException { //we call this constructor after we ask the IP address and the port of the server
         this.socket = new Socket();
         this.socket.connect(new InetSocketAddress(Settings.SERVER_NAME, Settings.PORT), 1000); //the address and the port of the server
+
+        personalPlayer=new Player();
 
         //in this way the stream is converted into objects
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
@@ -230,8 +233,29 @@ public class ClientSCK implements ClientGeneralInterface{
      * his nickname and to choose if he wants to join an already started Game or create a new one.
      */
     public void waitingRoom() {
+        Scanner sc= new Scanner(System.in);
+        boolean ok=false;
+        int errorCounter=0;
         if (selectedView == 1) {
             tuiView = new InterfaceTUI();
+            while(!ok){
+                if(errorCounter==3){
+                    System.out.println("Unable to communicate with the server! Shutting down.");
+                    System.exit(-1);
+                }
+                String nickname = tuiView.askNickname();
+                try {
+                   this.chooseNickname(nickname);
+                    personalPlayer.setNickname(nickname);
+                    ok=true;
+                } catch (RemoteException | NotBoundException e) {
+                    errorCounter++;
+                    System.out.println();
+                } catch (NicknameAlreadyTakenException ex) {
+                    System.out.println("Nickname is already taken! Please try again.");
+                }
+            }
+            System.out.println("Nickname correctly selected!");
         } else {
             //guiView= new InterfaceGUI();
         }

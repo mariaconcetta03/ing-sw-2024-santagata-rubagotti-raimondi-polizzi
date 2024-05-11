@@ -16,6 +16,8 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import java.util.Map;
+import java.util.Observer;
+import java.util.Set;
 
 
 public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface {
@@ -31,7 +33,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @param serverController
      * @throws RemoteException
      */
-    RMIServer(ServerController serverController) throws RemoteException {
+    public RMIServer(ServerController serverController) throws RemoteException {
         this.serverController = serverController;
     }
 
@@ -70,7 +72,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
         catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("Server ready"); // OK
+        System.out.println("RMI Server ready"); // OK
     }
 
 
@@ -83,7 +85,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @throws RemoteException
      * @return serverController.addPlayerToLobby(player, gameId) is the game controller of the match
      */
-    public GameController createLobby (String creatorNickname, int numOfPlayers) throws RemoteException {
+    public GameControllerInterface createLobby (String creatorNickname, int numOfPlayers) throws RemoteException {
         return serverController.startLobby(creatorNickname, numOfPlayers);
     }
 
@@ -100,7 +102,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * @throws GameNotExistsException
      * @return serverController.addPlayerToLobby(player, gameId) is the game controller of the match
      */
-    public GameController addPlayerToLobby (String playerNickname, int gameId) throws RemoteException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
+    public GameControllerInterface addPlayerToLobby (String playerNickname, int gameId) throws RemoteException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
         return serverController.addPlayerToLobby(playerNickname, gameId);
     }
 
@@ -122,6 +124,18 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
         return serverController.getAllGameControllers();
     }
 
+    @Override
+    public Set<Integer> getAvailableGameControllersId() throws RemoteException {
+        return serverController.getAvailableGameControllersId();
+    }
+
+    /**
+    @Override
+    public void addLobbyClient(RMIClient client) throws RemoteException {
+        WrappedObserver wrapObs= new WrappedObserver(client);
+        serverController.addLobbyClient((Observer) wrapObs);
+    }
+    */
 
     /**
      * Settings class

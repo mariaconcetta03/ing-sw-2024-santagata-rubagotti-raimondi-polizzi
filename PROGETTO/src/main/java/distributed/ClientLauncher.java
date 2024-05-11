@@ -40,17 +40,18 @@ public class ClientLauncher {
                     }else{
                         clientSCK.setSelectedView(2);
                     }
+                    clientSCK.waitingRoom();
                     //connect the client
                 }catch(IOException e){
                     System.out.println("Cannot connect to Server. Shutting down. Try again.");
                     System.exit(-1);
                 } //non so se vadano gestite in altra maniera, potremmo chiudere tutto e riprovare
             }else{
-                System.out.println("Please type 1 (TCP+TUI), 2 (TCP+GUI), 3 (RMI+TUI), 4 (RMI+GUI)");
+                System.out.println("Please type 1 (RMI+TUI), 2 (RMI+GUI), 3 (TCP+TUI), 4 (TCP+GUI)");
             }
             }catch (InputMismatchException e){
                 sc.next();
-                System.out.println("Please type 1 (TCP+TUI), 2 (TCP+GUI), 3 (RMI+TUI), 4 (RMI+GUI)");
+                System.out.println("Please type 1 (RMI+TUI), 2 (RMI+GUI), 3 (TCP+TUI), 4 (TCP+GUI)");
             }
         }while(!selected);
     }

@@ -13,6 +13,7 @@ import view.TUI.ANSIFormatter;
 import view.TUI.InterfaceTUI;
 
 import java.rmi.NotBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -32,10 +33,10 @@ import java.util.*;
 
 
 
-public class RMIClient extends UnicastRemoteObject implements ClientGeneralInterface {
+public class RMIClient extends UnicastRemoteObject implements ClientGeneralInterface, ClientRMIInterface {
     private ServerRMIInterface SRMIInterface; //following the slides' instructions
 
-    private GameController gameController = null;
+    private GameControllerInterface gameController = null;
     // given to the client when the game is started (lobby created or player joined to a lobby))
 
     private int selectedView; // 1==TUI, 2==GUI
@@ -51,7 +52,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private Player personalPlayer;
     private List<Player> playersInTheGame;
     private ObjectiveCard commonObjective1, commonObjective2;
-
+    private int check=0;
 
     /**
      * Class constructor
@@ -142,6 +143,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public void createLobby(String creatorNickname, int numOfPlayers) throws RemoteException, NotBoundException { //exceptions added automatically
         SRMIInterfaceFromRegistry();
         this.gameController = this.SRMIInterface.createLobby(creatorNickname, numOfPlayers);
+
+        ClientRMIInterface client = this;
+        gameController.addRMIClient(client);
+
     }
 
 
@@ -159,6 +164,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public void addPlayerToLobby (String playerNickname, int gameId) throws RemoteException, NotBoundException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
         SRMIInterfaceFromRegistry();
         this.gameController = this.SRMIInterface.addPlayerToLobby(playerNickname, gameId);
+        ClientRMIInterface client = this;
+        gameController.addRMIClient(client);
     }
 
 
@@ -305,15 +312,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             }
             System.out.println("Nickname correctly selected!");
             try {
-                    List<Integer> idAvailableLobby= new ArrayList<>();
-                    for (Integer i : SRMIInterface.getAllGameControllers().keySet()){
-                        if(SRMIInterface.getAllGameControllers().get(i).getGame()==null){
-                            idAvailableLobby.add(i);
-                        }
-                    }
-                    if(!idAvailableLobby.isEmpty()) {
+
+                    if(!SRMIInterface.getAvailableGameControllersId().isEmpty()) {
                         System.out.println("If you want you can join an already created lobby. These are the ones available:");
-                        for (Integer i : idAvailableLobby) {
+                        for (Integer i : SRMIInterface.getAvailableGameControllersId()) {
                                 System.out.println(i + " ");
                             }
                     }else{
@@ -331,10 +333,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 gameSelection=sc.nextInt();
                     createLobby(personalPlayer.getNickname(), gameSelection);
                     System.out.println("Successfully created a new lobby with id: "+gameController.getId());
+                    System.out.println("Insert check value: ");
+                    gameController.setCheck(sc.nextInt());
             }else if (SRMIInterface.getAllGameControllers().containsKey(gameSelection)){
                 try {
                     addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
                     System.out.println("Successfully joined the lobby with id: "+gameController.getId());
+                    System.out.println(gameController.getCheck());
                 }catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException e){
                     System.out.println(ANSIFormatter.ANSI_RED+"The game you want to join is inaccessible, try again"+ANSIFormatter.ANSI_RESET);
                 } //counter
@@ -362,10 +367,15 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public void updateBoard (Board board) throws RemoteException {
         personalPlayer.setBoard(board);
         if (selectedView == 1) {
-            //tuiView.showBoard(board)
+            System.out.println("I received the update.");
         } else if (selectedView == 2) {
             //guiView.showBoard(board)
         }
+    }
+
+    public void update() throws RemoteException{
+        check=10;
+        System.out.println("OOOOOOOOOOOOOOOOOOOOO");
     }
 
 
@@ -377,7 +387,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public void updateResourceDeck (PlayableDeck resourceDeck) throws RemoteException {
         this.resourceDeck=resourceDeck;
         if (selectedView == 1) {
-            //tuiView.showResourceDeck (resourceDeck) ?
+            System.out.println("I received the update.");
         } else if (selectedView == 2) {
             //guiView.showUpdatedResourceDeck(this.resourceDeck)
         }
@@ -391,7 +401,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public void updateGoldDeck (PlayableDeck goldDeck) throws RemoteException {
         if (selectedView == 1) {
-            //tuiView.updateGoldDeck(goldDeck)
+            System.out.println("I received the update.");
         } else if (selectedView == 2) {
             //guiView.updateGoldDeck(goldDeck)
         }
@@ -411,7 +421,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             }
         }
         if (selectedView == 1) {
-            //tuiView.updatePlayerDeck(player, playerDeck)
+            System.out.println("I received the update.");
         } else if (selectedView == 2) {
             //guiView.updatePlayerDeck(player, playerDeck)
         }
@@ -425,7 +435,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public void updateResourceCard1(PlayableCard card) throws RemoteException {
         if (selectedView == 1) {
-            //tuiView.updateResourceCard1(card)
+            System.out.println("I received the update.");
         } else if (selectedView == 2) {
             //guiView.updateResourceCard1(card)
         }
@@ -439,7 +449,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
    public void updateResourceCard2(PlayableCard card) throws RemoteException {
         if (selectedView == 1) {
-            //tuiView.updateResourceCard2(card)
+            System.out.println("I received the update.");
         } else if (selectedView == 2) {
             //guiView.updateResourceCard2(card)
         }
@@ -453,7 +463,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public void updateGoldCard1(PlayableCard card) throws RemoteException {
         if (selectedView == 1) {
-            //tuiView.updateGoldCard1(card)
+            System.out.println("I received the update.");
         } else if (selectedView == 2) {
             //guiView.updateGoldCard1(card)
         }
@@ -467,7 +477,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public void updateGoldCard2(PlayableCard card) throws RemoteException {
         if (selectedView == 1) {
-            //tuiView.updateGoldCard2(card)
+            System.out.println("I received the update.");
         } else if (selectedView == 2) {
             //guiView.updateGoldCard2(card)
         }
@@ -481,7 +491,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public void updateChat(Chat chat) throws RemoteException {
         if (selectedView == 1) {
-            //tuiView.updateChat(chat)
+            System.out.println("I received the update.");
         } else if (selectedView == 2) {
             //guiView.updateChat(chat)
         }
@@ -496,7 +506,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public void updatePawns(Player player, Pawn pawn) throws RemoteException {
         if (selectedView == 1) {
-            //tuiView.updatePawns(player, pawn)
+            System.out.println("I received the update.");
         } else if (selectedView == 2) {
             //guiView.updatePawns(player, pawn)
         }
@@ -511,7 +521,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public void updateNickname(Player player, String nickname) throws RemoteException {
         if (selectedView == 1) {
-            //tuiView.updateNickname(player, nickname)
+            System.out.println("I received the update.");
         } else if (selectedView == 2) {
             //guiView.updateNickname(player, nickname)
         }
@@ -525,7 +535,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public void updateRound(Player newCurrentPlayer) throws RemoteException {
         if (selectedView == 1) {
-            //tuiView.updateRound(newCurrentPlayer)
+            System.out.println("I received the update.");
         } else if (selectedView == 2) {
             //guiView.updateRound(newCurrentPlayer)
         }
@@ -539,7 +549,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public void updateGameState(Game game) throws RemoteException {
         if (selectedView == 1) {
-            //tuiView.updateGameState(game)
+            System.out.println("The game has started!");
         } else if (selectedView == 2) {
             //guiView.updateGameState(game)
         }

@@ -13,7 +13,7 @@ import java.rmi.RemoteException;
  * This class represents a CLIENT as an OBSERVER
  */
 public class WrappedObserver implements Observer {
-    private RMIClient remoteClient;
+    private ClientRMIInterface remoteClient;
     private String nickname;
 
 
@@ -30,7 +30,7 @@ public class WrappedObserver implements Observer {
      * Class constructor
      * @param ro the RMIClient
      */
-    public WrappedObserver(RMIClient ro) {
+    public WrappedObserver(ClientRMIInterface ro) {
         remoteClient = ro;
     }
 
@@ -52,13 +52,13 @@ public class WrappedObserver implements Observer {
                 break;
             case UPDATED_PLAYER_DECK: remoteClient.updatePlayerDeck((Player)(arg.getObj().get(0)), (PlayableCard[])(arg.getObj().get(1)));
                 break;
-            case UPDATED_RESOURCE_CARD_1: remoteClient.updateResourceCard1((PlayableCard)(arg.getObj()));
+            case UPDATED_RESOURCE_CARD_1: remoteClient.updateResourceCard1((PlayableCard)(arg.getObj()).get(0));
                 break;
-            case UPDATED_RESOURCE_CARD_2: remoteClient.updateResourceCard2((PlayableCard)(arg.getObj()));
+            case UPDATED_RESOURCE_CARD_2: remoteClient.updateResourceCard2((PlayableCard)(arg.getObj()).get(0));
                 break;
-            case UPDATED_GOLD_CARD_1: remoteClient.updateGoldCard1((PlayableCard)(arg.getObj()));
+            case UPDATED_GOLD_CARD_1: remoteClient.updateGoldCard1((PlayableCard)(arg.getObj()).get(0));
                 break;
-            case UPDATED_GOLD_CARD_2: remoteClient.updateGoldCard2((PlayableCard)(arg.getObj()));
+            case UPDATED_GOLD_CARD_2: remoteClient.updateGoldCard2((PlayableCard)(arg.getObj()).get(0));
                 break;
             case UPDATED_CHAT: remoteClient.updateChat((Chat) (arg.getObj()));
                 break;
@@ -70,10 +70,14 @@ public class WrappedObserver implements Observer {
                 break;
             case GAME_STATE_CHANGED: remoteClient.updateGameState((Game)(arg.getObj()));
                 break;
-            case SETUP_PHASE_1, SETUP_PHASE_2: remoteClient.updatePlayerDeck((Player)(arg.getObj().get(0)), (PlayableCard[])(arg.getObj().get(1)));
-                break;
+            //case SETUP_PHASE_1:
+            //    break;
+
+                    //SETUP_PHASE_2: remoteClient.updatePlayerDeck((Player)(arg.getObj().get(0)), (PlayableCard[])(arg.getObj().get(1)));
+               // break;
+
                 // SETUP PHASE 1 E 2: potremmo forse evitare di metterli e fare l'update del mazzo appena viene pescata la carta?
-            default: throw new IllegalStateException("Unexpected message event: " + arg.getMessageEvent().toString());
+            //default: throw new IllegalStateException("Unexpected message event: " + arg.getMessageEvent().toString());
         }
     }
 

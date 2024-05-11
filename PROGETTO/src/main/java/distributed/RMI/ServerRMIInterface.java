@@ -15,11 +15,13 @@ import java.util.*;
 public interface ServerRMIInterface extends Remote {
     void startServer() throws RemoteException;
 
-    GameController createLobby(String creatorNickname, int numOfPlayers) throws RemoteException;
+    GameControllerInterface createLobby(String creatorNickname, int numOfPlayers) throws RemoteException;
 
-    GameController addPlayerToLobby(String playerNickname, int gameId) throws RemoteException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException;
+    GameControllerInterface addPlayerToLobby(String playerNickname, int gameId) throws RemoteException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException;
 
     void chooseNickname(String nickname) throws RemoteException, NicknameAlreadyTakenException;
 
     Map<Integer, GameController> getAllGameControllers() throws RemoteException;
+    //void addLobbyClient(RMIClient client) throws RemoteException;
+    Set<Integer> getAvailableGameControllersId() throws RemoteException;
 }
