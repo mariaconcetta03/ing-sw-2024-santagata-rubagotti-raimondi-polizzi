@@ -229,6 +229,11 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
 
     //methods to be implemented to have a class that implements Observer: (invece in RMI avremo una classe intermedia la WrappedObserver che implementerà Observer)
 
+
+    // quando il Game viene creato sarebbe meglio avere un update specifico nella classe Observer per non dover aspettare il messaggio di START del
+    // client per far partire il thread che controlla la connessione (il Client nel frattempo potrebbe essersi sconnesso), in questo modo iniziamo
+    // subito a controllare la connessione e se il client in fase di lobby si è disconnesso ce ne accorgiamo.
+    // questo update specifico andrebbe a far partire il thread check connection poco prima di avvisare il client che la partita è iniziata (con un messaggio)
     @Override
     public void update(Observable obs, Message arg) { //here we call writeTheStream (the switch case is already in ClientSCK)
         //writeTheStream(message);
@@ -283,6 +288,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         //probabilmente questo messaggio ci serve per rendere TCP sincrono come RMI (il client aspetta che gli venga detto è andato tutto a buon fine)
         try {
             this.gameController=serverController.addPlayerToLobby(playerNickname, gameId);
+            setNickname(playerNickname); //we have an attribute nickname in this class (we are implementing Observer)
             writeTheStream(new SCKMessage(null,Event.OK)); //ci serve il messaggio per dire al ClientSCK il server ha fatto quello che hai chiesto (lo blocchiamo fino a quel momento)
         }catch (RemoteException e){
             System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
@@ -309,6 +315,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
         try {
             serverController.chooseNickname(nickname);
+            setNickname(nickname); //we have an attribute nickname in this class (we are implementing Observer)
             writeTheStream(new SCKMessage(null,Event.OK)); //ci serve il messaggio per dire al ClientSCK il server ha fatto quello che hai chiesto (lo blocchiamo fino a quel momento)
         }catch (RemoteException e){
             System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
@@ -330,16 +337,19 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
         try {
             this.gameController=serverController.startLobby(creatorNickname, numOfPlayers);
+            setNickname(creatorNickname); //we have an attribute nickname in this class (we are implementing Observer)
             writeTheStream(new SCKMessage(null,Event.OK));
         }catch (RemoteException e){
             System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
         }
     }
 
+
+    //quando potrà venir chiamato questo metodo il nickname sarà già settato in questa classe (al posto di riceverlo possiamo prendere quello già salvato qui)
     @Override
     public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) {
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        try {
+        try { //possiamo prendere nickname dagli attributi della classe al posto che dai parametri
             this.gameController.playCard(nickname, selectedCard, position, orientation);
             writeTheStream(new SCKMessage(null,Event.OK));
         }catch (RemoteException e){

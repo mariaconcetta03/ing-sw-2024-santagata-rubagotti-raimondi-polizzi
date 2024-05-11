@@ -32,6 +32,7 @@ import view.TUI.InterfaceTUI;
  * through the socket to be processed
  */
 public class ClientSCK implements ClientGeneralInterface{
+    private final Socket socket;
     private int selectedView;
     private InterfaceTUI tuiView;
     //private InterfaceGUI guiView;
@@ -39,44 +40,58 @@ public class ClientSCK implements ClientGeneralInterface{
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
     private final Thread threadCheckConnection;
-    private Player player;
+    private Player player; //the nickname is saved somewhere
     private List<Player> playersInTheGame;
     private ObjectiveCard commonObjective1, commonObjective2;
 
-    //ho rimosso eccezione ClassNotFound, non veniva mai lanciata secondo l'IDE
+    private Boolean running; //it is initialized true, when becomes false threadCheckConnection has to terminate.
+    private Boolean okReceived;
+    private Object actionLock;
     /**
      * Constructor method
      * @throws IOException
      */
     public ClientSCK() throws IOException { //we call this constructor after we ask the IP address and the port of the server
-        Socket socket = new Socket();
-        socket.connect(new InetSocketAddress(Settings.SERVER_NAME, Settings.PORT), 1000); //the address and the port of the server
+        this.socket = new Socket();
+        this.socket.connect(new InetSocketAddress(Settings.SERVER_NAME, Settings.PORT), 1000); //the address and the port of the server
 
         //in this way the stream is converted into objects
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
         this.inputStream = new ObjectInputStream(socket.getInputStream()); //what ClientHandlerThread writes in its socket's output stream ends up here
 
+        this.running=true;
+        this.okReceived=true; //initialized true to enter the first ClientGeneralInterface method without any problem
+        this.actionLock=new Object();
         //to control the status of the connection (a player can leave the game without any advice)
         threadCheckConnection= new Thread(()-> { //ci serve qualcosa su cui fare la syn?
-            try { //dobbiamo usare il filter?? per leggere il PingMessage
-                PingMessage pingMessage = (PingMessage) this.inputStream.readObject(); //we receive 'ARE_YOU_STILL_CONNECTED'
-                outputStream.writeObject(new PingMessage());
-                outputStream.flush();
-                outputStream.reset();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+            while (!Thread.currentThread().isInterrupted()&&running) {
+                PingMessage pingMessage = (PingMessage) this.inputStream.getObjectInputFilter(); //we receive 'ARE_YOU_STILL_CONNECTED'
+                try {
+                    outputStream.writeObject(new PingMessage());
+                    outputStream.flush();
+                    outputStream.reset();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
+
         },"CheckConnection"); //to be started when a Game is created (when we receive the msg ALL_CONNNECTED)
 
 
 
-        while (true) {
+        while (running) {
             try {
-                SCKMessage sckMessage = (SCKMessage) this.inputStream.readObject(); //così non abbiamo più bisogno della funzione receiveMessage
+                SCKMessage sckMessage = (SCKMessage) this.inputStream.getObjectInputFilter(); //così non abbiamo più bisogno della funzione receiveMessage
                 modifyClientSide(sckMessage); //questo è bloccante-> meglio utilizzare un thread...a meno che non vogliamo fare una modifica alla volta
-            } catch (Exception e) {
+            } catch (Exception e) { //se il server si disconnette
+                try { //devo fermare i thread lanciati all'interno di questo thread
+                    inputStream.close();
+                    outputStream.close();
+                    socket.close();
+                    running=false;
+                } catch (IOException ex) { //this catch is needed for the close statements
+                    throw new RuntimeException(ex);
+                }
                 break; //se per esempio il flusso viene interrotto (dovrebbe venire lanciata un eccezione di Input/Output)
             }
 
@@ -101,6 +116,14 @@ public class ClientSCK implements ClientGeneralInterface{
             outputStream.flush();
             outputStream.reset();
         } catch (IOException e) {
+            try { //devo fermare i thread lanciati all'interno di questo thread
+                inputStream.close();
+                outputStream.close();
+                socket.close(); //the ClientSCK will receive an exception
+                running=false;
+            } catch (IOException ex) { //this catch is needed for the close statements
+                throw new RuntimeException(ex);
+            }
             System.err.println("Server not available!");
             System.exit(-1); //this is a shutdown of the VirtualMachine
         }
@@ -112,11 +135,6 @@ public class ClientSCK implements ClientGeneralInterface{
     //con questo update andiamo a modificare le cose locali al client
     public void modifyClientSide(SCKMessage sckMessage) throws IOException, ClassNotFoundException {
         switch (sckMessage.getMessageEvent()) {
-            case ALL_CONNECTED -> {
-                getModel(); //local copy of the model
-                sendMessage(new SCKMessage(null, Event.START)); //null is referred to the objects sent. 'START' to tell the server that this client is ready
-                threadCheckConnection.start(); //now if a player doesn't reply to a ping message the Game ends
-            }
             case UPDATED_BOARD -> {
                 //we have to change the view and the local model
                 updateBoard((Board) sckMessage.getObj().get(0));
@@ -167,11 +185,36 @@ public class ClientSCK implements ClientGeneralInterface{
             }
             case GAME_STATE_CHANGED->{
                 //we have to change the view and the local model
+                //quello che era prima il case ALL_CONNECTED diventa questo controllo
+                if(((Game) sckMessage.getObj().get(0)).getState().equals(Game.GameState.STARTED)){
+                    //getModel(); //to initialize the local copy of the model
+                    sendMessage(new SCKMessage(null, Event.START)); //null is referred to the objects sent. 'START' to tell the server that this client is ready
+                    threadCheckConnection.start(); //now if a player doesn't reply to a ping message the Game ends
+                }
+                else if(((Game) sckMessage.getObj().get(0)).getState().equals(Game.GameState.ENDED)){
+                    inputStream.close();
+                    outputStream.close();
+                    socket.close();
+                    running=false;
+                }
                 updateGameState((Game) sckMessage.getObj().get(0));
+            }
+            case OK -> { //...potremmo stampare anche il messaggio di ok....
+                this.okReceived=true; //in this way the client is free to do the next action
+            }
+            default -> { //qui ci finiscono tutti i messaggi di errore
+                //stampiamo l'errore e poi permettiamo al client di proseguire
+                System.out.println(sckMessage.getMessageEvent().toString());
+                this.okReceived=true;
+
             }
         }
     }
 
+    /*
+
+    //da rivedere quando si fa la view:
+    //chiamando questo metodo otteniamo una prima inizializzazione degli attributi locali al client che devono rispettare la struttura nel model lato server
     public void getModel() throws IOException, ClassNotFoundException {
         //sendMessage(new SCKMessage(Event.ASK_SERVER_MODEL, Event.GAME_BOARD)); il 1 parametro è una List di Object non evento!
         this.board = (Board) this.inputStream.getObjectInputFilter(); // we need a filter because we may obtain a SCKMessage instead of a Board
@@ -179,6 +222,8 @@ public class ClientSCK implements ClientGeneralInterface{
         this.playersInTheGame = (List<Player>) this.inputStream.getObjectInputFilter(); //da riguardare bene filter (è da usare anche per l'estrazione di SCKMessage?)
         // e altro.... come i goal comuni
     }
+
+     */
 
     /**
      * This method is called when the client is created. Absolves the function of helping the player to select
@@ -210,126 +255,221 @@ public class ClientSCK implements ClientGeneralInterface{
     }
 
 
-    //this class implements clientGeneralInterface
+    /*
+    //un modo per aspettare che un booleano cambi
+
+
+    private Boolean bool = true;
+    private final Object lock = new Object();
+
+    private Boolean getChange(){
+        synchronized(lock){
+            while (bool) {
+                bool.wait();
+            }
+        }
+        return bool;
+    }
+    public void setChange(){
+        synchronized(lock){
+            bool = false;
+            bool.notify();
+        }
+    }
+
+     */
+
+
+    //these classes implement clientGeneralInterface
     @Override
     public void addPlayerToLobby(String playerNickname, int gameId) throws RemoteException, NotBoundException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
-        List<Object> list=new ArrayList<>();
-        list.add(playerNickname);
-        list.add(gameId);
-        try {
-            sendMessage(new SCKMessage(list,Event.ADD_PLAYER_TO_LOBBY));
-        }catch (Exception e){
-            e.printStackTrace();
+        synchronized (actionLock) {
+            if (okReceived) { //qui sarebbe meglio mettere una wait che aspetta che okReceived diventi true
+                okReceived = false;
+                List<Object> list = new ArrayList<>();
+                list.add(playerNickname);
+                list.add(gameId);
+                try {
+                    sendMessage(new SCKMessage(list, Event.ADD_PLAYER_TO_LOBBY));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("the server is still doing the previous action");
+            }
         }
     }
 
     @Override
     public void chooseNickname(String nickname) throws RemoteException, NotBoundException, NicknameAlreadyTakenException {
-        List<Object> list=new ArrayList<>();
-        list.add(nickname);
-        try {
-            sendMessage(new SCKMessage(list,Event.CHOOSE_NICKNAME));
-        }catch (Exception e){
-            e.printStackTrace();
+        synchronized (actionLock) {
+            if (okReceived) {
+                okReceived = false;
+                List<Object> list=new ArrayList<>();
+                list.add(nickname);
+                try {
+                    sendMessage(new SCKMessage(list,Event.CHOOSE_NICKNAME));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("the server is still doing the previous action");
+            }
         }
     }
 
     @Override
     public void createLobby(String creatorNickname, int numOfPlayers) throws RemoteException, NotBoundException {
-        List<Object> list=new ArrayList<>();
-        list.add(creatorNickname);
-        list.add(numOfPlayers);
-        try {
-            sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
-        }catch (Exception e){
-            e.printStackTrace();
+        synchronized (actionLock) {
+            if (okReceived) {
+                okReceived = false;
+                List<Object> list=new ArrayList<>();
+                list.add(creatorNickname);
+                list.add(numOfPlayers);
+                try {
+                    sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("the server is still doing the previous action");
+            }
         }
     }
 
     @Override
     public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, NotBoundException {
-        List<Object> list=new ArrayList<>();
-        list.add(nickname);
-        list.add(selectedCard);
-        list.add(position);
-        list.add(orientation);
-        try {
-            sendMessage(new SCKMessage(list,Event.PLAY_CARD));
-        }catch (Exception e){
-            e.printStackTrace();
+        synchronized (actionLock) {
+            if (okReceived) {
+                okReceived = false;
+                List<Object> list=new ArrayList<>();
+                list.add(nickname);
+                list.add(selectedCard);
+                list.add(position);
+                list.add(orientation);
+                try {
+                    sendMessage(new SCKMessage(list,Event.PLAY_CARD));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("the server is still doing the previous action");
+            }
         }
     }
 
     @Override
     public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException, NotBoundException {
-        List<Object> list=new ArrayList<>();
-        list.add(nickname);
-        list.add(baseCard);
-        list.add(orientation);
-        try {
-            sendMessage(new SCKMessage(list,Event.PLAY_BASE_CARD));
-        }catch (Exception e){
-            e.printStackTrace();
+        synchronized (actionLock) {
+            if (okReceived) {
+                okReceived = false;
+                List<Object> list = new ArrayList<>();
+                list.add(nickname);
+                list.add(baseCard);
+                list.add(orientation);
+                try {
+                    sendMessage(new SCKMessage(list, Event.PLAY_BASE_CARD));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("the server is still doing the previous action");
+            }
         }
     }
 
     @Override
     public void drawCard(String nickname, PlayableCard selectedCard) throws RemoteException, NotBoundException {
-        List<Object> list=new ArrayList<>();
-        list.add(nickname);
-        list.add(selectedCard);
-        try {
-            sendMessage(new SCKMessage(list,Event.DRAW_CARD));
-        }catch (Exception e){
-            e.printStackTrace();
+        synchronized (actionLock) {
+            if (okReceived) {
+                okReceived = false;
+                List<Object> list=new ArrayList<>();
+                list.add(nickname);
+                list.add(selectedCard);
+                try {
+                    sendMessage(new SCKMessage(list,Event.DRAW_CARD));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("the server is still doing the previous action");
+            }
         }
     }
 
     @Override
     public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) throws RemoteException, NotBoundException {
-        List<Object> list=new ArrayList<>();
-        list.add(chooserNickname);
-        list.add(selectedCard);
-        try {
-            sendMessage(new SCKMessage(list,Event.CHOOSE_OBJECTIVE_CARD));
-        }catch (Exception e){
-            e.printStackTrace();
+        synchronized (actionLock) {
+            if (okReceived) {
+                okReceived = false;
+                List<Object> list=new ArrayList<>();
+                list.add(chooserNickname);
+                list.add(selectedCard);
+                try {
+                    sendMessage(new SCKMessage(list,Event.CHOOSE_OBJECTIVE_CARD));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("the server is still doing the previous action");
+            }
         }
     }
 
     @Override
     public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, NotBoundException {
-        List<Object> list=new ArrayList<>();
-        list.add(chooserNickname);
-        list.add(selectedColor);
-        try {
-            sendMessage(new SCKMessage(list,Event.CHOOSE_PAWN_COLOR));
-        }catch (Exception e){
-            e.printStackTrace();
+        synchronized (actionLock) {
+            if (okReceived) {
+                okReceived = false;
+                List<Object> list=new ArrayList<>();
+                list.add(chooserNickname);
+                list.add(selectedColor);
+                try {
+                    sendMessage(new SCKMessage(list,Event.CHOOSE_PAWN_COLOR));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("the server is still doing the previous action");
+            }
         }
     }
 
     @Override
     public void sendMessage(String senderNickname, List<String> receiversNickname, String message) throws RemoteException, NotBoundException {
-        List<Object> list=new ArrayList<>();
-        list.add(senderNickname);
-        list.add(receiversNickname);
-        list.add(message);
-        try {
-            sendMessage(new SCKMessage(list,Event.SEND_MESSAGE));
-        }catch (Exception e){
-            e.printStackTrace();
+        synchronized (actionLock) {
+            if (okReceived) {
+                okReceived = false;
+                List<Object> list=new ArrayList<>();
+                list.add(senderNickname);
+                list.add(receiversNickname);
+                list.add(message);
+                try {
+                    sendMessage(new SCKMessage(list,Event.SEND_MESSAGE));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("the server is still doing the previous action");
+            }
         }
     }
 
     @Override
     public void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException {
-        List<Object> list=new ArrayList<>();
-        list.add(nickname);
-        try {
-            sendMessage(new SCKMessage(list,Event.LEAVE_GAME));
-        }catch (Exception e){
-            e.printStackTrace();
+        synchronized (actionLock) {
+            if (okReceived) {
+                okReceived = false;
+                List<Object> list=new ArrayList<>();
+                list.add(nickname);
+                try {
+                    sendMessage(new SCKMessage(list,Event.LEAVE_GAME));
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("the server is still doing the previous action");
+            }
         }
     }
 
