@@ -1,11 +1,18 @@
 package Exceptions;
 
-public class FullLobbyException extends Exception {
+import utils.Event;
+
+public class FullLobbyException extends Exception implements ExceptionAssociatedWithAnEvent {
     /**
      * Constructor with the specified error message
      * @param errormessage is the message we want to give
      */
     public FullLobbyException (String errormessage){
         super(errormessage);
+    }
+
+    @Override
+    public Event getAssociatedEvent() {
+        return Event.FULL_LOBBY;
     }
 }

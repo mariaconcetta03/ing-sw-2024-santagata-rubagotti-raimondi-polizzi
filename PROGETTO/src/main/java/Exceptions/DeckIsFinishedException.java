@@ -1,6 +1,8 @@
 package Exceptions;
 
-public class DeckIsFinishedException extends Exception {
+import utils.Event;
+
+public class DeckIsFinishedException extends Exception implements ExceptionAssociatedWithAnEvent {
 
     /**
     * Constructor with the specified error message
@@ -8,6 +10,11 @@ public class DeckIsFinishedException extends Exception {
     */
     public DeckIsFinishedException(String errormessage){
         super(errormessage);
+    }
+
+    @Override
+    public Event getAssociatedEvent() {
+        return null; //qual è l'evento associato?
     }
 }
 

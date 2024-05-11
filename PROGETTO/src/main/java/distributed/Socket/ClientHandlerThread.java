@@ -1,9 +1,6 @@
 package distributed.Socket;
 
-import Exceptions.FullLobbyException;
-import Exceptions.GameAlreadyStartedException;
-import Exceptions.GameNotExistsException;
-import Exceptions.NicknameAlreadyTakenException;
+import Exceptions.*;
 import controller.GameController;
 import controller.ServerController;
 import distributed.ClientActionsInterface;
@@ -36,24 +33,13 @@ import utils.Observer;
  */
 public class ClientHandlerThread implements Runnable, Observer, ClientActionsInterface { //this is a Thread
     private final Socket socket;
-    private GameController associatedGameController; //returned by ServerController' startlobby()/addPlayerToLobby()
-
-    // private boolean hasAlreadyAGame=false; //this flag is necessary if we don't want to generate some avoidable errors (see the explanation above)
     private String nickname = null;
-    private Player personalPlayer= new Player(); //it could be properly initialized with the method addPlayerToGame or addPlayerToLobby or createLobby
     private ServerController serverController; //to be passed as parameter in the constructor method
-
-    private ClientSCK clientSCK= null; //this class writes what the client wants in the stream and it's local to the client
-
-
-
     private final Thread threadCheckConnection;
     private final Object inputLock;
-
     private final ObjectInputStream input;
     private final ObjectOutputStream output;
     private GameController gameController;
-
     private Boolean running; //it is initialized true, when becomes false the while in run and threadCheckConnection terminate.
 
 
@@ -154,12 +140,13 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                 }
             }
         } catch (Exception e) {
+            System.err.println(e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
-    private void react(SCKMessage sckMessage){ //qui in base al messaggio letto chiamiamo il giusto metodo della ClientGeneralInterface
-        //legge il messaggio e fa qualcosa (si può prendere spunto dalla run commentata che leggeva testo dagli stream)
+    private void react(SCKMessage sckMessage){ //qui in base al messaggio letto chiamiamo il giusto metodo della ClientActionsInterface
+        //legge il messaggio e fa qualcosa
         switch (sckMessage.getMessageEvent()) {
             case START -> { //this message is sent by ClientSCK in response to ALL_CONNECTED (sent by the server)
                 threadCheckConnection.start(); // we start to check if the ClientSCK is still connected
@@ -168,63 +155,63 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                 try {
                     addPlayerToLobby((String) sckMessage.getObj().get(0), (Integer) sckMessage.getObj().get(1));
                 }catch (Exception e){
-
+                    System.err.println(e.getMessage());
                 }
             }
             case CHOOSE_NICKNAME->{
                 try {
                     chooseNickname((String)sckMessage.getObj().get(0));
                 }catch (Exception e){
-
+                    System.err.println(e.getMessage());
                 }
             }
             case CREATE_LOBBY->{
                 try {
                     createLobby((String)sckMessage.getObj().get(0),(int) sckMessage.getObj().get(1));
                 }catch (Exception e){
-
+                    System.err.println(e.getMessage());
                 }
             }
             case PLAY_CARD->{
                 try {
                     playCard((String) sckMessage.getObj().get(0), (PlayableCard) sckMessage.getObj().get(1), (Coordinates) sckMessage.getObj().get(2), (boolean) sckMessage.getObj().get(3));
                  }catch (Exception e){
-
+                    System.err.println(e.getMessage());
                  }
             }
             case PLAY_BASE_CARD->{
                 try {
                     playBaseCard((String) sckMessage.getObj().get(0), (PlayableCard) sckMessage.getObj().get(1), (boolean) sckMessage.getObj().get(2));
                 }catch (Exception e){
-
+                    System.err.println(e.getMessage());
                 }
             }
             case DRAW_CARD->{
                 try {
                     drawCard((String) sckMessage.getObj().get(0), (PlayableCard) sckMessage.getObj().get(1));
                 }catch (Exception e){
-
+                    System.err.println(e.getMessage());
                 }
             }
             case CHOOSE_OBJECTIVE_CARD->{
                 try {
                     chooseObjectiveCard((String) sckMessage.getObj().get(0), (ObjectiveCard) sckMessage.getObj().get(1));
                 }catch (Exception e){
-
+                    System.err.println(e.getMessage());
                 }
             }
             case CHOOSE_PAWN_COLOR->{
                 try {
                     choosePawnColor((String) sckMessage.getObj().get(0), (Pawn) sckMessage.getObj().get(1));
                 }catch (Exception e){
-
+                    System.err.println(e.getMessage());
                 }
             }
             case SEND_MESSAGE->{
                 try {
                     sendMessage((String) sckMessage.getObj().get(0), (List<String>) sckMessage.getObj().get(0), (String) sckMessage.getObj().get(0));
                 }catch (Exception e){
-
+                    System.err.println(e.getMessage());
                 }
             }
             case LEAVE_GAME->{
@@ -232,7 +219,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                     leaveGame((String) sckMessage.getObj().get(0));
                     //running=false;
                 }catch (Exception e){
-
+                    System.err.println(e.getMessage());
                 }
             }
         }
@@ -268,12 +255,17 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             output.flush();
             output.reset();
         } catch (IOException e) {
+            System.err.println(e.getMessage());
         }
     }
 
     //methods to be implemented to have a class that implements ClientActionsInterface
 
     //these methods should be private because they will never be called from the outside
+
+    //ATTENZIONE: vanno riviste le RemoteException perchè vengono chiamate solo nell'update
+    // del WrappedObserver però al posto di mettere un try/catch sono state messe nella
+    // signature e quindi qui mi da errore se non le inserisco anche se l'update TCP non ne ha bisogno
 
     /**
      * This method, will be used to call the ServerController method
@@ -286,11 +278,22 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
      * @throws GameNotExistsException
      */
     @Override
-    public void addPlayerToLobby(String playerNickname, int gameId) throws RemoteException, NotBoundException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
-        SCKMessage sckMessage=null;
+    public void addPlayerToLobby(String playerNickname, int gameId)  {
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        this.gameController=serverController.addPlayerToLobby(playerNickname, gameId);
-        writeTheStream(sckMessage); //ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
+        //probabilmente questo messaggio ci serve per rendere TCP sincrono come RMI (il client aspetta che gli venga detto è andato tutto a buon fine)
+        try {
+            this.gameController=serverController.addPlayerToLobby(playerNickname, gameId);
+            writeTheStream(new SCKMessage(null,Event.OK)); //ci serve il messaggio per dire al ClientSCK il server ha fatto quello che hai chiesto (lo blocchiamo fino a quel momento)
+        }catch (RemoteException e){
+            System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
+        } catch (GameAlreadyStartedException ex) {
+            writeTheStream(new SCKMessage(null,ex.getAssociatedEvent()));
+        } catch (FullLobbyException ex) {
+            writeTheStream(new SCKMessage(null,ex.getAssociatedEvent()));
+        } catch (GameNotExistsException ex) {
+            writeTheStream(new SCKMessage(null,ex.getAssociatedEvent()));
+        }
+
     }
 
 
@@ -302,11 +305,16 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
      * @throws NicknameAlreadyTakenException
      */
     @Override
-    public void chooseNickname(String nickname) throws RemoteException, NotBoundException, NicknameAlreadyTakenException {
-        SCKMessage sckMessage=null;
+    public void chooseNickname(String nickname) {
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        serverController.chooseNickname(nickname);
-        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
+        try {
+            serverController.chooseNickname(nickname);
+            writeTheStream(new SCKMessage(null,Event.OK)); //ci serve il messaggio per dire al ClientSCK il server ha fatto quello che hai chiesto (lo blocchiamo fino a quel momento)
+        }catch (RemoteException e){
+            System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
+        } catch (NicknameAlreadyTakenException ex) {
+            writeTheStream(new SCKMessage(null,ex.getAssociatedEvent()));
+        }
     }
 
 
@@ -318,77 +326,100 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
      * @throws NotBoundException
      */
     @Override
-    public void createLobby(String creatorNickname, int numOfPlayers) throws RemoteException, NotBoundException {
-        SCKMessage sckMessage=null;
+    public void createLobby(String creatorNickname, int numOfPlayers) {
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        this.gameController=serverController.startLobby(creatorNickname, numOfPlayers);
-        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
-        //probabilmente questo messaggio ci serve per rendere TCP sincrono come RMI (il client aspetta che gli venga detto è andato tutto a buon fine)
+        try {
+            this.gameController=serverController.startLobby(creatorNickname, numOfPlayers);
+            writeTheStream(new SCKMessage(null,Event.OK));
+        }catch (RemoteException e){
+            System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
+        }
     }
 
     @Override
-    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, NotBoundException {
-        SCKMessage sckMessage=null;
+    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) {
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        this.gameController.playCard(nickname, selectedCard, position, orientation);
-        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
+        try {
+            this.gameController.playCard(nickname, selectedCard, position, orientation);
+            writeTheStream(new SCKMessage(null,Event.OK));
+        }catch (RemoteException e){
+            System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
+        }
     }
 
     @Override
-    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException, NotBoundException {
-        SCKMessage sckMessage=null;
+    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) {
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        this.gameController.playBaseCard(nickname, baseCard, orientation);
-        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
+        try {
+            this.gameController.playBaseCard(nickname, baseCard, orientation);
+            writeTheStream(new SCKMessage(null,Event.OK));
+        }catch (RemoteException e){
+            System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
+        }
     }
 
     @Override
-    public void drawCard(String nickname, PlayableCard selectedCard) throws RemoteException, NotBoundException {
-        SCKMessage sckMessage=null;
+    public void drawCard(String nickname, PlayableCard selectedCard) {
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        this.gameController.drawCard(nickname, selectedCard);
-        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
+        try {
+            this.gameController.drawCard(nickname, selectedCard);
+            writeTheStream(new SCKMessage(null,Event.OK));
+        }catch (RemoteException e){
+            System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
+        }
     }
 
     @Override
-    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) throws RemoteException, NotBoundException {
-        SCKMessage sckMessage=null;
+    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) {
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        this.gameController.chooseObjectiveCard(chooserNickname, selectedCard);
-        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
+        try {
+            this.gameController.chooseObjectiveCard(chooserNickname, selectedCard);
+            writeTheStream(new SCKMessage(null,Event.OK));
+        }catch (RemoteException e){
+            System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
+        }
     }
 
     @Override
-    public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, NotBoundException {
-        SCKMessage sckMessage=null;
+    public void choosePawnColor(String chooserNickname, Pawn selectedColor){
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        this.gameController.choosePawnColor(chooserNickname, selectedColor);
-        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
+        try {
+            this.gameController.choosePawnColor(chooserNickname, selectedColor);
+            writeTheStream(new SCKMessage(null,Event.OK));
+        }catch (RemoteException e){
+            System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
+        }
     }
 
 
     //that's a method to be used to communicate between the players
     @Override
-    public void sendMessage(String senderNickname, List<String> receiversNickname, String message) throws RemoteException, NotBoundException {
-        SCKMessage sckMessage=null;
+    public void sendMessage(String senderNickname, List<String> receiversNickname, String message){
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        this.gameController.sendMessage(senderNickname, receiversNickname, message);
-        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
+        try {
+            this.gameController.sendMessage(senderNickname, receiversNickname, message);
+            writeTheStream(new SCKMessage(null,Event.OK));
+        }catch (RemoteException e){
+            System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
+        }
     }
 
     @Override
-    public void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException {
-        SCKMessage sckMessage=null;
+    public void leaveGame(String nickname){
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        this.gameController.leaveGame(nickname);  //questo metodo prima di aggiornare gli altri giocatori dovrebbe togliere dalla lista di listeners quello che l'ha chiamato
-        writeTheStream(sckMessage);//ci serve il messaggio mer dire al ClientSCK il server ha fatto quello che hai chiesto?
-        running=false; //così mi si fermano i thread interni
         try {
-            input.close();
-            output.close();
-            socket.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            this.gameController.leaveGame(nickname);  //questo metodo prima di aggiornare gli altri giocatori dovrebbe togliere dalla lista di listeners quello che l'ha chiamato
+            writeTheStream(new SCKMessage(null,Event.OK));
+            running=false; //così mi si fermano i thread interni
+            try {
+                input.close();
+                output.close();
+                socket.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }catch (RemoteException | IllegalArgumentException e){
+            System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
         }
     }
 
