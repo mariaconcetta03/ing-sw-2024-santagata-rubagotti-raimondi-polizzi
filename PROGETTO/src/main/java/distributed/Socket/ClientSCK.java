@@ -44,6 +44,7 @@ public class ClientSCK implements ClientGeneralInterface{
     private Player player; //the nickname is saved somewhere
     private List<Player> playersInTheGame;
     private ObjectiveCard commonObjective1, commonObjective2;
+    public Integer gameID;
 
     private Boolean running; //it is initialized true, when becomes false threadCheckConnection has to terminate.
     private Boolean okReceived;
@@ -190,6 +191,8 @@ public class ClientSCK implements ClientGeneralInterface{
                 //we have to change the view and the local model
                 //quello che era prima il case ALL_CONNECTED diventa questo controllo
                 if(((Game) sckMessage.getObj().get(0)).getState().equals(Game.GameState.STARTED)){
+                    //per il test
+                    System.out.println("partita iniziata");
                     //getModel(); //to initialize the local copy of the model
                     sendMessage(new SCKMessage(null, Event.START)); //null is referred to the objects sent. 'START' to tell the server that this client is ready
                     threadCheckConnection.start(); //now if a player doesn't reply to a ping message the Game ends
@@ -203,6 +206,10 @@ public class ClientSCK implements ClientGeneralInterface{
                 updateGameState((Game) sckMessage.getObj().get(0));
             }
             case OK -> { //...potremmo stampare anche il messaggio di ok....
+                //questo if mi serve per i test per memorizzare il gameID
+                if(sckMessage.getObj()!=null){
+                    this.gameID=(Integer) sckMessage.getObj().get(0);
+                }
                 this.okReceived=true; //in this way the client is free to do the next action
             }
             default -> { //qui ci finiscono tutti i messaggi di errore

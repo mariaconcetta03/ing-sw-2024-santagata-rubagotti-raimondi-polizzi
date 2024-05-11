@@ -16,6 +16,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 
@@ -289,7 +290,10 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         try {
             this.gameController=serverController.addPlayerToLobby(playerNickname, gameId);
             setNickname(playerNickname); //we have an attribute nickname in this class (we are implementing Observer)
-            writeTheStream(new SCKMessage(null,Event.OK)); //ci serve il messaggio per dire al ClientSCK il server ha fatto quello che hai chiesto (lo blocchiamo fino a quel momento)
+            //mi serve per i test che il ClientSCK abbia il gameid
+            List<Object> list=new ArrayList<>();
+            list.add(this.gameController);
+            writeTheStream(new SCKMessage(list,Event.OK)); //ci serve il messaggio per dire al ClientSCK il server ha fatto quello che hai chiesto (lo blocchiamo fino a quel momento)
         }catch (RemoteException e){
             System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
         } catch (GameAlreadyStartedException ex) {
