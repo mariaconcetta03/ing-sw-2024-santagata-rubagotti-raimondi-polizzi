@@ -1,9 +1,11 @@
 package distributed.Socket;
 
+import com.ctc.wstx.shaded.msv_core.driver.textui.Debug;
 import controller.ServerController;
 import distributed.messages.SCKMessage;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.RemoteException;
@@ -35,7 +37,9 @@ public class ServerSCK extends UnicastRemoteObject {
         ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket;
         try {
-            serverSocket = new ServerSocket(port); //This port number can then be retrieved by calling getLocalPort
+            // serverSocket = new ServerSocket(port); //This port number can then be retrieved by calling getLocalPort
+            InetAddress localAddress = InetAddress.getByName("127.0.0.1");
+            serverSocket = new ServerSocket(1085, 10, localAddress);
         } catch (IOException e) {
             System.err.println(e.getMessage()); // Porta non disponibile
             return;
