@@ -7,6 +7,7 @@ import utils.Observable;
 import utils.*;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 
 /**
@@ -66,10 +67,11 @@ public class WrappedObserver implements Observer {
                 break;
             case UPDATED_NICKNAME: remoteClient.updateNickname((Player) (arg.getObj().get(0)), (arg.getObj().get(1)).toString());
                 break;
-            case UPDATED_ROUND: remoteClient.updateRound((Player) (arg.getObj()));
+            case UPDATED_ROUND: remoteClient.updateRound((List<Player>) (arg.getObj().get(0)));
                 break;
             case GAME_STATE_CHANGED: remoteClient.updateGameState((Game)(arg.getObj()));
                 break;
+            case NEW_TURN: remoteClient.updateRound((List<Player>) arg.getObj().get(0));
             //case SETUP_PHASE_1:
             //    break;
 

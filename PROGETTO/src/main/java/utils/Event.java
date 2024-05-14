@@ -43,6 +43,7 @@ public enum Event implements Serializable {
     GAME_STATE_CHANGED,
     SETUP_PHASE_1,
     SETUP_PHASE_2,
+    NEW_TURN,
 
     //some new events to be used in SCKMessage to tell the server what the client want to do
     ALL_CONNECTED, //è un per avere un esempio (possiamo modificarlo)

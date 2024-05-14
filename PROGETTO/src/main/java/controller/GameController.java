@@ -77,6 +77,19 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         } else {
             throw new ArrayIndexOutOfBoundsException("This lobby is already full!");
         }
+        /*
+        if (gamePlayers.size() == numberOfPlayers) {
+            createGame(gamePlayers);
+            try {
+                startGame();
+            } catch (IllegalStateException e) {
+                System.out.println("The game is already started!");
+            }
+        }
+         */
+    }
+
+    public void checkNPlayers() throws RemoteException{
         if (gamePlayers.size() == numberOfPlayers) {
             createGame(gamePlayers);
             try {

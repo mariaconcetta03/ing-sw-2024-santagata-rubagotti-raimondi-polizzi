@@ -4,6 +4,7 @@ import org.model.*;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 public interface ClientRMIInterface extends Remote {
     void update() throws RemoteException;
@@ -30,7 +31,7 @@ public interface ClientRMIInterface extends Remote {
 
     void updateNickname(Player player, String string)throws RemoteException;
 
-    void updateRound(Player obj)throws RemoteException;
+    void updateRound(List<Player> obj)throws RemoteException;
 
     void updateGameState(Game obj) throws RemoteException;
 }

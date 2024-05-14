@@ -31,4 +31,5 @@ public interface GameControllerInterface extends Remote {
     void setCheck(int i)throws RemoteException;
 
     int getCheck()throws RemoteException;
+    void checkNPlayers() throws RemoteException;
 }

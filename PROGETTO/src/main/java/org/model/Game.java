@@ -205,7 +205,7 @@ public class Game extends Observable implements Serializable {
         players.get(0).setState(Player.PlayerState.IS_PLAYING);
 
 
-
+        notifyObservers(new Message(players, Event.NEW_TURN));
         notifyObservers(new Message(null, Event.SETUP_PHASE_1));
     }
 
@@ -378,12 +378,13 @@ public class Game extends Observable implements Serializable {
      *  The order of the whole list is modified
      *  @return the next player is who will play soon
      */
-    public Player nextRound() {
+    public Player nextRound() throws RemoteException{
         this.players.get(0).setState(Player.PlayerState.IS_WAITING);
         this.players.add(this.players.get(0));
         this.players.remove(0);
         this.currentPlayer = this.players.get(0);
         this.players.get(0).setState(Player.PlayerState.IS_PLAYING);
+            notifyObservers(new Message(players, Event.NEW_TURN));
         return this.currentPlayer;
     }
 

@@ -329,8 +329,9 @@ public class GameTest extends TestCase {
 
         // changing the playing order
         System.out.println("Changing the playing order...");
-        game.nextRound();
-
+        try {
+            game.nextRound();
+        }catch (RemoteException ignored){}
         System.out.println("The new playing order is FIRST PLAYER (" + game.getPlayers().get(0).getNickname() + "), " +
                 "SECOND PLAYER (" + game.getPlayers().get(1).getNickname() + "), " + "THIRD PLAYER (" + game.getPlayers().get(2).getNickname() + "), " +
                 "FOURTH PLAYER (" + game.getPlayers().get(3).getNickname() + ")");
