@@ -398,6 +398,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                             System.out.println("Resource card 2: "+this.resourceCard2.getId());
                             //System.out.println("Gold card 1: "+this.goldCard1);
                             //System.out.println("Gold card 1: "+this.goldCard1);
+                            break;
                     default:
                         System.out.println("not yet implemented");
                 }
@@ -603,6 +604,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             if(this.personalPlayer.getNickname().equals(playersInTheGame.get(0).getNickname())){
                 System.out.println(ANSIFormatter.ANSI_GREEN+"It's your turn!"+ANSIFormatter.ANSI_RESET);
                 new Thread(()->{gameTurn(true);}).start();
+                // this thread prints out the possible actions for the current player and for the waiting players
+                // these threads are executed in parallel mode
 
             }else{
                 System.out.println(playersInTheGame.get(0).getNickname()+" is playing!");
