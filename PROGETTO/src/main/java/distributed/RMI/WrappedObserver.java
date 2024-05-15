@@ -69,9 +69,14 @@ public class WrappedObserver implements Observer {
                 break;
             case UPDATED_ROUND: remoteClient.updateRound((List<Player>) (arg.getObj().get(0)));
                 break;
+            case UPDATED_PERSONAL_OBJECTIVE:
+                break;
             case GAME_STATE_CHANGED: remoteClient.updateGameState((Game)(arg.getObj()));
                 break;
             case NEW_TURN: remoteClient.updateRound((List<Player>) arg.getObj().get(0));
+            break;
+            case UNABLE_TO_PLAY_CARD: remoteClient.showError(Event.UNABLE_TO_PLAY_CARD);
+            break;
             //case SETUP_PHASE_1:
             //    break;
 

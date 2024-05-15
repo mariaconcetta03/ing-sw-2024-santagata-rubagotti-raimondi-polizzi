@@ -3,6 +3,8 @@ package org.model;
 
 import Exceptions.CardNotDrawableException;
 import Exceptions.CardNotOwnedException;
+import distributed.messages.Message;
+import utils.Event;
 import utils.Observable;
 
 import java.io.Serializable;
@@ -144,6 +146,10 @@ public class Player extends Observable implements Serializable {
                 playerDeck[i] = card;
             }
         }
+        List<Object> tmp=new ArrayList<>();
+        tmp.add(this);
+        tmp.add(playerDeck);
+        notifyObservers(new Message(tmp, Event.UPDATED_PLAYER_DECK));
     }
 
 
@@ -184,7 +190,7 @@ public class Player extends Observable implements Serializable {
         card.setOrientation(orientation);
         board.placeBaseCard(card);
     }
-
+    //non serve notify, non puo essere posizionata male
 
 
     /**
@@ -268,6 +274,9 @@ public class Player extends Observable implements Serializable {
             } else if (card.equals(this.personalObjective.get(1))) {
                 this.personalObjective.remove(0);
             }
+            try {
+                notifyObservers(new Message(personalObjective.get(0), Event.UPDATED_PERSONAL_OBJECTIVE));
+            }catch (RemoteException ignored){} //da rimuovere?
         }else{
             throw new CardNotOwnedException("You can't select this card!");
         }

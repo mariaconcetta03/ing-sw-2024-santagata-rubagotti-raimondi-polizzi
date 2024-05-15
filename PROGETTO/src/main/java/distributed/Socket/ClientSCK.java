@@ -6,24 +6,18 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.*;
 
 import Exceptions.FullLobbyException;
 import Exceptions.GameAlreadyStartedException;
 import Exceptions.GameNotExistsException;
-import Exceptions.NicknameAlreadyTakenException;
 import distributed.ClientGeneralInterface;
 import distributed.messages.*;
 import org.model.*;
 import utils.Event;
+import view.TUI.ANSIFormatter;
 import view.TUI.InterfaceTUI;
 
 
@@ -34,6 +28,8 @@ import view.TUI.InterfaceTUI;
  * through the socket to be processed
  */
 public class ClientSCK implements ClientGeneralInterface{
+    private boolean errorState= false;
+    private HashSet<Integer> lobbyId;
     private final Socket socket;
     private Player personalPlayer;
     private int selectedView;
@@ -63,6 +59,8 @@ public class ClientSCK implements ClientGeneralInterface{
         int port = 1085; // Porta del server
         SocketAddress socketAddress = new InetSocketAddress(inetAddress, port);
         socket.connect(socketAddress);
+
+        lobbyId=new HashSet<>();
 
         personalPlayer=new Player();
         this.inputLock=new Object();
@@ -103,7 +101,7 @@ public class ClientSCK implements ClientGeneralInterface{
                     try {
                         SCKMessage sckMessage = (SCKMessage) this.inputStream.readObject(); //così non abbiamo più bisogno della funzione receiveMessage
                         if (sckMessage != null) {
-                            System.out.println("messaggio ricevuto da ClienSCK non nullo");
+                            //System.out.println("messaggio ricevuto da ClienSCK non nullo");
                             modifyClientSide(sckMessage); //questo è bloccante-> meglio utilizzare un thread...a meno che non vogliamo fare una modifica alla volta
                         }
                     } catch (Exception e) { //se il server si disconnette
@@ -138,6 +136,7 @@ public class ClientSCK implements ClientGeneralInterface{
      */
     public void sendMessage(SCKMessage sckMessage) throws IOException { //ATTENTION: this method is called ONLY inside ClientGeneralInterface methods
         try {
+            responseReceived=false;
             outputStream.writeObject(sckMessage);
             outputStream.flush();
         } catch (IOException e) {
@@ -208,6 +207,15 @@ public class ClientSCK implements ClientGeneralInterface{
                 //we have to change the view and the local model
                 updateRound((Player) sckMessage.getObj().get(0));
             }
+            case AVAILABLE_LOBBY -> {
+                synchronized (actionLock) {
+                    for(Object o: sckMessage.getObj()){
+                        lobbyId.add((Integer) o);
+                    }
+                    responseReceived = true;
+                    actionLock.notify();
+                }
+            }
             case GAME_STATE_CHANGED->{
                 System.out.println("game state changed");
                 //System.out.println(((Game) sckMessage.getObj().get(0)).getState().toString());
@@ -242,7 +250,8 @@ public class ClientSCK implements ClientGeneralInterface{
             default -> { //qui ci finiscono tutti i messaggi di errore
                 //stampiamo l'errore e poi permettiamo al client di proseguire
                 synchronized (actionLock) {
-                    System.out.println(sckMessage.getMessageEvent().toString());
+                    errorState=true;
+                    //System.out.println(sckMessage.getMessageEvent().toString());
                     this.responseReceived = true;
                     actionLock.notify();
                 }
@@ -274,24 +283,76 @@ public class ClientSCK implements ClientGeneralInterface{
         int errorCounter=0;
         if (selectedView == 1) {
             tuiView = new InterfaceTUI();
+            tuiView.printWelcome();
+            String nickname=null;
             while(!ok){
                 if(errorCounter==3){
                     System.out.println("Unable to communicate with the server! Shutting down.");
                     System.exit(-1);
                 }
-                String nickname = tuiView.askNickname();
+                nickname = tuiView.askNickname();
                 try {
                    this.chooseNickname(nickname);
-                    personalPlayer.setNickname(nickname);
                     ok=true;
                 } catch (RemoteException | NotBoundException e) {
                     errorCounter++;
                     System.out.println();
-                } catch (NicknameAlreadyTakenException ex) {
+                }
+                if(errorState){
                     System.out.println("Nickname is already taken! Please try again.");
+                    errorState=false;
+                    ok=false;
                 }
             }
+            personalPlayer.setNickname(nickname);
             System.out.println("Nickname correctly selected!");
+            this.checkAvailableLobby();
+            printLobby(lobbyId);
+            System.out.println("Type -1 if you want to create a new lobby, or the lobby id if you want to join it (if there are any available)");
+            ok=false;
+            int gameSelection=0;
+            while(!ok) {
+                try {
+                    sc=new Scanner(System.in);
+                    gameSelection = sc.nextInt();
+                    ok=true;
+                } catch (InputMismatchException e) {
+                    System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
+                }
+            }
+            try {
+                ok=false;
+                while(!ok) {
+                    sc=new Scanner(System.in);
+                    if (gameSelection == -1) {
+                        System.out.println("How many players would you like to join you in this game?");
+                        while(!ok) {
+                            try {
+                                sc=new Scanner(System.in);
+                                gameSelection = sc.nextInt();
+                                ok=true;
+                            } catch (InputMismatchException e) {
+                                System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
+                            }
+                        }
+                        createLobby(personalPlayer.getNickname(), gameSelection);
+                        System.out.println("Successfully created a new lobby with id: " + gameID);
+                    } else if (lobbyId.contains(gameSelection)) {
+                        try {
+                            addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
+                            System.out.println("Successfully joined the lobby with id: " + gameID);
+                            ok=true;
+                        } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException e) {
+                            System.out.println(ANSIFormatter.ANSI_RED + "The game you want to join is inaccessible, try again" + ANSIFormatter.ANSI_RESET);
+                        } //counter
+                    } else {
+                        System.out.println("You wrote a wrong id, try again!");
+                    }
+                }
+            }catch (RemoteException |NotBoundException e){
+                System.out.println("Unable to communicate with the server! Shutting down.");
+                System.exit(-1);
+            }
         } else {
             //guiView= new InterfaceGUI();
         }
@@ -307,8 +368,15 @@ public class ClientSCK implements ClientGeneralInterface{
          */
     }
 
-
-
+    public void printLobby(HashSet<Integer> ids){
+        if(!ids.isEmpty()) {
+            for (Integer i : ids) {
+                System.out.println(i + " ");
+            }
+        }else{
+            System.out.println("There are no lobby available.");
+        }
+    }
 
     //GETTER & SETTER
     public int getSelectedView() {
@@ -343,6 +411,22 @@ public class ClientSCK implements ClientGeneralInterface{
     }
 
      */
+    public void checkAvailableLobby(){
+        synchronized (actionLock) {
+            try {
+                sendMessage(new SCKMessage(null,Event.AVAILABLE_LOBBY));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            while (!responseReceived) {
+                try {
+                    actionLock.wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
 
 
     //these classes implement clientGeneralInterface
@@ -350,7 +434,6 @@ public class ClientSCK implements ClientGeneralInterface{
     public void addPlayerToLobby(String playerNickname, int gameId) throws RemoteException, NotBoundException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
         System.out.println("sono in addPlayerToLobby");
         synchronized (actionLock) {
-                responseReceived = false;
                 List<Object> list = new ArrayList<>();
                 list.add(playerNickname);
                 list.add(gameId);
@@ -371,7 +454,7 @@ public class ClientSCK implements ClientGeneralInterface{
     }
 
     @Override
-    public void chooseNickname(String nickname) throws RemoteException, NotBoundException, NicknameAlreadyTakenException {
+    public void chooseNickname(String nickname) throws RemoteException, NotBoundException {
         synchronized (actionLock) {
             List<Object> list=new ArrayList<>();
             list.add(nickname);

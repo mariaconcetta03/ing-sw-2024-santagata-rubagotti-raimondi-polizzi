@@ -169,6 +169,14 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             }
 
              */
+            case AVAILABLE_LOBBY -> {
+                try {
+                    System.out.println("sono in available lobby");
+                    List<Object> list = new ArrayList<>();
+                    list.addAll(serverController.getAllGameControllers().keySet());
+                    writeTheStream(new SCKMessage(list, Event.AVAILABLE_LOBBY));
+                }catch (RemoteException ignored){}
+            }
             case ADD_PLAYER_TO_LOBBY->{
                 System.out.println("sono in ADD_PLAYER_TO_LOBBY");
                 try {
@@ -319,7 +327,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             this.gameController.addClient(this);
 
             writeTheStream(new SCKMessage(null,Event.OK)); //ci serve il messaggio per dire al ClientSCK il server ha fatto quello che hai chiesto (lo blocchiamo fino a quel momento)
-        }catch (RemoteException e){
+        }catch (RemoteException e){//non verrà mai lanciata
             System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
         } catch (GameAlreadyStartedException ex) {
             writeTheStream(new SCKMessage(null,ex.getAssociatedEvent()));

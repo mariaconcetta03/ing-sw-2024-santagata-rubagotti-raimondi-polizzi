@@ -40,6 +40,7 @@ public enum Event implements Serializable {
     UPDATED_PAWNS,
     UPDATED_NICKNAME,
     UPDATED_ROUND,
+    UPDATED_PERSONAL_OBJECTIVE,
     GAME_STATE_CHANGED,
     SETUP_PHASE_1,
     SETUP_PHASE_2,
@@ -67,6 +68,7 @@ public enum Event implements Serializable {
     CHOOSE_OBJECTIVE_CARD,
     CHOOSE_PAWN_COLOR,
     SEND_MESSAGE,
+    AVAILABLE_LOBBY,
     LEAVE_GAME;
 
     //end of events with a corresponding function in ClientGeneralInterface

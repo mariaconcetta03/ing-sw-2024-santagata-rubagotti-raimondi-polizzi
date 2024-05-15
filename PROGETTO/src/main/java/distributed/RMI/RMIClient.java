@@ -7,6 +7,7 @@ import Exceptions.NicknameAlreadyTakenException;
 import controller.GameController;
 import distributed.ClientGeneralInterface;
 import org.model.*;
+import utils.Event;
 import view.TUI.ANSIFormatter;
 import view.TUI.InterfaceTUI;
 
@@ -34,7 +35,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RMIClient extends UnicastRemoteObject implements ClientGeneralInterface, ClientRMIInterface {
     private ServerRMIInterface SRMIInterface; //following the slides' instructions
 
-    private Thread askInput;
+
+    int turnCounter=-1;
     private GameControllerInterface gameController = null;
     // given to the client when the game is started (lobby created or player joined to a lobby))
 
@@ -293,6 +295,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         int errorCounter=0;
         if(selectedView==1){
             tuiView=new InterfaceTUI();
+            tuiView.printWelcome();
             while(!ok) {
                 if(errorCounter==3){
                     System.out.println("Unable to communicate with the server! Shutting down.");
@@ -305,14 +308,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     ok=true;
                 } catch (RemoteException | NotBoundException e) {
                     errorCounter++;
-                    System.out.println();
+                    System.out.println("Error in the client-server communication. Try again.");
                 } catch (NicknameAlreadyTakenException ex) {
                     System.out.println("Nickname is already taken! Please try again.");
                 }
             }
             System.out.println("Nickname correctly selected!");
             try {
-
                     if(!SRMIInterface.getAvailableGameControllersId().isEmpty()) {
                         System.out.println("If you want you can join an already created lobby. These are the ones available:");
                         for (Integer i : SRMIInterface.getAvailableGameControllersId()) {
@@ -408,6 +410,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
     }
 
+    public void showError(Event event){
+        System.out.println(event.toString());
+    }
 
 
 
@@ -470,9 +475,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @param playerDeck the new deck we want to update
      */
     public void updatePlayerDeck (Player player, PlayableCard[] playerDeck) throws RemoteException {
-        for(Player p: playersInTheGame){
-            if(player.getNickname().equals(p.getNickname())){
-                p.setPlayerDeck(playerDeck);
+        if(player.getNickname().equals(personalPlayer.getNickname())){
+            personalPlayer.setPlayerDeck(playerDeck);
+        }else {
+            for (Player p : playersInTheGame) {
+                if (player.getNickname().equals(p.getNickname())) {
+                    p.setPlayerDeck(playerDeck);
+                }
             }
         }
         if (selectedView == 1) {
@@ -599,22 +608,35 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @param newPlayingOrder are the players of the game ordered
      */
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException {
-        playersInTheGame=newPlayingOrder;
-        if (selectedView == 1) {
-            if(this.personalPlayer.getNickname().equals(playersInTheGame.get(0).getNickname())){
-                System.out.println(ANSIFormatter.ANSI_GREEN+"It's your turn!"+ANSIFormatter.ANSI_RESET);
-                new Thread(()->{gameTurn(true);}).start();
-                // this thread prints out the possible actions for the current player and for the waiting players
-                // these threads are executed in parallel mode
+        playersInTheGame = newPlayingOrder;
+        new Thread(()->{
+        if (turnCounter != -1) {
+            if (turnCounter != 0) {
+                if (selectedView == 1) {
+                    if (this.personalPlayer.getNickname().equals(playersInTheGame.get(0).getNickname())) {
+                        System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
+                            gameTurn(true);
+                        // this thread prints out the possible actions for the current player and for the waiting players
+                        // these threads are executed in parallel mode
 
-            }else{
-                System.out.println(playersInTheGame.get(0).getNickname()+" is playing!");
-                new Thread(()->{gameTurn(false);}).start(); //se no mi si blocca, i thread sono l'unica strada?
+                    } else {
+                        System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
+                        new Thread(() -> {
+                            gameTurn(false);
+                        }).start(); //se no mi si blocca, i thread sono l'unica strada?
+                    }
+
+                } else if (selectedView == 2) {
+                    //guiView.updateRound(newCurrentPlayer)
+                }
+            } else if (turnCounter == 0) {
+                try {
+                    playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0],tuiView.askPlayBaseCard(personalPlayer.getPlayerDeck()[0]));
+                }catch (NotBoundException |RemoteException ignored){}
             }
-
-        } else if (selectedView == 2) {
-            //guiView.updateRound(newCurrentPlayer)
         }
+        turnCounter++;
+    }).start();
     }
     public void updateRound(Player p) throws RemoteException{}
 

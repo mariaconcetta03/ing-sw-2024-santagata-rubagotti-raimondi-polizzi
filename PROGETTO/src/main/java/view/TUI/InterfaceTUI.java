@@ -1,5 +1,6 @@
 package view.TUI;
 
+import org.model.PlayableCard;
 import utils.Observable;
 
 import java.io.Serializable;
@@ -13,14 +14,16 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         //chose nickname
     }
 
+    public void printWelcome(){
+        System.out.println("Welcome to "+ANSIFormatter.ANSI_GREEN+"C"+ANSIFormatter.ANSI_CYAN+"O"+ANSIFormatter.ANSI_RED+
+                "D"+ANSIFormatter.ANSI_YELLOW+"E"+ANSIFormatter.ANSI_PURPLE+"X"+ANSIFormatter.ANSI_RESET+" NATURALIS");
+    }
     /**
      * This method is used to print on the TUI a request for nickname
      * @return the nickname selected
      */
     public String askNickname(){
         sc=new Scanner(System.in);
-        System.out.println("Welcome to "+ANSIFormatter.ANSI_GREEN+"C"+ANSIFormatter.ANSI_CYAN+"O"+ANSIFormatter.ANSI_RED+
-                "D"+ANSIFormatter.ANSI_YELLOW+"E"+ANSIFormatter.ANSI_PURPLE+"X"+ANSIFormatter.ANSI_RESET+" NATURALIS");
         boolean selected= false;
         String nickname=null;
         while(!selected){
@@ -38,20 +41,27 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
     public void gameTurn(boolean inTurn){
         if(inTurn){
             System.out.println("These are the action you can perform");
-            System.out.println("| "+ANSIFormatter.ANSI_RED+"1"+ANSIFormatter.ANSI_RESET+" - Check the cards in your hand |");
-            System.out.println("| "+ANSIFormatter.ANSI_RED+"2"+ANSIFormatter.ANSI_RESET+" - Check your personal objective card |");
-            System.out.println("| "+ANSIFormatter.ANSI_RED+"3"+ANSIFormatter.ANSI_RESET+" - Check the common objective cards |");
-            System.out.println("| "+ANSIFormatter.ANSI_RED+"4"+ANSIFormatter.ANSI_RESET+" - Check the drawable cards       |");
-            System.out.println("| "+ANSIFormatter.ANSI_RED+"5"+ANSIFormatter.ANSI_RESET+" - Play a card             |");
-            System.out.println("| "+ANSIFormatter.ANSI_RED+"6"+ANSIFormatter.ANSI_RESET+" - Check someone else's board |");
+            System.out.println("| "+ANSIFormatter.ANSI_RED+"0"+ANSIFormatter.ANSI_RESET+" - Leave the game                     |");
+            System.out.println("| "+ANSIFormatter.ANSI_RED+"1"+ANSIFormatter.ANSI_RESET+" - Check the cards in your hand       |");
+            System.out.println("| "+ANSIFormatter.ANSI_RED+"2"+ANSIFormatter.ANSI_RESET+" - Check your personal objective card |");// si possono unire
+            System.out.println("| "+ANSIFormatter.ANSI_RED+"3"+ANSIFormatter.ANSI_RESET+" - Check the common objective cards   |");
+            System.out.println("| "+ANSIFormatter.ANSI_RED+"4"+ANSIFormatter.ANSI_RESET+" - Check the drawable cards           |");
+            System.out.println("| "+ANSIFormatter.ANSI_RED+"5"+ANSIFormatter.ANSI_RESET+" - Check someone else's board         |");
+            System.out.println("| "+ANSIFormatter.ANSI_RED+"6"+ANSIFormatter.ANSI_RESET+" - Check the points scored            |");
+            System.out.println("| "+ANSIFormatter.ANSI_RED+"7"+ANSIFormatter.ANSI_RESET+" - Send a message in the chat         |");
+            System.out.println("| "+ANSIFormatter.ANSI_RED+"8"+ANSIFormatter.ANSI_RESET+" - Play a card                        |"); //the draw will be called after the play action
         }else{
             System.out.println("These are the action you can perform");
-            System.out.println("| 1 - Check the cards in your hand |");
-            System.out.println("| 2 - Check your personal objective card |");
-            System.out.println("| 3 - Check the common objective cards |");
-            System.out.println("|      4 - Check the drawable cards       |");
-            System.out.println("| 6 -  Check someone else's board |");
-            }
+            System.out.println("| "+ANSIFormatter.ANSI_RED+"0"+ANSIFormatter.ANSI_RESET+" - Leave the game                     |");
+            System.out.println("| "+ANSIFormatter.ANSI_RED+"1"+ANSIFormatter.ANSI_RESET+" - Check the cards in your hand       |");
+            System.out.println("| "+ANSIFormatter.ANSI_RED+"2"+ANSIFormatter.ANSI_RESET+" - Check your personal objective card |");
+            System.out.println("| "+ANSIFormatter.ANSI_RED+"3"+ANSIFormatter.ANSI_RESET+" - Check the common objective cards   |");
+            System.out.println("| "+ANSIFormatter.ANSI_RED+"4"+ANSIFormatter.ANSI_RESET+" - Check the drawable cards           |");
+            System.out.println("| "+ANSIFormatter.ANSI_RED+"5"+ANSIFormatter.ANSI_RESET+" - Check someone else's board         |");
+            System.out.println("| "+ANSIFormatter.ANSI_RED+"6"+ANSIFormatter.ANSI_RESET+" - Check the points scored            |");
+            System.out.println("| "+ANSIFormatter.ANSI_RED+"7"+ANSIFormatter.ANSI_RESET+" - Send a message in the chat         |");
+
+        }
         }
 
     public int askAction(){
@@ -73,6 +83,27 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
             }
         }
         return value;
+    }
+    public boolean askPlayBaseCard(PlayableCard baseCard) {
+        Scanner sc = new Scanner(System.in);
+        int selection = 0;
+        System.out.println("This is your base card: " + baseCard.getId());
+        System.out.println("Would you like to play it upwards(1) or downwards(2)?");
+        while (true) {
+            sc=new Scanner(System.in);
+            try {
+                selection = sc.nextInt();
+            }catch (InputMismatchException e){
+                System.out.println("Please insert a number! 1 to play the card upwards, 2 to play the card downwards.");
+            }
+            if(selection==1){
+                return true;
+            }else if(selection==2){
+                return false;
+            }else{
+                System.out.println("Please write 1 to play it upwards, 2 to play it downwards");
+            }
+        }
     }
 
     public void askNumPlayers(){

@@ -1,6 +1,7 @@
 package distributed.RMI;
 
 import org.model.*;
+import utils.Event;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -34,4 +35,5 @@ public interface ClientRMIInterface extends Remote {
     void updateRound(List<Player> obj)throws RemoteException;
 
     void updateGameState(Game obj) throws RemoteException;
+    void showError(Event event) throws RemoteException;
 }

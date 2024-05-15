@@ -135,6 +135,7 @@ public class Game extends Observable implements Serializable {
 
         // setting the state of the game to STARTED
         setState(GameState.STARTED);
+        notifyObservers(new Message(players, Event.NEW_TURN));
 
         // shuffling the resource deck and giving 2 cards to the market
         this.resourceDeck.shuffleDeck();
