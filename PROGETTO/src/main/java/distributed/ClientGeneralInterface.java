@@ -28,7 +28,7 @@ public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
     void updatePawns(Player player, Pawn pawn) throws RemoteException;
     void updateNickname(Player player, String nickname) throws RemoteException;
     void updateRound(Player newCurrentPlayer) throws RemoteException;
-    void updateGameState(Game game) throws RemoteException;
+    void updateGameState(Game.GameState  gameState) throws RemoteException;
     //fine update
 
 

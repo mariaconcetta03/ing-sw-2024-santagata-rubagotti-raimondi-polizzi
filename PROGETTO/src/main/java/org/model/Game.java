@@ -234,13 +234,16 @@ public class Game extends Observable implements Serializable {
         // giving 2 cards to the market as common objective
         this.objectiveCard1 = objectiveDeck.getFirstCard();
         this.objectiveCard2 = objectiveDeck.getFirstCard();
-
         // giving each player 2 objective cards, next he will decide which one to choose
         for (int i = 0; i<nPlayers; i++) {
             this.players.get(i).addPersonalObjective(objectiveDeck.getFirstCard());
             this.players.get(i).addPersonalObjective(objectiveDeck.getFirstCard());
         }
-        notifyObservers(new Message(null, Event.SETUP_PHASE_2));
+
+        List<Object> tmp=new ArrayList<>();
+        tmp.add(this.objectiveCard1);
+        tmp.add(this.objectiveCard2);
+        notifyObservers(new Message(tmp, Event.UPDATED_COMMON_OBJECTIVES));
     }
 
 
@@ -653,7 +656,7 @@ public class Game extends Observable implements Serializable {
      */
     public void setState (GameState state) throws RemoteException {
         this.state = state;
-        notifyObservers(new Message(null, Event.GAME_STATE_CHANGED)); //we'll look into it
+        notifyObservers(new Message(this.state, Event.GAME_STATE_CHANGED)); //we'll look into it
     }
 
 

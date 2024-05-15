@@ -216,8 +216,13 @@ public class Player extends Observable implements Serializable {
      * Adds an objective card to the list. The list will contain 2 random objective cards, and the player will need to select only one of them
      * @param card is the objective card you need to add to the list
      */
-    public void addPersonalObjective(ObjectiveCard card) {
+    public void addPersonalObjective(ObjectiveCard card) throws RemoteException{
         this.personalObjective.add(card);
+
+        List<Object> tmp=new ArrayList<>();
+        tmp.add(card);
+        tmp.add(this.nickname);
+        notifyObservers(new Message(tmp, Event.UPDATED_PERSONAL_OBJECTIVE));
     }
 
 
@@ -353,6 +358,9 @@ public class Player extends Observable implements Serializable {
         return this.personalObjective.get(0);
     }
 
+    public List<ObjectiveCard> getPersonalObjectives(){
+        return this.personalObjective;
+    }
 
     /**
      * Getter method

@@ -234,7 +234,7 @@ public class ClientSCK implements ClientGeneralInterface{
                     socket.close();
                     running=false;
                 }
-                updateGameState((Game) sckMessage.getObj().get(0));
+                updateGameState((Game.GameState) sckMessage.getObj().get(0));
             }
             case OK -> { //...potremmo stampare anche il messaggio di ok....
                 //System.out.println("sono in case OK di ClientSCK");
@@ -706,7 +706,7 @@ public class ClientSCK implements ClientGeneralInterface{
     }
 
     @Override
-    public void updateGameState(Game game) throws RemoteException {
+    public void updateGameState(Game.GameState gameState) throws RemoteException {
         //we have to change the view and the local model
     }
     //fine update

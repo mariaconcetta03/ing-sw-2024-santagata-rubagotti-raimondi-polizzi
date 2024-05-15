@@ -34,6 +34,8 @@ public interface ClientRMIInterface extends Remote {
 
     void updateRound(List<Player> obj)throws RemoteException;
 
-    void updateGameState(Game obj) throws RemoteException;
+    void updateGameState(Game.GameState obj) throws RemoteException;
     void showError(Event event) throws RemoteException;
+    void updateCommonObjectives(ObjectiveCard card1, ObjectiveCard card2) throws RemoteException;
+    void updatePersonalObjective(ObjectiveCard card, String nickname) throws RemoteException;
 }
