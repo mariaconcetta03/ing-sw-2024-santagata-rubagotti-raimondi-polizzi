@@ -1,9 +1,6 @@
 package distributed.RMI;
 
-import Exceptions.FullLobbyException;
-import Exceptions.GameAlreadyStartedException;
-import Exceptions.GameNotExistsException;
-import Exceptions.NicknameAlreadyTakenException;
+import Exceptions.*;
 import controller.GameController;
 import distributed.ClientGeneralInterface;
 import org.model.*;
@@ -18,6 +15,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 
 // ----------------------------------- H O W   I T   W O R K S ----------------------------------------
@@ -35,7 +33,7 @@ import java.util.concurrent.CompletableFuture;
 public class RMIClient extends UnicastRemoteObject implements ClientGeneralInterface, ClientRMIInterface {
     private ServerRMIInterface SRMIInterface; //following the slides' instructions
 
-
+    Scanner sc;
     int turnCounter=-1;
     private GameControllerInterface gameController = null;
     // given to the client when the game is started (lobby created or player joined to a lobby))
@@ -43,7 +41,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private int selectedView; // 1==TUI, 2==GUI
     private InterfaceTUI tuiView;
     //private GUI; :O INTERFACCIA PERò...
-    private Board personalBoard; //magari gli attributi personali, non sono necessari se teniamo playersInTheGame
     private PlayableDeck goldDeck;
     private PlayableDeck resourceDeck;
     private PlayableCard goldCard1;
@@ -53,8 +50,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private Player personalPlayer;
     private List<Player> playersInTheGame;
     private ObjectiveCard commonObjective1, commonObjective2;
-    private Thread menuThread;
     private boolean inGame=false;
+    private CompletableFuture<Void> completableFuture;
+    private Thread menuThread;
     
     /**
      * Class constructor
@@ -62,46 +60,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public RMIClient() throws RemoteException {
         personalPlayer= new Player();
+        menuThread=new Thread(()->{
 
+        });
     }
-
-
-
-
-    /**
-     * Main method
-     * This method calls the method "startConnectionWithServer()". After the calling of this method the server
-     * is able to receive the requests of the clients
-     * @param args from CLI
-     */
-    public static void main( String[] args ) {
-
-        try {
-            RMIClient rmiC = new RMIClient();
-            GameController gc;
-            List <String> rc = new ArrayList<String>();
-            rc.add("Minnie");
-
-            // OK
-            rmiC.createLobby("Pippo", 4); // OK
-            rmiC.addPlayerToLobby("Papero", rmiC.gameController.getId());
-            rmiC.addPlayerToLobby("Minnie", rmiC.gameController.getId());
-            rmiC.addPlayerToLobby("Topolino", rmiC.gameController.getId());
-            rmiC.sendMessage("Pippo", rc, "Hello!");
-
-            // OK, BUT WE NEED A TUI OR A GUI TO COMPLETE THE WHOLE TEST. NOW IT ONLY JUMPS INTO THE METHOD "updateChat"
-            rmiC.updateChat(rmiC.gameController.getGame().getChats().get(0));
-
-            // KO
-            // rmiC.createLobby("Pluto", 9); // KO [java.lang.IllegalArgumentException: Wrong number of players!]
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
 
 
     /**
@@ -112,8 +74,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         static int PORT = 1099; // free ports: from 49152 to 65535, 1099 standard port for RMI registry
         static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
     }
-
-
 
 
 
@@ -291,30 +251,32 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * his nickname and to choose if he wants to join an already started Game or create a new one.
      */
     public void waitingRoom(){
-        Scanner sc= new Scanner(System.in);
+        sc=new Scanner(System.in);
         boolean ok=false;
         int errorCounter=0;
         if(selectedView==1){
             tuiView=new InterfaceTUI();
             tuiView.printWelcome();
-            while(!ok) {
-                if(errorCounter==3){
-                    System.out.println("Unable to communicate with the server! Shutting down.");
-                    System.exit(-1);
+            if(personalPlayer.getNickname()==null) {
+                while (!ok) {
+                    if (errorCounter == 3) {
+                        System.out.println("Unable to communicate with the server! Shutting down.");
+                        System.exit(-1);
+                    }
+                    String nickname = tuiView.askNickname(sc);
+                    try {
+                        this.chooseNickname(nickname);
+                        personalPlayer.setNickname(nickname);
+                        ok = true;
+                    } catch (RemoteException | NotBoundException e) {
+                        errorCounter++;
+                        System.out.println("Error in the client-server communication. Try again.");
+                    } catch (NicknameAlreadyTakenException ex) {
+                        System.out.println("Nickname is already taken! Please try again.");
+                    }
                 }
-                String nickname = tuiView.askNickname();
-                try {
-                    this.chooseNickname(nickname);
-                    personalPlayer.setNickname(nickname);
-                    ok=true;
-                } catch (RemoteException | NotBoundException e) {
-                    errorCounter++;
-                    System.out.println("Error in the client-server communication. Try again.");
-                } catch (NicknameAlreadyTakenException ex) {
-                    System.out.println("Nickname is already taken! Please try again.");
-                }
+                System.out.println("Nickname correctly selected!");
             }
-            System.out.println("Nickname correctly selected!");
             try {
                     if(!SRMIInterface.getAvailableGameControllersId().isEmpty()) {
                         System.out.println("If you want you can join an already created lobby. These are the ones available:");
@@ -333,26 +295,25 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             int gameSelection=0;
             while(!ok) {
                 try {
-                    sc=new Scanner(System.in);
                     gameSelection = sc.nextInt();
                     ok=true;
                 } catch (InputMismatchException e) {
                     System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
+                    sc.next();
                 }
             }
             try {
                 ok=false;
                 while(!ok) {
-                    sc=new Scanner(System.in);
                     if (gameSelection == -1) {
                         System.out.println("How many players would you like to join you in this game?");
                         while(!ok) {
                             try {
-                                sc=new Scanner(System.in);
                                 gameSelection = sc.nextInt();
                                 ok=true;
                             } catch (InputMismatchException e) {
                                 System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
+                                sc.next();
                             }
                         }
                         createLobby(personalPlayer.getNickname(), gameSelection);
@@ -384,31 +345,37 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
     }
 
-
     public void gameTurn(boolean inTurn){
         int choice= -1;
         boolean ok=false;
-        Scanner sc=new Scanner(System.in);
         if(selectedView==1) {
             tuiView.gameTurn(inTurn);
-            choice=tuiView.askAction(inTurn);
+            choice=tuiView.askAction(sc, inTurn);
             try {
                 switch (choice) {
                     case 0:
                         System.out.println("Are you sure to LEAVE the game? Type 1 if you want to leave.");
                         try{
                             if(sc.nextInt()==1){
+                                completableFuture.cancel(true);
+                                sc.close();
+                                inGame=false;
                                 leaveGame(personalPlayer.getNickname());
+                                System.out.println("You left the game.");
+                                this.resetAttributes();
+                                this.waitingRoom();
                             }
-                        }catch (InputMismatchException ignored){}
+                        }catch (InputMismatchException ignored){} //@TODO da gestire
                         break;
                     case 1: tuiView.printHand(personalPlayer.getPlayerDeck());
+                        gameTurn(inTurn);
                         break;
                     case 2: List<ObjectiveCard> list= new ArrayList<>();
                             list.add(commonObjective1);
                             list.add(commonObjective2);
                             list.add(personalPlayer.getPersonalObjective());
                             tuiView.printObjectiveCard(list);
+                        gameTurn(inTurn);
                         break;
                     case 3:
                         System.out.println("Gold card 1: " + this.goldCard1.getId());
@@ -417,6 +384,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         System.out.println("Resource card 2: " + this.resourceCard2.getId());
                         //System.out.println("Gold card 1: "+this.goldCard1);
                         //System.out.println("Gold card 1: "+this.goldCard1);
+                        gameTurn(inTurn);
                         break;
                     case 4:
                         ok=false;
@@ -425,14 +393,16 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         for(Player player: playersInTheGame){
                             if(player.getNickname().equals(nickname)){
                                 ok=true;
-                                tuiView.printBoard(player.getBoard());
+                                tuiView.printBoard(player.getBoard()); //TODO non sto aggiornando playerInTheGame quando arriva update
                             }
                         }
                         if(!ok){
                             System.out.println("There is no such player in this lobby! Try again.");
                         }
+                        gameTurn(inTurn);
                         break;
                     case 5: tuiView.printScoreBoard(playersInTheGame);
+                    gameTurn(inTurn);
                         break;
                     case 6: System.out.println("Do you want to send a message to everybody (type 1) or a private message (type the single nickname)?");
                     String answer= sc.nextLine();
@@ -463,6 +433,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                             System.out.println("There is no such player in this lobby! Try again.");
                         }
                     }
+                        gameTurn(inTurn);
                         break;
                     case 7: boolean orientation=true;
                     int value=-1;
@@ -476,6 +447,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     if(card!=null){
                         tuiView.askCardOrientation(card);
                     }
+                        gameTurn(inTurn);
                         break;
                     default:
                         System.out.println("not yet implemented");
@@ -498,6 +470,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     // ------- M E T H O D S   F O R   U P D A T E -------
     // ---- F R O M   S E R V E R   T O   C L I E N T ----
 
+    public void finishedSetupPhase2() throws RemoteException{
+        updateRound(playersInTheGame);
+    }
     /**
      * This is an update method
      * @param board the new board we want to update
@@ -512,7 +487,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     }
 
     public void update() throws RemoteException{
-        System.out.println("OOOOOOOOOOOOOOOOOOOOO");
+        System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
     }
 
 
@@ -569,15 +544,33 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
     }
 
-    public void updatePersonalObjective(ObjectiveCard card, String nickname) throws RemoteException{
-        if(personalPlayer.getNickname().equals(nickname)){
-         personalPlayer.addPersonalObjective(card);
-        }
-        if(personalPlayer.getPersonalObjectives().size()==2){
-            if(selectedView==1){
-                CompletableFuture.runAsync(()->{tuiView.askChoosePersonalObjective();});
-            }else if(selectedView==2){
-                //gui
+    public void updatePersonalObjective(ObjectiveCard card, String nickname) throws RemoteException {
+        if (personalPlayer.getNickname().equals(nickname)) {
+            personalPlayer.addPersonalObjective(card);
+            if (personalPlayer.getPersonalObjectives().size() == 2) {
+                    if (selectedView == 1) {
+                        CompletableFuture.runAsync(() -> {
+                            boolean ok = false;
+                            while (!ok) {
+                                tuiView.printHand(personalPlayer.getPlayerDeck());
+                                try {
+                                    ObjectiveCard tmp=tuiView.askChoosePersonalObjective(sc, personalPlayer.getPersonalObjectives());
+                                    chooseObjectiveCard(personalPlayer.getNickname(),tmp);
+                                    ok = true;
+                                    personalPlayer.setPersonalObjective(tmp);
+                                    System.out.println("You've correctly chosen your objective card!");
+                                }catch (RemoteException |NotBoundException e){
+                                    System.out.println("Unable to communicate with the server! Shutting down.");
+                                    System.exit(-1);
+                                }catch (CardNotOwnedException e){
+                                    System.out.println("You don't own this card.");
+                                }
+                            }
+                        });
+                    } else if (selectedView == 2) {
+                        //gui
+                    }
+
             }
         }
     }
@@ -700,7 +693,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException {
         playersInTheGame = newPlayingOrder;
-        CompletableFuture.runAsync(()->{
+        completableFuture=CompletableFuture.runAsync(()->{
         if (turnCounter != -1) {
             if (turnCounter != 0) {
                 if (selectedView == 1) {
@@ -720,7 +713,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 }
             } else if (turnCounter == 0) {
                 try {
-                    playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0],tuiView.askPlayBaseCard(personalPlayer.getPlayerDeck()[0]));
+                    playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0],tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]));
                 }catch (NotBoundException |RemoteException ignored){}
             }
         }
@@ -746,11 +739,36 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             } else if (gameState.equals(Game.GameState.ENDING)) {
                 
             }else if(gameState.equals(Game.GameState.ENDED)){
-                inGame=false;
+                //inGame=false;
             }
         } else if (selectedView == 2) {
             //guiView.updateGameState(game)
         }
+    }
+
+    public void gameLeft() throws RemoteException{
+        if(inGame){
+            sc.close();
+            completableFuture.cancel(true);
+            System.out.println(ANSIFormatter.ANSI_RED+"Someone left the game."+ANSIFormatter.ANSI_RESET);
+            this.resetAttributes();
+            System.out.println("Returning to lobby.\n\n\n\n\n\n\n");
+            this.waitingRoom();
+        }
+    }
+    public void resetAttributes(){
+        String tmp= personalPlayer.getNickname();
+        this.personalPlayer=new Player();
+        this.personalPlayer.setNickname(tmp);
+        this.goldDeck=null;
+        this.resourceDeck=null;
+        this.resourceCard1=null;
+        this.resourceCard2=null;
+        this.goldCard1=null;
+        this.goldCard2=null;
+        this.turnCounter=-1;
+        this.playersInTheGame=null;
+        this.gameController=null;
     }
 
     //GETTER & SETTER

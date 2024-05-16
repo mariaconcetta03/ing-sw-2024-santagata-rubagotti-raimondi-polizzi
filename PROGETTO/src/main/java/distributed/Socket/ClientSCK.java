@@ -290,7 +290,7 @@ public class ClientSCK implements ClientGeneralInterface{
                     System.out.println("Unable to communicate with the server! Shutting down.");
                     System.exit(-1);
                 }
-                nickname = tuiView.askNickname();
+                nickname = tuiView.askNickname(sc);
                 try {
                    this.chooseNickname(nickname);
                     ok=true;

@@ -234,16 +234,18 @@ public class Game extends Observable implements Serializable {
         // giving 2 cards to the market as common objective
         this.objectiveCard1 = objectiveDeck.getFirstCard();
         this.objectiveCard2 = objectiveDeck.getFirstCard();
+
+        List<Object> tmp=new ArrayList<>();
+        tmp.add(this.objectiveCard1);
+        tmp.add(this.objectiveCard2);
+        notifyObservers(new Message(tmp, Event.UPDATED_COMMON_OBJECTIVES));
+
         // giving each player 2 objective cards, next he will decide which one to choose
         for (int i = 0; i<nPlayers; i++) {
             this.players.get(i).addPersonalObjective(objectiveDeck.getFirstCard());
             this.players.get(i).addPersonalObjective(objectiveDeck.getFirstCard());
         }
 
-        List<Object> tmp=new ArrayList<>();
-        tmp.add(this.objectiveCard1);
-        tmp.add(this.objectiveCard2);
-        notifyObservers(new Message(tmp, Event.UPDATED_COMMON_OBJECTIVES));
     }
 
 

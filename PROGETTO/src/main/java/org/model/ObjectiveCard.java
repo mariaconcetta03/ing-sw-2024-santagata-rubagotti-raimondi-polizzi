@@ -14,6 +14,55 @@ public class ObjectiveCard extends Card implements Serializable {
         private AngleType card1Type;
         private AngleType card2Type;
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ObjectiveCard other = (ObjectiveCard) obj;
+        if ( this.getId()!= other.getId()) {
+            return false;
+        }
+        if ((this.getCard0Type()!=null)&&(other.getCard0Type()!=null)){
+            if(this.getCard0Type() != other.getCard0Type()){
+                return false;
+            }
+        }
+        if ((this.getCard1Type()!=null)&&(other.getCard1Type()!=null)){
+            if(this.getCard0Type() != other.getCard0Type()){
+                return false;
+            }
+        }
+        if ((this.getCard2Type()!=null)&&(other.getCard2Type()!=null)){
+            if(this.getCard0Type() != other.getCard0Type()){
+                return false;
+            }
+        }
+        if (this.getCardPoints() != other.getCardPoints()) {
+            return false;
+        }
+        if (!this.getPositionCard1().equals(other.getPositionCard1())) {
+            return false;
+        }
+        if (!this.getPositionCard2().equals(other.getPositionCard2())) {
+            return false;
+        }
+        //andrebbe finito? probabile
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int start=12;
+        int res=1;
+        res=start*res+this.getId();
+        res=start*res+2;
+        return res;
+    }
+
         /**
          * @param id
          * @param cardPoints

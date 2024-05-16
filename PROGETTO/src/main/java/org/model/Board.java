@@ -3,7 +3,7 @@ import java.io.Serializable;
 import java.util.*;
 import utils.Observable;
 
-public class Board extends Observable implements Serializable  {
+public class Board extends Observable implements Serializable  { //TODO why OBSERVABLE?
     private static final int numCarte=80;
     private Set<Coordinates> playablePositions;
     private Set<Coordinates> unPlayablePositions;

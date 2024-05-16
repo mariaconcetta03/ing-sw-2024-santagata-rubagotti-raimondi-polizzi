@@ -2,6 +2,7 @@ package distributed;
 import distributed.RMI.RMIClient;
 import distributed.Socket.ClientSCK;
 import view.TUI.ANSIFormatter;
+import view.TUI.InterfaceTUI;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
@@ -24,6 +25,7 @@ public class ClientLauncher {
                     RMIClient rmiClient = new RMIClient();
                     rmiClient.setSelectedView(selection);
                     rmiClient.SRMIInterfaceFromRegistry();
+                    InterfaceTUI.clearScreen();
                     //connect the client
                     rmiClient.waitingRoom(); //selection of nicknames and lobby functionalities
                 }catch (RemoteException | NotBoundException e){

@@ -176,6 +176,10 @@ public class Player extends Observable implements Serializable {
                 playerDeck[i] = null;      // value 0 in playerDeck, as no id will be = 0
             }
         }
+
+        try {
+            notifyObservers(new Message(this.board, Event.UPDATED_BOARD));
+        }catch (RemoteException e){}
     }
 
 
@@ -189,8 +193,12 @@ public class Player extends Observable implements Serializable {
     public void playBaseCard (boolean orientation, PlayableCard card) {
         card.setOrientation(orientation);
         board.placeBaseCard(card);
+
+        try {
+            notifyObservers(new Message(this.board, Event.UPDATED_BOARD));
+        }catch (RemoteException e){}
     }
-    //non serve notify, non puo essere posizionata male
+    //non serve notify, non puo essere posizionata male.
 
 
     /**
@@ -272,16 +280,14 @@ public class Player extends Observable implements Serializable {
      * Setter method
      * @param card is the personal objective chosen by the player
      */
-    public void setPersonalObjective (ObjectiveCard card) throws CardNotOwnedException {
+    public void setPersonalObjective (ObjectiveCard card) throws CardNotOwnedException, RemoteException {
         if (this.personalObjective.contains(card)) {
             if (card.equals(this.personalObjective.get(0))) {
                 this.personalObjective.remove(1);
             } else if (card.equals(this.personalObjective.get(1))) {
                 this.personalObjective.remove(0);
             }
-            try {
-                notifyObservers(new Message(personalObjective.get(0), Event.UPDATED_PERSONAL_OBJECTIVE));
-            }catch (RemoteException ignored){} //da rimuovere?
+                notifyObservers(new Message(null, Event.OK));
         }else{
             throw new CardNotOwnedException("You can't select this card!");
         }

@@ -85,6 +85,15 @@ public class Observable {
             this.observers.add(obs);
         }
     }
+    /**
+     * This method removes an observer from the list
+     */
+    public void removeObservers(){
+        for(int i=0; i< observers.size();i++){
+            observers.remove(observers.get(i));
+        }
+    }
+
 
 
 
@@ -109,14 +118,6 @@ public class Observable {
     //}
 
 
-    //non ci serve perchè se un giocatore si disconnette finisce la partita (dobbiamo usare messaggi di ping per capire se tutti sono ancora connessi)
-    /**
-     * This method removes a listener from the list
-     * @param listener to remove from the list
-     */
-    //public void removeListener(Game game, Observer listener){
-    //    this.listeners.get(game).remove(listener);
-    //}
 
 
     //non ci serve se abbiamo un attributo Observable per ogni Game

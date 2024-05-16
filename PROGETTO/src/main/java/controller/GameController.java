@@ -231,9 +231,15 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         try {
             chooser.setPersonalObjective(selectedCard);
             game.setLastEvent (Event.OK);
-        }catch(CardNotOwnedException ignored){
+        }catch(CardNotOwnedException e){
             game.setLastEvent (Event.OBJECTIVE_CARD_NOT_OWNED);
         }
+        for(Player p: game.getPlayers()){
+            if(p.getPersonalObjectives().size()==2){
+                return;
+            }
+        }
+        game.setLastEvent(Event.SETUP_PHASE_2); //finished choosing the objective card
     }
 
 
@@ -342,23 +348,25 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * @throws IllegalArgumentException if the specific Player is not part of the Game
      */
     public void leaveGame(String nickname) throws IllegalArgumentException, RemoteException {
-        Player tmp=null;
-        for(Player p: game.getPlayers()){
-            if(p.getNickname().equals(nickname)){
-                tmp=p;
-            }
-        }
+        Player tmp=getPlayerByNickname(nickname);
+
         if(tmp==null){
             throw new IllegalArgumentException("This player is not playing the match");
         }else {
-            if (!(game.getState() == Game.GameState.ENDED)) { //se è durante la partita ATTIVA
+            if (!(game.getState().equals(Game.GameState.ENDED))) { //se è durante la partita ATTIVA
                 //this will alert the listeners to notify all the players that the game has ENDED
+                game.setLastEvent(Event.START);
                 game.setLastEvent(Event.GAME_LEFT);
                 game.setState(Game.GameState.ENDED);//here or in the listeners?
                 //if(richiesta volontaria non causata da una disconnessione){ //potrei lasciarli tutti in server
                 //senza bisogno di "passarseli"
-                //
-                //
+
+                //removing all the observers since the game will not continue
+                for(Player p: game.getPlayers()){
+                    p.removeObservers();
+                }
+                game.removeObservers();
+
                 serverController.getAllGameControllers().remove(id); //il gamecontroller si "auto"rimuove dal server controller
             } else { //se è dopo la fine del gioco deve solo "tornare alla lobby"
 

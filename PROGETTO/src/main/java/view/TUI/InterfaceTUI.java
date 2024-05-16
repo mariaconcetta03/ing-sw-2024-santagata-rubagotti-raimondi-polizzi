@@ -32,8 +32,7 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
      * This method is used to print on the TUI a request for nickname
      * @return the nickname selected
      */
-    public String askNickname(){
-        sc=new Scanner(System.in);
+    public String askNickname(Scanner sc){
         boolean selected= false;
         String nickname=null;
         while(!selected){
@@ -62,14 +61,14 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         }
     }
 
-    public int askAction(boolean inTurn){
+    public int askAction(Scanner sc, boolean inTurn){
     boolean ok=false;
-    Scanner sc;
     int value=0;
         while(!ok){
             try {
-                sc= new Scanner(System.in);
-                value = sc.nextInt(); //lasciando lo scanner, wrappedObserver aspetta una risposta prima di inviare
+                value = sc.nextInt();
+                sc.nextLine();
+                //lasciando lo scanner, wrappedObserver aspetta una risposta prima di inviare
                 //update agli altri client (non ha ancora esaurito la chiamata a funzione
                 if((inTurn)&&(value==7)) {
                     ok=true;
@@ -80,17 +79,16 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                 }
             }catch (InputMismatchException e){
                 System.out.println("Please type a number. ");
+                sc.next();
             }
         }
         return value;
     }
-    public boolean askPlayBaseCard(PlayableCard baseCard) {
-        Scanner sc = new Scanner(System.in);
+    public boolean askPlayBaseCard(Scanner sc, PlayableCard baseCard) {
         int selection = 0;
         System.out.println("This is your base card: " + baseCard.getId());
         System.out.println("Would you like to play it upwards(1) or downwards(2)?");
         while (true) {
-            sc=new Scanner(System.in);
             try {
                 selection = sc.nextInt();
                 if(selection==1){
@@ -102,11 +100,28 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                 }
             }catch (InputMismatchException e){
                 System.out.println("Please insert a number! 1 to play the card upwards, 2 to play the card downwards.");
+                sc.next();
             }
         }
     }
-    public void askChoosePersonalObjective(){
-
+    public ObjectiveCard askChoosePersonalObjective(Scanner sc, List<ObjectiveCard> objectiveCards) {
+        int choice=-1;
+        while (true) {
+            System.out.println("These are the 2 objective card you can choose between: \n1_ " + objectiveCards.get(0).getId() + "\n2_ " + objectiveCards.get(1).getId());
+            try {
+                choice=sc.nextInt();
+                if(choice==1){
+                    return objectiveCards.get(0);
+                }else if(choice==2){
+                    return objectiveCards.get(1);
+                }else{
+                    System.out.println("Please insert a valid number.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Please type a number.");
+                sc.next();
+            }
+        }
     }
 
     /**
@@ -155,8 +170,8 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
      */
     public void printScoreBoard(List<Player> players){
         players.sort(Comparator.comparing(Player::getPoints));
-        for(int i=1; i<= players.size(); i++){
-            System.out.println(i+"_ "+players.get(i).getNickname()+" scored "+ players.get(i).getPoints()+" points!");
+        for(int i=0; i< players.size(); i++){
+            System.out.println((i+1)+"_ "+players.get(i).getNickname()+" scored "+ players.get(i).getPoints()+" points!");
         }
     }
 
@@ -175,6 +190,11 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
     }
 
     public void askCardOrientation(PlayableCard card){
+    }
+
+    public static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
 
 

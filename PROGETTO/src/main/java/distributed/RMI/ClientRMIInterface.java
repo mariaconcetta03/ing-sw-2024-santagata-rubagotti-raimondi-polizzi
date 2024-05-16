@@ -38,4 +38,6 @@ public interface ClientRMIInterface extends Remote {
     void showError(Event event) throws RemoteException;
     void updateCommonObjectives(ObjectiveCard card1, ObjectiveCard card2) throws RemoteException;
     void updatePersonalObjective(ObjectiveCard card, String nickname) throws RemoteException;
+    void finishedSetupPhase2() throws RemoteException;
+    void gameLeft() throws RemoteException;
 }
