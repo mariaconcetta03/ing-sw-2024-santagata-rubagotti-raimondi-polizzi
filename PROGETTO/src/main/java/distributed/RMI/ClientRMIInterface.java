@@ -10,7 +10,7 @@ import java.util.List;
 public interface ClientRMIInterface extends Remote {
     void update() throws RemoteException;
 
-    void updateBoard(Board obj)throws RemoteException;
+    void updateBoard(String boardOwner, Board obj)throws RemoteException;
 
     void updateResourceDeck(PlayableDeck obj)throws RemoteException;
 

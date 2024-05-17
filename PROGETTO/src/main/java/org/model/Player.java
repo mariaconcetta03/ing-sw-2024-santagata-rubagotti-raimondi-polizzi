@@ -133,8 +133,10 @@ public class Player extends Observable implements Serializable {
                 game.resetResourceCard2();
         } else if ((!game.getResourceDeck().isFinished())&&(card.equals(game.getResourceDeck().checkFirstCard()))){
             card= game.getResourceDeck().getFirstCard();
+            notifyObservers(new Message(game.getResourceDeck(), Event.UPDATED_RESOURCE_DECK));
         } else if ((!game.getGoldDeck().isFinished())&&card.equals(game.getGoldDeck().checkFirstCard())){
             card= game.getGoldDeck().getFirstCard();
+            notifyObservers(new Message(game.getGoldDeck(), Event.UPDATED_GOLD_DECK));
         }else if(!baseDeck.getCards().contains(card)){
             throw new CardNotDrawableException("You can't throw this card!");
         }
@@ -178,12 +180,15 @@ public class Player extends Observable implements Serializable {
             }
         }
 
-        List<Object> tmp=new ArrayList<>();
-        tmp.add(this.nickname);
-        tmp.add(this.playerDeck);
+        List<Object> tmp1=new ArrayList<>();
+        tmp1.add(this.nickname);
+        tmp1.add(this.playerDeck);
+        List<Object> tmp2=new ArrayList<>();
+        tmp2.add(this.nickname);
+        tmp2.add(this.board);
         try {
-            notifyObservers(new Message(tmp, Event.UPDATED_PLAYER_DECK));
-            notifyObservers(new Message(this.board, Event.UPDATED_BOARD));
+            notifyObservers(new Message(tmp1, Event.UPDATED_PLAYER_DECK));
+            notifyObservers(new Message(tmp2, Event.UPDATED_BOARD));
         }catch (RemoteException e){}
     }
 
@@ -199,12 +204,15 @@ public class Player extends Observable implements Serializable {
         card.setOrientation(orientation);
         board.placeBaseCard(card);
 
-        List<Object> tmp=new ArrayList<>();
-        tmp.add(this.nickname);
-        tmp.add(this.playerDeck);
+        List<Object> tmp1=new ArrayList<>();
+        tmp1.add(this.nickname);
+        tmp1.add(this.playerDeck);
+        List<Object> tmp2=new ArrayList<>();
+        tmp2.add(this.nickname);
+        tmp2.add(this.board);
         try {
-            notifyObservers(new Message(tmp, Event.UPDATED_PLAYER_DECK));
-            notifyObservers(new Message(this.board, Event.UPDATED_BOARD));
+            notifyObservers(new Message(tmp1, Event.UPDATED_PLAYER_DECK));
+            notifyObservers(new Message(tmp2, Event.UPDATED_BOARD));
         }catch (RemoteException e){}
     }
     //non serve notify, non puo essere posizionata male.

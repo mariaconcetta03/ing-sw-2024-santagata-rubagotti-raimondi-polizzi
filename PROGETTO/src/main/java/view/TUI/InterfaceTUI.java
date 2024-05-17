@@ -286,7 +286,7 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                     System.out.print("");
                 }
                 else{
-                    System.out.print(board.getTable()[i][j].getId());
+                    System.out.print(board.getTable()[i][j].getId()+" ");
                 }
             }
         }

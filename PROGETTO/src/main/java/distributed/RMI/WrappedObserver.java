@@ -45,7 +45,7 @@ public class WrappedObserver implements Observer {
     @Override
     public void update(Observable obs, Message arg) throws RemoteException {
         switch(arg.getMessageEvent()){
-            case UPDATED_BOARD: remoteClient.updateBoard((Board)(arg.getObj().get(0)));
+            case UPDATED_BOARD: remoteClient.updateBoard((String)(arg.getObj().get(0)), (Board) (arg.getObj().get(1)));
                 break;
             case UPDATED_RESOURCE_DECK: remoteClient.updateResourceDeck((PlayableDeck)(arg.getObj().get(0)));
                 break;

@@ -161,7 +161,7 @@ public class ClientSCK implements ClientGeneralInterface{
         switch (sckMessage.getMessageEvent()) {
             case UPDATED_BOARD -> {
                 //we have to change the view and the local model
-                updateBoard((Board) sckMessage.getObj().get(0));
+                updateBoard((String) sckMessage.getObj().get(0), (Board) sckMessage.getObj().get(0));
             }
             case UPDATED_RESOURCE_DECK -> {
                 //we have to change the view and the local model
@@ -646,7 +646,7 @@ public class ClientSCK implements ClientGeneralInterface{
 
  //update
     @Override
-    public void updateBoard(Board board) throws RemoteException {
+    public void updateBoard(String boardOwner, Board board) throws RemoteException {
         //we have to change the view and the local model
     }
 

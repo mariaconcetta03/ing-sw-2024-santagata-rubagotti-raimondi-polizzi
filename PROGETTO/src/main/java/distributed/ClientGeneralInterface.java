@@ -16,7 +16,7 @@ import java.util.List;
 public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
 
     //inizio update
-    void updateBoard (Board board) throws RemoteException;
+    void updateBoard (String boardOwner, Board board) throws RemoteException;
     void updateResourceDeck (PlayableDeck resourceDeck) throws RemoteException;
     void updateGoldDeck (PlayableDeck goldDeck) throws RemoteException;
     void updatePlayerDeck (String playerNickname, PlayableCard[] playerDeck)  throws RemoteException;

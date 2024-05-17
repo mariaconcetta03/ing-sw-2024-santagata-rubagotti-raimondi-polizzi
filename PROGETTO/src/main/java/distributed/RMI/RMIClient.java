@@ -51,6 +51,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private List<Player> playersInTheGame;
     private ObjectiveCard commonObjective1, commonObjective2;
     private boolean inGame=false;
+    private boolean isPlaying= false;
     private CompletableFuture<Void> completableFuture;
     private Thread menuThread;
     
@@ -60,18 +61,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public RMIClient() throws RemoteException {
         personalPlayer= new Player();
-        menuThread=new Thread(()->{
-            while(true){
-            while (inGame) {
-                    if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
-                        System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
-                        gameTurn(true);
-                    }else {
-                        System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
-                        gameTurn(false);
-                    }
-            }
-        }});
     }
 
 
@@ -243,7 +232,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
 
 
-
     /**
      * This method lets a player end the game (volontary action or involontary action - connection loss)
      * @param nickname of the player who is gonna leave the game
@@ -255,11 +243,33 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         this.gameController.leaveGame(nickname);
     }
 
+
+
+    private void initialiseMenuThread(){
+        menuThread=new Thread(()->{
+            while(true){
+                try {
+                    while (inGame) {
+                        if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
+                            System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
+                            gameTurn(isPlaying);
+                        } else {
+                            System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
+                            gameTurn(isPlaying);
+                        }
+                    }
+                }catch (InterruptedException e ){
+                    System.err.print(e.getStackTrace());
+                }
+            }});
+    }
+
     /**
      * This method is called when the client is created. Absolves the function of helping the player to select
      * his nickname and to choose if he wants to join an already started Game or create a new one.
      */
     public void waitingRoom(){
+        initialiseMenuThread();
         sc=new Scanner(System.in);
         boolean ok=false;
         int errorCounter=0;
@@ -354,11 +364,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
     }
 
-    public void gameTurn(boolean inTurn){
+    public void gameTurn(boolean inTurn) throws InterruptedException{
         int choice= -1;
         boolean ok=false;
         if(selectedView==1) {
-            tuiView.gameTurn(inTurn);
+            tuiView.gameTurn(isPlaying);
             choice=tuiView.askAction(sc, inTurn);
             try {
                 switch (choice) {
@@ -366,8 +376,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         System.out.println("Are you sure to LEAVE the game? Type 1 if you want to leave.");
                         try{
                             if(sc.nextInt()==1){
-                                sc.close();
                                 inGame=false;
+                                menuThread.join(); //letting the thread finish
                                 leaveGame(personalPlayer.getNickname());
                                 System.out.println("You left the game.");
                                 this.resetAttributes();
@@ -376,14 +386,14 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         }catch (InputMismatchException ignored){} //@TODO da gestire
                         break;
                     case 1: tuiView.printHand(personalPlayer.getPlayerDeck());
-                        gameTurn(inTurn);
+                        gameTurn(isPlaying);
                         break;
                     case 2: List<ObjectiveCard> list= new ArrayList<>();
                             list.add(commonObjective1);
                             list.add(commonObjective2);
                             list.add(personalPlayer.getPersonalObjective());
                             tuiView.printObjectiveCard(list);
-                        gameTurn(inTurn);
+                        gameTurn(isPlaying);
                         break;
                     case 3:List<PlayableCard> tmp=new ArrayList<>();
                         tmp.add(resourceCard1);
@@ -391,7 +401,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         tmp.add(goldCard1);
                         tmp.add(goldCard2);
                         tuiView.printDrawableCards(goldDeck, resourceDeck, tmp);
-                        gameTurn(inTurn);
+                        gameTurn(isPlaying);
                         break;
                     case 4:
                         ok=false;
@@ -406,10 +416,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         if(!ok){
                             System.out.println("There is no such player in this lobby! Try again.");
                         }
-                        gameTurn(inTurn);
+                        gameTurn(isPlaying);
                         break;
                     case 5: tuiView.printScoreBoard(playersInTheGame);
-                    gameTurn(inTurn);
+                    gameTurn(isPlaying);
                         break;
                     case 6: System.out.println("Do you want to send a message to everybody (type 1) or a private message (type the single nickname)?");
                     String answer= sc.nextLine();
@@ -440,7 +450,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                             System.out.println("There is no such player in this lobby! Try again.");
                         }
                     }
-                        gameTurn(inTurn);
+                        gameTurn(isPlaying);
                         break;
                     case 7: boolean orientation=true;
                         PlayableCard card= null;
@@ -449,7 +459,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         if(card!=null){
                             orientation=tuiView.askCardOrientation(sc, card);
                         }else{
-                            gameTurn(inTurn);
+                            gameTurn(isPlaying);
                         }
                         coordinates=tuiView.askCoordinates(sc, card, personalPlayer.getBoard());
                         if(coordinates!=null){
@@ -462,7 +472,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                             card= tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
                             this.drawCard(personalPlayer.getNickname(), card);
                         }else{
-                            gameTurn(inTurn);
+                            gameTurn(isPlaying);
                         }
                         break;
                     default:
@@ -493,12 +503,20 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This is an update method
      * @param board the new board we want to update
      */
-    public void updateBoard (Board board) throws RemoteException {
-        personalPlayer.setBoard(board);
-        if (selectedView == 1) {
-            System.out.println("I received the update.");
-        } else if (selectedView == 2) {
-            //guiView.showBoard(board)
+    public void updateBoard (String boardOwner, Board board) throws RemoteException {
+        if (boardOwner.equals(personalPlayer.getNickname())) {
+            personalPlayer.setBoard(board);
+        } else {
+            for (Player p : playersInTheGame) {
+                if (boardOwner.equals(p.getNickname())) {
+                    p.setBoard(board);
+                }
+            }
+            if (selectedView == 1) {
+                System.out.println("I received the board update.");
+            } else if (selectedView == 2) {
+                //guiView.showBoard(board)
+            }
         }
     }
 
@@ -709,7 +727,14 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException {
         playersInTheGame = newPlayingOrder;
-        completableFuture=CompletableFuture.runAsync(()->{
+        if(playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())){
+            System.out.println("You are playing");
+            isPlaying=true;
+        }else{
+            System.out.println("You are not playing");
+            isPlaying=false;
+        }
+        completableFuture=CompletableFuture.runAsync(()->{ //TODO rimuovere completableFuture
         if (turnCounter != -1) {
             if (turnCounter != 0) {
                 if (selectedView == 1) {
@@ -734,7 +759,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 }catch (NotBoundException |RemoteException ignored){}
             }
         }
-        turnCounter++;
+            turnCounter++;
     });
     }
     public void updateRound(Player p) throws RemoteException{}
@@ -765,8 +790,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     public void gameLeft() throws RemoteException{
         if(inGame){
-            sc.close();
             inGame=false;
+            try {
+                menuThread.join();
+            }catch (InterruptedException ignored){} //will never be interrupted before
             System.out.println(ANSIFormatter.ANSI_RED+"Someone left the game."+ANSIFormatter.ANSI_RESET);
             this.resetAttributes();
             System.out.println("Returning to lobby.\n\n\n\n\n\n\n");
