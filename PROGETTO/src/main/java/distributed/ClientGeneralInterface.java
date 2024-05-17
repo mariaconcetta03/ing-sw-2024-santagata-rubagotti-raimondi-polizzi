@@ -19,7 +19,7 @@ public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
     void updateBoard (Board board) throws RemoteException;
     void updateResourceDeck (PlayableDeck resourceDeck) throws RemoteException;
     void updateGoldDeck (PlayableDeck goldDeck) throws RemoteException;
-    void updatePlayerDeck (Player player, PlayableCard[] playerDeck)  throws RemoteException;
+    void updatePlayerDeck (String playerNickname, PlayableCard[] playerDeck)  throws RemoteException;
     void updateResourceCard1(PlayableCard card) throws RemoteException;
     void updateResourceCard2(PlayableCard card) throws RemoteException ;
     void updateGoldCard1(PlayableCard card) throws RemoteException;

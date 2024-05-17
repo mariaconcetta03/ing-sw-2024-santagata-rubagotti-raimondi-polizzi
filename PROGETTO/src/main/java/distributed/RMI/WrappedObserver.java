@@ -47,11 +47,11 @@ public class WrappedObserver implements Observer {
         switch(arg.getMessageEvent()){
             case UPDATED_BOARD: remoteClient.updateBoard((Board)(arg.getObj().get(0)));
                 break;
-            case UPDATED_RESOURCE_DECK: remoteClient.updateResourceDeck((PlayableDeck)(arg.getObj()));
+            case UPDATED_RESOURCE_DECK: remoteClient.updateResourceDeck((PlayableDeck)(arg.getObj().get(0)));
                 break;
-            case UPDATED_GOLD_DECK: remoteClient.updateGoldDeck((PlayableDeck)(arg.getObj()));
+            case UPDATED_GOLD_DECK: remoteClient.updateGoldDeck((PlayableDeck)(arg.getObj().get(0)));
                 break;
-            case UPDATED_PLAYER_DECK: remoteClient.updatePlayerDeck((Player)(arg.getObj().get(0)), (PlayableCard[])(arg.getObj().get(1)));
+            case UPDATED_PLAYER_DECK: remoteClient.updatePlayerDeck((String)(arg.getObj().get(0)), (PlayableCard[])(arg.getObj().get(1)));
                 break;
             case UPDATED_RESOURCE_CARD_1: remoteClient.updateResourceCard1((PlayableCard)(arg.getObj()).get(0));
                 break;
@@ -61,7 +61,7 @@ public class WrappedObserver implements Observer {
                 break;
             case UPDATED_GOLD_CARD_2: remoteClient.updateGoldCard2((PlayableCard)(arg.getObj()).get(0));
                 break;
-            case UPDATED_CHAT: remoteClient.updateChat((Chat) (arg.getObj()));
+            case UPDATED_CHAT: remoteClient.updateChat((Chat) (arg.getObj().get(0)));
                 break;
             case UPDATED_PAWNS: remoteClient.updatePawns((Player) (arg.getObj().get(0)), (Pawn)(arg.getObj().get(1)));
                 break;

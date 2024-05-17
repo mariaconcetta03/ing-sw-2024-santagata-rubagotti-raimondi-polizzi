@@ -205,6 +205,8 @@ public class Game extends Observable implements Serializable {
         this.players = newOrder;
         players.get(0).setState(Player.PlayerState.IS_PLAYING);
 
+        notifyObservers(new Message(this.goldDeck, Event.UPDATED_GOLD_DECK));
+        notifyObservers(new Message(this.resourceDeck, Event.UPDATED_RESOURCE_DECK));
 
         notifyObservers(new Message(players, Event.NEW_TURN));
         notifyObservers(new Message(null, Event.SETUP_PHASE_1));
@@ -246,6 +248,8 @@ public class Game extends Observable implements Serializable {
             this.players.get(i).addPersonalObjective(objectiveDeck.getFirstCard());
         }
 
+        notifyObservers(new Message(this.goldDeck, Event.UPDATED_GOLD_DECK));
+        notifyObservers(new Message(this.resourceDeck, Event.UPDATED_RESOURCE_DECK));
     }
 
 
@@ -396,9 +400,6 @@ public class Game extends Observable implements Serializable {
 
 
 
-
-
-
     /**
      * These 4 methods are useful to replace a card in the market.
      * The market is formed by 2 gold cards and 2 resource cards, which the player can pick up during the game
@@ -411,7 +412,8 @@ public class Game extends Observable implements Serializable {
         }else{
             this.goldCard1=null;
         }
-        notifyObservers(new Message(this.goldCard1, Event.UPDATED_GOLD_CARD_1)); //maybe we can create just one Event?
+        notifyObservers(new Message(this.goldCard1, Event.UPDATED_GOLD_CARD_1)); //TODO maybe we can create just one Event?
+        notifyObservers(new Message(this.goldDeck, Event.UPDATED_GOLD_DECK));
     }
 
     public void resetGoldCard2 () throws RemoteException {
@@ -423,6 +425,7 @@ public class Game extends Observable implements Serializable {
             this.goldCard2=null;
         }
         notifyObservers(new Message(this.goldCard2, Event.UPDATED_GOLD_CARD_2));
+        notifyObservers(new Message(this.goldDeck, Event.UPDATED_GOLD_DECK));
     }
 
     public void resetResourceCard1 () throws RemoteException {
@@ -434,6 +437,7 @@ public class Game extends Observable implements Serializable {
             this.resourceCard1=null;
         }
         notifyObservers(new Message(this.goldCard1, Event.UPDATED_RESOURCE_CARD_1));
+        notifyObservers(new Message(this.resourceDeck, Event.UPDATED_RESOURCE_DECK));
     }
 
     public void resetResourceCard2 () throws RemoteException {
@@ -445,6 +449,7 @@ public class Game extends Observable implements Serializable {
             this.resourceCard2=null;
         }
         notifyObservers(new Message(this.goldCard2, Event.UPDATED_RESOURCE_CARD_2));
+        notifyObservers(new Message(this.resourceDeck, Event.UPDATED_RESOURCE_DECK));
     }
 
 

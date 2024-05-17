@@ -146,8 +146,9 @@ public class Player extends Observable implements Serializable {
                 playerDeck[i] = card;
             }
         }
+
         List<Object> tmp=new ArrayList<>();
-        tmp.add(this);
+        tmp.add(this.nickname);
         tmp.add(playerDeck);
         notifyObservers(new Message(tmp, Event.UPDATED_PLAYER_DECK));
     }
@@ -177,7 +178,11 @@ public class Player extends Observable implements Serializable {
             }
         }
 
+        List<Object> tmp=new ArrayList<>();
+        tmp.add(this.nickname);
+        tmp.add(this.playerDeck);
         try {
+            notifyObservers(new Message(tmp, Event.UPDATED_PLAYER_DECK));
             notifyObservers(new Message(this.board, Event.UPDATED_BOARD));
         }catch (RemoteException e){}
     }
@@ -194,7 +199,11 @@ public class Player extends Observable implements Serializable {
         card.setOrientation(orientation);
         board.placeBaseCard(card);
 
+        List<Object> tmp=new ArrayList<>();
+        tmp.add(this.nickname);
+        tmp.add(this.playerDeck);
         try {
+            notifyObservers(new Message(tmp, Event.UPDATED_PLAYER_DECK));
             notifyObservers(new Message(this.board, Event.UPDATED_BOARD));
         }catch (RemoteException e){}
     }

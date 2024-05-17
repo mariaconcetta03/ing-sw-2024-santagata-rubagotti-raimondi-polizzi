@@ -173,7 +173,7 @@ public class ClientSCK implements ClientGeneralInterface{
             }
             case UPDATED_PLAYER_DECK,SETUP_PHASE_1,SETUP_PHASE_2->{
                 //we have to change the view and the local model
-                updatePlayerDeck((Player) sckMessage.getObj().get(0), (PlayableCard[]) sckMessage.getObj().get(1));
+                updatePlayerDeck((String) sckMessage.getObj().get(0), (PlayableCard[]) sckMessage.getObj().get(1));
             }
             case UPDATED_RESOURCE_CARD_1->{
                 //we have to change the view and the local model
@@ -661,7 +661,7 @@ public class ClientSCK implements ClientGeneralInterface{
     }
 
     @Override
-    public void updatePlayerDeck(Player player, PlayableCard[] playerDeck) throws RemoteException {
+    public void updatePlayerDeck(String playerNickname, PlayableCard[] playerDeck) throws RemoteException {
         //we have to change the view and the local model
     }
 

@@ -16,7 +16,7 @@ public interface ClientRMIInterface extends Remote {
 
     void updateGoldDeck(PlayableDeck obj)throws RemoteException;
 
-    void updatePlayerDeck(Player player, PlayableCard[] playableCards)throws RemoteException;
+    void updatePlayerDeck(String playerNickname, PlayableCard[] playableCards)throws RemoteException;
 
     void updateResourceCard1(PlayableCard obj)throws RemoteException;
 

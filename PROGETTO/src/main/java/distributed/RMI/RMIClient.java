@@ -61,8 +61,17 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public RMIClient() throws RemoteException {
         personalPlayer= new Player();
         menuThread=new Thread(()->{
-
-        });
+            while(true){
+            while (inGame) {
+                    if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
+                        System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
+                        gameTurn(true);
+                    }else {
+                        System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
+                        gameTurn(false);
+                    }
+            }
+        }});
     }
 
 
@@ -357,7 +366,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         System.out.println("Are you sure to LEAVE the game? Type 1 if you want to leave.");
                         try{
                             if(sc.nextInt()==1){
-                                completableFuture.cancel(true);
                                 sc.close();
                                 inGame=false;
                                 leaveGame(personalPlayer.getNickname());
@@ -377,13 +385,12 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                             tuiView.printObjectiveCard(list);
                         gameTurn(inTurn);
                         break;
-                    case 3:
-                        System.out.println("Gold card 1: " + this.goldCard1.getId());
-                        System.out.println("Gold card 2: " + this.goldCard2.getId());
-                        System.out.println("Resource card 1: " + this.resourceCard1.getId());
-                        System.out.println("Resource card 2: " + this.resourceCard2.getId());
-                        //System.out.println("Gold card 1: "+this.goldCard1);
-                        //System.out.println("Gold card 1: "+this.goldCard1);
+                    case 3:List<PlayableCard> tmp=new ArrayList<>();
+                        tmp.add(resourceCard1);
+                        tmp.add(resourceCard2);
+                        tmp.add(goldCard1);
+                        tmp.add(goldCard2);
+                        tuiView.printDrawableCards(goldDeck, resourceDeck, tmp);
                         gameTurn(inTurn);
                         break;
                     case 4:
@@ -393,7 +400,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         for(Player player: playersInTheGame){
                             if(player.getNickname().equals(nickname)){
                                 ok=true;
-                                tuiView.printBoard(player.getBoard()); //TODO non sto aggiornando playerInTheGame quando arriva update
+                                tuiView.printTable(player.getBoard()); //TODO non sto aggiornando playerInTheGame quando arriva update
                             }
                         }
                         if(!ok){
@@ -436,18 +443,27 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         gameTurn(inTurn);
                         break;
                     case 7: boolean orientation=true;
-                    int value=-1;
-                    PlayableCard card= null;
-                    tuiView.printHand(personalPlayer.getPlayerDeck());
-                    System.out.println("Which card do you want to play? Insert 1, 2, 3. ");
-                    value=sc.nextInt();
-                    if((value>=1)&&(value<=3)){
-                        card= personalPlayer.getPlayerDeck()[value]; //va rivisto questo metodo, devo far vedere tutto prima di decidere come giocare
-                    }
-                    if(card!=null){
-                        tuiView.askCardOrientation(card);
-                    }
-                        gameTurn(inTurn);
+                        PlayableCard card= null;
+                        Coordinates coordinates;
+                        card= tuiView.askPlayCard(sc, personalPlayer);
+                        if(card!=null){
+                            orientation=tuiView.askCardOrientation(sc, card);
+                        }else{
+                            gameTurn(inTurn);
+                        }
+                        coordinates=tuiView.askCoordinates(sc, card, personalPlayer.getBoard());
+                        if(coordinates!=null){
+                            this.playCard(personalPlayer.getNickname(), card, coordinates,orientation);
+                            tmp=new ArrayList<>();
+                            tmp.add(resourceCard1);
+                            tmp.add(resourceCard2);
+                            tmp.add(goldCard1);
+                            tmp.add(goldCard2);
+                            card= tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
+                            this.drawCard(personalPlayer.getNickname(), card);
+                        }else{
+                            gameTurn(inTurn);
+                        }
                         break;
                     default:
                         System.out.println("not yet implemented");
@@ -524,15 +540,15 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     /**
      * This is an update method
-     * @param player the player which deck is updated
+     * @param playerNickname the player which deck is updated
      * @param playerDeck the new deck we want to update
      */
-    public void updatePlayerDeck (Player player, PlayableCard[] playerDeck) throws RemoteException {
-        if(player.getNickname().equals(personalPlayer.getNickname())){
+    public void updatePlayerDeck (String playerNickname, PlayableCard[] playerDeck) throws RemoteException {
+        if(playerNickname.equals(personalPlayer.getNickname())){
             personalPlayer.setPlayerDeck(playerDeck);
         }else {
             for (Player p : playersInTheGame) {
-                if (player.getNickname().equals(p.getNickname())) {
+                if (playerNickname.equals(p.getNickname())) {
                     p.setPlayerDeck(playerDeck);
                 }
             }
@@ -697,6 +713,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         if (turnCounter != -1) {
             if (turnCounter != 0) {
                 if (selectedView == 1) {
+                    menuThread.start();/*
                     if (this.personalPlayer.getNickname().equals(playersInTheGame.get(0).getNickname())) {
                         System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
                             gameTurn(true);
@@ -705,9 +722,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
                     } else {
                         System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
-                        gameTurn(false);//se no mi si blocca, i thread sono l'unica strada?
+                        gameTurn(false);
                     }
-
+*/
                 } else if (selectedView == 2) {
                     //guiView.updateRound(newCurrentPlayer)
                 }
@@ -749,7 +766,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public void gameLeft() throws RemoteException{
         if(inGame){
             sc.close();
-            completableFuture.cancel(true);
+            inGame=false;
             System.out.println(ANSIFormatter.ANSI_RED+"Someone left the game."+ANSIFormatter.ANSI_RESET);
             this.resetAttributes();
             System.out.println("Returning to lobby.\n\n\n\n\n\n\n");
