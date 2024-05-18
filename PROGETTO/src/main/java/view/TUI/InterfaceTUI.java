@@ -1,8 +1,13 @@
 package view.TUI;
 
+import distributed.Socket.ClientSCK;
 import org.model.*;
+import org.mortbay.thread.Timeout;
 import utils.Observable;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.*;
 
@@ -11,6 +16,9 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
        /*System.out.println("Welcome to "+ANSIFormatter.ANSI_GREEN+"C"+ANSIFormatter.ANSI_CYAN+"O"+ANSIFormatter.ANSI_RED+
             "D"+ANSIFormatter.ANSI_YELLOW+"E"+ANSIFormatter.ANSI_PURPLE+"X"+ANSIFormatter.ANSI_RESET+" NATURALIS");
 */
+
+    private boolean previousIsPlayingAttribute;
+    private boolean firstMenu=true;
 
     /**
      * This method prints the welcome message to a new Player in the lobby
@@ -325,7 +333,65 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         System.out.flush();
     }
 
+    public int showMenuAndWaitForSelection(boolean isPlaying, BufferedReader console){
+        boolean ok=false;
+        Integer value=0;
+        if(firstMenu) {
+            System.out.println(firstMenu);
+            System.out.println("These are the action you can perform");
+            System.out.println("| " + ANSIFormatter.ANSI_RED + "0" + ANSIFormatter.ANSI_RESET + " - Leave the game                     |");
+            System.out.println("| " + ANSIFormatter.ANSI_RED + "1" + ANSIFormatter.ANSI_RESET + " - Check the cards in your hand       |");
+            System.out.println("| " + ANSIFormatter.ANSI_RED + "2" + ANSIFormatter.ANSI_RESET + " - Check the objective cards          |");// si possono unire
+            System.out.println("| " + ANSIFormatter.ANSI_RED + "3" + ANSIFormatter.ANSI_RESET + " - Check the drawable cards           |");
+            System.out.println("| " + ANSIFormatter.ANSI_RED + "4" + ANSIFormatter.ANSI_RESET + " - Check someone else's board         |");
+            System.out.println("| " + ANSIFormatter.ANSI_RED + "5" + ANSIFormatter.ANSI_RESET + " - Check the points scored            |");
+            System.out.println("| " + ANSIFormatter.ANSI_RED + "6" + ANSIFormatter.ANSI_RESET + " - Send a message in the chat         |");
+            if (isPlaying) {
+                System.out.println("| " + ANSIFormatter.ANSI_RED + "7" + ANSIFormatter.ANSI_RESET + " - Play a card                        |"); //the draw will be called after the play action
+            }
+            firstMenu=false;
+        }else{
+            if(previousIsPlayingAttribute!=isPlaying){
+                System.out.println("attributo isPlaying cambiato");
+                System.out.println("These are the action you can perform");
+                System.out.println("| " + ANSIFormatter.ANSI_RED + "0" + ANSIFormatter.ANSI_RESET + " - Leave the game                     |");
+                System.out.println("| " + ANSIFormatter.ANSI_RED + "1" + ANSIFormatter.ANSI_RESET + " - Check the cards in your hand       |");
+                System.out.println("| " + ANSIFormatter.ANSI_RED + "2" + ANSIFormatter.ANSI_RESET + " - Check the objective cards          |");// si possono unire
+                System.out.println("| " + ANSIFormatter.ANSI_RED + "3" + ANSIFormatter.ANSI_RESET + " - Check the drawable cards           |");
+                System.out.println("| " + ANSIFormatter.ANSI_RED + "4" + ANSIFormatter.ANSI_RESET + " - Check someone else's board         |");
+                System.out.println("| " + ANSIFormatter.ANSI_RED + "5" + ANSIFormatter.ANSI_RESET + " - Check the points scored            |");
+                System.out.println("| " + ANSIFormatter.ANSI_RED + "6" + ANSIFormatter.ANSI_RESET + " - Send a message in the chat         |");
+                if (isPlaying) {
+                    System.out.println("| " + ANSIFormatter.ANSI_RED + "7" + ANSIFormatter.ANSI_RESET + " - Play a card                        |"); //the draw will be called after the play action
+                }
+            }
+        }
+        previousIsPlayingAttribute=isPlaying;
 
+        try {
+            if (console.ready()) { //ready restituisce true se c'è una riga da leggere
+                value = console.read();
+                if (value != null) {
+                    if ((isPlaying) && (value == 7)) {
+                        System.out.println("value taken");
+                    } else if ((value < 0) || (value > 6)) {
+                        System.out.println("Please, insert one of the possible values. ");
+                    } else {
+                        System.out.println("Please type a number. ");
+                        value = -1;
+                    }
+                } else {
+                    value = -1;
+                }
+            } else { //se la console non è ready
+                value = -1;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return value;
+
+    }
 
     /*menuThread=new Thread(()->{ //that's needed only for tui
             Scanner sc=new Scanner(System.in);

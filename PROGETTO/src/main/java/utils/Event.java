@@ -39,7 +39,7 @@ public enum Event implements Serializable {
     UPDATED_CHAT,
     UPDATED_PAWNS,
     UPDATED_NICKNAME,
-    UPDATED_ROUND,
+    UPDATED_ROUND, // è stato sostituito da NEW_TURN?
     UPDATED_PERSONAL_OBJECTIVE,
     UPDATED_COMMON_OBJECTIVES,
     GAME_STATE_CHANGED,
@@ -70,9 +70,10 @@ public enum Event implements Serializable {
     CHOOSE_PAWN_COLOR,
     SEND_MESSAGE,
     AVAILABLE_LOBBY,
-    LEAVE_GAME;
+    LEAVE_GAME,
 
     //end of events with a corresponding function in ClientGeneralInterface
+    CHECK_N_PLAYERS;
     public void printEvent(){
         System.out.println("Questo è l'evento: " + this.toString());
     }

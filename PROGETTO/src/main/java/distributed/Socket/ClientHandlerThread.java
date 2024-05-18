@@ -250,6 +250,14 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                     System.err.println(e.getMessage());
                 }
             }
+            case CHECK_N_PLAYERS -> { //farà partire gli update che dicono che il gioco è iniziato
+                try {
+                    gameController.checkNPlayers(); //bisogna aggiungere qui dentro un'eccezione per dire 'game already started'
+                    writeTheStream(new SCKMessage(null, Event.OK));
+                } catch (RemoteException e) { //da cancellare perchè serve solo ad rmi
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
     }
@@ -329,14 +337,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             writeTheStream(new SCKMessage(null,Event.OK)); //ci serve il messaggio per dire al ClientSCK il server ha fatto quello che hai chiesto (lo blocchiamo fino a quel momento)
         }catch (RemoteException e){//non verrà mai lanciata
             System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
-        } catch (GameAlreadyStartedException ex) {
-            writeTheStream(new SCKMessage(null,ex.getAssociatedEvent()));
-        } catch (FullLobbyException ex) {
-            writeTheStream(new SCKMessage(null,ex.getAssociatedEvent()));
-        } catch (GameNotExistsException ex) {
-            writeTheStream(new SCKMessage(null,ex.getAssociatedEvent()));
+        } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException ex) {
+            writeTheStream(new SCKMessage(null, ex.getAssociatedEvent()));
         }
-
     }
 
 
