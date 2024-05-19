@@ -1,12 +1,13 @@
 package controller;
 
-import Exceptions.FullLobbyException;
-import Exceptions.GameAlreadyStartedException;
-import Exceptions.GameNotExistsException;
-import Exceptions.NicknameAlreadyTakenException;
+import CODEX.controller.GameController;
+import CODEX.controller.ServerController;
+import CODEX.Exceptions.FullLobbyException;
+import CODEX.Exceptions.GameAlreadyStartedException;
+import CODEX.Exceptions.GameNotExistsException;
+import CODEX.Exceptions.NicknameAlreadyTakenException;
 import junit.framework.TestCase;
-import org.model.Player;
-import utils.Event;
+import CODEX.org.model.Player;
 
 import java.rmi.RemoteException;
 

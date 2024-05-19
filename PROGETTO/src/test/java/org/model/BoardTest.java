@@ -1,8 +1,8 @@
 package org.model;
 
+import CODEX.org.model.*;
 import junit.framework.TestCase;
 
-import java.sql.Timestamp;
 import java.util.*;
 public class BoardTest extends TestCase {
 

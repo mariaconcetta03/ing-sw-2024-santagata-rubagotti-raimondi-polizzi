@@ -1,5 +1,7 @@
 package org.model;
 
+import CODEX.org.model.Game;
+import CODEX.org.model.Player;
 import junit.framework.TestCase;
 
 import java.rmi.RemoteException;

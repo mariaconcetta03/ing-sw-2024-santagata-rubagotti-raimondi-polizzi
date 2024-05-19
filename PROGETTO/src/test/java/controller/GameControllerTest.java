@@ -1,11 +1,12 @@
 package controller;
 
-import Exceptions.CardNotOwnedException;
-import Exceptions.FullLobbyException;
-import Exceptions.GameAlreadyStartedException;
-import Exceptions.GameNotExistsException;
+import CODEX.controller.GameController;
+import CODEX.controller.ServerController;
+import CODEX.Exceptions.FullLobbyException;
+import CODEX.Exceptions.GameAlreadyStartedException;
+import CODEX.Exceptions.GameNotExistsException;
+import CODEX.org.model.*;
 import junit.framework.TestCase;
-import org.model.*;
 
 import java.rmi.RemoteException;
 import java.util.*;

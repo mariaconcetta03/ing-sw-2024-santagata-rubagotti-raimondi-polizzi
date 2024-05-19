@@ -1,0 +1,4 @@
+.background_pane{
+    -fx-background-image: url("images/Main_Background.jpg");
+    -fx-background-size: cover; /* Adatta l'immagine all'AnchorPane */
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="1199.0" styleClass="background_pane" stylesheets="@CODEX/view/GUI/Styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CODEX.view.GUI.GUIController">
+   <effect>
+      <ImageInput>
+         <source>
+            <Image>
+                <url>view/GUI/images/Main_Background.jpg</url>
+            </Image>
+         </source></ImageInput>
+   </effect>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
+   <children>
+      <HBox prefHeight="100.0" prefWidth="200.0" />
+   </children>
+</AnchorPane>

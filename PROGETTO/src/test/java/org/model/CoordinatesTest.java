@@ -1,5 +1,6 @@
 package org.model;
 
+import CODEX.org.model.Coordinates;
 import junit.framework.TestCase;
 public class CoordinatesTest extends TestCase {
 

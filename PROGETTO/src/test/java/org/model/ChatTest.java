@@ -1,5 +1,8 @@
 package org.model;
 
+import CODEX.org.model.Chat;
+import CODEX.org.model.ChatMessage;
+import CODEX.org.model.Player;
 import junit.framework.TestCase;
 
 import java.sql.Timestamp;

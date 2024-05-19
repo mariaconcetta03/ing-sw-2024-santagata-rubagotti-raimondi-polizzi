@@ -1,5 +1,8 @@
 package org.model;
 
+import CODEX.org.model.AngleType;
+import CODEX.org.model.PlayableCard;
+import CODEX.org.model.PlayableDeck;
 import junit.framework.TestCase;
 
 public class PlayableDeckTest extends TestCase {
