@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.awt.*;
 import java.io.IOException;
@@ -18,9 +19,11 @@ public class InterfaceGUI extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 700, 480);
+        Scene scene = new Scene(fxmlLoader.load(), 1350, 900);
         stage.setTitle("Codex Naturalis");
         stage.setScene(scene);
+
+        stage.setResizable(false);
         stage.show();
 
        //scene.getStylesheets().add("CODEX/view/GUI/Styles.css");
