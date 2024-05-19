@@ -238,7 +238,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                 return;
             }
         }
-        game.setLastEvent(Event.SETUP_PHASE_2); //finished choosing the objective card
+        game.setLastEvent(Event.SETUP_PHASE_2); //finished choosing the objective card: need to start the real Game
     }
 
 

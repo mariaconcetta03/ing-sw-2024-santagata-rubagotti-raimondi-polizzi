@@ -7,6 +7,10 @@ import CODEX.utils.Event;
 import CODEX.view.TUI.ANSIFormatter;
 import CODEX.view.TUI.InterfaceTUI;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -17,6 +21,8 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 // ----------------------------------- H O W   I T   W O R K S ----------------------------------------
@@ -33,6 +39,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class RMIClient extends UnicastRemoteObject implements ClientGeneralInterface, ClientRMIInterface {
     private ServerRMIInterface SRMIInterface; //following the slides' instructions
+
+    ExecutorService executor;
 
     Scanner sc;
     int turnCounter=-1;
@@ -109,7 +117,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
         ClientRMIInterface client = this;
         gameController.addRMIClient(client);
-
     }
 
 
@@ -255,30 +262,38 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
  */
 
-    private void initialiseMenuThread(){
-        menuThread=new Thread(()->{
-            while(true){
-                try {
-                    while (inGame) {
-                        if(baseCard){
-                            playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0],tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]));
-                            baseCard=false;
-                        }else if(isPlaying){
+int choice=-1;
 
+    private void initialiseMenuThread(){
+        menuThread=new Thread(()-> {
+            int choice = -1;
+            BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
+            try {
+                while (!Thread.currentThread().isInterrupted()) {
+                    if (console.ready()) {
+                        choice = Integer.parseInt(console.readLine());
+                        if ((choice >= 0) && (choice <= 7)) {
+                            this.choice = choice;
+                        }else {
+                            System.out.println("Choose a number");
                         }
                     }
-                }catch (RemoteException | NotBoundException e ){
-                    System.err.print(e.getStackTrace());
                 }
-            }});
+            } catch (NumberFormatException e) {
+                System.out.println("Please write a number");
+            } catch (IOException e) {
+                System.err.print(e.getStackTrace());
+
+            }
+        });
     }
+
 
     /**
      * This method is called when the client is created. Absolves the function of helping the player to select
      * his nickname and to choose if he wants to join an already started Game or create a new one.
      */
     public void waitingRoom(){
-        initialiseMenuThread();
         sc=new Scanner(System.in);
         boolean ok=false;
         int errorCounter=0;
@@ -378,9 +393,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         boolean ok=false;
         if(selectedView==1) {
             tuiView.gameTurn(isPlaying);
-            choice=tuiView.askAction(sc, inTurn);
+            //choice=tuiView.askAction(sc, inTurn);
             try {
-                switch (choice) {
+                switch (this.choice) {
                     case 0:
                         System.out.println("Are you sure to LEAVE the game? Type 1 if you want to leave.");
                         try{
@@ -592,7 +607,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             personalPlayer.addPersonalObjective(card);
             if (personalPlayer.getPersonalObjectives().size() == 2) {
                     if (selectedView == 1) {
-                        CompletableFuture.runAsync(() -> {
+                        executor.execute(()-> {
                             boolean ok = false;
                             while (!ok) {
                                 tuiView.printHand(personalPlayer.getPlayerDeck());
@@ -657,11 +672,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public void updateGoldCard1(PlayableCard card) throws RemoteException {
         this.goldCard1=card;
         if (selectedView == 1) {
-            if(personalPlayer.getNickname().equals("fra")) {
-                System.out.println("I received the goldCard1. fra");
-            }else if(personalPlayer.getNickname().equals("pippo")){
-                System.out.println("I received the goldCard1. pippo");
-            }
+                System.out.println("I received the goldCard 1");
         } else if (selectedView == 2) {
             //guiView.updateGoldCard1(card)
         }
@@ -736,36 +747,50 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException {
         playersInTheGame = newPlayingOrder;
+
+
         if(playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())){
-            System.out.println("You are playing");
             isPlaying=true;
         }else{
-            System.out.println("You are not playing");
             isPlaying=false;
-        }//TODO rimuovere completableFuture
+        }
+
         if (turnCounter != -1) {
             if (turnCounter != 0) {
                 if (selectedView == 1) {
-                    /*
-                    if (this.personalPlayer.getNickname().equals(playersInTheGame.get(0).getNickname())) {
+
+                    if(isPlaying) {
                         System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
-                            gameTurn(true);
+                    }else {
+                        System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
+                    }
+
+                    if(turnCounter==1) {
+                        menuThread.start();
+                        turnCounter++;
+                    }
+                    try {
+                        gameTurn(isPlaying);
+                    }catch (InterruptedException e){}
+
+                    /*
+                    try {
+                        gameTurn(isPlaying);
+                    }catch (InterruptedException e){}
                         // this thread prints out the possible actions for the current player and for the waiting players
                         // these threads are executed in parallel mode
 
-                    } else {
-                        System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
-                        gameTurn(false);
-                    }
-*/
+                     */
+
                 } else if (selectedView == 2) {
                     //guiView.updateRound(newCurrentPlayer)
                 }
             } else if (turnCounter == 0) {
                 baseCard=true;
-                //try {
-                    //playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0],tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]));
-                //}catch (NotBoundException |RemoteException ignored){}
+                    executor.execute(()->{
+                        try {
+                        playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0],tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]));
+                        }catch (NotBoundException |RemoteException ignored){}});
             }
         }
             turnCounter++;
@@ -786,6 +811,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             if(gameState.equals(Game.GameState.STARTED)) {
                 inGame=true;
                 System.out.println(ANSIFormatter.ANSI_RED+"The game has started!"+ANSIFormatter.ANSI_RESET);
+                initialiseMenuThread();
+                executor=Executors.newCachedThreadPool();
+                /*
+                initialiseMenuThread();
+                menuThread.start();
+                */
+
             } else if (gameState.equals(Game.GameState.ENDING)) {
                 System.out.println("Ending condition triggered.");
             }else if(gameState.equals(Game.GameState.ENDED)){

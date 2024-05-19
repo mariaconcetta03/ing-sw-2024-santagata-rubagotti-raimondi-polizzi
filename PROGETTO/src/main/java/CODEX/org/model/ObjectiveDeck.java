@@ -80,7 +80,7 @@ public class ObjectiveDeck extends Deck implements Serializable {
     public static ObjectiveDeck objectiveDeck(){
         Stack<ObjectiveCard> objectiveDeck = new Stack<>();
         ObjectMapper objectMapper = new ObjectMapper();
-        File file= new File("PROGETTO/src/main/java/org/model/jsons/objectiveCards.json");
+        File file= new File("PROGETTO/src/main/java/CODEX/org/model/jsons/objectiveCards.json");
         try{
             objectiveDeck=objectMapper.readValue(file, new TypeReference<Stack<ObjectiveCard>>() {});
         }catch (IOException e){
