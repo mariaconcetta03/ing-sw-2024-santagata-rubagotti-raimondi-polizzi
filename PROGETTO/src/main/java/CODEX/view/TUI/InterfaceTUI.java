@@ -244,7 +244,9 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
     public void printHand(PlayableCard[] playerDeck){
         System.out.println("The card you've got are: ");
         for(PlayableCard card: playerDeck) {
-            System.out.println(card.getId()+" ");
+            if(card!=null) {
+                System.out.println(card.getId() + " ");
+            }
         }
     }
 
@@ -371,9 +373,10 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
             if (console.ready()) { //ready restituisce true se c'è una riga da leggere
                 value = Integer.parseInt(console.readLine());
                 if (value != null) {
-                    if ((isPlaying) && (value == 7)) {
+                    Integer intValue=value;
+                    if ((isPlaying) && (intValue == 7)) {
                         System.out.println("value taken");
-                    } else if ((value < 0) || (value > 6)) {
+                    } else if ((intValue < 0) || (intValue > 6)) {
                         System.out.println("Please, insert one of the possible values. ");
                     } else {
                         System.out.println("Please type a number. ");

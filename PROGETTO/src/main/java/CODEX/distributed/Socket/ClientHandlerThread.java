@@ -274,6 +274,19 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     // questo update specifico andrebbe a far partire il thread check connection poco prima di avvisare il client che la partita è iniziata (con un messaggio)
     @Override
     public void update(Observable obs, Message arg) { //here we call writeTheStream (the switch case is already in ClientSCK)
+        if(arg.getMessageEvent().equals(Event.UPDATED_PLAYER_DECK)){
+            List<Object> list=new ArrayList<>();
+            list.add(arg.getObj().get(0));
+            PlayableCard[] playableCards=(PlayableCard[]) arg.getObj().get(1);
+            for (PlayableCard c:playableCards){
+                list.add(c);
+            }
+            System.out.println("sono in update");
+            System.out.println(arg.getMessageEvent());
+            //writeTheStream(message);
+            writeTheStream(new SCKMessage(list,arg.getMessageEvent()));
+            return;
+        }
         System.out.println("sono in update");
         System.out.println(arg.getMessageEvent());
         //writeTheStream(message);

@@ -170,7 +170,7 @@ public class ClientSCK implements ClientGeneralInterface{
     //con questo update andiamo a modificare le cose locali al client
     public void modifyClientSide(SCKMessage sckMessage) throws IOException, ClassNotFoundException {
         switch (sckMessage.getMessageEvent()) {
-            case UPDATED_BOARD -> {
+            case UPDATED_BOARD -> { //viene chiamato in playBaseCard per la prima volta
                 //we have to change the view and the local model
                 updateBoard((String) sckMessage.getObj().get(0), (Board) sckMessage.getObj().get(0));
             }
@@ -182,7 +182,10 @@ public class ClientSCK implements ClientGeneralInterface{
                 //we have to change the view and the local model
                 updateGoldDeck((PlayableDeck) sckMessage.getObj().get(0));
             }
-            case UPDATED_PLAYER_DECK,SETUP_PHASE_1,SETUP_PHASE_2->{
+            case UPDATED_PLAYER_DECK->{
+                newUpdatePlayerDeck((String) sckMessage.getObj().get(0), (PlayableCard) sckMessage.getObj().get(1),(PlayableCard) sckMessage.getObj().get(2),(PlayableCard) sckMessage.getObj().get(3));
+            }
+                    case SETUP_PHASE_1,SETUP_PHASE_2->{
                 //we have to change the view and the local model
                 updatePlayerDeck((String) sckMessage.getObj().get(0), (PlayableCard[]) sckMessage.getObj().get(1));
             }
@@ -259,6 +262,28 @@ public class ClientSCK implements ClientGeneralInterface{
                     actionLock.notify();
                 }
             }
+        }
+    }
+
+    private void newUpdatePlayerDeck(String s, PlayableCard playableCard, PlayableCard playableCard1, PlayableCard playableCard2) {
+        PlayableCard[] playerDeck=new PlayableCard[3];
+        playerDeck[0]=playableCard;
+        System.out.println("baseCard "+ playerDeck[0]);
+        playerDeck[1]=playableCard1;
+        playerDeck[2]=playableCard2;
+        if(s.equals(personalPlayer.getNickname())){
+            personalPlayer.setPlayerDeck(playerDeck);
+        }else {
+            for (Player p : playersInTheGame) {
+                if (s.equals(p.getNickname())) {
+                    p.setPlayerDeck(playerDeck);
+                }
+            }
+        }
+        if (selectedView == 1) {
+            System.out.println("I received the update.");
+        } else if (selectedView == 2) {
+            //guiView.updatePlayerDeck(player, playerDeck)
         }
     }
 
@@ -901,6 +926,7 @@ public class ClientSCK implements ClientGeneralInterface{
         Integer choice;
         if(selectedView==1) {
             choice=tuiView.showMenuAndWaitForSelection(this.getIsPlaying(),this.console);
+            int intChoice=choice;
             boolean ok;
             if(choice!=-1) { //dopo ogni azione della tui si può ristampare il menù (possiamo farlo da qui o direttamente nella tui)
                 try {
