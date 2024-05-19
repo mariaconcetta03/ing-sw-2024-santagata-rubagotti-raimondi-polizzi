@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import static javafx.application.Application.launch;
 
+// THIS IS THE CORRECT CLASS
 public class InterfaceGUI extends Application {
 
     @Override
