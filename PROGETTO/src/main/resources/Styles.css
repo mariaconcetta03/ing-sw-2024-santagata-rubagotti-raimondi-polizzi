@@ -1,0 +1,4 @@
+.background_pane {
+    -fx-background-image: url("images/others/Intestazione_Codex_Naturalis.jpg");
+    -fx-background-size: cover; /* Adatta l'immagine all'AnchorPane */
+}
