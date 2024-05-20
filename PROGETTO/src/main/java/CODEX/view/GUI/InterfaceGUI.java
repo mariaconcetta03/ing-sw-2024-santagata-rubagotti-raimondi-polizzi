@@ -19,11 +19,11 @@ public class InterfaceGUI extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1350, 900);
+        Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Codex Naturalis");
         stage.setScene(scene);
 
-        stage.setResizable(false);
+        //stage.setResizable(false);
         stage.show();
 
        //scene.getStylesheets().add("CODEX/view/GUI/Styles.css");
