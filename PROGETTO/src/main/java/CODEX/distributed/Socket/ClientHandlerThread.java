@@ -141,13 +141,17 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     //when a Thread starts, run is automatically called
     public void run() { //questo metodo viene chiamato in automatico quando si fa submit alla thread pool. Lo uso per fare start dei thread interni a questo ClientHandlerThread
         System.out.println("sono nel run");
-        try {
-            System.out.println("sono nel try");
             while (!Thread.currentThread().isInterrupted()&&running) { //questo while dovrebbe servere nel caso in cui non vogliamo che il Thread venga interrotto mentre fa quello dentro il while
-                System.out.println("sono nel while");
+                System.out.println("sono nel while del run");
                 synchronized (inputLock) { //we use the inputLock to write the stream not simultaneously
-                    System.out.println("sono nel syn");
-                    SCKMessage sckMessage = (SCKMessage) this.input.readObject(); //messaggi scritti dal Client vero
+                    System.out.println("sono nel syn del run");
+                    SCKMessage sckMessage = null; //messaggi scritti dal Client vero
+                    try {
+                        sckMessage = (SCKMessage) this.input.readObject();
+                    } catch (IOException | ClassNotFoundException e) {
+                        System.err.println(e.getMessage());
+                        throw new RuntimeException(e);
+                    }
                     if(sckMessage!=null) {
                         System.out.println("messaggio non nullo");
                         react(sckMessage);
@@ -156,10 +160,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                     }
                 }
             }
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException(e);
-        }
+
     }
 
     private void react(SCKMessage sckMessage){ //qui in base al messaggio letto chiamiamo il giusto metodo della ClientActionsInterface
@@ -310,11 +311,12 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
 
     //writeTheStream will be called in the method react (maybe inside the methods of the ClientActionsInterface) to tell the client what the controller has effectively done
     //writeTheStream will also be called in the method update (we have it because ClientHandlerThread is a listener) to tell the client what is changed in the model
-    public void writeTheStream(SCKMessage sckMessage){ //this is the stream the real client can read
+    synchronized public void writeTheStream(SCKMessage sckMessage){ //this is the stream the real client can read
         try {
             System.out.println("sono nel try di writeTheStream");
             output.writeObject(sckMessage);
             output.flush();
+            output.reset();
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }

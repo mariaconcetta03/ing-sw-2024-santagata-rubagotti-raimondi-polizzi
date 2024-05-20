@@ -61,6 +61,7 @@ public class ClientSCK implements ClientGeneralInterface{
     private PlayableDeck resourceDeck;
     private BufferedReader console;
     private int turnCounter=-1;
+    private Object outputLock;
 
     //ATTENZIONE: se si chiama un metodo della ClientActionsInterface all'interno di un metodo di update bisogna per forza
     //usare un thread perchè i metodi della ClientActionsInterface aspettano l'OK di ritorno che non può venire letto
@@ -92,6 +93,7 @@ public class ClientSCK implements ClientGeneralInterface{
         this.running=true;
         this.responseReceived =false; //initialized false to enter the while inside every ClientGeneralInterface method
         this.actionLock=new Object();
+        this.outputLock=new Object();
 
         /*
         //da rivedere più avanti
@@ -121,11 +123,33 @@ public class ClientSCK implements ClientGeneralInterface{
                     try {
                         SCKMessage sckMessage = (SCKMessage) this.inputStream.readObject(); //così non abbiamo più bisogno della funzione receiveMessage
                         if (sckMessage != null) {
+                            System.out.println("the message isn't null");
                             //System.out.println("messaggio ricevuto da ClienSCK non nullo");
                             //il fatto che sia BLOCCANTE è POSITIVO: gli update vengono fatti in ordine di arrivo e quindi quando riceviamo SETUP_PHASE_2 siamo sicuri di aver veramente ricevuto già tutto
+                            try{
                             modifyClientSide(sckMessage); //questo è bloccante-> meglio utilizzare un thread...a meno che non vogliamo fare una modifica alla volta
+                            }catch (Exception e){
+                                System.out.println("sono nel catch di modifyClientSide(sckMessage)");
+                                System.out.println(sckMessage.getMessageEvent().toString());
+                                System.err.println(e.getMessage());
+                                System.err.println(e.getCause().getMessage());
+                                try { //devo fermare i thread lanciati all'interno di questo thread
+                                    inputStream.close();
+                                    outputStream.close();
+                                    socket.close();
+                                    running = false;
+                                } catch (IOException ex) { //this catch is needed for the close statements
+                                    throw new RuntimeException(ex);
+                                }
+                                break;
+                            }
+                        }
+                        else {
+                            System.out.println("the message is null");
                         }
                     } catch (Exception e) { //se il server si disconnette
+                        System.err.println(e.getMessage());
+                        System.out.println("sono nel catch di this.inputStream.readObject()");
                         try { //devo fermare i thread lanciati all'interno di questo thread
                             inputStream.close();
                             outputStream.close();
@@ -156,21 +180,23 @@ public class ClientSCK implements ClientGeneralInterface{
      * @throws IOException in case the Server is unreachable we shut down the Client.
      */
     public void sendMessage(SCKMessage sckMessage) throws IOException { //ATTENTION: this method is called ONLY inside ClientGeneralInterface methods
-        try {
-            responseReceived=false;
-            outputStream.writeObject(sckMessage);
-            outputStream.flush();
-        } catch (IOException e) {
-            try { //devo fermare i thread lanciati all'interno di questo thread
-                inputStream.close();
-                outputStream.close();
-                socket.close(); //the ClientSCK will receive an exception
-                running=false;
-            } catch (IOException ex) { //this catch is needed for the close statements
-                throw new RuntimeException(ex);
+        synchronized (outputLock) {
+            try {
+                responseReceived = false;
+                outputStream.writeObject(sckMessage);
+                outputStream.flush();
+            } catch (IOException e) {
+                try { //devo fermare i thread lanciati all'interno di questo thread
+                    inputStream.close();
+                    outputStream.close();
+                    socket.close(); //the ClientSCK will receive an exception
+                    running = false;
+                } catch (IOException ex) { //this catch is needed for the close statements
+                    throw new RuntimeException(ex);
+                }
+                System.err.println("Server not available!");
+                System.exit(-1); //this is a shutdown of the VirtualMachine
             }
-            System.err.println("Server not available!");
-            System.exit(-1); //this is a shutdown of the VirtualMachine
         }
     }
 
@@ -182,7 +208,7 @@ public class ClientSCK implements ClientGeneralInterface{
         switch (sckMessage.getMessageEvent()) {
             case UPDATED_BOARD -> { //viene chiamato in playBaseCard per la prima volta
                 //we have to change the view and the local model
-                updateBoard((String) sckMessage.getObj().get(0), (Board) sckMessage.getObj().get(0));
+                updateBoard((String) sckMessage.getObj().get(0), (Board) sckMessage.getObj().get(1));
             }
             case UPDATED_RESOURCE_DECK -> {
                 //we have to change the view and the local model
@@ -707,6 +733,8 @@ public class ClientSCK implements ClientGeneralInterface{
                 //guiView.showBoard(board)
             }
         }
+
+
     }
 
     @Override
@@ -1011,9 +1039,9 @@ public class ClientSCK implements ClientGeneralInterface{
             choice=tuiView.showMenuAndWaitForSelection(this.getIsPlaying(),this.console);
             int intChoice=choice;
             boolean ok;
-            if(choice!=-1) { //dopo ogni azione della tui si può ristampare il menù (possiamo farlo da qui o direttamente nella tui)
+            if(intChoice!=-1) { //dopo ogni azione della tui si può ristampare il menù (possiamo farlo da qui o direttamente nella tui)
                 try {
-                    switch (choice) {
+                    switch (intChoice) {
                         case 0:
                             inGame = false;
                             leaveGame(personalPlayer.getNickname());
