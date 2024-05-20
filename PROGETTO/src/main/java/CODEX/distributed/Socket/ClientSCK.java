@@ -1,6 +1,7 @@
 package CODEX.distributed.Socket;
 
 
+import CODEX.Exceptions.CardNotOwnedException;
 import CODEX.Exceptions.FullLobbyException;
 import CODEX.Exceptions.GameAlreadyStartedException;
 import CODEX.Exceptions.GameNotExistsException;
@@ -8,6 +9,7 @@ import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.messages.SCKMessage;
 import CODEX.org.model.*;
 import CODEX.utils.Event;
+import CODEX.view.GUI.InterfaceGUI;
 import CODEX.view.TUI.ANSIFormatter;
 import CODEX.view.TUI.InterfaceTUI;
 
@@ -58,6 +60,12 @@ public class ClientSCK implements ClientGeneralInterface{
     private PlayableDeck goldDeck;
     private PlayableDeck resourceDeck;
     private BufferedReader console;
+    private int turnCounter=-1;
+
+    //ATTENZIONE: se si chiama un metodo della ClientActionsInterface all'interno di un metodo di update bisogna per forza
+    //usare un thread perchè i metodi della ClientActionsInterface aspettano l'OK di ritorno che non può venire letto
+    //dal ClientSCK se si è ancora fermi sull'update che ha chiamato un metodo della ClientActionsInterface.
+    //Questo accade perchè per fare gli update in ordine vengono letti uno alla volta.
 
     /**
      * Constructor method
@@ -77,6 +85,7 @@ public class ClientSCK implements ClientGeneralInterface{
         this.inputLock=new Object();
 
         //in this way the stream is converted into objects
+        //forse però dovrei usare dei buffer per non perdere nessun messaggio
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
         this.inputStream = new ObjectInputStream(socket.getInputStream()); //what ClientHandlerThread writes in its socket's output stream ends up here
 
@@ -113,6 +122,7 @@ public class ClientSCK implements ClientGeneralInterface{
                         SCKMessage sckMessage = (SCKMessage) this.inputStream.readObject(); //così non abbiamo più bisogno della funzione receiveMessage
                         if (sckMessage != null) {
                             //System.out.println("messaggio ricevuto da ClienSCK non nullo");
+                            //il fatto che sia BLOCCANTE è POSITIVO: gli update vengono fatti in ordine di arrivo e quindi quando riceviamo SETUP_PHASE_2 siamo sicuri di aver veramente ricevuto già tutto
                             modifyClientSide(sckMessage); //questo è bloccante-> meglio utilizzare un thread...a meno che non vogliamo fare una modifica alla volta
                         }
                     } catch (Exception e) { //se il server si disconnette
@@ -185,10 +195,6 @@ public class ClientSCK implements ClientGeneralInterface{
             case UPDATED_PLAYER_DECK->{
                 newUpdatePlayerDeck((String) sckMessage.getObj().get(0), (PlayableCard) sckMessage.getObj().get(1),(PlayableCard) sckMessage.getObj().get(2),(PlayableCard) sckMessage.getObj().get(3));
             }
-                    case SETUP_PHASE_1,SETUP_PHASE_2->{
-                //we have to change the view and the local model
-                updatePlayerDeck((String) sckMessage.getObj().get(0), (PlayableCard[]) sckMessage.getObj().get(1));
-            }
             case UPDATED_RESOURCE_CARD_1->{
                 //we have to change the view and the local model
                 updateResourceCard1((PlayableCard) sckMessage.getObj().get(0));
@@ -217,9 +223,33 @@ public class ClientSCK implements ClientGeneralInterface{
                 //we have to change the view and the local model
                 updateNickname((Player) sckMessage.getObj().get(0), (String) sckMessage.getObj().get(1));
             }
-            case UPDATED_ROUND,NEW_TURN->{ //perchè avere due casi equivalenti?
+            case UPDATED_ROUND,NEW_TURN->{ //equivalenti
                 //we have to change the view and the local model
-                updateRound((List<Player>) sckMessage.getObj().get(0));
+                updateRound((List<Player>) sckMessage.getObj().get(0)); //we have to call it three times before the game can start and the menu be printed
+            }
+            case UPDATED_COMMON_OBJECTIVES->{
+                updateCommonObjectives((ObjectiveCard)sckMessage.getObj().get(0), (ObjectiveCard)sckMessage.getObj().get(1));
+            }
+            case UPDATED_PERSONAL_OBJECTIVE->{
+                System.out.println("sono in case UPDATED_PERSONAL_OBJECTIVE");
+                updatePersonalObjective((ObjectiveCard) sckMessage.getObj().get(0), (String) sckMessage.getObj().get(1));
+            }
+            case GAME_STATE_CHANGED->{ //subito dopo questo update c'è NEW_TURN ( quando si chiama game.startGame() )
+                //we have to change the view and the local model
+                System.out.println("game state changed"); //per il test
+                //sempre in game.startGame (nel model) vengono chiamati poi tutti gli altri update per permermettere al client di avere una copia locale di quello che c'è sul server
+                updateGameState((Game.GameState) sckMessage.getObj().get(0)); //threadCheckConnection.start() in updateRound
+            }
+            case UNABLE_TO_PLAY_CARD->{
+                showError(Event.UNABLE_TO_PLAY_CARD);
+            }
+            case SETUP_PHASE_2->{
+                //when we receive this update the player has all he needs to start the game (base card and objective card already chosen)
+                finishedSetupPhase2(); //here we call updateRound for the third time (from now on we can print the menu)
+
+            }
+            case GAME_LEFT->{
+                gameLeft();
             }
             case AVAILABLE_LOBBY -> {
                 synchronized (actionLock) {
@@ -230,20 +260,8 @@ public class ClientSCK implements ClientGeneralInterface{
                     actionLock.notify();
                 }
             }
-            case GAME_STATE_CHANGED->{ //subito dopo questo update c'è NEW_TURN ( quando si chiama game.startGame() )
-                //we have to change the view and the local model
-                System.out.println("game state changed"); //per il test
-                //sempre in game.startGame vengono chiamati poi tutti gli altri update per permermettere al client di avere una copia locale di quello che c'è sul server
-                updateGameState((Game.GameState) sckMessage.getObj().get(0)); //se la partita inizia: threadCheckConnection.start();
-                // in caso di Game ENDED dobbiamo chiudere la connessione? potremmo riutilizzarla per un'altra partita e rimettere il client in una lobby
-                //per chiudere la connessione:
-                // inputStream.close();
-                // outputStream.close();
-                // socket.close();
-                // running=false; //se decidiamo di non chiudere la connessione e di rimettere il client in una lobby il threadCheckConnection si deve fermare?
-            }
             case OK -> { //...potremmo stampare anche il messaggio di ok....
-                //System.out.println("sono in case OK di ClientSCK");
+                System.out.println("sono in case OK di ClientSCK");
                 //questo if mi serve per i test per memorizzare il gameID
                 synchronized (actionLock) {
                     if (sckMessage.getObj() != null) { //per usarlo nel test
@@ -268,7 +286,6 @@ public class ClientSCK implements ClientGeneralInterface{
     private void newUpdatePlayerDeck(String s, PlayableCard playableCard, PlayableCard playableCard1, PlayableCard playableCard2) {
         PlayableCard[] playerDeck=new PlayableCard[3];
         playerDeck[0]=playableCard;
-        System.out.println("baseCard "+ playerDeck[0]);
         playerDeck[1]=playableCard1;
         playerDeck[2]=playableCard2;
         if(s.equals(personalPlayer.getNickname())){
@@ -281,25 +298,11 @@ public class ClientSCK implements ClientGeneralInterface{
             }
         }
         if (selectedView == 1) {
-            System.out.println("I received the update.");
+            System.out.println("I received the update newUpdatePlayerDeck.");
         } else if (selectedView == 2) {
             //guiView.updatePlayerDeck(player, playerDeck)
         }
     }
-
-    /*
-
-    //da rivedere quando si fa la view:
-    //chiamando questo metodo otteniamo una prima inizializzazione degli attributi locali al client che devono rispettare la struttura nel model lato server
-    public void getModel() throws IOException, ClassNotFoundException {
-        //sendMessage(new SCKMessage(Event.ASK_SERVER_MODEL, Event.GAME_BOARD)); il 1 parametro è una List di Object non evento!
-        this.board = (Board) this.inputStream.getObjectInputFilter(); // we need a filter because we may obtain a SCKMessage instead of a Board
-        //sendMessage(new SCKMessage(Event.ASK_SERVER_MODEL, Event.GAME_PLAYERS));
-        this.playersInTheGame = (List<Player>) this.inputStream.getObjectInputFilter(); //da riguardare bene filter (è da usare anche per l'estrazione di SCKMessage?)
-        // e altro.... come i goal comuni
-    }
-
-     */
 
     /**
      * This method is called when the client is created. Absolves the function of helping the player to select
@@ -395,7 +398,7 @@ public class ClientSCK implements ClientGeneralInterface{
                 System.exit(-1);
             }
         } else {
-            //guiView= new InterfaceGUI();
+            InterfaceGUI.main(null);
         }
     }
 
@@ -549,17 +552,23 @@ public class ClientSCK implements ClientGeneralInterface{
             list.add(baseCard);
             list.add(orientation);
             try {
+                System.out.println("sto per inviare il messaggio in playBaseCard");
                 sendMessage(new SCKMessage(list, Event.PLAY_BASE_CARD));
+                System.out.println("messaggio in playBaseCard inviato");
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            /*
             while (!responseReceived) {
                 try {
+                    System.out.println("aspetto una risposta");
                     actionLock.wait();
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }
+
+             */
         }
     }
 
@@ -595,6 +604,7 @@ public class ClientSCK implements ClientGeneralInterface{
             }catch (Exception e){
                 e.printStackTrace();
             }
+            /*
             while (!responseReceived) {
                 try {
                     actionLock.wait();
@@ -602,6 +612,8 @@ public class ClientSCK implements ClientGeneralInterface{
                     throw new RuntimeException(e);
                 }
             }
+
+             */
         }
     }
 
@@ -670,16 +682,18 @@ public class ClientSCK implements ClientGeneralInterface{
 
  //update
 
-/*  //taken from RMIClient
+    //taken from RMIClient
     public void finishedSetupPhase2() throws RemoteException{
+        System.out.println("I received the board finishedSetupPhase2.");
         updateRound(playersInTheGame);
     }
 
- */
+
     @Override
     public void updateBoard(String boardOwner, Board board) throws RemoteException {
         //we have to change the view and the local model
         if (boardOwner.equals(personalPlayer.getNickname())) {
+            System.out.println("I received the board updatePlayerDeck.");
             personalPlayer.setBoard(board);
         } else {
             for (Player p : playersInTheGame) {
@@ -688,7 +702,7 @@ public class ClientSCK implements ClientGeneralInterface{
                 }
             }
             if (selectedView == 1) {
-                System.out.println("I received the board update.");
+                System.out.println("I received the board updatePlayerDeck di un altro.");
             } else if (selectedView == 2) {
                 //guiView.showBoard(board)
             }
@@ -700,7 +714,7 @@ public class ClientSCK implements ClientGeneralInterface{
         //we have to change the view and the local model
         this.resourceDeck=resourceDeck;
         if (selectedView == 1) {
-            System.out.println("I received the update.");
+            System.out.println("I received the updatePlayerDeck.");
         } else if (selectedView == 2) {
             //guiView.showUpdatedResourceDeck(this.resourceDeck)
         }
@@ -711,7 +725,7 @@ public class ClientSCK implements ClientGeneralInterface{
         //we have to change the view and the local model
         this.goldDeck=goldDeck;
         if (selectedView == 1) {
-            System.out.println("I received the update.");
+            System.out.println("I received the updatePlayerDeck.");
         } else if (selectedView == 2) {
             //guiView.updateGoldDeck(goldDeck)
         }
@@ -730,21 +744,41 @@ public class ClientSCK implements ClientGeneralInterface{
             }
         }
         if (selectedView == 1) {
-            System.out.println("I received the update.");
+            System.out.println("I received the updatePlayerDeck.");
         } else if (selectedView == 2) {
             //guiView.updatePlayerDeck(player, playerDeck)
         }
     }
-    /*
+
     //taken from RMIClient
     public void updatePersonalObjective(ObjectiveCard card, String nickname) throws RemoteException {
         if (personalPlayer.getNickname().equals(nickname)) {
             personalPlayer.addPersonalObjective(card);
             if (personalPlayer.getPersonalObjectives().size() == 2) {
                     if (selectedView == 1) {
-                        CompletableFuture.runAsync(() -> {
+                        System.out.println("I received the updatePersonalObjective.");
+                        boolean ok = false;
+                        while (!ok) {
+                            System.out.println("sto chiedendo alla tui di stamparmi il player deck");
+                            tuiView.printHand(personalPlayer.getPlayerDeck());
+                            try {
+                                ObjectiveCard tmp=tuiView.askChoosePersonalObjective(sc, personalPlayer.getPersonalObjectives());
+                                chooseObjectiveCard(personalPlayer.getNickname(),tmp);
+                                ok = true;
+                                personalPlayer.setPersonalObjective(tmp);
+                                System.out.println("You've correctly chosen your objective card!");
+                            }catch (RemoteException |NotBoundException e){
+                                System.out.println("Unable to communicate with the server! Shutting down.");
+                                System.exit(-1);
+                            }catch (CardNotOwnedException e){ //questa eccezione però non viene lanciata da nessuno (nè dal controller nè dalla tui)
+                                System.out.println("You don't own this card.");
+                            }
+                        }
+                        /*
+                        new Thread(()->{
                             boolean ok = false;
                             while (!ok) {
+                                System.out.println("sto chiedendo alla tui di stamparmi il player deck");
                                 tuiView.printHand(personalPlayer.getPlayerDeck());
                                 try {
                                     ObjectiveCard tmp=tuiView.askChoosePersonalObjective(sc, personalPlayer.getPersonalObjectives());
@@ -755,11 +789,16 @@ public class ClientSCK implements ClientGeneralInterface{
                                 }catch (RemoteException |NotBoundException e){
                                     System.out.println("Unable to communicate with the server! Shutting down.");
                                     System.exit(-1);
-                                }catch (CardNotOwnedException e){
+                                }catch (CardNotOwnedException e){ //questa eccezione però non viene lanciata da nessuno (nè dal controller nè dalla tui)
                                     System.out.println("You don't own this card.");
                                 }
                             }
-                        });
+
+                        }).start();;
+
+                         */
+
+
                     } else if (selectedView == 2) {
                         //gui
                     }
@@ -767,14 +806,14 @@ public class ClientSCK implements ClientGeneralInterface{
             }
         }
     }
-     */
+
 
     @Override
     public void updateResourceCard1(PlayableCard card) throws RemoteException {
         //we have to change the view and the local model
         this.resourceCard1=card;
         if (selectedView == 1) {
-            System.out.println("I received the update.");
+            System.out.println("I received the updateResourceCard1.");
         } else if (selectedView == 2) {
             //guiView.updateResourceCard1(card)
         }
@@ -785,7 +824,7 @@ public class ClientSCK implements ClientGeneralInterface{
         //we have to change the view and the local model
         this.resourceCard2=card;
         if (selectedView == 1) {
-            System.out.println("I received the update.");
+            System.out.println("I received the updateResourceCard2.");
         } else if (selectedView == 2) {
             //guiView.updateResourceCard2(card)
         }
@@ -796,7 +835,7 @@ public class ClientSCK implements ClientGeneralInterface{
         //we have to change the view and the local model
         this.goldCard1=card;
         if (selectedView == 1) {
-            System.out.println("I received the update.");
+            System.out.println("I received the updateGoldCard1.");
         } else if (selectedView == 2) {
             //guiView.updateGoldCard2(card)
         }
@@ -807,7 +846,7 @@ public class ClientSCK implements ClientGeneralInterface{
         //we have to change the view and the local model
         this.goldCard2=card;
         if (selectedView == 1) {
-            System.out.println("I received the update.");
+            System.out.println("I received the updateGoldCard2.");
         } else if (selectedView == 2) {
             //guiView.updateGoldCard2(card)
         }
@@ -818,7 +857,7 @@ public class ClientSCK implements ClientGeneralInterface{
         //we have to change the view and the local model
 
         if (selectedView == 1) {
-            System.out.println("You received a message.");
+            System.out.println("You received a message (updateGoldCard2).");
         } else if (selectedView == 2) {
             //guiView.updateChat(chat)
         }
@@ -828,7 +867,7 @@ public class ClientSCK implements ClientGeneralInterface{
     public void updatePawns(Player player, Pawn pawn) throws RemoteException {
         //we have to change the view and the local model
         if (selectedView == 1) {
-            System.out.println("I received the update.");
+            System.out.println("I received the updatePawns.");
         } else if (selectedView == 2) {
             //guiView.updatePawns(player, pawn)
         }
@@ -838,7 +877,7 @@ public class ClientSCK implements ClientGeneralInterface{
     public void updateNickname(Player player, String nickname) throws RemoteException {
         //we have to change the view and the local model
         if (selectedView == 1) {
-            System.out.println("I received the update.");
+            System.out.println("I received the updateNickname.");
         } else if (selectedView == 2) {
             //guiView.updateNickname(player, nickname)
         }
@@ -848,41 +887,47 @@ public class ClientSCK implements ClientGeneralInterface{
     public void updateRound(Player player) throws RemoteException {}
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException { //taken from RMIClient
         //we have to change the view and the local model
+        System.out.println("I received the updateRound.");
+        playersInTheGame = newPlayingOrder; //when turnCounter==-1 we have to initialize this list
+        if(this.turnCounter==0){ //we enter here only one time: the second time that updateRound is called
+            //the second time that updateRound is called we have all that is need to call playBaseCard (see the model server side)
+            try {
+                System.out.println("la tui mi chiede il lato della base card");
+                boolean choice=tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]);
+                System.out.println("chiamo playBaseCard");
+                playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0],choice);
+            } catch (NotBoundException e) { //non si verifica
+                throw new RuntimeException(e);
+            } catch (RemoteException e) { //non si verifica
+                throw new RuntimeException(e);
+            }
+           /* new Thread(()->{
+                try {
+                    System.out.println("la tui mi chiede il lato della base card");
+                    boolean choice=tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]);
+                    System.out.println("chiamo playBaseCard");
+                    playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0],choice);
+                } catch (NotBoundException e) { //non si verifica
+                    throw new RuntimeException(e);
+                } catch (RemoteException e) { //non si verifica
+                    throw new RuntimeException(e);
+                }
+            }).start();
 
-        playersInTheGame = newPlayingOrder;
-        if(playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())){
-            System.out.println("You are playing");
-            setIsPlaying(true);
-            //Qui posso lanciare un thread che fintanto che isPlaying==true mostra le azioni che il Player può fare.
-            //Queste nuove azioni vanno sommate a quelle di base (es. guarda la board di un altro giocatore) quindi
-            //un thread di base deve sempre andare e a questo thread quando isPlaying==true si possono aggiungere
-            //funzionalità (al posto di usare un secondo thread)
-        }else{
-            System.out.println("You are not playing");
-            setIsPlaying(false);
+            */
+
         }
-
-        //bisogna chiedere al giocatore di scegliere tra le base cards se è il primo turno?
-        //playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0],tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]));
-    }
-
-    /*
-    //taken from RMIClient
-    public void updateCommonObjectives(ObjectiveCard card1, ObjectiveCard card2) throws RemoteException{
-        this.commonObjective1=card1;
-        this.commonObjective2=card2;
-    }
-     */
-
-    @Override
-    public void updateGameState(Game.GameState gameState) throws RemoteException {
-        //we have to change the view and the local model
-
-        if (selectedView == 1) {
-            if(gameState.equals(Game.GameState.STARTED)) {
-                inGame=true;
-                System.out.println("The game has started!");
-                // qui lancio il thread base che mi legge l'input di un Player
+        if(this.turnCounter>=1){ //we enter here from the third time included that updateRound is called
+            //before starting the thread that prints the menu we communicate which is the player that is playing
+            if(playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())){
+                System.out.println("You are playing");
+                setIsPlaying(true);
+            }else{
+                System.out.println("You are not playing");
+                setIsPlaying(false);
+            }
+            if(this.turnCounter==1){ //we enter here the third time (finishedSetupPhase2())
+                //we have to start the thread that prints the menu
                 new Thread(()->{
                     while (inGame) { //quando la connessione viene persa/il Game termina inGame deve venire settato a false
                         //il player può usare il menù completo solo se isPlaying==true se no usa quello di base
@@ -890,32 +935,70 @@ public class ClientSCK implements ClientGeneralInterface{
 
                     }
                 }).start();
+            }
+
+        }
+
+
+
+        turnCounter++; //first time: -1 -> 0, second time 0 -> 1  so from the second time on we enter if(turnCounter>=1)
+    }
+
+
+    //taken from RMIClient
+    public void updateCommonObjectives(ObjectiveCard card1, ObjectiveCard card2) throws RemoteException{
+        System.out.println("I received the updateCommonObjectives.");
+        this.commonObjective1=card1;
+        this.commonObjective2=card2;
+    }
+
+    @Override
+    public void updateGameState(Game.GameState gameState) throws RemoteException {
+        //we have to change the view and the local model
+        System.out.println("I received the updateGameState.");
+        if (selectedView == 1) {
+            if(gameState.equals(Game.GameState.STARTED)) {
+                inGame=true;
+                System.out.println("The game has started!");
+
             } else if (gameState.equals(Game.GameState.ENDING)) {
 
             }else if(gameState.equals(Game.GameState.ENDED)){
                 //inGame=false;
+
+                // in caso di Game ENDED dobbiamo chiudere la connessione?
+                // potremmo riutilizzarla per un'altra partita e rimettere il client in una lobby
+                //per chiudere la connessione:
+                // inputStream.close();
+                // outputStream.close();
+                // socket.close();
+                // running=false;
+                // se decidiamo di non chiudere la connessione e di rimettere il client in una lobby il threadCheckConnection si deve fermare?
             }
         } else if (selectedView == 2) {
             //guiView.updateGameState(game)
         }
     }
 
-    /*
+
     //taken from RMIClient
     //caso in cui qualcuno lascia il gioco e la partita deve finire
     public void gameLeft() throws RemoteException{
+        System.out.println("I received the update gameLeft.");
         if(inGame){
             inGame=false;
-            try {
-                menuThread.join();
-            }catch (InterruptedException ignored){} //will never be interrupted before
             System.out.println(ANSIFormatter.ANSI_RED+"Someone left the game."+ANSIFormatter.ANSI_RESET);
             this.resetAttributes();
             System.out.println("Returning to lobby.\n\n\n\n\n\n\n");
             this.waitingRoom();
         }
     }
-     */
+
+    //taken from RMIClient
+    public void showError(Event event){ //dovrebbe mostrarmi UNABLE_TO_PLAY_CARD...dovrebbe essere già inclusa nelle eccezioni
+        System.out.println(event.toString());
+    }
+
 
 
     //fine update
@@ -1051,7 +1134,7 @@ public class ClientSCK implements ClientGeneralInterface{
         this.resourceCard2=null;
         this.goldCard1=null;
         this.goldCard2=null;
-        //this.turnCounter=-1;  //credo sia per capire se è il primo turno (e quindi bisogna scegliere tra le carte base
+        this.turnCounter=-1;  //credo sia per capire se è il primo turno (e quindi bisogna scegliere tra le carte base
         this.playersInTheGame=null;
         //this.gameController=null; //dovrebbe servire solo per RMI
     }

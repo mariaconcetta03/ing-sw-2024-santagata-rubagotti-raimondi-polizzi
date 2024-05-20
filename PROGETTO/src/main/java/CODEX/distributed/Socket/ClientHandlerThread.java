@@ -211,6 +211,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             }
             case PLAY_BASE_CARD->{
                 try {
+                    System.out.println("sono in PLAY_BASE_CARD");
                     playBaseCard((String) sckMessage.getObj().get(0), (PlayableCard) sckMessage.getObj().get(1), (boolean) sckMessage.getObj().get(2));
                 }catch (Exception e){
                     System.err.println(e.getMessage());
@@ -287,10 +288,12 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             writeTheStream(new SCKMessage(list,arg.getMessageEvent()));
             return;
         }
-        System.out.println("sono in update");
-        System.out.println(arg.getMessageEvent());
-        //writeTheStream(message);
-        writeTheStream(new SCKMessage(arg.getObj(),arg.getMessageEvent())); //qui dobbiamo vedere se far diventare Message e SCKMessage la stessa cosa
+        if(!(arg.getMessageEvent().equals(Event.OK))){ //non mi servono i messaggi di update ok dal controller
+            System.out.println("sono in update");
+            System.out.println(arg.getMessageEvent());
+            //writeTheStream(message);
+            writeTheStream(new SCKMessage(arg.getObj(),arg.getMessageEvent())); //qui dobbiamo vedere se far diventare Message e SCKMessage la stessa cosa
+        }
     }
 
     @Override
@@ -426,7 +429,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) {
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
         try {
+            System.out.println("sono nel try di playBaseCard");
             this.gameController.playBaseCard(nickname, baseCard, orientation);
+            System.out.println("scrivo il messaggio di OK di playBaseCard");
             writeTheStream(new SCKMessage(null,Event.OK));
         }catch (RemoteException e){
             System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
