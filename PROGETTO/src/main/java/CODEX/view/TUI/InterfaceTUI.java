@@ -4,6 +4,7 @@ import CODEX.org.model.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.*;
 
@@ -127,21 +128,26 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
      */
     public int askAction(Scanner sc, boolean inTurn) {
         boolean ok = false;
-        int value = 0;
+        BufferedReader console= new BufferedReader(new InputStreamReader(System.in));
+        String input;
+        int value = -1;
         while (!ok) {
             try {
-                value = sc.nextInt();
-                sc.nextLine();
-                //lasciando lo scanner, wrappedObserver aspetta una risposta prima di inviare
-                //update agli altri client (non ha ancora esaurito la chiamata a funzione
-                if ((inTurn) && (value == 7)) {
-                    ok = true;
-                } else if ((value < 0) || (value > 6)) {
-                    System.out.println("Please, insert one of the possible values. ");
-                } else {
-                    ok = true;
-                }
-            } catch (InputMismatchException e) {
+                    input = console.readLine();
+                    if (input.length() < 5) {
+                        value=Integer.parseInt(input);
+                        //lasciando lo scanner, wrappedObserver aspetta una risposta prima di inviare
+                        //update agli altri client (non ha ancora esaurito la chiamata a funzione
+                        if ((inTurn) && (value == 7)) {
+                            ok = true;
+                        } else if ((value < 0) || (value > 6)) {
+                            System.out.println("Please, insert one of the possible values. ");
+                        } else {
+                            ok = true;
+                        }
+                    }
+
+            } catch (IOException |NumberFormatException e) {
                 System.out.println("Please type a number. ");
                 sc.next();
             }
@@ -326,7 +332,7 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                     secondRow = secondRow.concat("   ");
                     thirdRow = thirdRow.concat("                  ");
                 }
-
+                pointsString="";
                 if (card.getPoints() > 0) {
                     pointsString = pointsString.concat(card.getPoints() + "pt");
                     if (card.isScrollToReceivePoints()) {
@@ -543,55 +549,90 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
 
         for(ObjectiveCard objCard:objectiveCards){
             if(objectiveCards.size()==2){ //siamo nel caso della scelta iniziale
-                indexString=indexString.concat("          ("+index+")          ");
+                indexString=indexString.concat("       ("+index+")       ");
                 index++;
             }
             if(objCard.getId()==87){
                 firstRow=firstRow.concat(" _________________");
-                secondRow=secondRow.concat("|       "+objCard.getCardPoints()+"pt       |");
-                thirdRow=thirdRow.concat("|          "+ANSIFormatter.ANSI_RED+"██"+rst+"     |");
-                fourthRow=fourthRow.concat("|        "+ANSIFormatter.ANSI_RED+"██"+rst+"       |");
-                fifthRow=fifthRow.concat("|      "+ANSIFormatter.ANSI_RED+"██"+rst+"         |");
+                secondRow=secondRow.concat("|       "+ANSIFormatter.ANSI_YELLOW+objCard.getCardPoints()+"pt"+rst+"       |");
+                thirdRow=thirdRow.concat("|          "+ANSIFormatter.ANSI_RED+"███"+rst+"    |");
+                fourthRow=fourthRow.concat("|       "+ANSIFormatter.ANSI_RED+"███"+rst+"       |");
+                fifthRow=fifthRow.concat("|    "+ANSIFormatter.ANSI_RED+"███"+rst+"          |");
                 sixthRow=sixthRow.concat("|_________________|");
             }else if(objCard.getId()==88){
                 firstRow=firstRow.concat(" _________________");
-                secondRow=secondRow.concat("|       "+objCard.getCardPoints()+"pt       |");
+                secondRow=secondRow.concat("|       "+ANSIFormatter.ANSI_YELLOW+objCard.getCardPoints()+"pt"+rst+"       |");
                 thirdRow=thirdRow.concat("|     "+ANSIFormatter.ANSI_GREEN+"██"+rst+"          |");
-                fourthRow=fourthRow.concat("|        "+ANSIFormatter.ANSI_GREEN+"██"+rst+"       |");
+                fourthRow=fourthRow.concat("|         "+ANSIFormatter.ANSI_GREEN+"██"+rst+"      |");
                 fifthRow=fifthRow.concat("|          "+ANSIFormatter.ANSI_GREEN+"██"+rst+"     |");
                 sixthRow=sixthRow.concat("|_________________|");
             }else if(objCard.getId()==89){
                 firstRow=firstRow.concat(" _________________");
-                secondRow=secondRow.concat("|       "+objCard.getCardPoints()+"pt       |");
+                secondRow=secondRow.concat("|       "+ANSIFormatter.ANSI_YELLOW+objCard.getCardPoints()+"pt"+rst+"       |");
                 thirdRow=thirdRow.concat("|          "+ANSIFormatter.ANSI_BLUE+"██"+rst+"     |");
                 fourthRow=fourthRow.concat("|        "+ANSIFormatter.ANSI_BLUE+"██"+rst+"       |");
                 fifthRow=fifthRow.concat("|      "+ANSIFormatter.ANSI_BLUE+"██"+rst+"         |");
                 sixthRow=sixthRow.concat("|_________________|");
             }else if(objCard.getId()==90){
                 firstRow=firstRow.concat(" _________________");
-                secondRow=secondRow.concat("|       "+objCard.getCardPoints()+"pt       |");
+                secondRow=secondRow.concat("|       "+ANSIFormatter.ANSI_YELLOW+objCard.getCardPoints()+"pt"+rst+"       |");
                 thirdRow=thirdRow.concat("|      "+ANSIFormatter.ANSI_PURPLE+"██"+rst+"         |");
                 fourthRow=fourthRow.concat("|       "+ANSIFormatter.ANSI_PURPLE+"██"+rst+"        |");
                 fifthRow=fifthRow.concat("|          "+ANSIFormatter.ANSI_PURPLE+"██"+rst+"     |");
                 sixthRow=sixthRow.concat("|_________________|");
             }else if(objCard.getId()==91){
-
+                firstRow=firstRow.concat(" _________________");
+                secondRow=secondRow.concat("|       "+ANSIFormatter.ANSI_YELLOW+objCard.getCardPoints()+"pt"+rst+"       |");
+                thirdRow=thirdRow.concat("|          "+ANSIFormatter.ANSI_RED+"███"+rst+"    |");
+                fourthRow=fourthRow.concat("|       "+ANSIFormatter.ANSI_RED+"███"+rst+"       |");
+                fifthRow=fifthRow.concat("|    "+ANSIFormatter.ANSI_RED+"███"+rst+"          |");
+                sixthRow=sixthRow.concat("|_________________|");
             }else if(objCard.getId()==92){
-
+                firstRow=firstRow.concat(" _________________");
+                secondRow=secondRow.concat("|       "+ANSIFormatter.ANSI_YELLOW+objCard.getCardPoints()+"pt"+rst+"       |");
+                thirdRow=thirdRow.concat("|          "+ANSIFormatter.ANSI_RED+"███"+rst+"    |");
+                fourthRow=fourthRow.concat("|       "+ANSIFormatter.ANSI_RED+"███"+rst+"       |");
+                fifthRow=fifthRow.concat("|    "+ANSIFormatter.ANSI_RED+"███"+rst+"          |");
+                sixthRow=sixthRow.concat("|_________________|");
             }else if(objCard.getId()==93){
-
+                firstRow=firstRow.concat(" _________________");
+                secondRow=secondRow.concat("|       "+ANSIFormatter.ANSI_YELLOW+objCard.getCardPoints()+"pt"+rst+"       |");
+                thirdRow=thirdRow.concat("|          "+ANSIFormatter.ANSI_RED+"███"+rst+"    |");
+                fourthRow=fourthRow.concat("|       "+ANSIFormatter.ANSI_RED+"███"+rst+"       |");
+                fifthRow=fifthRow.concat("|    "+ANSIFormatter.ANSI_RED+"███"+rst+"          |");
+                sixthRow=sixthRow.concat("|_________________|");
             }else if(objCard.getId()==94){
-
+                firstRow=firstRow.concat(" _________________");
+                secondRow=secondRow.concat("|       "+ANSIFormatter.ANSI_YELLOW+objCard.getCardPoints()+"pt"+rst+"       |");
+                thirdRow=thirdRow.concat("|          "+ANSIFormatter.ANSI_RED+"███"+rst+"    |");
+                fourthRow=fourthRow.concat("|       "+ANSIFormatter.ANSI_RED+"███"+rst+"       |");
+                fifthRow=fifthRow.concat("|    "+ANSIFormatter.ANSI_RED+"███"+rst+"          |");
+                sixthRow=sixthRow.concat("|_________________|");
             }else if(objCard.getId()==95){
-
+                firstRow=firstRow.concat(" _________________");
+                secondRow=secondRow.concat("|       "+ANSIFormatter.ANSI_YELLOW+objCard.getCardPoints()+"pt"+rst+"       |");
+                thirdRow=thirdRow.concat("|          "+ANSIFormatter.ANSI_RED+"███"+rst+"    |");
+                fourthRow=fourthRow.concat("|       "+ANSIFormatter.ANSI_RED+"███"+rst+"       |");
+                fifthRow=fifthRow.concat("|    "+ANSIFormatter.ANSI_RED+"███"+rst+"          |");
+                sixthRow=sixthRow.concat("|_________________|");
             }else if(objCard.getId()==96){
 
             }else if(objCard.getId()==97){
-
+                firstRow=firstRow.concat(" _________________");
+                secondRow=secondRow.concat("|       "+ANSIFormatter.ANSI_YELLOW+objCard.getCardPoints()+"pt"+rst+"       |");
+                thirdRow=thirdRow.concat("|          "+ANSIFormatter.ANSI_RED+"███"+rst+"    |");
+                fourthRow=fourthRow.concat("|       "+ANSIFormatter.ANSI_RED+"███"+rst+"       |");
+                fifthRow=fifthRow.concat("|    "+ANSIFormatter.ANSI_RED+"███"+rst+"          |");
+                sixthRow=sixthRow.concat("|_________________|");
             }else if(objCard.getId()==98){
 
             }else if(objCard.getId()==99){
-
+                firstRow=firstRow.concat(" _________________");
+                secondRow=secondRow.concat("|       "+ANSIFormatter.ANSI_YELLOW+objCard.getCardPoints()+"pt"+rst+"       |");
+                thirdRow=thirdRow.concat("|          "+ANSIFormatter.ANSI_RED+"███"+rst+"    |");
+                fourthRow=fourthRow.concat("|       "+ANSIFormatter.ANSI_RED+"███"+rst+"       |");
+                fifthRow=fifthRow.concat("|    "+ANSIFormatter.ANSI_RED+"███"+rst+"          |");
+                sixthRow=sixthRow.concat("|_________________|");
             }else if(objCard.getId()==100){
 
             }else if(objCard.getId()==101){

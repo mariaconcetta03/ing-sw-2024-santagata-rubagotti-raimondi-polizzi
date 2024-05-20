@@ -23,6 +23,7 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -66,6 +67,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private boolean baseCard= false;
     private CompletableFuture<Void> completableFuture;
     private Thread menuThread;
+    private Executor menuExecutor;
     
     /**
      * Class constructor
@@ -389,11 +391,20 @@ int choice=-1;
     public void gameTurn(boolean inTurn) throws InterruptedException{
         int choice= -1;
         boolean ok=false;
+        boolean read= false;
+        BufferedReader console= new BufferedReader(new InputStreamReader(System.in));
         if(selectedView==1) {
             tuiView.gameTurn(isPlaying);
-            //choice=tuiView.askAction(sc, inTurn);
+            while((!Thread.currentThread().isInterrupted())&&(!read)) {
+                try {
+                    if (console.ready()) {
+                        read=true;
+                        choice=tuiView.askAction(sc, inTurn);
+                    }
+                } catch (IOException e) {}
+            }
             try {
-                switch (this.choice) {
+                switch (choice) {
                     case 0:
                         System.out.println("Are you sure to LEAVE the game? Type 1 if you want to leave.");
                         try{
@@ -502,6 +513,7 @@ int choice=-1;
                         break;
                     default:
                         System.out.println("not yet implemented");
+                        gameTurn(isPlaying);
                 }
             }catch (RemoteException|NotBoundException e){
                 System.out.println("Unable to communicate with the server! Shutting down.");
@@ -759,21 +771,19 @@ int choice=-1;
         if (turnCounter != -1) {
             if (turnCounter != 0) {
                 if (selectedView == 1) {
-
+                    Thread.currentThread().interrupt();
                     if(isPlaying) {
                         System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
                     }else {
                         System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
                     }
 
-                    if(turnCounter==1) {
-                        menuThread.start();
-                        turnCounter++;
-                    }
-                    try {
-                        gameTurn(isPlaying);
-                    }catch (InterruptedException e){}
-
+                    executor.execute(()-> {
+                                try {
+                                    gameTurn(isPlaying);
+                                } catch (InterruptedException e) {
+                                }
+                            });
                     /*
                     try {
                         gameTurn(isPlaying);
