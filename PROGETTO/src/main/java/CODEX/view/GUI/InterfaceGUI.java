@@ -26,6 +26,13 @@ public class InterfaceGUI extends Application {
         //stage.setResizable(false);
         stage.show();
 
+
+        FXMLLoader fxmlLoader2 = new FXMLLoader(getClass().getResource("/network_and_interface.fxml"));
+        Scene scene2 = new Scene(fxmlLoader2.load());
+        stage.setScene(scene2);
+        stage.show();
+ 
+
        //scene.getStylesheets().add("CODEX/view/GUI/Styles.css");
     }
 
