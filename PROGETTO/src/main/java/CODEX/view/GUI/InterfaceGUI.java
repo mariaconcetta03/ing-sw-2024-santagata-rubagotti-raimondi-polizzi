@@ -1,14 +1,11 @@
 package CODEX.view.GUI;
 
+import CODEX.distributed.RMI.RMIClient;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
-import java.awt.*;
 import java.io.IOException;
 
 import static javafx.application.Application.launch;
@@ -16,27 +13,32 @@ import static javafx.application.Application.launch;
 // THIS IS THE CORRECT CLASS
 public class InterfaceGUI extends Application {
 
-    @Override
+    RMIClient rmiClient;
+    GUIController guiController = new GUIController();
+
+
+    public InterfaceGUI(RMIClient client) {
+        this.rmiClient = client;
+        this.guiController.setInterfaceGUI(this);
+    }
+
+    public InterfaceGUI() {
+        this.guiController.setInterfaceGUI(this);
+    }
+
+
+
+        @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/network_and_interface.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/nickname.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Codex Naturalis");
         stage.setScene(scene);
         //stage.setResizable(false);
         stage.show();
-
-       //scene.getStylesheets().add("CODEX/view/GUI/Styles.css");
     }
 
 
-
-    public void seconda(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader2 = new FXMLLoader(getClass().getResource("/hello-view.fxml"));
-        Scene scene2 = new Scene(fxmlLoader2.load());
-        stage.setScene(scene2);
-        stage.show();
-
-    }
 
 
     public static void main(String[] args) {
@@ -83,7 +85,7 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-//        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
+//        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("nickname.fxml"));
         VBox vbox = new VBox();
 
         HBox top = new HBox();

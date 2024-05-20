@@ -33,6 +33,8 @@ public class ClientLauncher {
                 }catch (RemoteException | NotBoundException e){
                     System.out.println("Cannot connect to Server. Shutting down. Try again.");
                     System.exit(-1);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
                 //generate client RMI
             }else if(selection>=3&&selection<=4){

@@ -382,12 +382,7 @@ int choice=-1;
                 System.exit(-1);
             }
         }else{ //GUI
-
-//            System.out.println(ANSIFormatter.ANSI_RED+"GUI will be implemented with the next update!");
-//            System.exit(-1);
-            InterfaceGUI guiView= new InterfaceGUI();
-            guiView.start(new Stage());
-
+                InterfaceGUI.main(null);
         }
     }
 

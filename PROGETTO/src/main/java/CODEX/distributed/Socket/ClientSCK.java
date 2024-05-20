@@ -9,6 +9,7 @@ import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.messages.SCKMessage;
 import CODEX.org.model.*;
 import CODEX.utils.Event;
+import CODEX.view.GUI.InterfaceGUI;
 import CODEX.view.TUI.ANSIFormatter;
 import CODEX.view.TUI.InterfaceTUI;
 
@@ -397,7 +398,7 @@ public class ClientSCK implements ClientGeneralInterface{
                 System.exit(-1);
             }
         } else {
-            //guiView= new InterfaceGUI();
+            InterfaceGUI.main(null);
         }
     }
 

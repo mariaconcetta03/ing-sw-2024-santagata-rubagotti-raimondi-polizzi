@@ -14,6 +14,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 public class GUIController {
+
+
+
+    private InterfaceGUI interfaceGUI = null;
     @FXML
     private MenuButton menuButton;
     private int choose = 0; // it means that user hasn't chosen
@@ -37,7 +41,7 @@ public class GUIController {
     @FXML
     protected void selectedOption () throws NotBoundException, IOException {
         if (choose == 1) { // tcp
-            ClientSCK clientSCK = new ClientSCK();
+            clientSCK = new ClientSCK();
             clientSCK.setSelectedView(2);
 
         } else if (choose == 2) { // rmi
@@ -47,13 +51,18 @@ public class GUIController {
             rmiClient.waitingRoom();
         }
 
-        InterfaceGUI interfaceGUI= new InterfaceGUI();
-        interfaceGUI.seconda(new Stage());
+        // QUI DEVO FAR CAMBIARE LA SCHERMATA!
     }
 
 
 
+    public InterfaceGUI getInterfaceGUI() {
+        return interfaceGUI;
+    }
 
+    public void setInterfaceGUI(InterfaceGUI interfaceGUI) {
+        this.interfaceGUI = interfaceGUI;
+    }
 
 
 
