@@ -4,8 +4,10 @@ import CODEX.Exceptions.*;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.org.model.*;
 import CODEX.utils.Event;
+import CODEX.view.GUI.InterfaceGUI;
 import CODEX.view.TUI.ANSIFormatter;
 import CODEX.view.TUI.InterfaceTUI;
+import javafx.stage.Stage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -293,7 +295,7 @@ int choice=-1;
      * This method is called when the client is created. Absolves the function of helping the player to select
      * his nickname and to choose if he wants to join an already started Game or create a new one.
      */
-    public void waitingRoom(){
+    public void waitingRoom() throws IOException {
         sc=new Scanner(System.in);
         boolean ok=false;
         int errorCounter=0;
@@ -379,12 +381,13 @@ int choice=-1;
                 System.out.println("Unable to communicate with the server! Shutting down.");
                 System.exit(-1);
             }
-        }else{
+        }else{ //GUI
 
+//            System.out.println(ANSIFormatter.ANSI_RED+"GUI will be implemented with the next update!");
+//            System.exit(-1);
+            InterfaceGUI guiView= new InterfaceGUI();
+            guiView.start(new Stage());
 
-            System.out.println(ANSIFormatter.ANSI_RED+"GUI will be implemented with the next update!");
-            System.exit(-1);
-            //guiView= new InterfaceGUI();
         }
     }
 
@@ -408,6 +411,9 @@ int choice=-1;
                                 this.waitingRoom();
                             }
                         }catch (InputMismatchException ignored){} //@TODO da gestire
+                        catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                         break;
                     case 1: tuiView.printHand(personalPlayer.getPlayerDeck());
                         gameTurn(isPlaying);
@@ -839,7 +845,11 @@ int choice=-1;
             System.out.println(ANSIFormatter.ANSI_RED+"Someone left the game."+ANSIFormatter.ANSI_RESET);
             this.resetAttributes();
             System.out.println("Returning to lobby.\n\n\n\n\n\n\n");
-            this.waitingRoom();
+            try {
+                this.waitingRoom();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
     public void resetAttributes(){

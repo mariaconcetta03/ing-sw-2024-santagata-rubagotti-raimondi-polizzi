@@ -18,22 +18,24 @@ public class InterfaceGUI extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/network_and_interface.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Codex Naturalis");
         stage.setScene(scene);
-
         //stage.setResizable(false);
         stage.show();
 
+       //scene.getStylesheets().add("CODEX/view/GUI/Styles.css");
+    }
 
-        FXMLLoader fxmlLoader2 = new FXMLLoader(getClass().getResource("/network_and_interface.fxml"));
+
+
+    public void seconda(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader2 = new FXMLLoader(getClass().getResource("/hello-view.fxml"));
         Scene scene2 = new Scene(fxmlLoader2.load());
         stage.setScene(scene2);
         stage.show();
- 
 
-       //scene.getStylesheets().add("CODEX/view/GUI/Styles.css");
     }
 
 
