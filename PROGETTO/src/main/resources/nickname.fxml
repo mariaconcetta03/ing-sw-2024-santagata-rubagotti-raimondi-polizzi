@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane fx:controller="CODEX.view.GUI.GUIController" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CODEX.view.GUI.GUIController">
    <children>
       <VBox layoutY="61.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="844.0" prefWidth="1350.0" styleClass="background_pane" stylesheets="@Styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -31,7 +31,7 @@
                         </Label>
                         <HBox alignment="TOP_CENTER" prefHeight="93.0" prefWidth="1350.0">
                            <children>
-                              <TextField alignment="TOP_CENTER" opacity="0.8" prefHeight="47.0" prefWidth="472.0">
+                              <TextField fx:id="nickname" alignment="TOP_CENTER" opacity="0.8" prefHeight="47.0" prefWidth="472.0">
                                  <font>
                                     <Font size="22.0" />
                                  </font>
@@ -43,7 +43,7 @@
                                  </HBox.margin>
                               </TextField>
                               <Separator opacity="0.0" prefHeight="9.0" prefWidth="2.0" />
-                              <Button alignment="TOP_CENTER" mnemonicParsing="false" opacity="0.8" prefHeight="47.0" prefWidth="155.0" text="Done" textAlignment="CENTER">
+                              <Button alignment="TOP_CENTER" mnemonicParsing="false" onAction="#sendNickname" opacity="0.8" prefHeight="47.0" prefWidth="155.0" text="Done" textAlignment="CENTER">
                                  <font>
                                     <Font name="Georgia" size="25.0" />
                                  </font>

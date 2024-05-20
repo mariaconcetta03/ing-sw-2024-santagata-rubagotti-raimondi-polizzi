@@ -1,6 +1,7 @@
 package CODEX.view.GUI;
 
 import CODEX.distributed.RMI.RMIClient;
+import CODEX.distributed.Socket.ClientSCK;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -13,22 +14,12 @@ import static javafx.application.Application.launch;
 // THIS IS THE CORRECT CLASS
 public class InterfaceGUI extends Application {
 
-    RMIClient rmiClient;
-    GUIController guiController = new GUIController();
+    private RMIClient rmiClient;
+    private ClientSCK clientSCK;
+    private int network = 0; // 1 = RMI   2 = TCP
+    private GUIController guiController = new GUIController();
 
-
-    public InterfaceGUI(RMIClient client) {
-        this.rmiClient = client;
-        this.guiController.setInterfaceGUI(this);
-    }
-
-    public InterfaceGUI() {
-        this.guiController.setInterfaceGUI(this);
-    }
-
-
-
-        @Override
+    @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/nickname.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
@@ -42,8 +33,28 @@ public class InterfaceGUI extends Application {
 
 
     public static void main(String[] args) {
-        launch(args);
+        launch((String) null);
+      //  if (args[0].equals("TCP")) {
+     //
+     //   }
     }
+
+
+
+
+
+    public InterfaceGUI(RMIClient client) {
+        this.rmiClient = client;
+        this.guiController.setInterfaceGUI(this);
+    }
+
+    public InterfaceGUI() {
+        this.guiController.setInterfaceGUI(this);
+    }
+
+
+
+
 
 }
 

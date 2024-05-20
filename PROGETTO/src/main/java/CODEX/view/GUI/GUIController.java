@@ -10,6 +10,7 @@ import java.rmi.RemoteException;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -23,6 +24,30 @@ public class GUIController {
     private int choose = 0; // it means that user hasn't chosen
     RMIClient rmiClient = null;
     ClientSCK clientSCK = null;
+
+    @FXML
+    private TextField nickname;
+
+
+    @FXML
+    protected void sendNickname(){
+        System.out.println(nickname.getCharacters());
+        // QUI COME FACCIO ?? devo chiamare socket o rmi ma da dove lo so che scelta ha fatto il client? dove tengo memorizzato rmi o tcp?
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @FXML
     protected void tcp() {
