@@ -948,11 +948,11 @@ public class ClientSCK implements ClientGeneralInterface{
         if(this.turnCounter>=1){ //we enter here from the third time included that updateRound is called
             //before starting the thread that prints the menu we communicate which is the player that is playing
             if(playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())){
-                System.out.println("You are playing");
                 setIsPlaying(true);
+                System.out.println("You are playing");
             }else{
-                System.out.println("You are not playing");
                 setIsPlaying(false);
+                System.out.println("You are not playing");
             }
             if(this.turnCounter==1){ //we enter here the third time (finishedSetupPhase2())
                 //we have to start the thread that prints the menu
@@ -964,11 +964,7 @@ public class ClientSCK implements ClientGeneralInterface{
                     }
                 }).start();
             }
-
         }
-
-
-
         turnCounter++; //first time: -1 -> 0, second time 0 -> 1  so from the second time on we enter if(turnCounter>=1)
     }
 
@@ -1033,7 +1029,7 @@ public class ClientSCK implements ClientGeneralInterface{
 
     //end of implementation of ClientGeneralInterface
 
-    synchronized private void showMenuAndWaitForSelection(){ //syn perchè così legge il valore corrente di isPlaying
+    private void showMenuAndWaitForSelection(){ //syn perchè così legge il valore corrente di isPlaying
         Integer choice;
         if(selectedView==1) {
             choice=tuiView.showMenuAndWaitForSelection(this.getIsPlaying(),this.console);
@@ -1172,7 +1168,7 @@ public class ClientSCK implements ClientGeneralInterface{
         static int PORT = 50000; // free ports: from 49152 to 65535, 1099 default port for RMI registry
         static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
     }
-    synchronized public void setIsPlaying(boolean isPlaying){
+    public void setIsPlaying(boolean isPlaying){
         this.isPlaying=isPlaying;
     }
     public boolean getIsPlaying(){ // c'è la syn nel metodo che lo chiama (showMenuAndWaitForSelection)
