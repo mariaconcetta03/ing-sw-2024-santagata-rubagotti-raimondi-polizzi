@@ -794,12 +794,12 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
             if (console.ready()) { //ready restituisce true se c'è una riga da leggere
                 value = Integer.parseInt(console.readLine());
                 if (value != null) {
-                    Integer intValue = value;
-                    if ((isPlaying) && (intValue == 7)) {
+                    int intValue = value;
+                    if (((isPlaying) && (intValue == 7))||((intValue>=0)&&(intValue<=6))) {
                         System.out.println("value taken");
-                    } else if ((intValue < 0) || (intValue > 6)) {
+                    } else if ((intValue < 0) || (intValue > 6))
                         System.out.println("Please, insert one of the possible values. ");
-                    } else {
+                    else {
                         System.out.println("Please type a number. ");
                         value = -1;
                     }
