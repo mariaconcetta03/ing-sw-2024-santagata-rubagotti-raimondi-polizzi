@@ -797,8 +797,10 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                     int intValue = value;
                     if (((isPlaying) && (intValue == 7))||((intValue>=0)&&(intValue<=6))) {
                         System.out.println("value taken");
-                    } else if ((intValue < 0) || (intValue > 6))
+                    } else if ((intValue < 0) || (intValue > 6)) {
                         System.out.println("Please, insert one of the possible values. ");
+                        value = -1;
+                    }
                     else {
                         System.out.println("Please type a number. ");
                         value = -1;
