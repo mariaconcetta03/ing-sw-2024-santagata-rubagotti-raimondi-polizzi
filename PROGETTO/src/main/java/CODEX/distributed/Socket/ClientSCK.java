@@ -305,7 +305,7 @@ public class ClientSCK implements ClientGeneralInterface{
                 //stampiamo l'errore e poi permettiamo al client di proseguire
                 synchronized (actionLock) {
                     errorState=true;
-                    //System.out.println(sckMessage.getMessageEvent().toString());
+                    System.out.println(sckMessage.getMessageEvent().toString());
                     this.responseReceived = true;
                     actionLock.notify();
                 }

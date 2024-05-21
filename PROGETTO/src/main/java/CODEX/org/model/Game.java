@@ -671,11 +671,15 @@ public class Game extends Observable implements Serializable {
      * Setter method
      * @param lastEvent which occurred in this game
      */
-    public void setLastEvent(Event lastEvent) {
+    public void setLastEvent(Event lastEvent) { //per far funzionare tcp NON devono venire notificati i messaggi di essore qui
         this.lastEvent = lastEvent;
-        try {
-            notifyObservers(new Message(null, this.lastEvent));
-        }catch (RemoteException e){}
+        if(lastEvent.equals(Event.SETUP_PHASE_2)||lastEvent.equals(Event.GAME_LEFT)) {
+            try {
+                notifyObservers(new Message(null, this.lastEvent));
+            } catch (RemoteException e) {
+            }
+        }
+
     }
 
 }
