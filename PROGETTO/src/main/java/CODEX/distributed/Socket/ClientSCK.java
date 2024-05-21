@@ -266,9 +266,13 @@ public class ClientSCK implements ClientGeneralInterface{
                 //sempre in game.startGame (nel model) vengono chiamati poi tutti gli altri update per permermettere al client di avere una copia locale di quello che c'è sul server
                 updateGameState((Game.GameState) sckMessage.getObj().get(0)); //threadCheckConnection.start() in updateRound
             }
+            //va nel default dove ci sono i messaggi di errore
+            /*
             case UNABLE_TO_PLAY_CARD->{
                 showError(Event.UNABLE_TO_PLAY_CARD);
             }
+
+             */
             case SETUP_PHASE_2->{
                 //when we receive this update the player has all he needs to start the game (base card and objective card already chosen)
                 finishedSetupPhase2(); //here we call updateRound for the third time (from now on we can print the menu)
@@ -1121,13 +1125,18 @@ public class ClientSCK implements ClientGeneralInterface{
                                 coordinates = tuiView.askCoordinates(sc, card, personalPlayer.getBoard());
                                 if (coordinates != null) {
                                     this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
-                                    tmp = new ArrayList<>();
-                                    tmp.add(resourceCard1);
-                                    tmp.add(resourceCard2);
-                                    tmp.add(goldCard1);
-                                    tmp.add(goldCard2);
-                                    card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
-                                    this.drawCard(personalPlayer.getNickname(), card);
+                                    if(!errorState) {
+                                        tmp = new ArrayList<>();
+                                        tmp.add(resourceCard1);
+                                        tmp.add(resourceCard2);
+                                        tmp.add(goldCard1);
+                                        tmp.add(goldCard2);
+                                        card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
+                                        this.drawCard(personalPlayer.getNickname(), card);
+                                    }else{
+                                        System.out.println("you can't play this card...returning to menu");
+                                        errorState=false; //to be used the next time
+                                    }
                                 } else {
                                     System.out.println("The coordinates are null");
                                 }

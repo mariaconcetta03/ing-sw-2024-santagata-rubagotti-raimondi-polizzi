@@ -156,7 +156,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * @param position the position where the Player wants to play the Card
      * @param orientation the side on which the Player wants to play the Card
      */
-    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException  {
+    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException,IllegalArgumentException{
         Player currentPlayer = game.getPlayers().get(0);
         if (!getPlayerByNickname(nickname).equals(currentPlayer)) {
             System.out.println("NON E IL TUO TURNO, NON PUOI GIOCARE LA CARTA");
@@ -173,7 +173,8 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                 }
                 game.setLastEvent(Event.OK);
             } catch (IllegalArgumentException e) {
-                game.setLastEvent(Event.UNABLE_TO_PLAY_CARD);
+                game.setLastEvent(Event.UNABLE_TO_PLAY_CARD); //così però non me lo scrive...
+                throw e;
             }
         }
     }

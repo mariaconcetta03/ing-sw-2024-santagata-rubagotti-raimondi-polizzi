@@ -421,7 +421,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
         try { //possiamo prendere nickname dagli attributi della classe al posto che dai parametri
             this.gameController.playCard(nickname, selectedCard, position, orientation);
-            writeTheStream(new SCKMessage(null,Event.OK));
+            writeTheStream(new SCKMessage(null, Event.OK));
+        }catch (IllegalArgumentException e){
+            writeTheStream(new SCKMessage(null, Event.UNABLE_TO_PLAY_CARD));
         }catch (RemoteException e){
             System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
         }
