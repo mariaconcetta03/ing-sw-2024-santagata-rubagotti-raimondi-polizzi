@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class InterfaceTUI implements Serializable { //I don't think it has to extend 
 
@@ -17,6 +21,9 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
     private Map<AngleType, String> abbreviations;
     private Map<AngleType, String> cardColors;
     String rst = ANSIFormatter.ANSI_RESET;
+
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final Scanner sc = new Scanner(System.in);
 
     private boolean previousIsPlayingAttribute;
     private boolean firstMenu = true;
@@ -155,6 +162,13 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         return value;
     }
 
+    public Future<Integer> getUserInputAsync() {
+        return executor.submit(new Callable<Integer>() {
+            public Integer call() {
+                return sc.nextInt();
+            }
+        });
+    }
     /**
      * This method let the player select how to play his baseCard
      *

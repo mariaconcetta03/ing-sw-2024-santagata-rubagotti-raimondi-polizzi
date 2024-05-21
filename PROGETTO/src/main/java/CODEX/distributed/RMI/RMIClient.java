@@ -22,10 +22,7 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 
 // ----------------------------------- H O W   I T   W O R K S ----------------------------------------
@@ -389,20 +386,20 @@ int choice=-1;
     }
 
     public void gameTurn(boolean inTurn) throws InterruptedException{
-        int choice= -1;
         boolean ok=false;
         boolean read= false;
-        BufferedReader console= new BufferedReader(new InputStreamReader(System.in));
+
+       // BufferedReader console= new BufferedReader(new InputStreamReader(System.in));
         if(selectedView==1) {
-            tuiView.gameTurn(isPlaying);
+            /*tuiView.gameTurn(isPlaying);
             while((!Thread.currentThread().isInterrupted())&&(!read)) {
                 try {
                     if (console.ready()) {
                         read=true;
-                        choice=tuiView.askAction(sc, inTurn);
+                        choice=tuiView.askAction(sc, inTurn); @TODO COME FACCIO?
                     }
                 } catch (IOException e) {}
-            }
+            }*/
             try {
                 switch (choice) {
                     case 0:
@@ -753,6 +750,33 @@ int choice=-1;
     }
 
 
+    private void showMenuForCurrentPlayer() {
+        executor.execute(() -> {
+            boolean isPlayerTurn = true;
+            while (inGame) {
+                tuiView.gameTurn(isPlaying);
+                Future<Integer> futureInput = tuiView.getUserInputAsync();
+
+                // Attendi che l'input sia disponibile senza bloccare l'interfaccia
+                while (!futureInput.isDone()) {
+                    // Possiamo aggiungere altre logiche qui se necessario
+                    try {
+                        Thread.sleep(100); // Evita il busy-waiting
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                try {
+                    int choice = futureInput.get();
+                    gameTurn(/*choice,*/ isPlayerTurn);
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+                isPlayerTurn = false;
+            }
+        });
+    }
 
     /**
      * This is an update method
@@ -771,14 +795,17 @@ int choice=-1;
         if (turnCounter != -1) {
             if (turnCounter != 0) {
                 if (selectedView == 1) {
-                    Thread.currentThread().interrupt();
+                    //Thread.currentThread().interrupt();
                     if(isPlaying) {
                         System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
                     }else {
                         System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
                     }
+                    tuiView.gameTurn(isPlaying);
+                    showMenuForCurrentPlayer();
 
-                    executor.execute(()-> {
+
+                    /*executor.execute(()-> {
                                 try {
                                     gameTurn(isPlaying);
                                 } catch (InterruptedException e) {
