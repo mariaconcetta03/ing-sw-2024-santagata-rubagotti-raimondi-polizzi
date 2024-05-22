@@ -11,6 +11,15 @@ public class PlayableCard extends Card implements Serializable {
       */
 
     private int points;
+    private int playOrder=0;
+
+    public int getPlayOrder() {
+        return playOrder;
+    }
+
+    public void setPlayOrder(int playOrder) {
+        this.playOrder = playOrder;
+    }
 
     public PlayableCard(){
         this.points = -1;

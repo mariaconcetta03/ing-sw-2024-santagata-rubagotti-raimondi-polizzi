@@ -16,7 +16,6 @@ public class ClientLauncher {
         boolean selected=false;
         int selection=0;
         Scanner sc=new Scanner(System.in);
-
         System.out.println(ANSIFormatter.ANSI_BLUE+"Choose a connection protocol and an interface:"+ANSIFormatter.ANSI_RESET+": \n-Type 1 for RMI+TUI\n-Type 2 for RMI+GUI\n-Type 3 for TCP+TUI\n-Type 4 for TCP+GUI");
         do{
             try {

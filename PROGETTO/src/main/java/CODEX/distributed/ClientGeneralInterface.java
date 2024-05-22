@@ -23,5 +23,8 @@ public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
     void updateGameState(Game.GameState  gameState) throws RemoteException;
     //fine update
 
+    //DISCONNESSIONE
+    void handleDisconnection() throws RemoteException;
+
 
 }

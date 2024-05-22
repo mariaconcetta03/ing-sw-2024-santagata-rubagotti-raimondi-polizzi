@@ -218,6 +218,10 @@ public class ClientSCK implements ClientGeneralInterface{
                 //we have to change the view and the local model
                 updateGoldDeck((PlayableDeck) sckMessage.getObj().get(0));
             }
+
+
+
+
             case UPDATED_PLAYER_DECK->{
                 newUpdatePlayerDeck((String) sckMessage.getObj().get(0), (PlayableCard) sckMessage.getObj().get(1),(PlayableCard) sckMessage.getObj().get(2),(PlayableCard) sckMessage.getObj().get(3));
             }
@@ -1006,6 +1010,11 @@ public class ClientSCK implements ClientGeneralInterface{
         } else if (selectedView == 2) {
             //guiView.updateGameState(game)
         }
+    }
+
+    @Override
+    public void handleDisconnection() throws RemoteException {
+
     }
 
 

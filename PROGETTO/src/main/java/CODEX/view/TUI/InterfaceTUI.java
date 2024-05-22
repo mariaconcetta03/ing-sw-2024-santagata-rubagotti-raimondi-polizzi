@@ -576,24 +576,24 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
             }else if(objCard.getId()==88){
                 firstRow=firstRow.concat(" _________________");
                 secondRow=secondRow.concat("|       "+ANSIFormatter.ANSI_YELLOW+objCard.getCardPoints()+"pt"+rst+"       |");
-                thirdRow=thirdRow.concat("|     "+ANSIFormatter.ANSI_GREEN+"██"+rst+"          |");
-                fourthRow=fourthRow.concat("|         "+ANSIFormatter.ANSI_GREEN+"██"+rst+"      |");
-                fifthRow=fifthRow.concat("|          "+ANSIFormatter.ANSI_GREEN+"██"+rst+"     |");
-                sixthRow=sixthRow.concat("|_________________|");
+                thirdRow=thirdRow.concat("|    "+ANSIFormatter.ANSI_GREEN+"███"+rst+"          |");
+                fourthRow=fourthRow.concat("|       "+ANSIFormatter.ANSI_GREEN+"███"+rst+"       |");
+                fifthRow=fifthRow.concat("|          "+ANSIFormatter.ANSI_GREEN+"███"+rst+"    |");
+                sixthRow=sixthRow.concat("|_________________|"); //19
             }else if(objCard.getId()==89){
                 firstRow=firstRow.concat(" _________________");
                 secondRow=secondRow.concat("|       "+ANSIFormatter.ANSI_YELLOW+objCard.getCardPoints()+"pt"+rst+"       |");
-                thirdRow=thirdRow.concat("|          "+ANSIFormatter.ANSI_BLUE+"██"+rst+"     |");
-                fourthRow=fourthRow.concat("|        "+ANSIFormatter.ANSI_BLUE+"██"+rst+"       |");
-                fifthRow=fifthRow.concat("|      "+ANSIFormatter.ANSI_BLUE+"██"+rst+"         |");
+                thirdRow=thirdRow.concat("|          "+ANSIFormatter.ANSI_BLUE+"███"+rst+"    |");
+                fourthRow=fourthRow.concat("|       "+ANSIFormatter.ANSI_BLUE+"███"+rst+"       |");
+                fifthRow=fifthRow.concat("|    "+ANSIFormatter.ANSI_BLUE+"███"+rst+"          |");
                 sixthRow=sixthRow.concat("|_________________|");
             }else if(objCard.getId()==90){
                 firstRow=firstRow.concat(" _________________");
                 secondRow=secondRow.concat("|       "+ANSIFormatter.ANSI_YELLOW+objCard.getCardPoints()+"pt"+rst+"       |");
-                thirdRow=thirdRow.concat("|      "+ANSIFormatter.ANSI_PURPLE+"██"+rst+"         |");
-                fourthRow=fourthRow.concat("|       "+ANSIFormatter.ANSI_PURPLE+"██"+rst+"        |");
-                fifthRow=fifthRow.concat("|          "+ANSIFormatter.ANSI_PURPLE+"██"+rst+"     |");
-                sixthRow=sixthRow.concat("|_________________|");
+                thirdRow=thirdRow.concat("|    "+ANSIFormatter.ANSI_PURPLE+"███"+rst+"          |");
+                fourthRow=fourthRow.concat("|       "+ANSIFormatter.ANSI_PURPLE+"███"+rst+"       |");
+                fifthRow=fifthRow.concat("|          "+ANSIFormatter.ANSI_PURPLE+"███"+rst+"    |");
+                sixthRow=sixthRow.concat("|_________________|"); //19
             }else if(objCard.getId()==91){
                 firstRow=firstRow.concat(" _________________");
                 secondRow=secondRow.concat("|       "+ANSIFormatter.ANSI_YELLOW+objCard.getCardPoints()+"pt"+rst+"       |");

@@ -421,7 +421,7 @@ public class Game extends Observable implements Serializable {
         }else{
             this.resourceCard1=null;
         }
-        notifyObservers(new Message(this.goldCard1, Event.UPDATED_RESOURCE_CARD_1));
+        notifyObservers(new Message(this.resourceCard1, Event.UPDATED_RESOURCE_CARD_1));
         notifyObservers(new Message(this.resourceDeck, Event.UPDATED_RESOURCE_DECK));
     }
 
@@ -433,7 +433,7 @@ public class Game extends Observable implements Serializable {
         }else{
             this.resourceCard2=null;
         }
-        notifyObservers(new Message(this.goldCard2, Event.UPDATED_RESOURCE_CARD_2));
+        notifyObservers(new Message(this.resourceCard2, Event.UPDATED_RESOURCE_CARD_2));
         notifyObservers(new Message(this.resourceDeck, Event.UPDATED_RESOURCE_DECK));
     }
 

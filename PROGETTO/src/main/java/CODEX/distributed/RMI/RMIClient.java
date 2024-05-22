@@ -18,10 +18,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.*;
 
 
@@ -866,6 +863,29 @@ int choice=-1;
         } else if (selectedView == 2) {
             //guiView.updateGameState(game)
         }
+    }
+
+    /**
+     * This method is called when a disconnection happens.
+     * It closes the application.
+     * @throws RemoteException
+     */
+    @Override
+    public void handleDisconnection() throws RemoteException {
+        if(selectedView==1) {
+            try {
+                executor.shutdown();
+            } catch (Exception e) {
+            }
+            System.out.println("A disconnection happened.");
+            Timer timer = new Timer();
+            try {
+                timer.wait(5000);
+            } catch (InterruptedException e) {
+            }
+        }else if(selectedView==2) {
+        }
+        System.exit(-1);
     }
 
     public void gameLeft() throws RemoteException{
