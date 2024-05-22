@@ -1,10 +1,7 @@
 package CODEX.distributed.Socket;
 
 
-import CODEX.Exceptions.CardNotOwnedException;
-import CODEX.Exceptions.FullLobbyException;
-import CODEX.Exceptions.GameAlreadyStartedException;
-import CODEX.Exceptions.GameNotExistsException;
+import CODEX.Exceptions.*;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.messages.SCKMessage;
 import CODEX.org.model.*;
@@ -29,8 +26,8 @@ import java.util.*;
  * and performs action to update the view. It also sends User input to the ClientHandlerThread
  * through the socket to be processed
  */
-public class ClientSCK implements ClientGeneralInterface{
-    private boolean errorState= false;
+public class ClientSCK implements ClientGeneralInterface {
+    private boolean errorState = false;
     private HashSet<Integer> lobbyId;
     private final Socket socket;
     private Player personalPlayer;
@@ -60,8 +57,9 @@ public class ClientSCK implements ClientGeneralInterface{
     private PlayableDeck goldDeck;
     private PlayableDeck resourceDeck;
     private BufferedReader console;
-    private int turnCounter=-1;
+    private int turnCounter = -1;
     private Object outputLock;
+    private boolean nicknameSet = false;
 
     //ATTENZIONE: se si chiama un metodo della ClientActionsInterface all'interno di un metodo di update bisogna per forza
     //usare un thread perchè i metodi della ClientActionsInterface aspettano l'OK di ritorno che non può venire letto
@@ -74,26 +72,26 @@ public class ClientSCK implements ClientGeneralInterface{
      */
     public ClientSCK() throws IOException { //we call this constructor after we ask the IP address and the port of the server
         this.socket = new Socket();
-       // this.socket.connect(new InetSocketAddress(Settings.SERVER_NAME, Settings.PORT), 1000); //the address and the port of the server
+        // this.socket.connect(new InetSocketAddress(Settings.SERVER_NAME, Settings.PORT), 1000); //the address and the port of the server
         InetAddress inetAddress = InetAddress.getByName("localhost");
         int port = 1085; // Porta del server
         SocketAddress socketAddress = new InetSocketAddress(inetAddress, port);
         socket.connect(socketAddress);
 
-        lobbyId=new HashSet<>();
+        lobbyId = new HashSet<>();
 
-        personalPlayer=new Player();
-        this.inputLock=new Object();
+        personalPlayer = new Player();
+        this.inputLock = new Object();
 
         //in this way the stream is converted into objects
         //forse però dovrei usare dei buffer per non perdere nessun messaggio
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
         this.inputStream = new ObjectInputStream(socket.getInputStream()); //what ClientHandlerThread writes in its socket's output stream ends up here
 
-        this.running=true;
-        this.responseReceived =false; //initialized false to enter the while inside every ClientGeneralInterface method
-        this.actionLock=new Object();
-        this.outputLock=new Object();
+        this.running = true;
+        this.responseReceived = false; //initialized false to enter the while inside every ClientGeneralInterface method
+        this.actionLock = new Object();
+        this.outputLock = new Object();
 
         /*
         //da rivedere più avanti
@@ -117,7 +115,7 @@ public class ClientSCK implements ClientGeneralInterface{
 
          */
 
-        new Thread(()-> {
+        new Thread(() -> {
             while (running) {
                 synchronized (inputLock) {
                     try {
@@ -126,9 +124,9 @@ public class ClientSCK implements ClientGeneralInterface{
                             System.out.println("the message isn't null");
                             //System.out.println("messaggio ricevuto da ClienSCK non nullo");
                             //il fatto che sia BLOCCANTE è POSITIVO: gli update vengono fatti in ordine di arrivo e quindi quando riceviamo SETUP_PHASE_2 siamo sicuri di aver veramente ricevuto già tutto
-                            try{
-                            modifyClientSide(sckMessage); //questo è bloccante-> meglio utilizzare un thread...a meno che non vogliamo fare una modifica alla volta
-                            }catch (Exception e){
+                            try {
+                                modifyClientSide(sckMessage); //questo è bloccante-> meglio utilizzare un thread...a meno che non vogliamo fare una modifica alla volta
+                            } catch (Exception e) {
                                 System.out.println("sono nel catch di modifyClientSide(sckMessage)");
                                 System.out.println(sckMessage.getMessageEvent().toString());
                                 System.err.println(e.getMessage());
@@ -143,8 +141,7 @@ public class ClientSCK implements ClientGeneralInterface{
                                 }
                                 break;
                             }
-                        }
-                        else {
+                        } else {
                             System.out.println("the message is null");
                         }
                     } catch (Exception e) { //se il server si disconnette
@@ -166,11 +163,26 @@ public class ClientSCK implements ClientGeneralInterface{
         }).start();
     }
 
-        //we have to read this stream every time there is a server update to the client (->in the Thread local to server we modify this stream)
-        //public SCKMessage receivedMessage () throws IOException, ClassNotFoundException {
-        //    //the socket stream has been changed in the Thread (locally to the server)
-        //    return (SCKMessage) inputStream.readObject(); //we are reading the object written in the inputStream
-        //}
+    //we have to read this stream every time there is a server update to the client (->in the Thread local to server we modify this stream)
+    //public SCKMessage receivedMessage () throws IOException, ClassNotFoundException {
+    //    //the socket stream has been changed in the Thread (locally to the server)
+    //    return (SCKMessage) inputStream.readObject(); //we are reading the object written in the inputStream
+    //}
+
+
+    public boolean setNickname(String nickname) {
+        try {
+            chooseNickname(nickname);
+            this.personalPlayer.setNickname(nickname);
+            this.nicknameSet = true;
+            //} catch (NicknameAlreadyTakenException e) {  //DA RISOLVERE!! ALTRIMENTI NON POSSIAMO COMUNICARE QUANDO IL NCKNM è SBAGLIATO
+            //this.nicknameSet = false;
+        } catch (RemoteException | NotBoundException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("il nickname è stato settato a: " + this.personalPlayer.getNickname());
+        return this.nicknameSet;
+    }
 
 
 
@@ -342,7 +354,7 @@ public class ClientSCK implements ClientGeneralInterface{
      * This method is called when the client is created. Absolves the function of helping the player to select
      * his nickname and to choose if he wants to join an already started Game or create a new one.
      */
-    public void waitingRoom() {
+    public void waitingRoom() throws RemoteException {
         this.isPlaying=false;
         this.sc=new Scanner(System.in);
         this.console = new BufferedReader(new InputStreamReader(System.in));
@@ -432,8 +444,11 @@ public class ClientSCK implements ClientGeneralInterface{
                 System.exit(-1);
             }
         } else {
-            InterfaceGUI.main(null);
+            String[] network = new String[1];
+            network[0] = "TCP";
+            InterfaceGUI.main(network);
         }
+
     }
 
     public void printLobby(HashSet<Integer> ids){

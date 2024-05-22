@@ -62,7 +62,25 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private CompletableFuture<Void> completableFuture;
     private Thread menuThread;
     private Executor menuExecutor;
-    
+    private boolean nicknameSet = false;
+
+
+    public boolean setNickname(String nickname) {
+        try {
+            chooseNickname(nickname);
+            this.personalPlayer.setNickname(nickname);
+            this.nicknameSet = true;
+        } catch (NicknameAlreadyTakenException e) {
+            this.nicknameSet = false;
+        } catch (RemoteException | NotBoundException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("il nickname è stato settato a: " + this.personalPlayer.getNickname());
+        return this.nicknameSet;
+    }
+
+
+
     /**
      * Class constructor
      * @throws RemoteException
@@ -378,9 +396,15 @@ int choice=-1;
                 System.exit(-1);
             }
         }else{ //GUI
-                InterfaceGUI.main(null);
+            String[] network = new String[1];
+            network[0] = "RMI";
+            InterfaceGUI.main(network);
+            // facendo un'interfaccia RMIGUI e un'altra interfaccia SCKGUI
+            // leggo lo username da system out che viene stampato (scanner su system out) attenzione devo farlo stampare SOLO una volta
+            // viene stampato tutte le volte che premo il tasto done. a questo punto viene comunicato l'esito al client
         }
     }
+
 
     public void gameTurn(boolean inTurn) throws InterruptedException{
         boolean ok=false;

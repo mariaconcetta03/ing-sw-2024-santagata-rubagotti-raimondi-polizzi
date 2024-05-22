@@ -56,6 +56,14 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </HBox>
+                        <Label fx:id="nicknameUsed" opacity="0.0" text="WARNING! The nickname you have selected is already in use, please retry " textFill="#b90101">
+                           <font>
+                              <Font name="Georgia Bold" size="20.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="-25.0" />
+                           </VBox.margin>
+                        </Label>
                      </children>
                   </VBox>
                </children>

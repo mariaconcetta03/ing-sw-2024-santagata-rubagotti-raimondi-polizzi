@@ -18,80 +18,79 @@ public class GUIController {
 
 
 
-    private InterfaceGUI interfaceGUI = null;
     @FXML
     private MenuButton menuButton;
-    private int choose = 0; // it means that user hasn't chosen
-    RMIClient rmiClient = null;
-    ClientSCK clientSCK = null;
+
+
+    private int network = 0; // it means that user hasn't chosen
+    RMIClient rmiClient = new RMIClient();
+    ClientSCK clientSCK;
+
+    {
+        try {
+            clientSCK = new ClientSCK();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @FXML
     private TextField nickname;
 
+    @FXML
+    private Label nicknameUsed;
+
+    public GUIController() throws RemoteException {
+    }
+
+
+
+    public void setNetwork(int network) {
+        this.network = network;
+    }
+
+
 
     @FXML
-    protected void sendNickname(){
+    protected void sendNickname() {
+
+        boolean correctNickname = false;
         System.out.println(nickname.getCharacters());
-        // QUI COME FACCIO ?? devo chiamare socket o rmi ma da dove lo so che scelta ha fatto il client? dove tengo memorizzato rmi o tcp?
-    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    @FXML
-    protected void tcp() {
-        this.menuButton.setText("TCP");
-        choose = 1;
-    }
-
-    @FXML
-    protected void rmi() {
-        this.menuButton.setText("RMI");
-        choose = 2;
-    }
-
-
-
-    @FXML
-    protected void selectedOption () throws NotBoundException, IOException {
-        if (choose == 1) { // tcp
-            clientSCK = new ClientSCK();
-            clientSCK.setSelectedView(2);
-
-        } else if (choose == 2) { // rmi
-            rmiClient = new RMIClient();
-            rmiClient.setSelectedView(2);
-            rmiClient.SRMIInterfaceFromRegistry();
-            rmiClient.waitingRoom();
+        if (network == 1) { //RMI
+            correctNickname = rmiClient.setNickname(nickname.getCharacters().toString());
+        }else{ //SCK
+            correctNickname = clientSCK.setNickname(nickname.getCharacters().toString());
         }
+
+        if (!correctNickname) {
+            nicknameUsed.setOpacity(1);
+        } else {
+            nicknameUsed.setOpacity(0);
+        }
+    }
+
+
+
+
+
+    // RIVEDERE FUNZIONAMENTO DI JAVA FX!!!
+    // IL MAIN DEVE PROSEGUIRE, E DOPO DI ESSO IN RMI CLIENT NON VA FATTO ESEGUIRE NIENTE!
+    // I CONTROLLI SUL NICKNAME VALIDO OPPURE NO SI DEVONO FARE DIRETTAMENTE DA INTERFACCIA GRAFICA
+    // (possibilità di avere 2 interfacce una per rmi e una per sck, oppure ho 2 attributi, vedo se sono rmi o se
+    // sono socket). COSI DOPO QUESTA COSA GESTISCE TUTTO L'INTERFACCIA GRAFICA.
+    // MAIN RITORNA STATIC
+
+
+
+
+
+
+
+
+
 
         // QUI DEVO FAR CAMBIARE LA SCHERMATA!
     }
 
 
-
-    public InterfaceGUI getInterfaceGUI() {
-        return interfaceGUI;
-    }
-
-    public void setInterfaceGUI(InterfaceGUI interfaceGUI) {
-        this.interfaceGUI = interfaceGUI;
-    }
-
-
-
-
-
-
-}

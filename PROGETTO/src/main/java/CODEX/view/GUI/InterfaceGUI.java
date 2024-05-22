@@ -3,25 +3,29 @@ package CODEX.view.GUI;
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
 import javafx.application.Application;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 
 import static javafx.application.Application.launch;
 
 // THIS IS THE CORRECT CLASS
 public class InterfaceGUI extends Application {
+    private static int network = 0; // 1 = RMI   2 = TCP
 
-    private RMIClient rmiClient;
-    private ClientSCK clientSCK;
-    private int network = 0; // 1 = RMI   2 = TCP
-    private GUIController guiController = new GUIController();
 
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/nickname.fxml"));
+        GUIController controller = fxmlLoader.getController(); // obtaining the GUI controller
+        controller.setNetwork(network); // setting the network RMI or TCP
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Codex Naturalis");
         stage.setScene(scene);
@@ -31,32 +35,24 @@ public class InterfaceGUI extends Application {
 
 
 
-
     public static void main(String[] args) {
         launch((String) null);
-      //  if (args[0].equals("TCP")) {
-     //
-     //   }
+        if (args[0].equals("RMI")) {
+            network = 1;
+        } else if (args[0].equals("TCP")) {
+            network = 2;
+        }
     }
 
 
-
-
-
-    public InterfaceGUI(RMIClient client) {
-        this.rmiClient = client;
-        this.guiController.setInterfaceGUI(this);
-    }
-
-    public InterfaceGUI() {
-        this.guiController.setInterfaceGUI(this);
-    }
 
 
 
 
 
 }
+
+
 
 
 
