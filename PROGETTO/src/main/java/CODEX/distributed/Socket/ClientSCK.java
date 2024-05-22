@@ -937,7 +937,7 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void updateRound(Player player) throws RemoteException {}
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException { //taken from RMIClient
-        //we have to change the view and the local model
+        //we have to change the view and the local model @TODO differenziare TUI e GUI
         System.out.println("I received the updateRound.");
         playersInTheGame = newPlayingOrder; //when turnCounter==-1 we have to initialize this list
         if(this.turnCounter==0){ //we enter here only one time: the second time that updateRound is called
@@ -947,7 +947,7 @@ public class ClientSCK implements ClientGeneralInterface {
                 boolean choice=tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]);
                 System.out.println("chiamo playBaseCard");
                 playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0],choice);
-            } catch (NotBoundException e) { //non si verifica
+            } catch (NotBoundException e) { //non si verifica @TODO non lanciamo altre eccezioni
                 throw new RuntimeException(e);
             } catch (RemoteException e) { //non si verifica
                 throw new RuntimeException(e);

@@ -38,6 +38,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private ServerRMIInterface SRMIInterface; //following the slides' instructions
 
     ExecutorService executor;
+    private BufferedReader console;
 
     Scanner sc;
     int turnCounter=-1;
@@ -311,6 +312,7 @@ int choice=-1;
      */
     public void waitingRoom() throws IOException {
         sc=new Scanner(System.in);
+        this.console = new BufferedReader(new InputStreamReader(System.in));
         boolean ok=false;
         int errorCounter=0;
         if(selectedView==1){
@@ -406,136 +408,122 @@ int choice=-1;
     }
 
 
-    public void gameTurn(boolean inTurn) throws InterruptedException{
+    public void gameTurn() throws InterruptedException{
         boolean ok=false;
         boolean read= false;
-
-       // BufferedReader console= new BufferedReader(new InputStreamReader(System.in));
+        int choice;
         if(selectedView==1) {
-            /*tuiView.gameTurn(isPlaying);
-            while((!Thread.currentThread().isInterrupted())&&(!read)) {
+            choice=tuiView.showMenuAndWaitForSelection(isPlaying, console);
+            if(choice!=-1) {
                 try {
-                    if (console.ready()) {
-                        read=true;
-                        choice=tuiView.askAction(sc, inTurn); @TODO COME FACCIO?
-                    }
-                } catch (IOException e) {}
-            }*/
-            try {
-                switch (choice) {
-                    case 0:
-                        System.out.println("Are you sure to LEAVE the game? Type 1 if you want to leave.");
-                        try{
-                            if(sc.nextInt()==1){
-                                inGame=false;
-                                menuThread.join(); //letting the thread finish
-                                leaveGame(personalPlayer.getNickname());
-                                System.out.println("You left the game.");
-                                this.resetAttributes();
-                                this.waitingRoom();
+                    switch (choice) {
+                        case 0:
+                            System.out.println("Are you sure to LEAVE the game? Type 1 if you want to leave any other character to return to the game.");
+                            try {
+                                if (sc.nextInt() == 1) {
+                                    inGame = false;
+                                    leaveGame(personalPlayer.getNickname());
+                                    System.out.println("You left the game.");
+                                    System.exit(-1);
+                                }
+                            } catch (InputMismatchException ignored) {
                             }
-                        }catch (InputMismatchException ignored){} //@TODO da gestire
-                        catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                        break;
-                    case 1: tuiView.printHand(personalPlayer.getPlayerDeck());
-                        gameTurn(isPlaying);
-                        break;
-                    case 2: List<ObjectiveCard> list= new ArrayList<>();
+                            break;
+                        case 1:
+                            tuiView.printHand(personalPlayer.getPlayerDeck());
+                            break;
+                        case 2:
+                            List<ObjectiveCard> list = new ArrayList<>();
                             list.add(commonObjective1);
                             list.add(commonObjective2);
                             list.add(personalPlayer.getPersonalObjective());
                             tuiView.printObjectiveCard(list);
-                        gameTurn(isPlaying);
-                        break;
-                    case 3:List<PlayableCard> tmp=new ArrayList<>();
-                        tmp.add(resourceCard1);
-                        tmp.add(resourceCard2);
-                        tmp.add(goldCard1);
-                        tmp.add(goldCard2);
-                        tuiView.printDrawableCards(goldDeck, resourceDeck, tmp);
-                        gameTurn(isPlaying);
-                        break;
-                    case 4:
-                        ok=false;
-                        System.out.println("Which player's board do you want to see?");
-                        String nickname= sc.nextLine();
-                        for(Player player: playersInTheGame){
-                            if(player.getNickname().equals(nickname)){
-                                ok=true;
-                                tuiView.printTable(player.getBoard()); //TODO non sto aggiornando playerInTheGame quando arriva update
-                            }
-                        }
-                        if(!ok){
-                            System.out.println("There is no such player in this lobby! Try again.");
-                        }
-                        gameTurn(isPlaying);
-                        break;
-                    case 5: tuiView.printScoreBoard(playersInTheGame);
-                    gameTurn(isPlaying);
-                        break;
-                    case 6: System.out.println("Do you want to send a message to everybody (type 1) or a private message (type the single nickname)?");
-                    String answer= sc.nextLine();
-                    if(answer.equals("1")){
-                        List<String> receivers = new ArrayList<>();
-                        for(Player p: playersInTheGame){
-                            if(!p.getNickname().equals(personalPlayer.getNickname())){
-                                receivers.add(p.getNickname());
-                            }
-                        }
-                        System.out.println("Now type the message you want to send: ");
-                        answer=sc.nextLine();
-                        sendMessage(personalPlayer.getNickname(), receivers, answer);
-                    }else{
-                        ok=false;
-                        for(Player p: playersInTheGame){
-                            if(p.getNickname().equals(answer)){
-                                ok=true;
-                            }
-                        }
-                        if(ok){
-                            List<String> receivers= new ArrayList<>();
-                            receivers.add(answer);
-                            System.out.println("Now type the message you want to send: ");
-                            answer=sc.nextLine();
-                            sendMessage(personalPlayer.getNickname(), receivers, answer);
-                        }else{
-                            System.out.println("There is no such player in this lobby! Try again.");
-                        }
-                    }
-                        gameTurn(isPlaying);
-                        break;
-                    case 7: boolean orientation=true;
-                        PlayableCard card= null;
-                        Coordinates coordinates;
-                        card= tuiView.askPlayCard(sc, personalPlayer);
-                        if(card!=null){
-                            orientation=tuiView.askCardOrientation(sc, card);
-                        }else{
-                            gameTurn(isPlaying);
-                        }
-                        coordinates=tuiView.askCoordinates(sc, card, personalPlayer.getBoard());
-                        if(coordinates!=null){
-                            this.playCard(personalPlayer.getNickname(), card, coordinates,orientation);
-                            tmp=new ArrayList<>();
+                            break;
+                        case 3:
+                            List<PlayableCard> tmp = new ArrayList<>();
                             tmp.add(resourceCard1);
                             tmp.add(resourceCard2);
                             tmp.add(goldCard1);
                             tmp.add(goldCard2);
-                            card= tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
-                            this.drawCard(personalPlayer.getNickname(), card);
-                        }else{
-                            gameTurn(isPlaying);
-                        }
-                        break;
-                    default:
-                        System.out.println("not yet implemented");
-                        gameTurn(isPlaying);
+                            tuiView.printDrawableCards(goldDeck, resourceDeck, tmp);
+                            break;
+                        case 4:
+                            ok = false;
+                            System.out.println("Which player's board do you want to see?");
+                            String nickname = sc.nextLine();
+                            for (Player player : playersInTheGame) {
+                                if (player.getNickname().equals(nickname)) {
+                                    ok = true;
+                                    tuiView.printTable(player.getBoard()); //TODO non sto aggiornando playerInTheGame quando arriva update
+                                }
+                            }
+                            if (!ok) {
+                                System.out.println("There is no such player in this lobby! Try again.");
+                            }
+                            break;
+                        case 5:
+                            tuiView.printScoreBoard(playersInTheGame);
+                            break;
+                        case 6:
+                            System.out.println("Do you want to send a message to everybody (type 1) or a private message (type the single nickname)?");
+                            String answer = sc.nextLine();
+                            if (answer.equals("1")) {
+                                List<String> receivers = new ArrayList<>();
+                                for (Player p : playersInTheGame) {
+                                    if (!p.getNickname().equals(personalPlayer.getNickname())) {
+                                        receivers.add(p.getNickname());
+                                    }
+                                }
+                                System.out.println("Now type the message you want to send: ");
+                                answer = sc.nextLine();
+                                sendMessage(personalPlayer.getNickname(), receivers, answer);
+                            } else {
+                                ok = false;
+                                for (Player p : playersInTheGame) {
+                                    if (p.getNickname().equals(answer)) {
+                                        ok = true;
+                                    }
+                                }
+                                if (ok) {
+                                    List<String> receivers = new ArrayList<>();
+                                    receivers.add(answer);
+                                    System.out.println("Now type the message you want to send: ");
+                                    answer = sc.nextLine();
+                                    sendMessage(personalPlayer.getNickname(), receivers, answer);
+                                } else {
+                                    System.out.println("There is no such player in this lobby! Try again.");
+                                }
+                            }
+                            break;
+                        case 7:
+                            boolean orientation = true;
+                            PlayableCard card = null;
+                            Coordinates coordinates;
+                            card = tuiView.askPlayCard(sc, personalPlayer);
+                            if (card != null) {
+                                orientation = tuiView.askCardOrientation(sc, card);
+                            coordinates = tuiView.askCoordinates(sc, card, personalPlayer.getBoard());
+                            if (coordinates != null) {
+                                this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
+                                tmp = new ArrayList<>();
+                                tmp.add(resourceCard1);
+                                tmp.add(resourceCard2);
+                                tmp.add(goldCard1);
+                                tmp.add(goldCard2);
+                                card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
+                                this.drawCard(personalPlayer.getNickname(), card);
+                            } else {
+                                System.out.println("you can't play this card...returning to menu");
+                            }
+                            }
+                            break;
+                        default:
+                            System.out.println("not yet implemented");
+                    }
+                } catch (RemoteException | NotBoundException e) {
+                    System.out.println("Unable to communicate with the server! Shutting down.");
+                    System.exit(-1);
                 }
-            }catch (RemoteException|NotBoundException e){
-                System.out.println("Unable to communicate with the server! Shutting down.");
-                System.exit(-1);
             }
         }else{
             //gui
@@ -770,7 +758,7 @@ int choice=-1;
         }
     }
 
-
+/*
     private void showMenuForCurrentPlayer() {
         executor.execute(() -> {
             boolean isPlayerTurn = true;
@@ -790,7 +778,7 @@ int choice=-1;
 
                 try {
                     int choice = futureInput.get();
-                    gameTurn(/*choice,*/ isPlayerTurn);
+                    gameTurn(/*choice, isPlayerTurn);
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
@@ -798,7 +786,7 @@ int choice=-1;
             }
         });
     }
-
+    */
     /**
      * This is an update method
      * @param newPlayingOrder are the players of the game ordered
@@ -807,24 +795,30 @@ int choice=-1;
         playersInTheGame = newPlayingOrder;
 
 
-        if(playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())){
-            isPlaying=true;
-        }else{
-            isPlaying=false;
-        }
+
 
         if (turnCounter != -1) {
             if (turnCounter != 0) {
                 if (selectedView == 1) {
-                    //Thread.currentThread().interrupt();
-                    if(isPlaying) {
+                    if(playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())){
+                        isPlaying=true;
                         System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
-                    }else {
+                    }else{
+                        isPlaying=false;
                         System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
                     }
-                    tuiView.gameTurn(isPlaying);
-                    showMenuForCurrentPlayer();
-
+                    if(turnCounter==1){
+                        executor.execute(()-> {
+                            try {
+                                while (inGame) {
+                                    gameTurn();
+                                }
+                            }catch (InterruptedException e){
+                                System.out.println("Issues while executing the app. Closing the program.");
+                                System.exit(-1);
+                            }
+                        });
+                    }
 
                     /*executor.execute(()-> {
                                 try {

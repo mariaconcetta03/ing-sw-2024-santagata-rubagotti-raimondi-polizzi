@@ -5,6 +5,7 @@ import CODEX.utils.Observable;
 
 public class Board extends Observable implements Serializable  { //TODO why OBSERVABLE?
     private static final int numCarte=80;
+    private int playOrder=0;
     private Set<Coordinates> playablePositions;
     private Set<Coordinates> unPlayablePositions;
     private Map<Coordinates, AngleType> playedCards; //we need that for the objective_pattern
@@ -75,6 +76,9 @@ public class Board extends Observable implements Serializable  { //TODO why OBSE
             numResources.put(baseCard.get_back_up_left(), numResources.get(baseCard.get_back_up_left()) + 1);
             numResources.put(baseCard.get_back_up_right(), numResources.get(baseCard.get_back_up_right()) + 1);
         }
+        //is always the first card played
+        baseCard.setPlayOrder(-1);
+
         updateUnplayablePositions(baseCard);
         updatePlayablePositions(baseCard);
     }
@@ -162,10 +166,16 @@ public class Board extends Observable implements Serializable  { //TODO why OBSE
                 numResources.put(downRight, numResources.get(downRight)-1);
                 coveredAngles++;
             }
+            //setting the index the Player played the card
+            card.setPlayOrder(playOrder);
+            playOrder++;
+
             //updating the playable and unplayable positions
             updateUnplayablePositions(card);
             updatePlayablePositions(card);
-            player.addPoints(cardPoints(card, coveredAngles));
+            if(card.getOrientation()) { //only if played on the front side
+                player.addPoints(cardPoints(card, coveredAngles));
+            }
             return true;
         } else {
             return false;
@@ -279,7 +289,7 @@ public class Board extends Observable implements Serializable  { //TODO why OBSE
                 playablePositions.add(card.getPosition().findDownLeft());
             }
         } else {
-            //If played on the back side, all the angles are present
+            //If played on the back side, all the angles are present @TODO PROBLEMS WITH BASECARD 86
             if (!unPlayablePositions.contains(card.getPosition().findUpRight())) {
                 playablePositions.add(card.getPosition().findUpRight());
             }
