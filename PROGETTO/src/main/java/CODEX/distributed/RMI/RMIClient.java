@@ -312,6 +312,12 @@ int choice=-1;
     }
 
 
+    public List<Integer> getAvailableLobbies() throws RemoteException {
+        List<Integer> lobbies = new ArrayList<>();
+        lobbies.addAll(SRMIInterface.getAvailableGameControllersId());
+        return lobbies;
+    }
+
     /**
      * This method is called when the client is created. Absolves the function of helping the player to select
      * his nickname and to choose if he wants to join an already started Game or create a new one.

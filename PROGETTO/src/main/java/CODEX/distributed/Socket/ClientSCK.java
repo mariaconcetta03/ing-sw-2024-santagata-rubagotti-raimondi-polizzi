@@ -192,6 +192,13 @@ public class ClientSCK implements ClientGeneralInterface {
     //}
 
 
+    public List<Integer> getAvailableLobbies() throws RemoteException {
+        List<Integer> lobbies = new ArrayList<>();
+        lobbies.addAll(this.lobbyId);
+        return lobbies;
+    }
+
+
     public boolean setNickname(String nickname) {
         this.personalPlayer.setNickname(nickname);
         this.nicknameSet = true;

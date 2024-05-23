@@ -127,6 +127,9 @@ public class GUIController {
                 ctr.setNetwork(1);
             } else if (network == 2) {
                 ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", now join a lobby");
+                ctr.setAvailableLobbies(clientSCK.getAvailableLobbies());
+                ctr.setClientSCK(clientSCK);
+                ctr.setNetwork(2);
             }
         }
     }
