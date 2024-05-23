@@ -19,6 +19,12 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.*;
 
+//PER LA PROSSIMA SETTIMANA: CHIEDIAMO SE DOBBIAMO GESTIRE CASI DI PERDITA DI MESSAGGI IN RETE
+//se vogliamo gestire il caso di perdita di messaggi nella trasmissione in rete li numeriamo (anche i messaggi di ping)
+//e quando leggiamo un messaggio andiamo a controllare che abbiamo il numero successivo all'ultimo messaggio arrivato,
+//se si tratta del secondo ping (perchè per sicurezza ne mandiamo due) non richiediamo il ping precedente se invece si
+//tratta di update: richiediamo l'update precedente. Questo implica di tenere lato client e lato server una lista di
+//ultimi messaggi inviati da cui pescare il messaggio mancante quando viene richiesto
 
 /**
  * This class represents the Client who chose TCP as network protocol.
@@ -35,8 +41,8 @@ public class ClientSCK implements ClientGeneralInterface {
     private InterfaceTUI tuiView;
     //private InterfaceGUI guiView;
     private Board board;
-    private ObjectOutputStream outputStream;
-    private ObjectInputStream inputStream;
+    private final ObjectOutputStream outputStream;
+    private final ObjectInputStream inputStream;
     //private final Thread threadCheckConnection;
     private Player player; //the nickname is saved somewhere
     private List<Player> playersInTheGame;
@@ -49,6 +55,9 @@ public class ClientSCK implements ClientGeneralInterface {
     private final Object inputLock;
     private boolean isPlaying;
     private boolean inGame;
+    private boolean firstPongReceived; //to check the connection
+    private boolean secondPongReceived; //to check the connection
+    private Timer timer;
     private Scanner sc;
     private PlayableCard resourceCard1;
     private PlayableCard resourceCard2;
@@ -58,7 +67,7 @@ public class ClientSCK implements ClientGeneralInterface {
     private PlayableDeck resourceDeck;
     private BufferedReader console;
     private int turnCounter = -1;
-    private Object outputLock;
+    private final Object outputLock;
     private boolean nicknameSet = false;
 
     //ATTENZIONE: se si chiama un metodo della ClientActionsInterface all'interno di un metodo di update bisogna per forza
@@ -136,8 +145,12 @@ public class ClientSCK implements ClientGeneralInterface {
                                     outputStream.close();
                                     socket.close();
                                     running = false;
+                                    inGame=false;
                                 } catch (IOException ex) { //this catch is needed for the close statements
                                     throw new RuntimeException(ex);
+                                }
+                                if(this.timer!=null){ //this is null if the game is not already started
+                                    this.timer.cancel(); //we don't need to check the connection anymore
                                 }
                                 break;
                             }
@@ -152,8 +165,12 @@ public class ClientSCK implements ClientGeneralInterface {
                             outputStream.close();
                             socket.close();
                             running = false;
+                            inGame=false;
                         } catch (IOException ex) { //this catch is needed for the close statements
                             throw new RuntimeException(ex);
+                        }
+                        if(this.timer!=null){ //this is null if the game is not already started
+                            this.timer.cancel(); //we don't need to check the connection anymore
                         }
                         break; //se per esempio il flusso viene interrotto (dovrebbe venire lanciata un eccezione di Input/Output)
                     }
@@ -197,6 +214,7 @@ public class ClientSCK implements ClientGeneralInterface {
                 responseReceived = false;
                 outputStream.writeObject(sckMessage);
                 outputStream.flush();
+                outputStream.reset();
             } catch (IOException e) {
                 try { //devo fermare i thread lanciati all'interno di questo thread
                     inputStream.close();
@@ -216,8 +234,18 @@ public class ClientSCK implements ClientGeneralInterface {
     //leggiamo l'evento per capire di che update si tratta e poi aggiorniamo quello che ci dice di aggiornare l'evento e chiamiamo infine sendMessage
     //non è l'update dei listeners (quello è in ClientHandlerThread: scriverà sull'input della socket)
     //con questo update andiamo a modificare le cose locali al client
-    public void modifyClientSide(SCKMessage sckMessage) throws IOException, ClassNotFoundException {
+    public void modifyClientSide(SCKMessage sckMessage) throws IOException {
         switch (sckMessage.getMessageEvent()) {
+            case PONG -> { //sent by the server to say 'yes, I'm still connected' (in response to a ping message)
+                if(this.firstPongReceived){
+                    this.secondPongReceived=true; //abbiamo davvero bisogno di due booleani?
+                }else{
+                    this.firstPongReceived=true;
+                }
+            }
+            case PING -> { //sent by the server to say 'are you still connected?'
+                sendMessage(new SCKMessage(null,Event.PONG)); //to say to the server 'yes, I'm still connected'
+            }
             case UPDATED_BOARD -> { //viene chiamato in playBaseCard per la prima volta
                 //we have to change the view and the local model
                 updateBoard((String) sckMessage.getObj().get(0), (Board) sckMessage.getObj().get(1));
@@ -230,11 +258,8 @@ public class ClientSCK implements ClientGeneralInterface {
                 //we have to change the view and the local model
                 updateGoldDeck((PlayableDeck) sckMessage.getObj().get(0));
             }
-
-
-
-
             case UPDATED_PLAYER_DECK->{
+                //we have to change the view and the local model
                 newUpdatePlayerDeck((String) sckMessage.getObj().get(0), (PlayableCard) sckMessage.getObj().get(1),(PlayableCard) sckMessage.getObj().get(2),(PlayableCard) sckMessage.getObj().get(3));
             }
             case UPDATED_RESOURCE_CARD_1->{
@@ -295,6 +320,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
             }
             case GAME_LEFT->{
+                //when someone leaves the game the other players receive this update that makes them close their socket
                 gameLeft();
             }
             case AVAILABLE_LOBBY -> {
@@ -1007,20 +1033,64 @@ public class ClientSCK implements ClientGeneralInterface {
             if(gameState.equals(Game.GameState.STARTED)) {
                 inGame=true;
                 System.out.println("The game has started!");
+                //to check the connection
+                this.firstPongReceived=true; //initialization
+                this.secondPongReceived=true; //initialization
+                this.timer = new Timer(true); //isDaemon==true -> maintenance activities performed as long as the application is running
+                //we need to use ping-pong messages because sometimes the connection seems to be open (we do not receive any I/O exception) but it is not.
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if(firstPongReceived||secondPongReceived) {
+                            firstPongReceived=false;
+                            secondPongReceived=false;
+                            try {
+                                sendMessage(new SCKMessage(null,Event.PING)); //first ping
+                                sendMessage(new SCKMessage(null,Event.PING)); //second ping
+                            } catch (IOException e) { //the connection doesn't is open (and it doesn't seem to be open)
+                                System.out.println("the connection has been interrupted....Bye bye");
+                                try { //we close all we have to close
+                                    running=false;
+                                    inGame=false;
+                                    inputStream.close();
+                                    outputStream.close();
+                                    socket.close();
+                                } catch (IOException ex) { //needed for the close clause
+                                    throw new RuntimeException(ex);
+                                }
+                                timer.cancel(); // Ferma il timer
+                            }
+                        }else{ //there are no pongs received
+                            System.out.println("the connection has been interrupted...Bye bye");
+                            try {
+                                running=false;
+                                inGame=false;
+                                inputStream.close();
+                                outputStream.close();
+                                socket.close();
+                            } catch (IOException e) { //needed for the close clause
+                                throw new RuntimeException(e);
+                            }
+                            timer.cancel(); // Ferma il timer
+                        }
+                    }
+                }, 0, 10000); // Esegui ogni 10 secondi
 
             } else if (gameState.equals(Game.GameState.ENDING)) {
 
-            }else if(gameState.equals(Game.GameState.ENDED)){
-                //inGame=false;
+            }else if(gameState.equals(Game.GameState.ENDED)){ //we do not return to the lobby -> we have to close the connection and stop the threads
+                running=false;
+                inGame=false;
+                try {
+                    inputStream.close();
+                    outputStream.close();
+                    socket.close();
+                } catch (IOException e) { //needed for the close clause
+                    throw new RuntimeException(e);
+                }
+                //the TimerTask that checks the connection should end by itself when the application ends
+                this.timer.cancel(); //to be sure
 
-                // in caso di Game ENDED dobbiamo chiudere la connessione?
-                // potremmo riutilizzarla per un'altra partita e rimettere il client in una lobby
-                //per chiudere la connessione:
-                // inputStream.close();
-                // outputStream.close();
-                // socket.close();
-                // running=false;
-                // se decidiamo di non chiudere la connessione e di rimettere il client in una lobby il threadCheckConnection si deve fermare?
             }
         } else if (selectedView == 2) {
             //guiView.updateGameState(game)
@@ -1037,13 +1107,28 @@ public class ClientSCK implements ClientGeneralInterface {
     //caso in cui qualcuno lascia il gioco e la partita deve finire
     public void gameLeft() throws RemoteException{
         System.out.println("I received the update gameLeft.");
-        if(inGame){
+        if(inGame){ //solo se il gioco è iniziato qualcuno se ne può andare volontariamente....verrà prima settato lo stato del gioco ad ENDED oppre chiamato questo update??
             inGame=false;
             System.out.println(ANSIFormatter.ANSI_RED+"Someone left the game."+ANSIFormatter.ANSI_RESET);
+            System.out.println("the game has to end...Bye bye");
+            /*
             this.resetAttributes();
             System.out.println("Returning to lobby.\n\n\n\n\n\n\n");
             this.waitingRoom();
+
+             */
         }
+        //we do not return to the lobby -> we have to terminate everything
+        try {
+            inputStream.close();
+            outputStream.close();
+            socket.close();
+        } catch (IOException e) { //needed for the close clause
+            throw new RuntimeException(e);
+        }
+        //the TimerTask that checks the connection should end by itself when the application ends
+        this.timer.cancel(); //to be sure
+
     }
 
     //taken from RMIClient

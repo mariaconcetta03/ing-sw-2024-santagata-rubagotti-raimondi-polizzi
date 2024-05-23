@@ -73,7 +73,11 @@ public enum Event implements Serializable {
     LEAVE_GAME,
 
     //end of events with a corresponding function in ClientGeneralInterface
-    CHECK_N_PLAYERS;
+    CHECK_N_PLAYERS,
+
+    PING, //this means: 'are you still connected?'
+    PONG; //this means: 'yes, I'm still connected'
+
     public void printEvent(){
         System.out.println("Questo è l'evento: " + this.toString());
     }
