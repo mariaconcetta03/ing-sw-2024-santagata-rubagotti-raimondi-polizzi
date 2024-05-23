@@ -545,7 +545,7 @@ int choice=-1;
     // ------- M E T H O D S   F O R   U P D A T E -------
     // ---- F R O M   S E R V E R   T O   C L I E N T ----
 
-    public void finishedSetupPhase2() throws RemoteException{
+    public void finishedSetUpPhase() throws RemoteException{
         updateRound(playersInTheGame);
     }
     /**
@@ -799,9 +799,6 @@ int choice=-1;
      */
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException {
         playersInTheGame = newPlayingOrder;
-
-
-
 
         if (turnCounter != -1) {
             if (turnCounter != 0) {

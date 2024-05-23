@@ -1,5 +1,6 @@
 package CODEX.distributed.RMI;
 
+import CODEX.distributed.ClientGeneralInterface;
 import CODEX.org.model.*;
 import CODEX.utils.Event;
 
@@ -7,7 +8,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 
-public interface ClientRMIInterface extends Remote {
+public interface ClientRMIInterface extends Remote, ClientGeneralInterface {
     void update() throws RemoteException;
 
     void updateBoard(String boardOwner, Board obj)throws RemoteException;
@@ -38,6 +39,6 @@ public interface ClientRMIInterface extends Remote {
     void showError(Event event) throws RemoteException;
     void updateCommonObjectives(ObjectiveCard card1, ObjectiveCard card2) throws RemoteException;
     void updatePersonalObjective(ObjectiveCard card, String nickname) throws RemoteException;
-    void finishedSetupPhase2() throws RemoteException;
+    void finishedSetUpPhase() throws RemoteException;
     void gameLeft() throws RemoteException;
 }

@@ -18,13 +18,6 @@ import java.util.List;
 
 public class GameController extends UnicastRemoteObject implements GameControllerInterface {
 
-    private int check;
-    public void setCheck(int check){
-        this.check=check;
-    }
-    public int getCheck(){
-        return this.check;
-    }
 
     private ServerController serverController;
     private Game game;

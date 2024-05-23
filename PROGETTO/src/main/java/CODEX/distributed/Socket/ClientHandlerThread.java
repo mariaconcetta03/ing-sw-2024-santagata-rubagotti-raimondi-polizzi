@@ -9,10 +9,7 @@ import CODEX.controller.ServerController;
 import CODEX.distributed.ClientActionsInterface;
 import CODEX.distributed.messages.Message;
 import CODEX.distributed.messages.SCKMessage;
-import CODEX.org.model.Coordinates;
-import CODEX.org.model.ObjectiveCard;
-import CODEX.org.model.Pawn;
-import CODEX.org.model.PlayableCard;
+import CODEX.org.model.*;
 import CODEX.utils.Event;
 import CODEX.utils.Observable;
 import CODEX.utils.Observer;
@@ -25,6 +22,8 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 //the server communicates with the clients calling their method update, the clients communicate with the server (better->the model) using
 //first the attribute serverController and then the attribute gameController (when the game is created)
@@ -44,6 +43,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     private final ObjectOutputStream output;
     private GameController gameController;
     private Boolean running; //it is initialized true, when becomes false the while in run and threadCheckConnection terminate.
+    private boolean firstPongReceived;
+    private boolean secondPongReceived;
+    private Timer timer;
 
 
     /**
@@ -172,6 +174,18 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             }
 
              */
+            case PING -> { //sent by the client to ask 'are you still connected?'
+                writeTheStream(new SCKMessage(null,Event.PONG)); //to tell the client 'yes, I'm still connected'
+
+            }
+            case PONG -> { //sent by the client to say 'yes, I'm still connected?'
+                if(this.firstPongReceived){
+                    this.secondPongReceived=true; //abbiamo davvero bisogno di due booleani?
+                }else{
+                    this.firstPongReceived=true;
+                }
+
+            }
             case AVAILABLE_LOBBY -> {
                 try {
                     System.out.println("sono in available lobby");
@@ -289,12 +303,47 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             writeTheStream(new SCKMessage(list,arg.getMessageEvent()));
             return;
         }
+        if((arg.getMessageEvent().equals(Event.GAME_STATE_CHANGED))&&(arg.getObj().equals(Game.GameState.STARTED))){
+            this.firstPongReceived=true; //initialization
+            this.secondPongReceived=true; //initialization
+            this.timer = new Timer(true); //isDaemon==true -> maintenance activities performed as long as the application is running
+            //we need to use ping-pong messages because sometimes the connection seems to be open (we do not receive any I/O exception) but it is not.
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    if(firstPongReceived||secondPongReceived) {
+                        firstPongReceived=false;
+                        secondPongReceived=false;
+                        writeTheStream(new SCKMessage(null,Event.PING)); //first ping
+                        writeTheStream(new SCKMessage(null,Event.PING)); //second ping
+                    }else{ //there are no pongs received
+                        System.out.println("the connection has been interrupted...Bye bye");
+                        try {
+                            running=false;
+                            input.close();
+                            output.close();
+                            socket.close();
+                        } catch (IOException e) { //needed for the close clause
+                            throw new RuntimeException(e);
+                        }
+                        timer.cancel(); // Ferma il timer
+                    }
+                }
+            }, 0, 10000); // Esegui ogni 10 secondi
+
+        }
+
         if(!(arg.getMessageEvent().equals(Event.OK))){ //non mi servono i messaggi di update ok dal controller
             System.out.println("sono in update");
             System.out.println(arg.getMessageEvent());
             //writeTheStream(message);
             writeTheStream(new SCKMessage(arg.getObj(),arg.getMessageEvent())); //qui dobbiamo vedere se far diventare Message e SCKMessage la stessa cosa
         }
+    }
+
+    @Override
+    public void update(Observable obs, CODEX.utils.executableMessages.Event e) throws RemoteException {
+
     }
 
     @Override
@@ -319,6 +368,16 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             output.reset();
         } catch (IOException e) {
             System.err.println(e.getMessage());
+            System.out.println("the connection has been interrupted....Bye bye");
+            try { //we close all we have to close
+                running=false;
+                input.close();
+                output.close();
+                socket.close();
+            } catch (IOException ex) { //needed for the close clause
+                throw new RuntimeException(ex);
+            }
+            timer.cancel(); // Ferma il timer
         }
     }
 

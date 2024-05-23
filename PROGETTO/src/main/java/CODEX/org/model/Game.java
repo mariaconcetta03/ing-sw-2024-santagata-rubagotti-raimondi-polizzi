@@ -3,6 +3,7 @@ import CODEX.Exceptions.CardNotDrawableException;
 import CODEX.distributed.messages.Message;
 import CODEX.utils.Event;
 import CODEX.utils.Observable;
+import CODEX.utils.executableMessages.*;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -134,21 +135,29 @@ public class Game extends Observable implements Serializable {
         // setting the state of the game to STARTED
         setState(GameState.STARTED);
         notifyObservers(new Message(players, Event.NEW_TURN));
+        notifyObservers(new updatePlayersOrderEvent(players));//NEW
 
         // shuffling the resource deck and giving 2 cards to the market
         this.resourceDeck.shuffleDeck();
         this.resourceCard1 = this.resourceDeck.getFirstCard();
         notifyObservers(new Message(resourceCard1, Event.UPDATED_RESOURCE_CARD_1));
+        notifyObservers(new updateResourceCard1Event(resourceCard1));//NEW
+
         this.resourceCard2 = this.resourceDeck.getFirstCard();
         notifyObservers(new Message(resourceCard2, Event.UPDATED_RESOURCE_CARD_2));
+        notifyObservers(new updateResourceCard2Event(resourceCard2));//NEW
+
 
 
         // shuffling the gold deck and giving 2 cards to the market
         this.goldDeck.shuffleDeck();
         this.goldCard1 = this.goldDeck.getFirstCard();
         notifyObservers(new Message(goldCard1, Event.UPDATED_GOLD_CARD_1));
+        notifyObservers(new updateGoldCard1Event(goldCard1));
         this.goldCard2 = this.goldDeck.getFirstCard();
         notifyObservers(new Message(goldCard2, Event.UPDATED_GOLD_CARD_2));
+        notifyObservers(new updateGoldCard2Event(goldCard2));
+
 
 
         // shuffling the base deck and each player draws a starter card (base card)
@@ -192,8 +201,11 @@ public class Game extends Observable implements Serializable {
 
         notifyObservers(new Message(this.goldDeck, Event.UPDATED_GOLD_DECK));
         notifyObservers(new Message(this.resourceDeck, Event.UPDATED_RESOURCE_DECK));
+        notifyObservers(new updateGoldDeckEvent(goldDeck));
+        notifyObservers(new updateResourceDeckEvent(resourceDeck));
 
-        notifyObservers(new Message(players, Event.NEW_TURN)); //ora inviamo ai player l'ordine di gioco
+        notifyObservers(new Message(players, Event.NEW_TURN));
+        notifyObservers(new updatePlayersOrderEvent(players));//ora inviamo ai player l'ordine di gioco
         //notifyObservers(new Message(null, Event.SETUP_PHASE_1)); @TODO serve?
     }
 
@@ -226,6 +238,7 @@ public class Game extends Observable implements Serializable {
         tmp.add(this.objectiveCard1);
         tmp.add(this.objectiveCard2);
         notifyObservers(new Message(tmp, Event.UPDATED_COMMON_OBJECTIVES));
+        notifyObservers(new updateCommonObjectivesEvent(objectiveCard1, objectiveCard2));
 
         // giving each player 2 objective cards, next he will decide which one to choose
         for (int i = 0; i<nPlayers; i++) {
@@ -235,6 +248,8 @@ public class Game extends Observable implements Serializable {
 
         notifyObservers(new Message(this.goldDeck, Event.UPDATED_GOLD_DECK));
         notifyObservers(new Message(this.resourceDeck, Event.UPDATED_RESOURCE_DECK));
+        notifyObservers(new updateGoldDeckEvent(goldDeck));
+        notifyObservers(new updateResourceDeckEvent(resourceDeck));
     }
 
 
@@ -380,6 +395,7 @@ public class Game extends Observable implements Serializable {
         this.currentPlayer = this.players.get(0);
         this.players.get(0).setState(Player.PlayerState.IS_PLAYING);
             notifyObservers(new Message(players, Event.NEW_TURN));
+            notifyObservers(new updatePlayersOrderEvent(players));
         return this.currentPlayer;
     }
 
@@ -399,6 +415,8 @@ public class Game extends Observable implements Serializable {
         }
         notifyObservers(new Message(this.goldCard1, Event.UPDATED_GOLD_CARD_1)); //TODO maybe we can create just one Event?
         notifyObservers(new Message(this.goldDeck, Event.UPDATED_GOLD_DECK));
+        notifyObservers(new updateGoldCard1Event(goldCard1));
+        notifyObservers(new updateGoldDeckEvent(goldDeck));
     }
 
     public void resetGoldCard2 () throws RemoteException {
@@ -411,6 +429,8 @@ public class Game extends Observable implements Serializable {
         }
         notifyObservers(new Message(this.goldCard2, Event.UPDATED_GOLD_CARD_2));
         notifyObservers(new Message(this.goldDeck, Event.UPDATED_GOLD_DECK));
+        notifyObservers(new updateGoldCard2Event(goldCard2));
+        notifyObservers(new updateGoldDeckEvent(goldDeck));
     }
 
     public void resetResourceCard1 () throws RemoteException {
@@ -423,6 +443,8 @@ public class Game extends Observable implements Serializable {
         }
         notifyObservers(new Message(this.resourceCard1, Event.UPDATED_RESOURCE_CARD_1));
         notifyObservers(new Message(this.resourceDeck, Event.UPDATED_RESOURCE_DECK));
+        notifyObservers(new updateResourceCard1Event(resourceCard1));
+        notifyObservers(new updateResourceDeckEvent(resourceDeck));
     }
 
     public void resetResourceCard2 () throws RemoteException {
@@ -435,6 +457,8 @@ public class Game extends Observable implements Serializable {
         }
         notifyObservers(new Message(this.resourceCard2, Event.UPDATED_RESOURCE_CARD_2));
         notifyObservers(new Message(this.resourceDeck, Event.UPDATED_RESOURCE_DECK));
+        notifyObservers(new updateResourceCard2Event(resourceCard2));
+        notifyObservers(new updateResourceDeckEvent(resourceDeck));
     }
 
 
@@ -649,6 +673,7 @@ public class Game extends Observable implements Serializable {
     public void setState (GameState state) throws RemoteException {
         this.state = state;
         notifyObservers(new Message(this.state, Event.GAME_STATE_CHANGED)); //we'll look into it
+        notifyObservers(new updateGameStateEvent(this.state));
     }
 
 
@@ -676,6 +701,7 @@ public class Game extends Observable implements Serializable {
         if(lastEvent.equals(Event.SETUP_PHASE_2)||lastEvent.equals(Event.GAME_LEFT)) {
             try {
                 notifyObservers(new Message(null, this.lastEvent));
+                notifyObservers(new setUpPhaseFinishedEvent());
             } catch (RemoteException e) {
             }
         }

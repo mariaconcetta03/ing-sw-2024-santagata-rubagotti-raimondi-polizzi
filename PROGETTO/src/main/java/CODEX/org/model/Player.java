@@ -6,6 +6,7 @@ import CODEX.Exceptions.CardNotOwnedException;
 import CODEX.distributed.messages.Message;
 import CODEX.utils.Event;
 import CODEX.utils.Observable;
+import CODEX.utils.executableMessages.*;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -113,9 +114,11 @@ public class Player extends Observable implements Serializable {
         } else if ((!game.getResourceDeck().isFinished())&&(card.equals(game.getResourceDeck().checkFirstCard()))){
             card= game.getResourceDeck().getFirstCard();
             notifyObservers(new Message(game.getResourceDeck(), Event.UPDATED_RESOURCE_DECK));
+            notifyObservers(new updateResourceDeckEvent(game.getResourceDeck()));
         } else if ((!game.getGoldDeck().isFinished())&&card.equals(game.getGoldDeck().checkFirstCard())){
             card= game.getGoldDeck().getFirstCard();
             notifyObservers(new Message(game.getGoldDeck(), Event.UPDATED_GOLD_DECK));
+            notifyObservers(new updateGoldDeckEvent(game.getGoldDeck()));
         }else if(!baseDeck.getCards().contains(card)){
             throw new CardNotDrawableException("You can't throw this card!");
         }
@@ -132,6 +135,7 @@ public class Player extends Observable implements Serializable {
         tmp.add(this.nickname);
         tmp.add(playerDeck);
         notifyObservers(new Message(tmp, Event.UPDATED_PLAYER_DECK));
+        notifyObservers(new updatePlayerDeckEvent(this.nickname, this.playerDeck));
     }
 
 
@@ -168,6 +172,8 @@ public class Player extends Observable implements Serializable {
         try {
             notifyObservers(new Message(tmp1, Event.UPDATED_PLAYER_DECK));
             notifyObservers(new Message(tmp2, Event.UPDATED_BOARD));
+            notifyObservers(new updatePlayerDeckEvent(this.nickname, this.playerDeck));
+            notifyObservers(new updateBoardEvent(this.nickname, this.board));
         }catch (RemoteException e){}
     }
 
@@ -192,6 +198,8 @@ public class Player extends Observable implements Serializable {
         try {
             notifyObservers(new Message(tmp1, Event.UPDATED_PLAYER_DECK));
             notifyObservers(new Message(tmp2, Event.UPDATED_BOARD));
+            notifyObservers(new updatePlayerDeckEvent(this.nickname, this.playerDeck));
+            notifyObservers(new updateBoardEvent(this.nickname, this.board));
         }catch (RemoteException e){}
     }
     //non serve notify, non puo essere posizionata male.
@@ -227,6 +235,7 @@ public class Player extends Observable implements Serializable {
         tmp.add(card);
         tmp.add(this.nickname);
         notifyObservers(new Message(tmp, Event.UPDATED_PERSONAL_OBJECTIVE));
+        notifyObservers(new updatePersonalObjectiveEvent(card, this.nickname));
     }
 
 
