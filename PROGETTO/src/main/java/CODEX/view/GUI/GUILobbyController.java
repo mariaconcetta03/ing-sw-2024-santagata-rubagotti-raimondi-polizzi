@@ -3,6 +3,7 @@ package CODEX.view.GUI;
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -26,7 +27,13 @@ public class GUILobbyController {
     ComboBox<Integer> availableLobbies;
 
     @FXML
-    Label lobbyError;
+    Label lobbyError1;
+    @FXML
+    Label lobbyError2;
+    @FXML
+    Label lobbyError3;
+    @FXML
+    Button joinButton;
 
     Integer chosenLobby;
 
@@ -50,13 +57,19 @@ public class GUILobbyController {
 
     public void showNoLobbyError() {
         availableLobbies.setOpacity(0);
-        lobbyError.setOpacity(1);
+        lobbyError1.setOpacity(1);
+        lobbyError2.setOpacity(1);
+        lobbyError3.setOpacity(1);
+        joinButton.setOpacity(0);
     }
 
 
     public void hideNoLobbyError() {
         availableLobbies.setOpacity(1);
-        lobbyError.setOpacity(0);
+        lobbyError1.setOpacity(0);
+        lobbyError2.setOpacity(0);
+        lobbyError3.setOpacity(0);
+        joinButton.setOpacity(1);
     }
 
 
@@ -76,6 +89,8 @@ public class GUILobbyController {
             }
         } else if (network == 2) { // TCP
              try {
+                 clientSCK.checkAvailableLobby();
+                 System.out.println("STO AGGIUNTANDO");
                  availableLobbies.getItems().clear();
                  setAvailableLobbies(clientSCK.getAvailableLobbies());
                  if (clientSCK.getAvailableLobbies().isEmpty()) {

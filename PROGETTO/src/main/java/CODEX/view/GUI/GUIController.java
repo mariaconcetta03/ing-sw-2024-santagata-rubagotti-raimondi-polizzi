@@ -98,8 +98,6 @@ public class GUIController {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lobby.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
 
-
-
             // old dimensions and position
             double width = stage.getWidth();
             double height = stage.getHeight();
@@ -126,6 +124,7 @@ public class GUIController {
                 ctr.setRmiClient(rmiClient);
                 ctr.setNetwork(1);
             } else if (network == 2) {
+                clientSCK.checkAvailableLobby();
                 ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", now join a lobby");
                 ctr.setAvailableLobbies(clientSCK.getAvailableLobbies());
                 ctr.setClientSCK(clientSCK);
