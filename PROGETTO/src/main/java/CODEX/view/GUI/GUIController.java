@@ -122,6 +122,9 @@ public class GUIController {
 
             if (network == 1) {
                 ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", now join a lobby");
+                ctr.setAvailableLobbies(rmiClient.getAvailableLobbies());
+                ctr.setRmiClient(rmiClient);
+                ctr.setNetwork(1);
             } else if (network == 2) {
                 ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", now join a lobby");
             }

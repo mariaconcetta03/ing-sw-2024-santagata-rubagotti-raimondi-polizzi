@@ -71,6 +71,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private boolean nicknameSet = false;
 
 
+
     public boolean setNickname(String nickname) {
         try {
             chooseNickname(nickname);

@@ -26,6 +26,42 @@
                               <Font name="Georgia" size="55.0" />
                            </font>
                         </Label>
+                        <HBox prefHeight="224.0" prefWidth="1350.0">
+                           <children>
+                              <ComboBox fx:id="availableLobbies" prefHeight="40.0" prefWidth="150.0">
+                                 <HBox.margin>
+                                    <Insets left="100.0" top="20.0" />
+                                 </HBox.margin>
+                              </ComboBox>
+                              <Separator opacity="0.0" prefHeight="73.0" prefWidth="22.0" />
+                              <VBox prefHeight="224.0" prefWidth="256.0">
+                                 <children>
+                                    <HBox prefHeight="38.0" prefWidth="138.0">
+                                       <children>
+                                          <Button mnemonicParsing="false" prefHeight="35.0" prefWidth="53.0" text="OK">
+                                             <font>
+                                                <Font name="Georgia Bold" size="12.0" />
+                                             </font></Button>
+                                          <Separator opacity="0.0" prefHeight="15.0" prefWidth="14.0" />
+                                          <Button mnemonicParsing="false" onMouseClicked="#updateAvailableLobbies" prefHeight="35.0" prefWidth="72.0" text="Refresh">
+                                             <font>
+                                                <Font name="Georgia Bold" size="12.0" />
+                                             </font>
+                                          </Button>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="20.0" />
+                                       </VBox.margin>
+                                    </HBox>
+                                    <Label fx:id="lobbyError" prefHeight="45.0" prefWidth="256.0" text="No available lobbies" textFill="#dd0000">
+                                       <font>
+                                          <Font name="Georgia Bold" size="24.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
                </children>
