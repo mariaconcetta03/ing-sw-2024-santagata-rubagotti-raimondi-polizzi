@@ -54,6 +54,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private PlayableCard goldCard2;
     private PlayableCard resourceCard1;
     private PlayableCard resourceCard2;
+
+    public Player getPersonalPlayer() {
+        return personalPlayer;
+    }
+
     private Player personalPlayer;
     private List<Player> playersInTheGame;
     private ObjectiveCard commonObjective1, commonObjective2;
@@ -400,7 +405,8 @@ int choice=-1;
         }else{ //GUI
             String[] network = new String[1];
             network[0] = "RMI";
-            InterfaceGUI.main(network);
+            InterfaceGUI itr = new InterfaceGUI(1);
+            itr.main(network);
             // facendo un'interfaccia RMIGUI e un'altra interfaccia SCKGUI
             // leggo lo username da system out che viene stampato (scanner su system out) attenzione devo farlo stampare SOLO una volta
             // viene stampato tutte le volte che premo il tasto done. a questo punto viene comunicato l'esito al client

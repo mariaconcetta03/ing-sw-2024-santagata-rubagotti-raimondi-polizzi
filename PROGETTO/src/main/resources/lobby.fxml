@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CODEX.view.GUI.GUIController">
+   <children>
+      <VBox layoutY="61.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="844.0" prefWidth="1350.0" styleClass="background_pane" stylesheets="@Styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <StackPane alignment="TOP_CENTER" prefHeight="137.0" prefWidth="1350.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <VBox alignment="TOP_CENTER" prefWidth="1350.0" StackPane.alignment="TOP_CENTER">
+                     <children>
+                        <Label fx:id="labelWithPlayerName" alignment="TOP_CENTER" contentDisplay="CENTER" prefHeight="56.0" prefWidth="1350.0" text="&lt;nickname&gt;, now join a lobby" textAlignment="CENTER" textFill="WHITE">
+                           <font>
+                              <Font name="Georgia" size="55.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="100.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label text="or create a new one" textFill="WHITE">
+                           <font>
+                              <Font name="Georgia" size="55.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+               </children>
+            </StackPane>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

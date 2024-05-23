@@ -30,6 +30,11 @@ public class ClientSCK implements ClientGeneralInterface {
     private boolean errorState = false;
     private HashSet<Integer> lobbyId;
     private final Socket socket;
+
+    public Player getPersonalPlayer() {
+        return personalPlayer;
+    }
+
     private Player personalPlayer;
     private int selectedView;
     private InterfaceTUI tuiView;
@@ -171,15 +176,13 @@ public class ClientSCK implements ClientGeneralInterface {
 
 
     public boolean setNickname(String nickname) {
-        try {
-            chooseNickname(nickname);
-            this.personalPlayer.setNickname(nickname);
-            this.nicknameSet = true;
-            //} catch (NicknameAlreadyTakenException e) {  //DA RISOLVERE!! ALTRIMENTI NON POSSIAMO COMUNICARE QUANDO IL NCKNM è SBAGLIATO
-            //this.nicknameSet = false;
-        } catch (RemoteException | NotBoundException e) {
-            throw new RuntimeException(e);
+        this.personalPlayer.setNickname(nickname);
+        this.nicknameSet = true;
+        if (errorState){
+            this.nicknameSet = false;
         }
+        //} catch (NicknameAlreadyTakenException e) {  //DA RISOLVERE!! ALTRIMENTI NON POSSIAMO COMUNICARE QUANDO IL NCKNM è SBAGLIATO
+        //this.nicknameSet = false;
         System.out.println("il nickname è stato settato a: " + this.personalPlayer.getNickname());
         return this.nicknameSet;
     }
@@ -446,7 +449,8 @@ public class ClientSCK implements ClientGeneralInterface {
         } else {
             String[] network = new String[1];
             network[0] = "TCP";
-            InterfaceGUI.main(network);
+            InterfaceGUI itr = new InterfaceGUI(2);
+            itr.main(network);
         }
 
     }
@@ -1203,6 +1207,10 @@ public class ClientSCK implements ClientGeneralInterface {
     }
     public void setIsPlaying(boolean isPlaying){
         this.isPlaying=isPlaying;
+    }
+
+    public void setErrorState (boolean s) {
+        this.errorState = s;
     }
     public boolean getIsPlaying(){ // c'è la syn nel metodo che lo chiama (showMenuAndWaitForSelection)
         return this.isPlaying;

@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
@@ -22,9 +25,20 @@ public class GUIController {
     private MenuButton menuButton;
 
 
-    private int network = 0; // it means that user hasn't chosen
+    private int network = 0; // it means that user hasn't chosen (1 = rmi  2 = sck)
     RMIClient rmiClient = new RMIClient();
     ClientSCK clientSCK;
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    Stage stage;
+
+
+
+    boolean correctNickname = false;
+
 
     {
         try {
@@ -40,6 +54,11 @@ public class GUIController {
     @FXML
     private Label nicknameUsed;
 
+    @FXML
+    Label labelWithPlayerName;
+
+
+
     public GUIController() throws RemoteException {
     }
 
@@ -49,24 +68,61 @@ public class GUIController {
         this.network = network;
     }
 
-
+    public boolean isCorrectNickname() {
+        return correctNickname;
+    }
 
     @FXML
-    protected void sendNickname() {
+    protected void sendNickname() throws IOException {
 
-        boolean correctNickname = false;
         System.out.println(nickname.getCharacters());
+        System.out.println("prec NET" + network);
 
         if (network == 1) { //RMI
             correctNickname = rmiClient.setNickname(nickname.getCharacters().toString());
-        }else{ //SCK
+        }else if (network == 2){ //SCK
+            clientSCK.setErrorState (false);
+            try {
+                clientSCK.chooseNickname(nickname.getCharacters().toString());
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            } catch (NotBoundException e) {
+                throw new RuntimeException(e);
+            }
             correctNickname = clientSCK.setNickname(nickname.getCharacters().toString());
         }
 
         if (!correctNickname) {
-            nicknameUsed.setOpacity(1);
+            nicknameUsed.setOpacity(1); // shows the message error
         } else {
-            nicknameUsed.setOpacity(0);
+            nicknameUsed.setOpacity(0); // not necessary because we will change our window!
+
+            // let's show the new window!
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lobby.fxml"));
+            Scene scene = new Scene(fxmlLoader.load());
+
+            // old dimensions and position
+            double width = stage.getWidth();
+            double height = stage.getHeight();
+            double x = stage.getX();
+            double y = stage.getY();
+
+            // new scene
+            stage.setScene(scene);
+
+            // setting the od values of position and dimension
+            stage.setWidth(width);
+            stage.setHeight(height);
+            stage.setX(x);
+            stage.setY(y);
+
+            // setting the dynamic parameters of the new window
+            System.out.println("NET" + network);
+            if (network == 1) {
+                labelWithPlayerName.setText(rmiClient.getPersonalPlayer().getNickname() + ", now join a lobby");
+            } else if (network == 2) {
+                labelWithPlayerName.setText(clientSCK.getPersonalPlayer().getNickname() + ", now join a lobby");
+            }
         }
     }
 

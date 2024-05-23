@@ -18,35 +18,45 @@ import static javafx.application.Application.launch;
 
 // THIS IS THE CORRECT CLASS
 public class InterfaceGUI extends Application {
-    private static int network = 0; // 1 = RMI   2 = TCP
+    private int network = 0; // 1 = RMI   2 = TCP
 
 
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/nickname.fxml"));
-        GUIController controller = fxmlLoader.getController(); // obtaining the GUI controller
-        controller.setNetwork(network); // setting the network RMI or TCP
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Codex Naturalis");
         stage.setScene(scene);
-        //stage.setResizable(false);
+        GUIController controller = fxmlLoader.getController(); // obtaining the GUI controller
+        controller.setNetwork(network); // setting the network RMI or TCP
+        controller.setStage(stage);
         stage.show();
     }
 
 
 
-    public static void main(String[] args) {
-        launch((String) null);
+    public void main(String[] args) {
         if (args[0].equals("RMI")) {
             network = 1;
+            System.out.println("Hai scelto RMI");
         } else if (args[0].equals("TCP")) {
             network = 2;
+            System.out.println("Hai scelto TCP");
+        } else {
+            System.out.println("NON E NESSUN CASO");
         }
+        launch((String) null); // COSA FA LAUNCH?? BISOGNA CAPIRLO
     }
 
 
 
+public InterfaceGUI (int network) {
+        this.network = network;
+}
 
+public InterfaceGUI () {
+
+}
 
 
 
