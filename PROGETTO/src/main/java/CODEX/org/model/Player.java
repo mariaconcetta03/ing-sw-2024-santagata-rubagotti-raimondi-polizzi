@@ -235,7 +235,7 @@ public class Player extends Observable implements Serializable {
         tmp.add(card);
         tmp.add(this.nickname);
         notifyObservers(new Message(tmp, Event.UPDATED_PERSONAL_OBJECTIVE));
-        notifyObservers(new updatePersonalObjectiveEvent(card, this.nickname));
+        notifyObservers(new UpdatePersonalObjectiveEvent(card, this.nickname));
     }
 
 

@@ -119,6 +119,7 @@ public class GUIController {
 
             // setting the dynamic parameters of the new window
             System.out.println("NET" + network);
+
             if (network == 1) {
                 ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", now join a lobby");
             } else if (network == 2) {

@@ -28,14 +28,14 @@ public class InterfaceGUI extends Application {
         stage.setTitle("Codex Naturalis");
         stage.setScene(scene);
         GUIController controller = fxmlLoader.getController(); // obtaining the GUI controller
-        controller.setNetwork(network); // setting the network RMI or TCP
+        controller.setNetwork(getNetwork()); // setting the network RMI or TCP
         controller.setStage(stage);
         stage.show();
     }
 
 
 
-    public void main(String[] args) {
+    public static void main(String[] args) {
         if (args[0].equals("RMI")) {
             network = 1;
             System.out.println("Hai scelto RMI");
@@ -50,14 +50,17 @@ public class InterfaceGUI extends Application {
 
 
 
-public InterfaceGUI (int network) {
-        this.network = network;
-}
+//public InterfaceGUI (int network) {
+  //      this.network = network;
+//}
 
 public InterfaceGUI () {
 
 }
 
+public int getNetwork(){
+       return network;
+}
 
 
 }
