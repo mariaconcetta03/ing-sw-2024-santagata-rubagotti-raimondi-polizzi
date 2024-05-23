@@ -1,6 +1,7 @@
 package CODEX.utils;
 
 import CODEX.distributed.messages.Message;
+import CODEX.utils.executableMessages.Event;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -72,6 +73,11 @@ public class Observable {
     public void notifyObservers(Message notification) throws RemoteException {
         for(Observer obs: observers) {
             obs.update(this, notification);
+        }
+    }
+    public void notifyObservers(Event e) throws RemoteException{
+        for(Observer obs: observers){
+            obs.update(this, e);
         }
     }
 

@@ -27,9 +27,5 @@ public interface GameControllerInterface extends Remote {
     void sendMessage(String senderNickname, List<String> receiversNicknames, String message)throws RemoteException;
 
     void leaveGame(String nickname)throws RemoteException;
-
-    void setCheck(int i)throws RemoteException;
-
-    int getCheck()throws RemoteException;
     void checkNPlayers() throws RemoteException;
 }

@@ -4,6 +4,7 @@ import CODEX.org.model.*;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
 
@@ -19,8 +20,11 @@ public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
     void updateChat(Chat chat) throws RemoteException;
     void updatePawns(Player player, Pawn pawn) throws RemoteException;
     void updateNickname(Player player, String nickname) throws RemoteException;
-    void updateRound(Player newCurrentPlayer) throws RemoteException;
+    void updateRound(List<Player> newPlayingOrder) throws RemoteException;
     void updateGameState(Game.GameState  gameState) throws RemoteException;
+    void updateCommonObjectives(ObjectiveCard objCard1, ObjectiveCard objCard2) throws RemoteException;
+    void updatePersonalObjective(ObjectiveCard personalObjective, String playerNickname) throws RemoteException;
+    void finishedSetUpPhase() throws RemoteException;
     //fine update
 
     //DISCONNESSIONE

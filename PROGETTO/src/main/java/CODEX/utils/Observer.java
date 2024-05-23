@@ -1,5 +1,6 @@
 package CODEX.utils;
 import CODEX.distributed.messages.Message;
+import CODEX.utils.executableMessages.Event;
 
 import java.rmi.RemoteException;
 
@@ -21,7 +22,8 @@ public interface Observer {
 //    ----------------------------------------------------------------------------------------------------------------
 
 
-    void update(Observable obs, Message arg) throws RemoteException;
+    void update(Observable obs, Message arg) throws RemoteException;//@TODO da rimuovere
+    void update(Observable obs, Event e) throws RemoteException;
     void setNickname(String nick) throws RemoteException;
     String getNickname() throws RemoteException;
 }

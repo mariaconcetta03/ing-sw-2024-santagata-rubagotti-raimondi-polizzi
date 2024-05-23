@@ -884,6 +884,11 @@ public class ClientSCK implements ClientGeneralInterface {
         }
     }
 
+    @Override
+    public void finishedSetUpPhase() throws RemoteException {
+
+    }
+
 
     @Override
     public void updateResourceCard1(PlayableCard card) throws RemoteException {
@@ -960,7 +965,6 @@ public class ClientSCK implements ClientGeneralInterface {
         }
     }
 
-    @Override
     public void updateRound(Player player) throws RemoteException {}
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException { //taken from RMIClient
         //we have to change the view and the local model @TODO differenziare TUI e GUI
