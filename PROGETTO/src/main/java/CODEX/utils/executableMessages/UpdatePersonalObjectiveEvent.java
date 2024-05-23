@@ -5,7 +5,7 @@ import CODEX.org.model.ObjectiveCard;
 
 import java.rmi.RemoteException;
 
-public class updatePersonalObjectiveEvent implements Event{
+public class UpdatePersonalObjectiveEvent implements Event{
     ObjectiveCard personalObjCard;
     String nickname;
 

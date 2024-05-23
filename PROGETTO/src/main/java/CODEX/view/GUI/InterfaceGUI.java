@@ -18,7 +18,7 @@ import static javafx.application.Application.launch;
 
 // THIS IS THE CORRECT CLASS
 public class InterfaceGUI extends Application {
-    private int network = 0; // 1 = RMI   2 = TCP
+    private static int network ; // 1 = RMI   2 = TCP
 
 
     @Override

@@ -10,6 +10,7 @@ import java.rmi.RemoteException;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
@@ -54,10 +55,6 @@ public class GUIController {
     @FXML
     private Label nicknameUsed;
 
-    @FXML
-    Label labelWithPlayerName;
-
-
 
     public GUIController() throws RemoteException {
     }
@@ -101,6 +98,8 @@ public class GUIController {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lobby.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
 
+
+
             // old dimensions and position
             double width = stage.getWidth();
             double height = stage.getHeight();
@@ -116,12 +115,14 @@ public class GUIController {
             stage.setX(x);
             stage.setY(y);
 
+            GUILobbyController ctr = fxmlLoader.getController();
+
             // setting the dynamic parameters of the new window
             System.out.println("NET" + network);
             if (network == 1) {
-                labelWithPlayerName.setText(rmiClient.getPersonalPlayer().getNickname() + ", now join a lobby");
+                ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", now join a lobby");
             } else if (network == 2) {
-                labelWithPlayerName.setText(clientSCK.getPersonalPlayer().getNickname() + ", now join a lobby");
+                ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", now join a lobby");
             }
         }
     }
