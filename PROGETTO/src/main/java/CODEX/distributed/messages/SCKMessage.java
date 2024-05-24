@@ -1,7 +1,8 @@
 package CODEX.distributed.messages;
 
-import CODEX.utils.ClientMessage;
-import CODEX.utils.Event;
+
+import CODEX.utils.executableMessages.clientMessages.ClientMessage;
+import CODEX.utils.executableMessages.events.Event;
 import CODEX.utils.executableMessages.serverMessages.ServerMessage;
 
 import java.io.Serializable;
@@ -10,33 +11,41 @@ import java.util.*;
 /**
  * This class defines a message that is used to pass information through the socket in a bidirectional way
  */
-public class SCKMessage extends Message implements Serializable{ //qui dovremmo aggiungere attributi e costruttori che collegano il messaggio a chi l'ha generato
-    private ClientMessage clientMessage;
-    private ServerMessage serverMessage;
-    /**
-     * Constructor method
-     * @param obj the single generic object
-     * @param event the action we are performing
-     */
-    public SCKMessage(Object obj, Event event) {
-        super(obj, event);
-    }
+public class SCKMessage implements Serializable{ //qui dovremmo aggiungere attributi e costruttori che collegano il messaggio a chi l'ha generato
+    private final ClientMessage clientMessage;
+    private final ServerMessage serverMessage;
+    private final Event event;
 
-    /**
-     * Constructor method
-     * @param obj List of generic objects
-     * @param event the action we are performing
-     */
-    public SCKMessage(List<Object> obj, Event event) {
-        super(obj, event);
-    }
+
+
+
 
     public SCKMessage(ClientMessage msg){  //o si vuol mandare un ClientMessage o si vuole mandare un ServerMessage
-        super(); //qui abbiamo un this.event=
+        this.event=null;
+        this.serverMessage=null;
         this.clientMessage=msg; //letto lato server
     }
     public SCKMessage(ServerMessage msg){ //o si vuol mandare un ClientMessage o si vuole mandare un ServerMessage
-        super(); //qui abbiamo un this.event=null;
+        this.event=null;
+        this.clientMessage=null;
         this.serverMessage=msg; //letto lato client
+    }
+    public SCKMessage(Event event){
+        this.clientMessage=null;
+        this.serverMessage=null;
+        this.event=event;
+
+    }
+
+
+
+    public Event getEvent(){
+        return this.event;
+    }
+    public ServerMessage getServerMessage(){
+        return this.serverMessage;
+    }
+    public ClientMessage getClientMessage(){
+        return this.clientMessage;
     }
 }

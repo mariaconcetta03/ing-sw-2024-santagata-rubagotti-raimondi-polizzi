@@ -1,6 +1,6 @@
 package CODEX.distributed.RMI;
 
-import CODEX.distributed.messages.Message;
+
 import CODEX.utils.Observable;
 import CODEX.utils.Observer;
 import CODEX.utils.executableMessages.events.Event;
@@ -91,10 +91,6 @@ public class WrappedObserver implements Observer {
         }
 
 
-    @Override
-    public void update(Observable obs, Message arg) throws RemoteException {
-
-    }
 
     /**
      * Setter method

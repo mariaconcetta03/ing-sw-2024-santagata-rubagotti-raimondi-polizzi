@@ -1,6 +1,6 @@
 package CODEX.utils;
 
-import CODEX.distributed.messages.Message;
+
 import CODEX.utils.executableMessages.events.Event;
 
 import java.rmi.RemoteException;
@@ -68,13 +68,9 @@ public class Observable {
     /**
      * This method will be called at the end of the model's methods that "modify" something.
      * It will inform the Observers to perform an update action contacting the Client related to them.
-     * @param notification is the message containing the Event that caused the modification
+     * @param e has caused the modification
      */
-    public void notifyObservers(Message notification) throws RemoteException {
-        for(Observer obs: observers) {
-            obs.update(this, notification);
-        }
-    }
+
     public void notifyObservers(Event e) throws RemoteException{
         for(Observer obs: observers){
             obs.update(this, e);

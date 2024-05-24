@@ -5,7 +5,7 @@ import CODEX.org.model.Board;
 
 import java.rmi.RemoteException;
 
-public class updateBoardEvent implements Event {
+public class updateBoardEvent implements Event { //viene chiamato in playBaseCard per la prima volta
     private String boardOwner;
     private Board board;
     public updateBoardEvent(String boardOwner, Board board){

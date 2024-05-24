@@ -11,10 +11,10 @@ public class updateGameStateEvent implements Event{
         private Game.GameState gameState;
         private Boolean startCheckConnection; //this has to be initialized when the Event is instantiated
 
-        public updateGameStateEvent(Game.GameState gameState) { //aggiungiamo parametro Boolean theGameHasJustStarted
+        public updateGameStateEvent(Game.GameState gameState, boolean theGameHasJustStarted) { //aggiungiamo parametro Boolean theGameHasJustStarted
 
             this.gameState = gameState;
-            //this.startCheckConnection = theGameHasJustStarted;
+            this.startCheckConnection = theGameHasJustStarted;
         }
 
         @Override

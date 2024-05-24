@@ -6,6 +6,7 @@ import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.messages.SCKMessage;
 import CODEX.org.model.*;
 import CODEX.utils.Event;
+import CODEX.utils.executableMessages.clientMessages.*;
 import CODEX.view.GUI.InterfaceGUI;
 import CODEX.view.TUI.ANSIFormatter;
 import CODEX.view.TUI.InterfaceTUI;
@@ -60,8 +61,7 @@ public class ClientSCK implements ClientGeneralInterface {
     private final Object inputLock;
     private boolean isPlaying;
     private boolean inGame;
-    private boolean firstPongReceived; //to check the connection
-    private boolean secondPongReceived; //to check the connection
+    private boolean pongReceived; //to check the connection
     private Timer timer;
     private Scanner sc;
     private PlayableCard resourceCard1;
@@ -107,42 +107,17 @@ public class ClientSCK implements ClientGeneralInterface {
         this.actionLock = new Object();
         this.outputLock = new Object();
 
-        /*
-        //da rivedere più avanti
-        //to control the status of the connection (a player can leave the game without any advice)
-        threadCheckConnection= new Thread(()-> { //ci serve qualcosa su cui fare la syn?
-            while (running) {
-                synchronized (inputLock) {
-                    PingMessage pingMessage = (PingMessage) this.inputStream.getObjectInputFilter(); //we receive 'ARE_YOU_STILL_CONNECTED'
-                    try {
-                        outputStream.writeObject(new PingMessage());
-                        outputStream.flush();
-                        outputStream.reset();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-
-        },"CheckConnection"); //to be started when a Game is created (when we receive the msg ALL_CONNNECTED)
-
-
-         */
-
         new Thread(() -> {
             while (running) {
                 synchronized (inputLock) {
                     try {
                         SCKMessage sckMessage = (SCKMessage) this.inputStream.readObject(); //così non abbiamo più bisogno della funzione receiveMessage
                         if (sckMessage != null) {
-                            System.out.println("the message isn't null");
                             //System.out.println("messaggio ricevuto da ClienSCK non nullo");
                             //il fatto che sia BLOCCANTE è POSITIVO: gli update vengono fatti in ordine di arrivo e quindi quando riceviamo SETUP_PHASE_2 siamo sicuri di aver veramente ricevuto già tutto
                             try {
                                 modifyClientSide(sckMessage); //questo è bloccante-> meglio utilizzare un thread...a meno che non vogliamo fare una modifica alla volta
                             } catch (Exception e) {
-                                System.out.println("sono nel catch di modifyClientSide(sckMessage)");
-                                System.out.println(sckMessage.getMessageEvent().toString());
                                 System.err.println(e.getMessage());
                                 System.err.println(e.getCause().getMessage());
                                 try { //devo fermare i thread lanciati all'interno di questo thread
@@ -159,12 +134,9 @@ public class ClientSCK implements ClientGeneralInterface {
                                 }
                                 break;
                             }
-                        } else {
-                            System.out.println("the message is null");
                         }
                     } catch (Exception e) { //se il server si disconnette
                         System.err.println(e.getMessage());
-                        System.out.println("sono nel catch di this.inputStream.readObject()");
                         try { //devo fermare i thread lanciati all'interno di questo thread
                             inputStream.close();
                             outputStream.close();
@@ -241,132 +213,41 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
+    public void setPongReceived(Boolean received){ //to be used in ServerPong
+        this.pongReceived=received;
+    }
+
     //leggiamo l'evento per capire di che update si tratta e poi aggiorniamo quello che ci dice di aggiornare l'evento e chiamiamo infine sendMessage
     //non è l'update dei listeners (quello è in ClientHandlerThread: scriverà sull'input della socket)
     //con questo update andiamo a modificare le cose locali al client
     public void modifyClientSide(SCKMessage sckMessage) throws IOException {
         //al posto dello switch se l'attributo Event del sckMessage è diverso da null si tratta di un update, altrimenti è un ServerMessage (attributo ServerMessage del sckMessage)
 
-        switch (sckMessage.getMessageEvent()) {
-            case PONG -> { //sent by the server to say 'yes, I'm still connected' (in response to a ping message)
-                if(this.firstPongReceived){
-                    this.secondPongReceived=true; //abbiamo davvero bisogno di due booleani?
-                }else{
-                    this.firstPongReceived=true;
-                }
-            }
-            case PING -> { //sent by the server to say 'are you still connected?'
-                sendMessage(new SCKMessage(null,Event.PONG)); //to say to the server 'yes, I'm still connected'
-            }
-            case UPDATED_BOARD -> { //viene chiamato in playBaseCard per la prima volta
-                //we have to change the view and the local model
-                updateBoard((String) sckMessage.getObj().get(0), (Board) sckMessage.getObj().get(1));
-            }
-            case UPDATED_RESOURCE_DECK -> {
-                //we have to change the view and the local model
-                updateResourceDeck((PlayableDeck) sckMessage.getObj().get(0));
-            }
-            case UPDATED_GOLD_DECK->{
-                //we have to change the view and the local model
-                updateGoldDeck((PlayableDeck) sckMessage.getObj().get(0));
-            }
-            case UPDATED_PLAYER_DECK->{
-                //we have to change the view and the local model
-                newUpdatePlayerDeck((String) sckMessage.getObj().get(0), (PlayableCard) sckMessage.getObj().get(1),(PlayableCard) sckMessage.getObj().get(2),(PlayableCard) sckMessage.getObj().get(3));
-            }
-            case UPDATED_RESOURCE_CARD_1->{
-                //we have to change the view and the local model
-                updateResourceCard1((PlayableCard) sckMessage.getObj().get(0));
-            }
-            case UPDATED_RESOURCE_CARD_2->{
-                //we have to change the view and the local model
-                updateResourceCard2((PlayableCard) sckMessage.getObj().get(0));
-            }
-            case UPDATED_GOLD_CARD_1->{
-                //we have to change the view and the local model
-                updateGoldCard1((PlayableCard) sckMessage.getObj().get(0));
-            }
-            case UPDATED_GOLD_CARD_2->{
-                //we have to change the view and the local model
-                updateGoldCard2((PlayableCard) sckMessage.getObj().get(0));
-            }
+        if (sckMessage.getEvent() != null) { //we have an update
+            sckMessage.getEvent().executeSCK(this);
+        }else{ //we have a ServerMessage
+            sckMessage.getServerMessage().execute(this);
+        }
+
+       /*
+        switch (sckMessage.getMessageEvent()) { //lasciati commentati gli update per cui non è stato creato un evento del package events
+
             case UPDATED_CHAT->{  //non è stato creato un nuovo Event del package events per questo
                 //we have to change the view and the local model
                 updateChat((Chat) sckMessage.getObj().get(0));
             }
-            case UPDATED_PAWNS->{
-                //we have to change the view and the local model
-                updatePawns((Player) sckMessage.getObj().get(0), (Pawn) sckMessage.getObj().get(1));
-            }
+
             case UPDATED_NICKNAME->{ //non è stato creato un nuovo Event del package events per questo
                 //we have to change the view and the local model
                 updateNickname((Player) sckMessage.getObj().get(0), (String) sckMessage.getObj().get(1));
             }
-            case UPDATED_ROUND,NEW_TURN->{ //equivalenti
-                //we have to change the view and the local model
-                updateRound((List<Player>) sckMessage.getObj().get(0)); //we have to call it three times before the game can start and the menu be printed
-            }
-            case UPDATED_COMMON_OBJECTIVES->{
-                updateCommonObjectives((ObjectiveCard)sckMessage.getObj().get(0), (ObjectiveCard)sckMessage.getObj().get(1));
-            }
-            case UPDATED_PERSONAL_OBJECTIVE->{
-                System.out.println("sono in case UPDATED_PERSONAL_OBJECTIVE");
-                updatePersonalObjective((ObjectiveCard) sckMessage.getObj().get(0), (String) sckMessage.getObj().get(1));
-            }
-            case GAME_STATE_CHANGED->{ //subito dopo questo update c'è NEW_TURN ( quando si chiama game.startGame() )
-                //we have to change the view and the local model
-                System.out.println("game state changed"); //per il test
-                //sempre in game.startGame (nel model) vengono chiamati poi tutti gli altri update per permermettere al client di avere una copia locale di quello che c'è sul server
-                updateGameState((Game.GameState) sckMessage.getObj().get(0)); //threadCheckConnection.start() in updateRound
-            }
-            //va nel default dove ci sono i messaggi di errore
-            /*
-            case UNABLE_TO_PLAY_CARD->{
-                showError(Event.UNABLE_TO_PLAY_CARD);
-            }
 
-             */
-            case SETUP_PHASE_2->{
-                //when we receive this update the player has all he needs to start the game (base card and objective card already chosen)
-                finishedSetupPhase2(); //here we call updateRound for the third time (from now on we can print the menu)
 
-            }
-            case GAME_LEFT->{
-                //when someone leaves the game the other players receive this update that makes them close their socket
-                gameLeft();
-            }
-            case AVAILABLE_LOBBY -> {
-                synchronized (actionLock) {
-                    for(Object o: sckMessage.getObj()){
-                        lobbyId.add((Integer) o);
-                    }
-                    responseReceived = true;
-                    actionLock.notify();
-                }
-            }
-            case OK -> { //...potremmo stampare anche il messaggio di ok....
-                System.out.println("sono in case OK di ClientSCK");
-                //questo if mi serve per i test per memorizzare il gameID
-                synchronized (actionLock) {
-                    if (sckMessage.getObj() != null) { //per usarlo nel test
-                        this.gameID = (Integer) sckMessage.getObj().get(0);
-                    }
-                    this.responseReceived = true; //in this way the client is free to do the next action
-                    actionLock.notify(); //per fermare la wait nei metodi della ClientGeneralInterface
-                }
-            }
-            default -> { //qui ci finiscono tutti i messaggi di errore
-                //stampiamo l'errore e poi permettiamo al client di proseguire
-                synchronized (actionLock) {
-                    errorState=true;
-                    System.out.println(sckMessage.getMessageEvent().toString());
-                    this.responseReceived = true;
-                    actionLock.notify();
-                }
-            }
-        }
+        */
     }
 
+
+/*
     private void newUpdatePlayerDeck(String s, PlayableCard playableCard, PlayableCard playableCard1, PlayableCard playableCard2) {
         PlayableCard[] playerDeck=new PlayableCard[3];
         playerDeck[0]=playableCard;
@@ -387,6 +268,8 @@ public class ClientSCK implements ClientGeneralInterface {
             //guiView.updatePlayerDeck(player, playerDeck)
         }
     }
+
+ */
 
     /**
      * This method is called when the client is created. Absolves the function of helping the player to select
@@ -512,7 +395,8 @@ public class ClientSCK implements ClientGeneralInterface {
     public void checkAvailableLobby(){
         synchronized (actionLock) {
             try {
-                sendMessage(new SCKMessage(null,Event.AVAILABLE_LOBBY));
+                ClientMessage clientMessage= new ClientAvailableLobbies();
+                sendMessage(new SCKMessage(clientMessage));
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -528,7 +412,8 @@ public class ClientSCK implements ClientGeneralInterface {
     public void checkNPlayers(){
         synchronized (actionLock) {
             try {
-                sendMessage(new SCKMessage(null, Event.CHECK_N_PLAYERS));
+                ClientMessage clientMessage=new CheckNPlayers();
+                sendMessage(new SCKMessage(clientMessage));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -552,7 +437,8 @@ public class ClientSCK implements ClientGeneralInterface {
                 list.add(playerNickname);
                 list.add(gameId);
                 try {
-                    sendMessage(new SCKMessage(list, Event.ADD_PLAYER_TO_LOBBY));
+                    ClientMessage clientMessage=new AddPlayerToLobby();
+                    sendMessage(new SCKMessage(clientMessage));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -573,7 +459,8 @@ public class ClientSCK implements ClientGeneralInterface {
             List<Object> list=new ArrayList<>();
             list.add(nickname);
             try {
-                sendMessage(new SCKMessage(list,Event.CHOOSE_NICKNAME));
+                ClientMessage clientMessage=new ChooseNickname();
+                sendMessage(new SCKMessage(clientMessage));
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -594,7 +481,8 @@ public class ClientSCK implements ClientGeneralInterface {
             list.add(creatorNickname);
             list.add(numOfPlayers);
             try {
-                sendMessage(new SCKMessage(list,Event.CREATE_LOBBY));
+                ClientMessage clientMessage=new CreateLobby();
+                sendMessage(new SCKMessage(clientMessage));
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -617,7 +505,8 @@ public class ClientSCK implements ClientGeneralInterface {
             list.add(position);
             list.add(orientation);
             try {
-                sendMessage(new SCKMessage(list,Event.PLAY_CARD));
+                ClientMessage clientMessage=new PlayCard();
+                sendMessage(new SCKMessage(clientMessage));
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -639,9 +528,9 @@ public class ClientSCK implements ClientGeneralInterface {
             list.add(baseCard);
             list.add(orientation);
             try {
-                System.out.println("sto per inviare il messaggio in playBaseCard");
-                sendMessage(new SCKMessage(list, Event.PLAY_BASE_CARD));
-                System.out.println("messaggio in playBaseCard inviato");
+                ClientMessage clientMessage=new PlayBaseCard();
+                sendMessage(new SCKMessage(clientMessage));
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -666,7 +555,8 @@ public class ClientSCK implements ClientGeneralInterface {
             list.add(nickname);
             list.add(selectedCard);
             try {
-                sendMessage(new SCKMessage(list,Event.DRAW_CARD));
+                ClientMessage clientMessage=new DrawCard();
+                sendMessage(new SCKMessage(clientMessage));
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -687,7 +577,8 @@ public class ClientSCK implements ClientGeneralInterface {
             list.add(chooserNickname);
             list.add(selectedCard);
             try {
-                sendMessage(new SCKMessage(list,Event.CHOOSE_OBJECTIVE_CARD));
+                ClientMessage clientMessage=new ChooseObjectiveCard();
+                sendMessage(new SCKMessage(clientMessage));
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -711,7 +602,8 @@ public class ClientSCK implements ClientGeneralInterface {
             list.add(chooserNickname);
             list.add(selectedColor);
             try {
-                sendMessage(new SCKMessage(list,Event.CHOOSE_PAWN_COLOR));
+                ClientMessage clientMessage=new ChoosePawnColor();
+                sendMessage(new SCKMessage(clientMessage));
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -733,7 +625,8 @@ public class ClientSCK implements ClientGeneralInterface {
             list.add(receiversNickname);
             list.add(message);
             try {
-                sendMessage(new SCKMessage(list,Event.SEND_MESSAGE));
+                ClientMessage clientMessage=new SendMessage();
+                sendMessage(new SCKMessage(clientMessage));
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -753,7 +646,8 @@ public class ClientSCK implements ClientGeneralInterface {
             List<Object> list=new ArrayList<>();
             list.add(nickname);
             try {
-                sendMessage(new SCKMessage(list,Event.LEAVE_GAME));
+                ClientMessage clientMessage=new LeaveGame();
+                sendMessage(new SCKMessage(clientMessage));
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -1050,19 +944,18 @@ public class ClientSCK implements ClientGeneralInterface {
                 inGame=true;
                 System.out.println("The game has started!");
                 //to check the connection
-                this.firstPongReceived=true; //initialization
-                this.secondPongReceived=true; //initialization
+                this.pongReceived=true; //initialization
                 this.timer = new Timer(true); //isDaemon==true -> maintenance activities performed as long as the application is running
                 //we need to use ping-pong messages because sometimes the connection seems to be open (we do not receive any I/O exception) but it is not.
                 timer.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
-                        if(firstPongReceived||secondPongReceived) {
-                            firstPongReceived=false;
-                            secondPongReceived=false;
+                        if(pongReceived) {
+                            pongReceived=false;
                             try {
-                                sendMessage(new SCKMessage(null,Event.PING)); //first ping
-                                sendMessage(new SCKMessage(null,Event.PING)); //second ping
+                                ClientMessage clientMessage=new ClientPing();
+                                sendMessage(new SCKMessage(clientMessage)); //first ping
+                                sendMessage(new SCKMessage(clientMessage)); //second ping
                             } catch (IOException e) { //the connection doesn't is open (and it doesn't seem to be open)
                                 System.out.println("the connection has been interrupted....Bye bye");
                                 try { //we close all we have to close
