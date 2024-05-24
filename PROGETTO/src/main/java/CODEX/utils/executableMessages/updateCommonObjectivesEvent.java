@@ -1,5 +1,6 @@
 package CODEX.utils.executableMessages;
 
+import CODEX.distributed.ClientActionsInterface;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.org.model.ObjectiveCard;
 
@@ -17,5 +18,18 @@ public class updateCommonObjectivesEvent implements Event{
     @Override
     public void execute(ClientGeneralInterface client) throws RemoteException {
         client.updateCommonObjectives(objCard1, objCard2);
+    }
+    @Override
+    public void executeSCK(ClientGeneralInterface client) {
+        try {
+            client.updateCommonObjectives(objCard1, objCard2);
+        } catch (RemoteException ignored) { //è il modo migliore di gestire la cosa?
+        }
+    }
+
+    @Override
+    public boolean executeSCKServerSide(ClientActionsInterface client) { //returns true when we are considering updateGameState and the new state is 'STARTED'
+        return false;
+
     }
 }
