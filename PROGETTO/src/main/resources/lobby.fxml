@@ -26,12 +26,12 @@
                               <Font name="Georgia" size="55.0" />
                            </font>
                         </Label>
-                        <HBox prefHeight="285.0" prefWidth="1100.0">
+                        <HBox alignment="TOP_CENTER" prefHeight="323.0" prefWidth="1350.0">
                            <children>
                               <Separator opacity="0.0" prefHeight="46.0" prefWidth="239.0" />
-                              <VBox prefHeight="224.0" prefWidth="256.0">
+                              <VBox prefHeight="340.0" prefWidth="256.0">
                                  <children>
-                                    <Label text="JOIN" textFill="WHITE">
+                                    <Label fx:id="joinLabel" text="JOIN" textFill="WHITE">
                                        <font>
                                           <Font name="Georgia Bold" size="40.0" />
                                        </font>
@@ -46,13 +46,13 @@
                                     </HBox>
                                     <HBox prefHeight="40.0" prefWidth="256.0">
                                        <children>
-                                          <Button mnemonicParsing="false" onMouseClicked="#updateAvailableLobbies" prefHeight="40.0" prefWidth="76.0" text="Refresh">
+                                          <Button fx:id="refreshButton" mnemonicParsing="false" onMouseClicked="#updateAvailableLobbies" prefHeight="40.0" prefWidth="76.0" text="Refresh">
                                              <font>
                                                 <Font name="Georgia Bold" size="14.0" />
                                              </font>
                                           </Button>
                                           <Separator opacity="0.0" prefHeight="15.0" prefWidth="24.0" />
-                                          <Button fx:id="joinButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="76.0" text="Join">
+                                          <Button fx:id="joinButton" mnemonicParsing="false" onAction="#joinLobby" prefHeight="40.0" prefWidth="76.0" text="Join">
                                              <font>
                                                 <Font name="Georgia Bold" size="14.0" />
                                              </font></Button>
@@ -79,12 +79,16 @@
                                           <Font name="Georgia" size="18.0" />
                                        </font>
                                     </Label>
+                                    <Label fx:id="fullLobby" opacity="0.0" prefHeight="36.0" prefWidth="256.0" text="This lobby is full" textFill="#d30000">
+                                       <font>
+                                          <Font name="Georgia Bold" size="18.0" />
+                                       </font></Label>
                                  </children>
                               </VBox>
                               <Separator opacity="0.0" prefHeight="73.0" prefWidth="202.0" />
                               <VBox prefHeight="285.0" prefWidth="398.0">
                                  <children>
-                                    <Label text="CREATE" textFill="WHITE">
+                                    <Label fx:id="createLabel" text="CREATE" textFill="WHITE">
                                        <font>
                                           <Font name="Georgia Bold" size="40.0" />
                                        </font>
@@ -92,12 +96,12 @@
                                           <Insets bottom="35.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Label prefHeight="24.0" prefWidth="372.0" text="How many players do you want in your lobby? " textFill="WHITE">
+                                    <Label fx:id="question1" prefHeight="24.0" prefWidth="372.0" text="How many players do you want in your lobby? " textFill="WHITE">
                                        <font>
                                           <Font name="Georgia" size="18.0" />
                                        </font>
                                     </Label>
-                                    <Label text="You can select between 2 and 4 players (ex. 3)" textFill="WHITE">
+                                    <Label fx:id="question2" text="You can select between 2 and 4 players (ex. 3)" textFill="WHITE">
                                        <font>
                                           <Font name="Georgia" size="18.0" />
                                        </font>
@@ -105,8 +109,8 @@
                                           <Insets bottom="10.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <TextField prefHeight="40.0" prefWidth="435.0" />
-                                    <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="78.0" text="Create">
+                                    <TextField fx:id="createText" prefHeight="40.0" prefWidth="435.0" />
+                                    <Button fx:id="createButton" mnemonicParsing="false" prefHeight="40.0" prefWidth="78.0" text="Create">
                                        <VBox.margin>
                                           <Insets top="20.0" />
                                        </VBox.margin>
@@ -114,7 +118,7 @@
                                           <Font name="Georgia Bold" size="14.0" />
                                        </font>
                                     </Button>
-                                    <Label text="Wrong number of players!" textFill="#cf8600">
+                                    <Label fx:id="wrongNumber" text="Wrong number of players!" textFill="#cf8600">
                                        <font>
                                           <Font name="Georgia" size="18.0" />
                                        </font>
@@ -132,6 +136,19 @@
                            <VBox.margin>
                               <Insets top="130.0" />
                            </VBox.margin>
+                        </HBox>
+                        <HBox prefHeight="201.0" prefWidth="1350.0">
+                           <children>
+                              <Separator opacity="0.0" prefHeight="187.0" prefWidth="537.0" />
+                              <Label fx:id="waitingPlayers" opacity="0.0" prefHeight="106.0" prefWidth="249.0" text="Waiting for players..." textFill="#85ff8e">
+                                 <font>
+                                    <Font name="Georgia Bold" size="22.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                           </children>
                         </HBox>
                      </children>
                   </VBox>
