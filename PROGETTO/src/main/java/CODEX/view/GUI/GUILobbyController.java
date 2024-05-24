@@ -7,12 +7,16 @@ import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GUILobbyController {
 
@@ -98,7 +102,6 @@ public class GUILobbyController {
     public void updateAvailableLobbies() {
         if (network == 1) { // RMI
             try {
-                System.out.println("STO AGGIUNTANDO");
                 availableLobbies.getItems().clear();
                 setAvailableLobbies(rmiClient.getAvailableLobbies());
                 if (rmiClient.getAvailableLobbies().isEmpty()) {
@@ -112,7 +115,6 @@ public class GUILobbyController {
         } else if (network == 2) { // TCP
              try {
                  clientSCK.checkAvailableLobby();
-                 System.out.println("STO AGGIUNTANDO");
                  availableLobbies.getItems().clear();
                  setAvailableLobbies(clientSCK.getAvailableLobbies());
                  if (clientSCK.getAvailableLobbies().isEmpty()) {
@@ -166,9 +168,42 @@ public class GUILobbyController {
                     throw new RuntimeException(e);
                 }
             }
+
+            changeScene();
         }).start();
+
     }
 
+    public void changeScene(){
+        // let's show the new window!
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/inGame.fxml"));
+        Scene scene = null;
+        try {
+            scene = new Scene(fxmlLoader.load());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        Stage stage = new Stage();
+        // old dimensions and position
+        double width = stage.getWidth();
+        double height = stage.getHeight();
+        double x = stage.getX();
+        double y = stage.getY();
+
+        // new scene
+        stage.setScene(scene);
+
+        // setting the od values of position and dimension
+        stage.setWidth(width);
+        stage.setHeight(height);
+        stage.setX(x);
+        stage.setY(y);
+
+        GUILobbyController ctr = fxmlLoader.getController();
+        stage.show();
+    }
 
     public void joinLobby() {
         fullLobby.setOpacity(0);
@@ -197,7 +232,33 @@ public class GUILobbyController {
         }
     }
 
+public void createNewLobby(){
+    int number;
+            if(network == 1){
+                try {
+                    String input = createText.getText();
+                    number = Integer.parseInt(input);
 
+                    rmiClient.createLobby(rmiClient.getPersonalPlayer().getNickname(), number);
+                    updateAvailableLobbies();
+                    setWaitingPlayers();
+                } catch (RemoteException | NotBoundException e) {
+                    throw new RuntimeException(e);
+                }
+            } else if (network == 2) {
+                try {
+                    String input = createText.getText();
+                    number = Integer.parseInt(input);
+
+                    clientSCK.createLobby(clientSCK.getPersonalPlayer().getNickname(), number);
+                    updateAvailableLobbies();
+                    setWaitingPlayers();
+                } catch (RemoteException | NotBoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+}
 
     void setRmiClient(RMIClient client) {
              this.rmiClient = client;
