@@ -1,5 +1,8 @@
 package CODEX.view.GUI;
 
+import CODEX.Exceptions.FullLobbyException;
+import CODEX.Exceptions.GameAlreadyStartedException;
+import CODEX.Exceptions.GameNotExistsException;
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
 import javafx.fxml.FXML;
@@ -8,6 +11,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
