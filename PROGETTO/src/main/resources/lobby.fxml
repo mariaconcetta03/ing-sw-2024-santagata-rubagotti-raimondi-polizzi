@@ -26,7 +26,7 @@
                               <Font name="Georgia" size="55.0" />
                            </font>
                         </Label>
-                        <HBox prefHeight="285.0" prefWidth="1100.0">
+                        <HBox alignment="TOP_CENTER" prefHeight="285.0" prefWidth="1100.0">
                            <children>
                               <Separator opacity="0.0" prefHeight="46.0" prefWidth="239.0" />
                               <VBox prefHeight="224.0" prefWidth="256.0">
