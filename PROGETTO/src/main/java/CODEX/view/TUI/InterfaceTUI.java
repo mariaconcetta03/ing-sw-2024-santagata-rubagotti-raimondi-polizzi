@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 public class InterfaceTUI implements Serializable { //I don't think it has to extend 
 
@@ -753,10 +754,21 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
      * @param players are the players in the game
      */
     public void printScoreBoard(List<Player> players) {
-        Collections.sort(players, Comparator.comparing(p-> p.getPoints()));
-        for (int i = 0; i < players.size(); i++) {
+        Map<Integer,Player> map= new HashMap<>();
+        for(Player p: players){
+            map.put(p.getPoints(),p);
+
+        }
+        List<Integer> sortedList = players.stream().map(Player::getPoints).sorted().toList();
+        for(int k = 0; k < sortedList.size(); k++){
+            System.out.println(map.get(k).getNickname());
+        }
+        /*
+        for (int k = 0; k < sortedList.size(); k++) {
             System.out.println((i + 1) + "_ " + players.get(i).getNickname() + " scored " + players.get(i).getPoints() + " points!");
         }
+
+         */
     }
 
     public void printDrawableCards(PlayableDeck goldDeck, PlayableDeck resourceDeck, List<PlayableCard> visibileCards) {
