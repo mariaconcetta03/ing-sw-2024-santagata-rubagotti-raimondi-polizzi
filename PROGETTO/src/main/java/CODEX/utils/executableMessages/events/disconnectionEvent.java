@@ -4,7 +4,7 @@ import CODEX.distributed.ClientGeneralInterface;
 
 import java.rmi.RemoteException;
 
-public class disconnectionEvent implements Event {
+public class disconnectionEvent implements Event {  //sostituisce quello che prima era l'evento di GAME_LEFT
     @Override
     public void execute(ClientGeneralInterface client) throws RemoteException {
         //client.

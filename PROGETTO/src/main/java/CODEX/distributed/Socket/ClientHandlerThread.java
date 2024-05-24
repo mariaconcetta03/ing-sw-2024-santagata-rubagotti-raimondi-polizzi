@@ -166,6 +166,8 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     }
 
     private void react(SCKMessage sckMessage){ //qui in base al messaggio letto chiamiamo il giusto metodo della ClientActionsInterface
+        //al posto dello switch qui userò sempre l'attributo ServerMessage della classe SCKMessage
+
         //legge il messaggio e fa qualcosa
         switch (sckMessage.getMessageEvent()) {
             /*
@@ -290,6 +292,8 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     // questo update specifico andrebbe a far partire il thread check connection poco prima di avvisare il client che la partita è iniziata (con un messaggio)
     @Override
     public void update(Observable obs, Message arg) { //here we call writeTheStream (the switch case is already in ClientSCK)
+        //l'update non mi passerà più un Message ma un Event che manderò dentro un sckMessage
+
         if(arg.getMessageEvent().equals(Event.UPDATED_PLAYER_DECK)){
             List<Object> list=new ArrayList<>();
             list.add(arg.getObj().get(0));

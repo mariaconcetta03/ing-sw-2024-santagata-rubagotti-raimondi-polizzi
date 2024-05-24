@@ -1,6 +1,8 @@
 package CODEX.distributed.messages;
 
+import CODEX.utils.ClientMessage;
 import CODEX.utils.Event;
+import CODEX.utils.executableMessages.serverMessages.ServerMessage;
 
 import java.io.Serializable;
 import java.util.*;
@@ -9,7 +11,8 @@ import java.util.*;
  * This class defines a message that is used to pass information through the socket in a bidirectional way
  */
 public class SCKMessage extends Message implements Serializable{ //qui dovremmo aggiungere attributi e costruttori che collegano il messaggio a chi l'ha generato
-
+    private ClientMessage clientMessage;
+    private ServerMessage serverMessage;
     /**
      * Constructor method
      * @param obj the single generic object
@@ -26,5 +29,14 @@ public class SCKMessage extends Message implements Serializable{ //qui dovremmo 
      */
     public SCKMessage(List<Object> obj, Event event) {
         super(obj, event);
+    }
+
+    public SCKMessage(ClientMessage msg){  //o si vuol mandare un ClientMessage o si vuole mandare un ServerMessage
+        super(); //qui abbiamo un this.event=
+        this.clientMessage=msg; //letto lato server
+    }
+    public SCKMessage(ServerMessage msg){ //o si vuol mandare un ClientMessage o si vuole mandare un ServerMessage
+        super(); //qui abbiamo un this.event=null;
+        this.serverMessage=msg; //letto lato client
     }
 }

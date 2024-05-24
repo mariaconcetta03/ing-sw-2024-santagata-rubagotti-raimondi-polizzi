@@ -245,6 +245,8 @@ public class ClientSCK implements ClientGeneralInterface {
     //non è l'update dei listeners (quello è in ClientHandlerThread: scriverà sull'input della socket)
     //con questo update andiamo a modificare le cose locali al client
     public void modifyClientSide(SCKMessage sckMessage) throws IOException {
+        //al posto dello switch se l'attributo Event del sckMessage è diverso da null si tratta di un update, altrimenti è un ServerMessage (attributo ServerMessage del sckMessage)
+
         switch (sckMessage.getMessageEvent()) {
             case PONG -> { //sent by the server to say 'yes, I'm still connected' (in response to a ping message)
                 if(this.firstPongReceived){
@@ -288,7 +290,7 @@ public class ClientSCK implements ClientGeneralInterface {
                 //we have to change the view and the local model
                 updateGoldCard2((PlayableCard) sckMessage.getObj().get(0));
             }
-            case UPDATED_CHAT->{
+            case UPDATED_CHAT->{  //non è stato creato un nuovo Event del package events per questo
                 //we have to change the view and the local model
                 updateChat((Chat) sckMessage.getObj().get(0));
             }
@@ -296,7 +298,7 @@ public class ClientSCK implements ClientGeneralInterface {
                 //we have to change the view and the local model
                 updatePawns((Player) sckMessage.getObj().get(0), (Pawn) sckMessage.getObj().get(1));
             }
-            case UPDATED_NICKNAME->{
+            case UPDATED_NICKNAME->{ //non è stato creato un nuovo Event del package events per questo
                 //we have to change the view and the local model
                 updateNickname((Player) sckMessage.getObj().get(0), (String) sckMessage.getObj().get(1));
             }

@@ -4,9 +4,9 @@ import CODEX.utils.Event;
 import java.io.Serializable;
 import java.util.*;
 
-public class Message implements Serializable {
+public class Message implements Serializable { //questa classe verrà cancellata e si usarà solo SCKMessage per le SCK
         protected final Event event;
-        protected final List<Object> obj;
+        protected List<Object> obj; //to be deleted
 
     /**
      * Constructor method
@@ -29,7 +29,12 @@ public class Message implements Serializable {
             this.event = event;
         }
 
-        public List<Object> getObj() {
+    public Message() {
+        this.event=null;
+    }
+
+
+    public List<Object> getObj() {
             return this.obj;
         }
 

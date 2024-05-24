@@ -6,7 +6,7 @@ import CODEX.org.model.Player;
 import java.rmi.RemoteException;
 import java.util.List;
 
-public class updatePlayersOrderEvent implements Event {
+public class updatePlayersOrderEvent implements Event { //questo era prima l'evento UPDATED_ROUND
     private List<Player> newPlayingOrder;
 
     public updatePlayersOrderEvent(List<Player> newPlayingOrder) {
