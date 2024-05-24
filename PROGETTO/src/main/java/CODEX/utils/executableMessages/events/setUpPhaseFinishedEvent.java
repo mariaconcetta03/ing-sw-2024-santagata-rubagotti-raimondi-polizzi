@@ -1,11 +1,10 @@
-package CODEX.utils.executableMessages;
+package CODEX.utils.executableMessages.events;
 
-import CODEX.distributed.ClientActionsInterface;
 import CODEX.distributed.ClientGeneralInterface;
 
 import java.rmi.RemoteException;
 
-public class setUpPhaseFinishedEvent implements Event{
+public class setUpPhaseFinishedEvent implements Event {
     @Override
     public void execute(ClientGeneralInterface client) throws RemoteException {
         client.finishedSetUpPhase();
@@ -19,7 +18,7 @@ public class setUpPhaseFinishedEvent implements Event{
     }
 
     @Override
-    public boolean executeSCKServerSide(ClientActionsInterface client) { //returns true when we are considering updateGameState and the new state is 'STARTED'
+    public boolean executeSCKServerSide() { //returns true when we are considering updateGameState and the new state is 'STARTED'
         return false;
 
     }

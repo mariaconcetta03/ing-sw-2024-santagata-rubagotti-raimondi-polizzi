@@ -1,12 +1,11 @@
-package CODEX.utils.executableMessages;
+package CODEX.utils.executableMessages.events;
 
-import CODEX.distributed.ClientActionsInterface;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.org.model.Board;
 
 import java.rmi.RemoteException;
 
-public class updateBoardEvent implements Event{
+public class updateBoardEvent implements Event {
     private String boardOwner;
     private Board board;
     public updateBoardEvent(String boardOwner, Board board){
@@ -26,7 +25,7 @@ public class updateBoardEvent implements Event{
     }
 
     @Override
-    public boolean executeSCKServerSide(ClientActionsInterface client) { //returns true when we are considering updateGameState and the new state is 'STARTED'
+    public boolean executeSCKServerSide() { //returns true when we are considering updateGameState and the new state is 'STARTED'
         return false;
 
     }

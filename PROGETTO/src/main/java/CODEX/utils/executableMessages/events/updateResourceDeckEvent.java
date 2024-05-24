@@ -1,12 +1,11 @@
-package CODEX.utils.executableMessages;
+package CODEX.utils.executableMessages.events;
 
-import CODEX.distributed.ClientActionsInterface;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.org.model.PlayableDeck;
 
 import java.rmi.RemoteException;
 
-public class updateResourceDeckEvent implements Event{
+public class updateResourceDeckEvent implements Event {
     private PlayableDeck resourceDeck;
     public updateResourceDeckEvent(PlayableDeck resourceDeck){
         this.resourceDeck=resourceDeck;
@@ -24,7 +23,7 @@ public class updateResourceDeckEvent implements Event{
     }
 
     @Override
-    public boolean executeSCKServerSide(ClientActionsInterface client) { //returns true when we are considering updateGameState and the new state is 'STARTED'
+    public boolean executeSCKServerSide() { //returns true when we are considering updateGameState and the new state is 'STARTED'
         return false;
 
     }

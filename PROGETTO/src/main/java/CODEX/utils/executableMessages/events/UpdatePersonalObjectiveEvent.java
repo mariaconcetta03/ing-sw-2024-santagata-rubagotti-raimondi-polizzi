@@ -1,12 +1,11 @@
-package CODEX.utils.executableMessages;
+package CODEX.utils.executableMessages.events;
 
-import CODEX.distributed.ClientActionsInterface;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.org.model.ObjectiveCard;
 
 import java.rmi.RemoteException;
 
-public class UpdatePersonalObjectiveEvent implements Event{
+public class UpdatePersonalObjectiveEvent implements Event {
     ObjectiveCard personalObjCard;
     String nickname;
 
@@ -28,7 +27,7 @@ public class UpdatePersonalObjectiveEvent implements Event{
     }
 
     @Override
-    public boolean executeSCKServerSide(ClientActionsInterface client) { //returns true when we are considering updateGameState and the new state is 'STARTED'
+    public boolean executeSCKServerSide() { //returns true when we are considering updateGameState and the new state is 'STARTED'
         return false;
 
     }

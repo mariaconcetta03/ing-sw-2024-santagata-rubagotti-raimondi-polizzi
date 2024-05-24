@@ -342,7 +342,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     }
 
     @Override
-    public void update(Observable obs, CODEX.utils.executableMessages.Event e) throws RemoteException {
+    public void update(Observable obs, CODEX.utils.executableMessages.events.Event e) throws RemoteException {
 
     }
 

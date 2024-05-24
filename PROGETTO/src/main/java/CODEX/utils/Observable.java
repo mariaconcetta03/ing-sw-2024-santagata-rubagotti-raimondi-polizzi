@@ -1,7 +1,7 @@
 package CODEX.utils;
 
 import CODEX.distributed.messages.Message;
-import CODEX.utils.executableMessages.Event;
+import CODEX.utils.executableMessages.events.Event;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;

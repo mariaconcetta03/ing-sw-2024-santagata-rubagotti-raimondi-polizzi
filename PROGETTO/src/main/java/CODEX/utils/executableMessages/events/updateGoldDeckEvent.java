@@ -1,6 +1,5 @@
-package CODEX.utils.executableMessages;
+package CODEX.utils.executableMessages.events;
 
-import CODEX.distributed.ClientActionsInterface;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.org.model.PlayableDeck;
 
@@ -29,7 +28,7 @@ public class updateGoldDeckEvent implements Event {
     }
 
     @Override
-    public boolean executeSCKServerSide(ClientActionsInterface client) { //returns true when we are considering updateGameState and the new state is 'STARTED'
+    public boolean executeSCKServerSide() { //returns true when we are considering updateGameState and the new state is 'STARTED'
         return false;
 
     }

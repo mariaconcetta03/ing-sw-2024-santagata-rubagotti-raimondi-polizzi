@@ -1,6 +1,5 @@
-package CODEX.utils.executableMessages;
+package CODEX.utils.executableMessages.events;
 
-import CODEX.distributed.ClientActionsInterface;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.org.model.PlayableCard;
 
@@ -8,7 +7,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class updatePlayerDeckEvent implements Event{
+public class updatePlayerDeckEvent implements Event {
     private String playerNickname;
     private PlayableCard[] playerDeck;
 
@@ -39,7 +38,7 @@ public class updatePlayerDeckEvent implements Event{
     }
 
     @Override
-    public boolean executeSCKServerSide(ClientActionsInterface client) { //returns true when we are considering updateGameState and the new state is 'STARTED'
+    public boolean executeSCKServerSide() { //returns true when we are considering updateGameState and the new state is 'STARTED'
         List<PlayableCard> list=new ArrayList<>();
         PlayableCard[] playableCards=this.playerDeck;
         for (PlayableCard c:playableCards){

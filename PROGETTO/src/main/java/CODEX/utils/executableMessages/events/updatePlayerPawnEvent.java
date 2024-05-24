@@ -1,13 +1,12 @@
-package CODEX.utils.executableMessages;
+package CODEX.utils.executableMessages.events;
 
-import CODEX.distributed.ClientActionsInterface;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.org.model.Pawn;
 import CODEX.org.model.Player;
 
 import java.rmi.RemoteException;
 
-public class updatePlayerPawnEvent implements Event{
+public class updatePlayerPawnEvent implements Event {
     private Player player; //@TODO piu che il player, magari il nickname
     private Pawn pawn;
 
@@ -29,7 +28,7 @@ public class updatePlayerPawnEvent implements Event{
     }
 
     @Override
-    public boolean executeSCKServerSide(ClientActionsInterface client) { //returns true when we are considering updateGameState and the new state is 'STARTED'
+    public boolean executeSCKServerSide() { //returns true when we are considering updateGameState and the new state is 'STARTED'
         return false;
 
     }

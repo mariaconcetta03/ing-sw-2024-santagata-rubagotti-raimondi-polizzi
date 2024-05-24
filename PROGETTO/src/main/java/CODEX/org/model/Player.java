@@ -6,7 +6,7 @@ import CODEX.Exceptions.CardNotOwnedException;
 import CODEX.distributed.messages.Message;
 import CODEX.utils.Event;
 import CODEX.utils.Observable;
-import CODEX.utils.executableMessages.*;
+import CODEX.utils.executableMessages.events.*;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;

@@ -3,7 +3,8 @@ import CODEX.Exceptions.CardNotDrawableException;
 import CODEX.distributed.messages.Message;
 import CODEX.utils.Event;
 import CODEX.utils.Observable;
-import CODEX.utils.executableMessages.*;
+import CODEX.utils.executableMessages.clientMessages.ClientMessage;
+import CODEX.utils.executableMessages.events.*;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -673,7 +674,7 @@ public class Game extends Observable implements Serializable {
     public void setState (GameState state) throws RemoteException {
         this.state = state;
         notifyObservers(new Message(this.state, Event.GAME_STATE_CHANGED)); //we'll look into it
-        notifyObservers(new updateGameStateEvent(this.state));
+        notifyObservers(new ClientMessage.updateGameStateEvent(this.state));
     }
 
 

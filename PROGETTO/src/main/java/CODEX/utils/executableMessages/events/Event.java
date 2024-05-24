@@ -1,6 +1,5 @@
-package CODEX.utils.executableMessages;
+package CODEX.utils.executableMessages.events;
 
-import CODEX.distributed.ClientActionsInterface;
 import CODEX.distributed.ClientGeneralInterface;
 
 import java.io.Serializable;
@@ -16,7 +15,7 @@ public interface Event extends Serializable {
 
     //it checks Boolean startCheckConnection (returns true if this Boolean is true). It's true when we are in updateGameState and the new state is 'STARTED'
     //+ in updatePlayerDeck writes the attribute convertedArray (an array can't be transmitted using a TCP stream)
-    boolean executeSCKServerSide(ClientActionsInterface client); //needed to convert an array into a list and to decide server side when to start checking the connection
+    boolean executeSCKServerSide(); //needed to convert an array into a list and to decide server side when to start checking the connection
 
 
     //ClientActionsInterface client: we can use it to do actions server-side (after receiving a msg from ClientSCK)

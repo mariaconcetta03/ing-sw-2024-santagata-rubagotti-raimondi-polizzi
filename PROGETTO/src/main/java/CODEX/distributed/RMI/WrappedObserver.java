@@ -1,14 +1,11 @@
 package CODEX.distributed.RMI;
 
 import CODEX.distributed.messages.Message;
-import CODEX.org.model.*;
-import CODEX.org.model.Game.GameState;
 import CODEX.utils.Observable;
 import CODEX.utils.Observer;
-import CODEX.utils.executableMessages.Event;
+import CODEX.utils.executableMessages.events.Event;
 
 import java.rmi.RemoteException;
-import java.util.List;
 
 
 /**
