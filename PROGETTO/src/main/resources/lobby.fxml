@@ -118,7 +118,7 @@
                                           <Font name="Georgia Bold" size="14.0" />
                                        </font>
                                     </Button>
-                                    <Label fx:id="wrongNumber" text="Wrong number of players!" textFill="#cf8600">
+                                    <Label fx:id="wrongNumber" opacity="0.0" text="Wrong number of players!" textFill="#cf8600">
                                        <font>
                                           <Font name="Georgia" size="18.0" />
                                        </font>

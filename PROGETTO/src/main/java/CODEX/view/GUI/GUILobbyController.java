@@ -258,15 +258,23 @@ public class GUILobbyController {
     }
 
 public void createNewLobby(){
+        wrongNumber.setOpacity(0);
     int number;
             if(network == 1){
                 try {
                     String input = createText.getText();
                     number = Integer.parseInt(input);
 
-                    rmiClient.createLobby(rmiClient.getPersonalPlayer().getNickname(), number);
-                    updateAvailableLobbies();
-                    setWaitingPlayers();
+                    if (number >= 2 && number <=4) {
+                        rmiClient.createLobby(rmiClient.getPersonalPlayer().getNickname(), number);
+                        updateAvailableLobbies();
+                        setWaitingPlayers();
+                    }
+                    else {
+                        wrongNumber.setOpacity(1);
+                    }
+
+
                 } catch (RemoteException | NotBoundException e) {
                     throw new RuntimeException(e);
                 }
@@ -274,10 +282,14 @@ public void createNewLobby(){
                 try {
                     String input = createText.getText();
                     number = Integer.parseInt(input);
-
-                    clientSCK.createLobby(clientSCK.getPersonalPlayer().getNickname(), number);
-                    updateAvailableLobbies();
-                    setWaitingPlayers();
+                    if (number >= 2 && number <=4) {
+                        clientSCK.createLobby(clientSCK.getPersonalPlayer().getNickname(), number);
+                        updateAvailableLobbies();
+                        setWaitingPlayers();
+                    }
+                    else {
+                        wrongNumber.setOpacity(1);
+                    }
                 } catch (RemoteException | NotBoundException e) {
                     throw new RuntimeException(e);
                 }
