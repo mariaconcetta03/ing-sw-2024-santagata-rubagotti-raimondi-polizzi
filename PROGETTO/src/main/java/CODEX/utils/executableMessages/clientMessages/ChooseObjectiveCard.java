@@ -1,19 +1,19 @@
 package CODEX.utils.executableMessages.clientMessages;
 
 import CODEX.distributed.Socket.ClientHandlerThread;
+import CODEX.org.model.ObjectiveCard;
 
 public class ChooseObjectiveCard implements ClientMessage{
+    private final String chooserNickname;
+    private final ObjectiveCard selectedCard;
+    public ChooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard){
+        this.chooserNickname=chooserNickname;
+        this.selectedCard=selectedCard;
+    }
     @Override
     public void execute(ClientHandlerThread clientHandlerThread) {
-        /*
-        case CHOOSE_OBJECTIVE_CARD->{
-                try {
-                    chooseObjectiveCard((String) sckMessage.getObj().get(0), (ObjectiveCard) sckMessage.getObj().get(1));
-                }catch (Exception e){
-                    System.err.println(e.getMessage());
-                }
-            }
-         */
+        clientHandlerThread.chooseObjectiveCard(this.chooserNickname,this.selectedCard);
+
 
     }
 }

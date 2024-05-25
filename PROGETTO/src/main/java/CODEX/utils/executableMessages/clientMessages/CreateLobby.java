@@ -3,18 +3,16 @@ package CODEX.utils.executableMessages.clientMessages;
 import CODEX.distributed.Socket.ClientHandlerThread;
 
 public class CreateLobby implements ClientMessage{
+    private final String creatorNickname;
+    private final int numOfPlayers;
+    public CreateLobby(String creatorNickname, int numOfPlayers){
+        this.creatorNickname=creatorNickname;
+        this.numOfPlayers=numOfPlayers;
+    }
     @Override
     public void execute(ClientHandlerThread clientHandlerThread) {
-        /*
-        case CREATE_LOBBY->{
-                System.out.println("sono in CREATE_LOBBY");
-                try {
-                    createLobby((String)sckMessage.getObj().get(0),(int) sckMessage.getObj().get(1));
-                }catch (Exception e){
-                    System.err.println(e.getMessage());
-                }
-            }
-         */
+        clientHandlerThread.createLobby(creatorNickname,numOfPlayers);
+
 
     }
 }

@@ -1,18 +1,18 @@
 package CODEX.utils.executableMessages.clientMessages;
 
 import CODEX.distributed.Socket.ClientHandlerThread;
+import CODEX.org.model.Pawn;
 
 public class ChoosePawnColor implements ClientMessage{
+    private final String chooserNickname;
+    private final Pawn selectedColor ;
+    public ChoosePawnColor(String chooserNickname, Pawn selectedColor){
+        this.chooserNickname=chooserNickname;
+        this.selectedColor=selectedColor;
+    }
     @Override
     public void execute(ClientHandlerThread clientHandlerThread) {
-        /*
-        case CHOOSE_PAWN_COLOR->{
-                try {
-                    choosePawnColor((String) sckMessage.getObj().get(0), (Pawn) sckMessage.getObj().get(1));
-                }catch (Exception e){
-                    System.err.println(e.getMessage());
-                }
-            }
-         */
+        clientHandlerThread.choosePawnColor(this.chooserNickname,this.selectedColor);
+
     }
 }

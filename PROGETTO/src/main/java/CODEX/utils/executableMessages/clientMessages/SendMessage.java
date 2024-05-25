@@ -2,18 +2,21 @@ package CODEX.utils.executableMessages.clientMessages;
 
 import CODEX.distributed.Socket.ClientHandlerThread;
 
+import java.util.List;
+
 public class SendMessage implements ClientMessage{
+    private final String senderNickname;
+    private final List<String> receiversNickname;
+    private final String message;
+    public SendMessage(String senderNickname, List<String> receiversNickname, String message){
+        this.senderNickname=senderNickname;
+        this.receiversNickname=receiversNickname;
+        this.message=message;
+    }
     @Override
     public void execute(ClientHandlerThread clientHandlerThread) {
-        /*
-        case SEND_MESSAGE->{
-                try {
-                    sendMessage((String) sckMessage.getObj().get(0), (List<String>) sckMessage.getObj().get(1), (String) sckMessage.getObj().get(2));
-                }catch (Exception e){
-                    System.err.println(e.getMessage());
-                }
-            }
-         */
+        clientHandlerThread.sendMessage(this.senderNickname,this.receiversNickname,this.message);
+
 
     }
 }

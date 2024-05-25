@@ -3,17 +3,14 @@ package CODEX.utils.executableMessages.clientMessages;
 import CODEX.distributed.Socket.ClientHandlerThread;
 
 public class ChooseNickname implements ClientMessage{
+    private final String nickname;
+    public ChooseNickname(String nickname){
+        this.nickname=nickname;
+    }
     @Override
     public void execute(ClientHandlerThread clientHandlerThread) {
-        /*
-        case CHOOSE_NICKNAME->{
-                try {
-                    chooseNickname((String)sckMessage.getObj().get(0));
-                }catch (Exception e){
-                    System.err.println(e.getMessage());
-                }
-            }
-         */
+        clientHandlerThread.chooseNickname(this.nickname);
+
 
     }
 }

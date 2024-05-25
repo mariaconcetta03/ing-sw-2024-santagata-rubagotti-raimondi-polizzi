@@ -1,19 +1,24 @@
 package CODEX.utils.executableMessages.clientMessages;
 
 import CODEX.distributed.Socket.ClientHandlerThread;
+import CODEX.org.model.Coordinates;
+import CODEX.org.model.PlayableCard;
 
 public class PlayCard implements ClientMessage{
+    private final String nickname;
+    private final PlayableCard selectedCard;
+    private final Coordinates position;
+    private final boolean orientation;
+
+    public PlayCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation){
+        this.nickname=nickname;
+        this.selectedCard=selectedCard;
+        this.position=position;
+        this.orientation=orientation;
+    }
     @Override
     public void execute(ClientHandlerThread clientHandlerThread) {
-        /*
-        case PLAY_CARD->{
-                try {
-                    playCard((String) sckMessage.getObj().get(0), (PlayableCard) sckMessage.getObj().get(1), (Coordinates) sckMessage.getObj().get(2), (boolean) sckMessage.getObj().get(3));
-                 }catch (Exception e){
-                    System.err.println(e.getMessage());
-                 }
-            }
-         */
+        clientHandlerThread.playCard(this.nickname,this.selectedCard,this.position,this.orientation);
 
     }
 }

@@ -5,7 +5,7 @@ import CODEX.Exceptions.*;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.messages.SCKMessage;
 import CODEX.org.model.*;
-import CODEX.utils.Event;
+
 import CODEX.utils.executableMessages.clientMessages.*;
 import CODEX.view.GUI.InterfaceGUI;
 import CODEX.view.TUI.ANSIFormatter;
@@ -394,11 +394,11 @@ public class ClientSCK implements ClientGeneralInterface {
 
     public void checkAvailableLobby(){
         synchronized (actionLock) {
+            ClientMessage clientMessage= new ClientAvailableLobbies();
             try {
-                ClientMessage clientMessage= new ClientAvailableLobbies();
                 sendMessage(new SCKMessage(clientMessage));
-            }catch (Exception e){
-                e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
             while (!responseReceived) {
                 try {
@@ -411,11 +411,11 @@ public class ClientSCK implements ClientGeneralInterface {
     }
     public void checkNPlayers(){
         synchronized (actionLock) {
+            ClientMessage clientMessage=new CheckNPlayers();
             try {
-                ClientMessage clientMessage=new CheckNPlayers();
                 sendMessage(new SCKMessage(clientMessage));
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
             while (!responseReceived){
                 try {
@@ -431,17 +431,13 @@ public class ClientSCK implements ClientGeneralInterface {
     //these classes implement clientGeneralInterface
     @Override
     public void addPlayerToLobby(String playerNickname, int gameId) throws RemoteException, NotBoundException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
-        System.out.println("sono in addPlayerToLobby");
         synchronized (actionLock) {
-                List<Object> list = new ArrayList<>();
-                list.add(playerNickname);
-                list.add(gameId);
-                try {
-                    ClientMessage clientMessage=new AddPlayerToLobby();
-                    sendMessage(new SCKMessage(clientMessage));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            ClientMessage clientMessage=new AddPlayerToLobby(playerNickname,gameId);
+            try {
+                sendMessage(new SCKMessage(clientMessage));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             while (!responseReceived){
                 try {
                     actionLock.wait();
@@ -449,20 +445,17 @@ public class ClientSCK implements ClientGeneralInterface {
                     throw new RuntimeException(e);
                 }
             }
-            System.out.println("risposta ricevuta in addPlayerToLobby");
         }
     }
 
     @Override
     public void chooseNickname(String nickname) throws RemoteException, NotBoundException {
         synchronized (actionLock) {
-            List<Object> list=new ArrayList<>();
-            list.add(nickname);
+            ClientMessage clientMessage=new ChooseNickname(nickname);
             try {
-                ClientMessage clientMessage=new ChooseNickname();
                 sendMessage(new SCKMessage(clientMessage));
-            }catch (Exception e){
-                e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
             while (!responseReceived) {
                 try {
@@ -477,14 +470,11 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void createLobby(String creatorNickname, int numOfPlayers) throws RemoteException, NotBoundException {
         synchronized (actionLock) {
-            List<Object> list=new ArrayList<>();
-            list.add(creatorNickname);
-            list.add(numOfPlayers);
+            ClientMessage clientMessage=new CreateLobby(creatorNickname,numOfPlayers);
             try {
-                ClientMessage clientMessage=new CreateLobby();
                 sendMessage(new SCKMessage(clientMessage));
-            }catch (Exception e){
-                e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
             while (!responseReceived) {
                 try {
@@ -499,16 +489,11 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, NotBoundException {
         synchronized (actionLock) {
-            List<Object> list=new ArrayList<>();
-            list.add(nickname);
-            list.add(selectedCard);
-            list.add(position);
-            list.add(orientation);
+            ClientMessage clientMessage=new PlayCard(nickname,selectedCard,position,orientation);
             try {
-                ClientMessage clientMessage=new PlayCard();
                 sendMessage(new SCKMessage(clientMessage));
-            }catch (Exception e){
-                e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
             while (!responseReceived) {
                 try {
@@ -523,16 +508,11 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException, NotBoundException {
         synchronized (actionLock) {
-            List<Object> list = new ArrayList<>();
-            list.add(nickname);
-            list.add(baseCard);
-            list.add(orientation);
+            ClientMessage clientMessage=new PlayBaseCard(nickname,baseCard,orientation);
             try {
-                ClientMessage clientMessage=new PlayBaseCard();
                 sendMessage(new SCKMessage(clientMessage));
-
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
             /*
             while (!responseReceived) {
@@ -551,14 +531,11 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void drawCard(String nickname, PlayableCard selectedCard) throws RemoteException, NotBoundException {
         synchronized (actionLock) {
-            List<Object> list=new ArrayList<>();
-            list.add(nickname);
-            list.add(selectedCard);
+            ClientMessage clientMessage=new DrawCard(nickname,selectedCard);
             try {
-                ClientMessage clientMessage=new DrawCard();
                 sendMessage(new SCKMessage(clientMessage));
-            }catch (Exception e){
-                e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
             while (!responseReceived) {
                 try {
@@ -573,14 +550,11 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) throws RemoteException, NotBoundException {
         synchronized (actionLock) {
-            List<Object> list=new ArrayList<>();
-            list.add(chooserNickname);
-            list.add(selectedCard);
+            ClientMessage clientMessage=new ChooseObjectiveCard(chooserNickname,selectedCard);
             try {
-                ClientMessage clientMessage=new ChooseObjectiveCard();
                 sendMessage(new SCKMessage(clientMessage));
-            }catch (Exception e){
-                e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
             /*
             while (!responseReceived) {
@@ -598,14 +572,11 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, NotBoundException {
         synchronized (actionLock) {
-            List<Object> list=new ArrayList<>();
-            list.add(chooserNickname);
-            list.add(selectedColor);
+            ClientMessage clientMessage=new ChoosePawnColor(chooserNickname,selectedColor);
             try {
-                ClientMessage clientMessage=new ChoosePawnColor();
                 sendMessage(new SCKMessage(clientMessage));
-            }catch (Exception e){
-                e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
             while (!responseReceived) {
                 try {
@@ -620,15 +591,11 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void sendMessage(String senderNickname, List<String> receiversNickname, String message) throws RemoteException, NotBoundException {
         synchronized (actionLock) {
-            List<Object> list=new ArrayList<>();
-            list.add(senderNickname);
-            list.add(receiversNickname);
-            list.add(message);
+            ClientMessage clientMessage=new SendMessage(senderNickname,receiversNickname,message);
             try {
-                ClientMessage clientMessage=new SendMessage();
                 sendMessage(new SCKMessage(clientMessage));
-            }catch (Exception e){
-                e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
             while (!responseReceived) {
                 try {
@@ -643,13 +610,11 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException {
         synchronized (actionLock) {
-            List<Object> list=new ArrayList<>();
-            list.add(nickname);
+            ClientMessage clientMessage=new LeaveGame(nickname);
             try {
-                ClientMessage clientMessage=new LeaveGame();
                 sendMessage(new SCKMessage(clientMessage));
-            }catch (Exception e){
-                e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
             while (!responseReceived) {
                 try {
@@ -665,7 +630,6 @@ public class ClientSCK implements ClientGeneralInterface {
 
     //taken from RMIClient
     public void finishedSetupPhase2() throws RemoteException{
-        System.out.println("I received the board finishedSetupPhase2.");
         updateRound(playersInTheGame);
     }
 
@@ -1038,11 +1002,6 @@ public class ClientSCK implements ClientGeneralInterface {
         //the TimerTask that checks the connection should end by itself when the application ends
         this.timer.cancel(); //to be sure
 
-    }
-
-    //taken from RMIClient
-    public void showError(Event event){ //dovrebbe mostrarmi UNABLE_TO_PLAY_CARD...dovrebbe essere già inclusa nelle eccezioni
-        System.out.println(event.toString());
     }
 
 
