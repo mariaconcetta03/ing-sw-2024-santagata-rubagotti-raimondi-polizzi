@@ -131,7 +131,6 @@ public class GUILobbyController {
 
 
     public void setWaitingPlayers() {
-        boolean lobbyHasStarted = false;
         availableLobbies.setOpacity(0);
         lobbyError1.setOpacity(0);
         lobbyError2.setOpacity(0);
@@ -150,6 +149,7 @@ public class GUILobbyController {
 
         // Dynamic text update in a separate thread
         new Thread(() -> {
+            boolean lobbyHasStarted = false;
             while (!lobbyHasStarted) {
                 try {
                     // Update text on the JavaFX Application Thread
@@ -167,9 +167,30 @@ public class GUILobbyController {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-            }
 
+                if(network == 1){
+                    if(rmiClient.getPersonalPlayer().getGame() != null && rmiClient.getPersonalPlayer().getGame().getState() == Game.GameState.STARTED){
+                        lobbyHasStarted = true;
+                    }
+                } else if (network == 2) {
+                     if (clientSCK.getPersonalPlayer().getGame() != null && clientSCK.getPersonalPlayer().getGame().getState() == Game.GameState.STARTED) {
+                         lobbyHasStarted = true;
+                     }
+                }
+            }
+            https://meet.google.com/oux-zmby-wfs
             changeScene();
+
+//            if(network == 1) {
+//                try {
+//                        rmiClient.getGameController().checkNPlayers(); // game può essere iniziato e settato a started se si hano raggiunto il numero necessario
+//                    } catch (RemoteException e) {
+//                        throw new RuntimeException(e);
+//                }
+//             } else if (network == 2) {
+//                clientSCK.checkNPlayers(); // game può essere iniziato e settato a started se si hano raggiunto il numero necessario
+//
+//            }
         }).start();
 
     }
@@ -201,7 +222,7 @@ public class GUILobbyController {
         stage.setX(x);
         stage.setY(y);
 
-        GUILobbyController ctr = fxmlLoader.getController();
+        ctr = fxmlLoader.getController();
         stage.show();
     }
 
