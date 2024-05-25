@@ -5,6 +5,7 @@ import CODEX.Exceptions.GameAlreadyStartedException;
 import CODEX.Exceptions.GameNotExistsException;
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
+import CODEX.org.model.Game;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -61,7 +62,8 @@ public class GUILobbyController {
     @FXML
     Button refreshButton;
 
-    Integer chosenLobby;
+    GUIInGameController ctr;
+
 
 
     public void setLabelWithPlayerName(String text) {
@@ -198,7 +200,7 @@ public class GUILobbyController {
     public void changeScene(){
         // let's show the new window!
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/inGame.fxml"));
-        Scene scene = null;
+        Scene scene;
         try {
             scene = new Scene(fxmlLoader.load());
         } catch (IOException e) {
@@ -232,6 +234,7 @@ public class GUILobbyController {
             if (network == 1) {
                 try {
                     rmiClient.addPlayerToLobby(rmiClient.getPersonalPlayer().getNickname(), availableLobbies.getValue());
+                    rmiClient.getGameController().checkNPlayers(); // starts the game if the number of players is correct
                     setWaitingPlayers();
                 } catch (RemoteException | GameNotExistsException | NotBoundException e) {
                     throw new RuntimeException(e);
@@ -242,6 +245,7 @@ public class GUILobbyController {
             } else if (network == 2) {
                 try {
                     clientSCK.addPlayerToLobby(rmiClient.getPersonalPlayer().getNickname(), availableLobbies.getValue());
+                    clientSCK.checkNPlayers(); // starts the game if the number of players is correct
                     setWaitingPlayers();
                 } catch (GameNotExistsException | NotBoundException | RemoteException e) {
                     throw new RuntimeException(e);

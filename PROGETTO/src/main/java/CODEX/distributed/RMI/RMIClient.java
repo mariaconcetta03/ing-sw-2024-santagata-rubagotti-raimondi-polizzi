@@ -71,6 +71,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private boolean nicknameSet = false;
 
 
+    public GameControllerInterface getGameController() {
+        return gameController;
+    }
 
     public boolean setNickname(String nickname) {
         try {
@@ -950,6 +953,15 @@ int choice=-1;
 
     public void setSelectedView(int selectedView) {
         this.selectedView = selectedView;
+    }
+
+
+    public Game.GameState getGameState (){
+        try {
+            return gameController.getGame().getState();
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 

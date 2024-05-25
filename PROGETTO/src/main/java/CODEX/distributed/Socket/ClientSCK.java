@@ -1165,6 +1165,9 @@ public class ClientSCK implements ClientGeneralInterface {
         return this.isPlaying;
     }
 
+    public Game.GameState getGameState () {
+        return player.getGame().getState();
+    }
 }
 
 
