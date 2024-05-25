@@ -4,7 +4,7 @@ package CODEX.org.model;
 import CODEX.Exceptions.CardNotDrawableException;
 import CODEX.Exceptions.CardNotOwnedException;
 
-import CODEX.utils.Event;
+
 import CODEX.utils.Observable;
 import CODEX.utils.executableMessages.events.*;
 

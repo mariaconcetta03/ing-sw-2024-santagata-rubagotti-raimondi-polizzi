@@ -3,7 +3,7 @@ package CODEX.distributed.RMI;
 import CODEX.Exceptions.*;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.org.model.*;
-import CODEX.utils.Event;
+
 import CODEX.view.GUI.InterfaceGUI;
 import CODEX.view.TUI.ANSIFormatter;
 import CODEX.view.TUI.InterfaceTUI;
@@ -542,9 +542,9 @@ int choice=-1;
         }
     }
 
-    public void showError(Event event){
+ /*   public void showError(Event event){
         System.out.println(event.toString());
-    }
+    }*/
 
 
 
