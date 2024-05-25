@@ -14,6 +14,7 @@ public class PlayBaseCard implements ClientMessage{
     }
     @Override
     public void execute(ClientHandlerThread clientHandlerThread) {
+        System.out.println("sono in execute di PlayBaseCard");
         clientHandlerThread.playBaseCard(this.nickname,this.baseCard,this.orientation);
 
     }

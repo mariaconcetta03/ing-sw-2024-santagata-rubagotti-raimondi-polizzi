@@ -53,11 +53,11 @@ public class ClientSCK implements ClientGeneralInterface {
     private Player player; //the nickname is saved somewhere
     private List<Player> playersInTheGame;
     private ObjectiveCard commonObjective1, commonObjective2;
-    public Integer gameID;
+    private Integer gameID;
 
     private Boolean running; //it is initialized true, when becomes false threadCheckConnection has to terminate.
     private Boolean responseReceived;
-    private final Object actionLock;
+    public final Object actionLock;
     private final Object inputLock;
     private boolean isPlaying;
     private boolean inGame;
@@ -136,6 +136,7 @@ public class ClientSCK implements ClientGeneralInterface {
                             }
                         }
                     } catch (Exception e) { //se il server si disconnette
+                        System.out.println("lost connection...Bye, bye");
                         System.err.println(e.getMessage());
                         try { //devo fermare i thread lanciati all'interno di questo thread
                             inputStream.close();
@@ -155,6 +156,12 @@ public class ClientSCK implements ClientGeneralInterface {
 
             }
         }).start();
+    }
+    public void setLobbyId(List<Integer>list){
+        lobbyId.addAll(list);
+    }
+    public void setResponseReceived(boolean responseReceived){
+        this.responseReceived=responseReceived;
     }
 
     //we have to read this stream every time there is a server update to the client (->in the Thread local to server we modify this stream)
@@ -194,10 +201,12 @@ public class ClientSCK implements ClientGeneralInterface {
         synchronized (outputLock) {
             try {
                 responseReceived = false;
+                errorState=false;
                 outputStream.writeObject(sckMessage);
                 outputStream.flush();
                 outputStream.reset();
             } catch (IOException e) {
+                System.out.println("lost connection...Bye, bye");
                 try { //devo fermare i thread lanciati all'interno di questo thread
                     inputStream.close();
                     outputStream.close();
@@ -247,29 +256,6 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-/*
-    private void newUpdatePlayerDeck(String s, PlayableCard playableCard, PlayableCard playableCard1, PlayableCard playableCard2) {
-        PlayableCard[] playerDeck=new PlayableCard[3];
-        playerDeck[0]=playableCard;
-        playerDeck[1]=playableCard1;
-        playerDeck[2]=playableCard2;
-        if(s.equals(personalPlayer.getNickname())){
-            personalPlayer.setPlayerDeck(playerDeck);
-        }else {
-            for (Player p : playersInTheGame) {
-                if (s.equals(p.getNickname())) {
-                    p.setPlayerDeck(playerDeck);
-                }
-            }
-        }
-        if (selectedView == 1) {
-            System.out.println("I received the update newUpdatePlayerDeck.");
-        } else if (selectedView == 2) {
-            //guiView.updatePlayerDeck(player, playerDeck)
-        }
-    }
-
- */
 
     /**
      * This method is called when the client is created. Absolves the function of helping the player to select
@@ -508,6 +494,7 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException, NotBoundException {
         synchronized (actionLock) {
+            System.out.println("instanzio un clientMessage");
             ClientMessage clientMessage=new PlayBaseCard(nickname,baseCard,orientation);
             try {
                 sendMessage(new SCKMessage(clientMessage));
@@ -681,6 +668,7 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void updatePlayerDeck(String playerNickname, PlayableCard[] playerDeck) throws RemoteException {
         //we have to change the view and the local model
+        System.out.println("I received the UpdatePlayerDeck.");
         if(playerNickname.equals(personalPlayer.getNickname())){
             personalPlayer.setPlayerDeck(playerDeck);
         }else {
@@ -835,7 +823,6 @@ public class ClientSCK implements ClientGeneralInterface {
         }
     }
 
-    public void updateRound(Player player) throws RemoteException {}
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException { //taken from RMIClient
         //we have to change the view and the local model @TODO differenziare TUI e GUI
         System.out.println("I received the updateRound.");
@@ -1158,11 +1145,14 @@ public class ClientSCK implements ClientGeneralInterface {
         this.isPlaying=isPlaying;
     }
 
-    public void setErrorState (boolean s) {
-        this.errorState = s;
+    public void setErrorState (boolean errorState) {
+        this.errorState = errorState;
     }
     public boolean getIsPlaying(){ // c'è la syn nel metodo che lo chiama (showMenuAndWaitForSelection)
         return this.isPlaying;
+    }
+    public void setGameID(Integer gameID){
+        this.gameID=gameID;
     }
 
     public Game.GameState getGameState () {

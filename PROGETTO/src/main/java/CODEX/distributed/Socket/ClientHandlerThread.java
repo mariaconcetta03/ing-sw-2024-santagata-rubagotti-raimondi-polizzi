@@ -81,6 +81,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                     try {
                         sckMessage = (SCKMessage) this.input.readObject();
                     } catch (IOException | ClassNotFoundException e) {
+                        System.out.println("lost the connection...Bye, bye");
                         System.err.println(e.getMessage());
                         throw new RuntimeException(e);
                     }
@@ -210,7 +211,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
 
             //IMPORTANTE per ricevere le notify e gli update
             this.gameController.addClient(this);
-            ServerMessage serverMessage=new ServerOk();
+            ServerMessage serverMessage=new ServerOk(this.gameController.getId());
             writeTheStream(new SCKMessage(serverMessage)); //ci serve il messaggio per dire al ClientSCK il server ha fatto quello che hai chiesto (lo blocchiamo fino a quel momento)
         }catch (RemoteException ignored){//non verrà mai lanciata
 
@@ -262,10 +263,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             //IMPORTANTE per ricevere le notify e gli update
             this.gameController.addClient(this);
 
-            //per il test
-            List<Object>list=new ArrayList<>();
-            list.add(this.gameController.getId());
-            ServerMessage serverMessage=new ServerOk();
+            ServerMessage serverMessage=new ServerOk(this.gameController.getId());
             writeTheStream(new SCKMessage(serverMessage));
         }catch (RemoteException ignored){
         }
@@ -291,10 +289,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     @Override
     public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) {
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        System.out.println("sono in playBaseCard dell'handler");
         try {
-            System.out.println("sono nel try di playBaseCard");
             this.gameController.playBaseCard(nickname, baseCard, orientation);
-            System.out.println("scrivo il messaggio di OK di playBaseCard");
             ServerMessage serverMessage=new ServerOk();
             writeTheStream(new SCKMessage(serverMessage));
         }catch (RemoteException ignored){

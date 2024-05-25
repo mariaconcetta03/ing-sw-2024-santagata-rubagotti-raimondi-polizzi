@@ -10,17 +10,12 @@ public class ServerError implements ServerMessage{
     }
     @Override
     public void execute(ClientSCK clientSCK) {
-        /*
-        default -> { //qui ci finiscono tutti i messaggi di errore
-                //stampiamo l'errore e poi permettiamo al client di proseguire
-                synchronized (actionLock) {
-                    errorState=true;
-                    System.out.println(sckMessage.getMessageEvent().toString());
-                    this.responseReceived = true;
-                    actionLock.notify();
-                }
-            }
-         */
+        synchronized (clientSCK.actionLock){ //stampiamo l'errore e poi permettiamo al client di proseguire
+            clientSCK.setErrorState(true);
+            System.out.println(this.event.toString());
+            clientSCK.setResponseReceived(true);
+            clientSCK.notify();
+        }
 
     }
 }
