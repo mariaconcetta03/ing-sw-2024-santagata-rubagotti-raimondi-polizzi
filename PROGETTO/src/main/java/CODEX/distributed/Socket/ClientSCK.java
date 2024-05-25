@@ -625,7 +625,7 @@ public class ClientSCK implements ClientGeneralInterface {
     public void updateBoard(String boardOwner, Board board) throws RemoteException {
         //we have to change the view and the local model
         if (boardOwner.equals(personalPlayer.getNickname())) {
-            System.out.println("I received the board updatePlayerDeck.");
+            System.out.println("I received the board.");
             personalPlayer.setBoard(board);
         } else {
             for (Player p : playersInTheGame) {
@@ -634,7 +634,7 @@ public class ClientSCK implements ClientGeneralInterface {
                 }
             }
             if (selectedView == 1) {
-                System.out.println("I received the board updatePlayerDeck di un altro.");
+                System.out.println("I received the board di un altro.");
             } else if (selectedView == 2) {
                 //guiView.showBoard(board)
             }
@@ -669,6 +669,12 @@ public class ClientSCK implements ClientGeneralInterface {
     public void updatePlayerDeck(String playerNickname, PlayableCard[] playerDeck) throws RemoteException {
         //we have to change the view and the local model
         System.out.println("I received the UpdatePlayerDeck.");
+        if(playerDeck[0]!=null){
+            System.out.println(playerDeck[0].getId());
+        }
+        else {
+            System.out.println("update con carta nulla");
+        }
         if(playerNickname.equals(personalPlayer.getNickname())){
             personalPlayer.setPlayerDeck(playerDeck);
         }else {
@@ -679,7 +685,7 @@ public class ClientSCK implements ClientGeneralInterface {
             }
         }
         if (selectedView == 1) {
-            System.out.println("I received the updatePlayerDeck.");
+
         } else if (selectedView == 2) {
             //guiView.updatePlayerDeck(player, playerDeck)
         }
@@ -692,6 +698,8 @@ public class ClientSCK implements ClientGeneralInterface {
             if (personalPlayer.getPersonalObjectives().size() == 2) {
                     if (selectedView == 1) {
                         System.out.println("I received the updatePersonalObjective.");
+
+
                         boolean ok = false;
                         while (!ok) {
                             System.out.println("sto chiedendo alla tui di stamparmi il player deck");
@@ -709,8 +717,12 @@ public class ClientSCK implements ClientGeneralInterface {
                                 System.out.println("You don't own this card.");
                             }
                         }
+
+
+
                         /*
-                        new Thread(()->{
+
+                        new Thread(()->{ //per ricevere i ping
                             boolean ok = false;
                             while (!ok) {
                                 System.out.println("sto chiedendo alla tui di stamparmi il player deck");
@@ -732,6 +744,8 @@ public class ClientSCK implements ClientGeneralInterface {
                         }).start();;
 
                          */
+
+
 
 
                     } else if (selectedView == 2) {
@@ -829,17 +843,25 @@ public class ClientSCK implements ClientGeneralInterface {
         playersInTheGame = newPlayingOrder; //when turnCounter==-1 we have to initialize this list
         if(this.turnCounter==0){ //we enter here only one time: the second time that updateRound is called
             //the second time that updateRound is called we have all that is need to call playBaseCard (see the model server side)
+
+
             try {
                 System.out.println("la tui mi chiede il lato della base card");
+                if(personalPlayer.getPlayerDeck()[0]!=null) {
+                    System.out.println(personalPlayer.getPlayerDeck()[0].getId());
+                }else {
+                    System.out.println("carte base nulla");
+                }
                 boolean choice=tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]);
                 System.out.println("chiamo playBaseCard");
                 playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0],choice);
-            } catch (NotBoundException e) { //non si verifica @TODO non lanciamo altre eccezioni
-                throw new RuntimeException(e);
-            } catch (RemoteException e) { //non si verifica
-                throw new RuntimeException(e);
+            } catch (NotBoundException | RemoteException ignored) { //non si verifica
+
             }
-           /* new Thread(()->{
+
+
+            /*
+           new Thread(()->{ //per riuscire a ricevere i ping
                 try {
                     System.out.println("la tui mi chiede il lato della base card");
                     boolean choice=tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]);
@@ -852,7 +874,9 @@ public class ClientSCK implements ClientGeneralInterface {
                 }
             }).start();
 
-            */
+             */
+
+
 
         }
         if(this.turnCounter>=1){ //we enter here from the third time included that updateRound is called
@@ -894,6 +918,8 @@ public class ClientSCK implements ClientGeneralInterface {
             if(gameState.equals(Game.GameState.STARTED)) {
                 inGame=true;
                 System.out.println("The game has started!");
+
+                /*
                 //to check the connection
                 this.pongReceived=true; //initialization
                 this.timer = new Timer(true); //isDaemon==true -> maintenance activities performed as long as the application is running
@@ -934,7 +960,9 @@ public class ClientSCK implements ClientGeneralInterface {
                             timer.cancel(); // Ferma il timer
                         }
                     }
-                }, 0, 10000); // Esegui ogni 10 secondi
+                }, 0, 100000); // Esegui ogni 100 secondi
+
+                 */
 
             } else if (gameState.equals(Game.GameState.ENDING)) {
 

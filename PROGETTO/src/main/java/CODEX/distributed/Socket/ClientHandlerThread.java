@@ -118,6 +118,8 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     public void update(Observable obs, CODEX.utils.executableMessages.events.Event e) throws RemoteException {
         boolean check=e.executeSCKServerSide();
         if(check){ //true if the game state has changed to 'STARTED'
+
+            /*
             this.pongReceived=true; //initialization
             this.timer = new Timer(true); //isDaemon==true -> maintenance activities performed as long as the application is running
             //we need to use ping-pong messages because sometimes the connection seems to be open (we do not receive any I/O exception) but it is not.
@@ -142,7 +144,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                         timer.cancel(); // Ferma il timer
                     }
                 }
-            }, 0, 10000); // Esegui ogni 10 secondi
+            }, 0, 100000); // Esegui ogni 100 secondi
+
+             */
         }
 
         writeTheStream(new SCKMessage(e));
@@ -293,6 +297,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         System.out.println("sono in playBaseCard dell'handler");
         try {
             this.gameController.playBaseCard(nickname, baseCard, orientation);
+            System.out.println("sto per scrivere ok in playBaseCard dell'handler");
             ServerMessage serverMessage=new ServerOk();
             writeTheStream(new SCKMessage(serverMessage));
         }catch (RemoteException ignored){

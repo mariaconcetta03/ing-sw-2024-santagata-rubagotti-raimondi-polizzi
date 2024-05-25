@@ -14,6 +14,7 @@ public class updatePlayerDeckEvent implements Event {
     private List<PlayableCard> convertedArray; //an array can't be transmitted using a TCP stream
 
     public updatePlayerDeckEvent(String playerNickname, PlayableCard[] playerDeck) {
+        System.out.println("updatePlayerDeckEvent istanziato");
         this.playerNickname = playerNickname;
         this.playerDeck = playerDeck;
     }
@@ -26,12 +27,12 @@ public class updatePlayerDeckEvent implements Event {
     @Override
     public void executeSCK(ClientGeneralInterface client) {
         //the name of the method will be changed to become more comprehensible
-        PlayableCard[] RewrittenplayerDeck=new PlayableCard[3];
+        this.playerDeck=new PlayableCard[3];
         playerDeck[0]= convertedArray.get(0);
         playerDeck[1]=convertedArray.get(1);
         playerDeck[2]=convertedArray.get(2);
         try {
-            client.updatePlayerDeck(playerNickname, RewrittenplayerDeck);
+            client.updatePlayerDeck(playerNickname, playerDeck);
         }catch (RemoteException ignored){ //è il modo migliore di gestire la cosa?
 
         }
@@ -45,6 +46,7 @@ public class updatePlayerDeckEvent implements Event {
             list.add(c);
         }
         this.convertedArray=new ArrayList<PlayableCard>(list);
+        this.playerDeck=null;
         return false;
 
     }
