@@ -837,11 +837,12 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException { //taken from RMIClient
-        //we have to change the view and the local model @TODO differenziare TUI e GUI
-        System.out.println("I received the updateRound.");
-        playersInTheGame = newPlayingOrder; //when turnCounter==-1 we have to initialize this list
-        if(this.turnCounter==0){ //we enter here only one time: the second time that updateRound is called
-            //the second time that updateRound is called we have all that is need to call playBaseCard (see the model server side)
+        if (selectedView == 1) {
+            //we have to change the view and the local model @TODO differenziare TUI e GUI
+            System.out.println("I received the updateRound.");
+            playersInTheGame = newPlayingOrder; //when turnCounter==-1 we have to initialize this list
+            if (this.turnCounter == 0) { //we enter here only one time: the second time that updateRound is called
+                //the second time that updateRound is called we have all that is need to call playBaseCard (see the model server side)
 
             /*
             try {
@@ -861,46 +862,46 @@ public class ClientSCK implements ClientGeneralInterface {
              */
 
 
-
-           new Thread(()->{ //per riuscire a ricevere i ping
-                try {
-                    System.out.println("la tui mi chiede il lato della base card");
-                    boolean choice=tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]);
-                    System.out.println("chiamo playBaseCard");
-                    playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0],choice);
-                } catch (NotBoundException e) { //non si verifica
-                    throw new RuntimeException(e);
-                } catch (RemoteException e) { //non si verifica
-                    throw new RuntimeException(e);
-                }
-            }).start();
-
-
-
-
-
-        }
-        if(this.turnCounter>=1){ //we enter here from the third time included that updateRound is called
-            //before starting the thread that prints the menu we communicate which is the player that is playing
-            if(playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())){
-                setIsPlaying(true);
-                System.out.println("You are playing");
-            }else{
-                setIsPlaying(false);
-                System.out.println("You are not playing");
-            }
-            if(this.turnCounter==1){ //we enter here the third time (finishedSetupPhase2())
-                //we have to start the thread that prints the menu
-                new Thread(()->{
-                    while (inGame) { //quando la connessione viene persa/il Game termina inGame deve venire settato a false
-                        //il player può usare il menù completo solo se isPlaying==true se no usa quello di base
-                        showMenuAndWaitForSelection();
-
+                new Thread(() -> { //per riuscire a ricevere i ping
+                    try {
+                        System.out.println("la tui mi chiede il lato della base card");
+                        boolean choice = tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]);
+                        System.out.println("chiamo playBaseCard");
+                        playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0], choice);
+                    } catch (NotBoundException e) { //non si verifica
+                        throw new RuntimeException(e);
+                    } catch (RemoteException e) { //non si verifica
+                        throw new RuntimeException(e);
                     }
                 }).start();
+
+
             }
+            if (this.turnCounter >= 1) { //we enter here from the third time included that updateRound is called
+                //before starting the thread that prints the menu we communicate which is the player that is playing
+                if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
+                    setIsPlaying(true);
+                    System.out.println("You are playing");
+                } else {
+                    setIsPlaying(false);
+                    System.out.println("You are not playing");
+                }
+                if (this.turnCounter == 1) { //we enter here the third time (finishedSetupPhase2())
+                    //we have to start the thread that prints the menu
+                    new Thread(() -> {
+                        while (inGame) { //quando la connessione viene persa/il Game termina inGame deve venire settato a false
+                            //il player può usare il menù completo solo se isPlaying==true se no usa quello di base
+                            showMenuAndWaitForSelection();
+
+                        }
+                    }).start();
+                }
+            }
+            turnCounter++; //first time: -1 -> 0, second time 0 -> 1  so from the second time on we enter if(turnCounter>=1)
         }
-        turnCounter++; //first time: -1 -> 0, second time 0 -> 1  so from the second time on we enter if(turnCounter>=1)
+        else if (selectedView == 2) {
+
+        }
     }
 
 

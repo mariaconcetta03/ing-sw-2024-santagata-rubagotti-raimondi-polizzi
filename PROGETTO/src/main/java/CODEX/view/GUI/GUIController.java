@@ -97,6 +97,8 @@ public class GUIController {
             // let's show the new window!
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lobby.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
+            GUILobbyController ctr = fxmlLoader.getController();
+            ctr.setStage(stage);
 
             // old dimensions and position
             double width = stage.getWidth();
@@ -112,8 +114,6 @@ public class GUIController {
             stage.setHeight(height);
             stage.setX(x);
             stage.setY(y);
-
-            GUILobbyController ctr = fxmlLoader.getController();
 
             // setting the dynamic parameters of the new window
             System.out.println("NET" + network);

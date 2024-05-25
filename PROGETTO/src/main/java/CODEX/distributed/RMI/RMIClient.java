@@ -892,9 +892,11 @@ int choice=-1;
      * @param gameState is the new Game state (WAITING_FOR_START -> STARTED -> ENDING -> ENDED)
      */
     public void updateGameState(Game.GameState gameState) throws RemoteException {
+        if(gameState.equals(Game.GameState.STARTED)){
+            inGame=true;
+        } 
         if (selectedView == 1) {
             if(gameState.equals(Game.GameState.STARTED)) {
-                inGame=true;
                 System.out.println(ANSIFormatter.ANSI_RED+"The game has started!"+ANSIFormatter.ANSI_RESET);
                 //initialiseMenuThread();
                 executor=Executors.newCachedThreadPool();
@@ -910,7 +912,7 @@ int choice=-1;
                 tuiView.printScoreBoard(playersInTheGame);
             }
         } else if (selectedView == 2) {
-            //guiView.updateGameState(game)
+
         }
     }
 
@@ -985,6 +987,11 @@ int choice=-1;
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    public boolean getInGame() {
+        return inGame;
     }
 }
 

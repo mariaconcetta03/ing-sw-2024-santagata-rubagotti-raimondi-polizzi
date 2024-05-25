@@ -64,6 +64,13 @@ public class GUILobbyController {
 
     GUIInGameController ctr;
 
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    Stage stage;
+
+
 
 
     public void setLabelWithPlayerName(String text) {
@@ -150,7 +157,7 @@ public class GUILobbyController {
         fullLobby.setOpacity(0);
 
         // Dynamic text update in a separate thread
-        new Thread(() -> {
+       Thread t= new Thread(() -> {
             boolean lobbyHasStarted = false;
             while (!lobbyHasStarted) {
                 try {
@@ -169,19 +176,26 @@ public class GUILobbyController {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-
-                if(network == 1){
-                    if(rmiClient.getPersonalPlayer().getGame() != null && rmiClient.getPersonalPlayer().getGame().getState() == Game.GameState.STARTED){
+                System.out.println("sto per controllare");
+                if (network == 1) {
+                    System.out.println("sono nel caso RMI");
+                    if (rmiClient.getInGame()) {
+                        System.out.println("ho cambiato, lobby partita!!");
                         lobbyHasStarted = true;
                     }
                 } else if (network == 2) {
-                     if (clientSCK.getPersonalPlayer().getGame() != null && clientSCK.getPersonalPlayer().getGame().getState() == Game.GameState.STARTED) {
-                         lobbyHasStarted = true;
-                     }
+                    if (clientSCK.getPersonalPlayer().getGame() != null && clientSCK.getPersonalPlayer().getGame().getState() == Game.GameState.STARTED) {
+                        lobbyHasStarted = true;
+                    }
                 }
             }
-            https://meet.google.com/oux-zmby-wfs
-            changeScene();
+           Platform.runLater(this::changeScene);
+            // platform.runLater grants that this method is called in the JAVAFX Application thread
+       });
+       t.start();
+
+
+    }
 
 //            if(network == 1) {
 //                try {
@@ -193,9 +207,8 @@ public class GUILobbyController {
 //                clientSCK.checkNPlayers(); // game può essere iniziato e settato a started se si hano raggiunto il numero necessario
 //
 //            }
-        }).start();
 
-    }
+
 
     public void changeScene(){
         // let's show the new window!
@@ -207,8 +220,6 @@ public class GUILobbyController {
             throw new RuntimeException(e);
         }
 
-
-        Stage stage = new Stage();
         // old dimensions and position
         double width = stage.getWidth();
         double height = stage.getHeight();
@@ -244,7 +255,7 @@ public class GUILobbyController {
                 }
             } else if (network == 2) {
                 try {
-                    clientSCK.addPlayerToLobby(rmiClient.getPersonalPlayer().getNickname(), availableLobbies.getValue());
+                    clientSCK.addPlayerToLobby(clientSCK.getPersonalPlayer().getNickname(), availableLobbies.getValue());
                     clientSCK.checkNPlayers(); // starts the game if the number of players is correct
                     setWaitingPlayers();
                 } catch (GameNotExistsException | NotBoundException | RemoteException e) {

@@ -2,6 +2,7 @@ package CODEX.distributed;
 
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
+import CODEX.view.GUI.InterfaceGUI;
 import CODEX.view.TUI.ANSIFormatter;
 import CODEX.view.TUI.InterfaceTUI;
 
@@ -20,7 +21,7 @@ public class ClientLauncher {
         do{
             try {
                 selection = sc.nextInt();
-            if(selection>=1&&selection<=2){
+            if(selection==1){
                 selected=true;
                 try {
                     RMIClient rmiClient = new RMIClient();
@@ -36,7 +37,12 @@ public class ClientLauncher {
                     throw new RuntimeException(e);
                 }
                 //generate client RMI
-            }else if(selection>=3&&selection<=4){
+            }else if(selection == 2){
+                selected=true;
+                String[] network = new String[1];
+                network[0] = "RMI";
+                InterfaceGUI.main(network);
+            }else if(selection==3){
                 selected=true;
                 try {
                     ClientSCK clientSCK = new ClientSCK(); //per TCP dobbiamo solo chiedere porte disponibili lato client
@@ -51,7 +57,13 @@ public class ClientLauncher {
                     System.out.println("Cannot connect to Server. Shutting down. Try again.");
                     System.exit(-1);
                 } //non so se vadano gestite in altra maniera, potremmo chiudere tutto e riprovare
-            }else{
+            } else if (selection==4) {
+                selected = true;
+                String[] network = new String[1];
+                network[0] = "TCP";
+                InterfaceGUI.main(network);
+            }
+            else{
                 System.out.println("Please type 1 (RMI+TUI), 2 (RMI+GUI), 3 (TCP+TUI), 4 (TCP+GUI)");
             }
             }catch (InputMismatchException e){

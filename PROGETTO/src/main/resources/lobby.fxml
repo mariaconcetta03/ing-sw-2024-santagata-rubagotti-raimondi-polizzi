@@ -7,7 +7,7 @@
 
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CODEX.view.GUI.GUILobbyController">
    <children>
-      <VBox layoutY="61.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="844.0" prefWidth="1350.0" styleClass="background_pane" stylesheets="@Styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox alignment="CENTER" layoutY="61.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="844.0" prefWidth="1350.0" styleClass="background_pane" stylesheets="@Styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <StackPane alignment="TOP_CENTER" prefHeight="137.0" prefWidth="1350.0" VBox.vgrow="ALWAYS">
                <children>
@@ -137,10 +137,9 @@
                               <Insets top="130.0" />
                            </VBox.margin>
                         </HBox>
-                        <HBox prefHeight="201.0" prefWidth="1350.0">
+                        <HBox alignment="CENTER" prefHeight="201.0" prefWidth="1350.0">
                            <children>
-                              <Separator opacity="0.0" prefHeight="187.0" prefWidth="537.0" />
-                              <Label fx:id="waitingPlayers" opacity="0.0" prefHeight="106.0" prefWidth="249.0" text="Waiting for players..." textFill="#85ff8e">
+                              <Label fx:id="waitingPlayers" alignment="CENTER" opacity="0.0" prefHeight="106.0" prefWidth="249.0" text="Waiting for players..." textFill="#85ff8e">
                                  <font>
                                     <Font name="Georgia Bold" size="22.0" />
                                  </font>
