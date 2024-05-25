@@ -542,10 +542,6 @@ int choice=-1;
         }
     }
 
- /*   public void showError(Event event){
-        System.out.println(event.toString());
-    }*/
-
 
 
     // ------- M E T H O D S   F O R   U P D A T E -------
