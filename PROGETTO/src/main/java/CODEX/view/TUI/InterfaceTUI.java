@@ -777,11 +777,21 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
     }
 
     /**
+     * This method is used to print the positions where the player can play a card
+     * @param board is the player's board
+     */
+    public void printPlayablePositions(Board board){
+        System.out.println("These are the coordinates where you can play a card: ");
+        for(Coordinates c: board.getPlayablePositions()){
+            System.out.println("("+c.getX()+","+c.getY()+")  ");
+        }
+    }
+
+    /**
      * This method is used to print the table of the selected board
      * @param board is the player' selected board
      */
     public void printTable(Board board) {
-        /*
         String firstRow="";
         String secondRow="";
         String thirdRow="";
@@ -794,42 +804,13 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         String cardColor;
 
 
-        for (int i = 0; i < board.getBoardDimensions(); i++) {
-            for (int j = 0; j < board.getBoardDimensions(); j++) {
-                PlayableCard currCard= board.getTable()[i][j];
-                if (currCard == null) {
-                    if(firstCardToPrintFound) {
-                        firstRow = firstRow.concat("                       ");
-                        secondRow = secondRow.concat("                       ");
-                        thirdRow = thirdRow.concat("                       ");
-                        fourthRow = fourthRow.concat("                       ");
-                        fifthRow = fifthRow.concat("                       ");
-                        sixthRow = sixthRow.concat("                       ");
-                        seventhRow = seventhRow.concat("                       ");
-                    }
-                } else {
-                    if(!firstCardToPrintFound) {
-                        firstCardToPrintFound = true;
-                    }
-                    if((currCard.getId()<81)||(currCard.getId()>86)) {
-                        cardColor = cardColors.get(currCard.getCentralResources().get(0));
-                    }else{
-                        cardColor=ANSIFormatter.ANSI_WHITE;
-                    }
-                    firstRow = firstRow.concat(cardColor + " _____________________" + rst);
-                    secondRow = secondRow.concat(cardColor + "|" + rst);
-                    thirdRow = thirdRow.concat(cardColor + "|" + rst);
 
-                    if((currCard.getPosition().findUpLeft()==null)||((currCard.getPosition().findUpLeft()!=null)&&(board.getTable()[currCard.getPosition().findUpLeft().getX()][currCard.getPosition().findUpLeft().getY()].getPlayOrder()<currCard.getPlayOrder()))){ //se la carta in alto a sinistra non c'è
-                        secondRow.concat("");
-                    }else{
 
-                    }
-                }
-            }
-        }
 
-         */
+
+
+        printAvailableResources(board);
+        printPlayablePositions(board);
     }
 
     /**

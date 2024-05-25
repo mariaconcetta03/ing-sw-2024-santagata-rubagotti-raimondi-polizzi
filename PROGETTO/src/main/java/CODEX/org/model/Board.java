@@ -3,7 +3,11 @@ import java.io.Serializable;
 import java.util.*;
 import CODEX.utils.Observable;
 
-public class Board implements Serializable  { //TODO why OBSERVABLE?
+public class Board implements Serializable  {
+    private Coordinates upperLimit;
+    private Coordinates bottomLimit;
+    private Coordinates leftLimit;
+    private Coordinates rightLimit;
     private static final int numCarte=80;
     private int playOrder=0;
     private Set<Coordinates> playablePositions;
@@ -78,6 +82,11 @@ public class Board implements Serializable  { //TODO why OBSERVABLE?
         }
         //is always the first card played
         baseCard.setPlayOrder(-1);
+
+        upperLimit=new Coordinates(boardDimensions/2, boardDimensions/2);
+        bottomLimit=new Coordinates(boardDimensions/2, boardDimensions/2);
+        leftLimit=new Coordinates(boardDimensions/2, boardDimensions/2);
+        rightLimit=new Coordinates(boardDimensions/2, boardDimensions/2);
 
         updateUnplayablePositions(baseCard);
         updatePlayablePositions(baseCard);
@@ -169,6 +178,20 @@ public class Board implements Serializable  { //TODO why OBSERVABLE?
             //setting the index the Player played the card
             card.setPlayOrder(playOrder);
             playOrder++;
+
+            //updating the extreme positions
+            if(position.getY()>upperLimit.getY()){
+                upperLimit=position;
+            }
+            if(position.getY()<bottomLimit.getY()){
+                bottomLimit=position;
+            }
+            if(position.getX()<leftLimit.getX()){
+                leftLimit=position;
+            }
+            if(position.getX()>rightLimit.getX()){
+                rightLimit=position;
+            }
 
             //updating the playable and unplayable positions
             updateUnplayablePositions(card);

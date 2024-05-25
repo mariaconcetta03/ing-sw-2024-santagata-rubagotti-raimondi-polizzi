@@ -823,29 +823,29 @@ int choice=-1;
      */
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException {
         playersInTheGame = newPlayingOrder;
-
-        if (turnCounter != -1) {
-            if (turnCounter != 0) {
-                if (selectedView == 1) {
-                    if(playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())){
-                        isPlaying=true;
-                        System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
-                    }else{
-                        isPlaying=false;
-                        System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
-                    }
-                    if(turnCounter==1){
-                        executor.execute(()-> {
-                            try {
-                                while (inGame) {
-                                    gameTurn();
+        if (selectedView == 1) {
+            if (turnCounter != -1) {
+                if (turnCounter != 0) {
+                    if (selectedView == 1) {
+                        if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
+                            isPlaying = true;
+                            System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
+                        } else {
+                            isPlaying = false;
+                            System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
+                        }
+                        if (turnCounter == 1) {
+                            executor.execute(() -> {
+                                try {
+                                    while (inGame) {
+                                        gameTurn();
+                                    }
+                                } catch (InterruptedException e) {
+                                    System.out.println("Issues while executing the app. Closing the program.");
+                                    System.exit(-1);
                                 }
-                            }catch (InterruptedException e){
-                                System.out.println("Issues while executing the app. Closing the program.");
-                                System.exit(-1);
-                            }
-                        });
-                    }
+                            });
+                        }
 
                     /*executor.execute(()-> {
                                 try {
@@ -862,18 +862,23 @@ int choice=-1;
 
                      */
 
-                } else if (selectedView == 2) {
-                    //guiView.updateRound(newCurrentPlayer)
-                }
-            } else if (turnCounter == 0) {
-                baseCard=true;
-                    executor.execute(()->{
+                    } else if (selectedView == 2) {
+                        //guiView.updateRound(newCurrentPlayer)
+                    }
+                } else if (turnCounter == 0) {
+                    baseCard = true;
+                    executor.execute(() -> {
                         try {
-                        playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0],tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]));
-                        }catch (NotBoundException |RemoteException ignored){}});
+                            playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0], tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]));
+                        } catch (NotBoundException | RemoteException ignored) {
+                        }
+                    });
+                }
             }
-        }
             turnCounter++;
+        } else if (selectedView==2) {
+            //gui
+        }
     }
     public void updateRound(Player p) throws RemoteException{}
 
