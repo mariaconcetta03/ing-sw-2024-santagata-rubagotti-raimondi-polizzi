@@ -142,7 +142,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         this.gameController = this.SRMIInterface.createLobby(creatorNickname, numOfPlayers);
 
         ClientRMIInterface client = this;
-        gameController.addRMIClient(client);
+        gameController.addRMIClient(this.personalPlayer.getNickname(), client);
     }
 
 
@@ -161,7 +161,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         SRMIInterfaceFromRegistry();
         this.gameController = this.SRMIInterface.addPlayerToLobby(playerNickname, gameId);
         ClientRMIInterface client = this;
-        gameController.addRMIClient(client);
+        gameController.addRMIClient(this.personalPlayer.getNickname(), client);
     }
 
 
@@ -287,7 +287,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     }
 
  */
-
+/*
 int choice=-1;
 
     private void initialiseMenuThread(){
@@ -314,6 +314,8 @@ int choice=-1;
         });
     }
 
+
+ */
 
     public List<Integer> getAvailableLobbies() throws RemoteException {
         List<Integer> lobbies = new ArrayList<>();
@@ -357,7 +359,7 @@ int choice=-1;
                     if(!SRMIInterface.getAvailableGameControllersId().isEmpty()) {
                         System.out.println("If you want you can join an already created lobby. These are the ones available:");
                         for (Integer i : SRMIInterface.getAvailableGameControllersId()) {
-                                System.out.println(i + " ");
+                            System.out.println("ID: "+i);
                             }
                     }else{
                         System.out.println("There are no lobby available");
@@ -366,13 +368,32 @@ int choice=-1;
                 System.out.println("Unable to communicate with the server! Shutting down.");
                 System.exit(-1);
             }
-            System.out.println("Type -1 if you want to create a new lobby, or the lobby id if you want to join it (if there are any available)");
             ok=false;
             int gameSelection=0;
             while(!ok) {
+                System.out.println("Type -1 if you want to create a new lobby, or the lobby id if you want to join it (if there are any available).");
+                System.out.println("Type -2  to refresh the available lobbies.");
                 try {
                     gameSelection = sc.nextInt();
-                    ok=true;
+                    if(gameSelection==-2){
+                        try {
+                            if(!SRMIInterface.getAvailableGameControllersId().isEmpty()) {
+                                System.out.println("If you want you can join an already created lobby. These are the ones available:");
+                                for (Integer i : SRMIInterface.getAvailableGameControllersId()) {
+                                    System.out.println("ID: "+i);
+                                }
+                            }else{
+                                System.out.println("There are no lobby available");
+                            }
+                        }catch (RemoteException e) {
+                            System.out.println("Unable to communicate with the server! Shutting down.");
+                            System.exit(-1);
+                        }
+                    }else if((gameSelection!=-1)&&(!SRMIInterface.getAvailableGameControllersId().contains(gameSelection))){
+                        System.out.println("You wrote a wrong ID, try again.");
+                    }else{
+                        ok = true;
+                    }
                 } catch (InputMismatchException e) {
                     System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
                     sc.next();
@@ -396,16 +417,14 @@ int choice=-1;
                         System.out.println("Successfully created a new lobby with id: " + gameController.getId());
                     } else if (SRMIInterface.getAllGameControllers().containsKey(gameSelection)) {
                         try {
-                            System.out.println("Joining the "+gameSelection+" lobby...");
+                            System.out.println("Joining the " + gameSelection + " lobby...");
                             addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
                             System.out.println("Successfully joined the lobby with id: " + gameController.getId());
-                            ok=true;
+                            ok = true;
                             gameController.checkNPlayers();
                         } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException e) {
                             System.out.println(ANSIFormatter.ANSI_RED + "The lobby you want to join is inaccessible, try again" + ANSIFormatter.ANSI_RESET);
                         } //counter
-                    } else {
-                        System.out.println("UPS! You wrote a wrong id, try again.");
                     }
                 }
             }catch (RemoteException |NotBoundException e){
@@ -567,7 +586,7 @@ int choice=-1;
                 }
             }
             if (selectedView == 1) {
-                System.out.println("I received the board update.");
+                //System.out.println("I received the board update.");
             } else if (selectedView == 2) {
                 //guiView.showBoard(board)
             }
@@ -575,7 +594,7 @@ int choice=-1;
     }
 
     public void update() throws RemoteException{
-        System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+        //System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
     }
 
 
@@ -587,7 +606,7 @@ int choice=-1;
     public void updateResourceDeck (PlayableDeck resourceDeck) throws RemoteException {
         this.resourceDeck=resourceDeck;
         if (selectedView == 1) {
-            System.out.println("I received the resourceDeck.");
+            //System.out.println("I received the resourceDeck.");
         } else if (selectedView == 2) {
             //guiView.showUpdatedResourceDeck(this.resourceDeck)
         }
@@ -602,7 +621,7 @@ int choice=-1;
     public void updateGoldDeck (PlayableDeck goldDeck) throws RemoteException {
         this.goldDeck=goldDeck;
         if (selectedView == 1) {
-            System.out.println("I received the goldDeck.");
+            //System.out.println("I received the goldDeck.");
         } else if (selectedView == 2) {
             //guiView.updateGoldDeck(goldDeck)
         }
@@ -626,7 +645,7 @@ int choice=-1;
             }
         }
         if (selectedView == 1) {
-            System.out.println("I received the updated "+playerNickname+"'s deck.");
+            //System.out.println("I received the updated "+playerNickname+"'s deck.");
         } else if (selectedView == 2) {
             //guiView.updatePlayerDeck(player, playerDeck)
         }
@@ -672,7 +691,7 @@ int choice=-1;
     public void updateResourceCard1(PlayableCard card) throws RemoteException {
         this.resourceCard1=card;
         if (selectedView == 1) {
-            System.out.println("I received the resource Card 1.");
+            //System.out.println("I received the resource Card 1.");
         } else if (selectedView == 2) {
             //guiView.updateResourceCard1(card)
         }
@@ -687,7 +706,7 @@ int choice=-1;
    public void updateResourceCard2(PlayableCard card) throws RemoteException {
        this.resourceCard2=card;
         if (selectedView == 1) {
-            System.out.println("I received the resource Card2.");
+            //System.out.println("I received the resource Card2.");
         } else if (selectedView == 2) {
             //guiView.updateResourceCard2(card)
         }
@@ -702,7 +721,7 @@ int choice=-1;
     public void updateGoldCard1(PlayableCard card) throws RemoteException {
         this.goldCard1=card;
         if (selectedView == 1) {
-                System.out.println("I received the goldCard 1");
+                //System.out.println("I received the goldCard 1");
         } else if (selectedView == 2) {
             //guiView.updateGoldCard1(card)
         }
@@ -717,7 +736,7 @@ int choice=-1;
     public void updateGoldCard2(PlayableCard card) throws RemoteException {
         this.goldCard2=card;
         if (selectedView == 1) {
-            System.out.println("I received the goldCard2.");
+            //System.out.println("I received the goldCard2.");
         } else if (selectedView == 2) {
             //guiView.updateGoldCard2(card)
         }
@@ -732,7 +751,7 @@ int choice=-1;
     public void updateChat(Chat chat) throws RemoteException {//ha senso creare un chatHandler nel model
 
         if (selectedView == 1) {
-            System.out.println("You received a message.");
+            //System.out.println("You received a message.");
         } else if (selectedView == 2) {
             //guiView.updateChat(chat)
         }
@@ -748,7 +767,7 @@ int choice=-1;
     public void updatePawns(Player player, Pawn pawn) throws RemoteException {
 
         if (selectedView == 1) {
-            System.out.println("I received the pawns.");
+            //System.out.println("I received the pawns.");
         } else if (selectedView == 2) {
             //guiView.updatePawns(player, pawn)
         }
@@ -763,7 +782,7 @@ int choice=-1;
      */
     public void updateNickname(Player player, String nickname) throws RemoteException {
         if (selectedView == 1) {
-            System.out.println("I received the nickname.");
+            //System.out.println("I received the nickname.");
         } else if (selectedView == 2) {
             //guiView.updateNickname(player, nickname)
         }
@@ -872,7 +891,7 @@ int choice=-1;
             if(gameState.equals(Game.GameState.STARTED)) {
                 inGame=true;
                 System.out.println(ANSIFormatter.ANSI_RED+"The game has started!"+ANSIFormatter.ANSI_RESET);
-                initialiseMenuThread();
+                //initialiseMenuThread();
                 executor=Executors.newCachedThreadPool();
                 /*
                 initialiseMenuThread();
@@ -884,7 +903,6 @@ int choice=-1;
             }else if(gameState.equals(Game.GameState.ENDED)){
                 System.out.println("The game has ended.");
                 tuiView.printScoreBoard(playersInTheGame);
-                //inGame=false; TODO modificia attributi per fermare threads
             }
         } else if (selectedView == 2) {
             //guiView.updateGameState(game)

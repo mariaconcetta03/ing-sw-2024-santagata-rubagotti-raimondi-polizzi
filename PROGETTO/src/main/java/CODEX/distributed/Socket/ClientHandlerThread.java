@@ -113,6 +113,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     //methods to be implemented to have a class that implements Observer: (invece in RMI avremo una classe intermedia la WrappedObserver che implementerà Observer)
 
 
+
     @Override
     public void update(Observable obs, CODEX.utils.executableMessages.events.Event e) throws RemoteException {
         boolean check=e.executeSCKServerSide();
@@ -210,7 +211,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             //mi serve per i test che il ClientSCK abbia il gameid
 
             //IMPORTANTE per ricevere le notify e gli update
-            this.gameController.addClient(this);
+            this.gameController.addClient(this.nickname, this);
             ServerMessage serverMessage=new ServerOk(this.gameController.getId());
             writeTheStream(new SCKMessage(serverMessage)); //ci serve il messaggio per dire al ClientSCK il server ha fatto quello che hai chiesto (lo blocchiamo fino a quel momento)
         }catch (RemoteException ignored){//non verrà mai lanciata
@@ -261,7 +262,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             setNickname(creatorNickname); //we have an attribute nickname in this class (we are implementing Observer)
 
             //IMPORTANTE per ricevere le notify e gli update
-            this.gameController.addClient(this);
+            this.gameController.addClient(this.nickname,this);
 
             ServerMessage serverMessage=new ServerOk(this.gameController.getId());
             writeTheStream(new SCKMessage(serverMessage));

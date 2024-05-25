@@ -109,12 +109,28 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
     }
 
     /**
-     * This method prints a menu containing the action the player can perform
-     *
-     * @param inTurn is true if the player is the one playing, false otherwise
+     * This method prints the correct menu containing the action the player can perform
+     * @param isPlaying is true if the player is the one playing, false otherwise
      */
-    public void gameTurn(boolean inTurn) {
+    public void gameTurn(boolean isPlaying) {
+        if (firstMenu) {
+            printMenu(isPlaying);
+            firstMenu = false;
+        } else {
+            if (previousIsPlayingAttribute != isPlaying) {
+                printMenu(isPlaying);
+            }
+        }
+        previousIsPlayingAttribute = isPlaying;
+    }
+
+    /**
+     * This method actually prints the menu with the action the player can perform
+     * @param isPlaying is true if the player is the one playing, false otherwise
+     */
+    public void printMenu(boolean isPlaying){
         System.out.println("These are the action you can perform");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "menu" + ANSIFormatter.ANSI_RESET + " - Print the menu                  |");
         System.out.println("| " + ANSIFormatter.ANSI_RED + "0" + ANSIFormatter.ANSI_RESET + " - Leave the game                     |");
         System.out.println("| " + ANSIFormatter.ANSI_RED + "1" + ANSIFormatter.ANSI_RESET + " - Check the cards in your hand       |");
         System.out.println("| " + ANSIFormatter.ANSI_RED + "2" + ANSIFormatter.ANSI_RESET + " - Check the objective cards          |");// si possono unire
@@ -122,58 +138,15 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         System.out.println("| " + ANSIFormatter.ANSI_RED + "4" + ANSIFormatter.ANSI_RESET + " - Check someone else's board         |");
         System.out.println("| " + ANSIFormatter.ANSI_RED + "5" + ANSIFormatter.ANSI_RESET + " - Check the points scored            |");
         System.out.println("| " + ANSIFormatter.ANSI_RED + "6" + ANSIFormatter.ANSI_RESET + " - Send a message in the chat         |");
-        if (inTurn) {
+        if (isPlaying) {
             System.out.println("| " + ANSIFormatter.ANSI_RED + "7" + ANSIFormatter.ANSI_RESET + " - Play a card                        |"); //the draw will be called after the play action
         }
     }
 
-    /**
-     * This method is used to ask the player what action he wants to do during his turn (passive/active)
-     *
-     * @param sc     is the player' Scanner
-     * @param inTurn is true if the player is the one playing, false otherwise
-     * @return the index of the selected action
-     */
-    public int askAction(Scanner sc, boolean inTurn) {
-        boolean ok = false;
-        BufferedReader console= new BufferedReader(new InputStreamReader(System.in));
-        String input;
-        int value = -1;
-        while (!ok) {
-            try {
-                    input = console.readLine();
-                    if (input.length() < 5) {
-                        value=Integer.parseInt(input);
-                        //lasciando lo scanner, wrappedObserver aspetta una risposta prima di inviare
-                        //update agli altri client (non ha ancora esaurito la chiamata a funzione
-                        if ((inTurn) && (value == 7)) {
-                            ok = true;
-                        } else if ((value < 0) || (value > 6)) {
-                            System.out.println("Please, insert one of the possible values. ");
-                        } else {
-                            ok = true;
-                        }
-                    }
 
-            } catch (IOException |NumberFormatException e) {
-                System.out.println("Please type a number. ");
-                sc.next();
-            }
-        }
-        return value;
-    }
-
-    public Future<Integer> getUserInputAsync() {
-        return executor.submit(new Callable<Integer>() {
-            public Integer call() {
-                return sc.nextInt();
-            }
-        });
-    }
     /**
      * This method let the player select how to play his baseCard
-     *
-     * @param sc       is the player' Scanner
+     * @param sc is the player' Scanner
      * @param baseCard is the player's baseCard
      * @return true if the card is played face-up, false otherwise
      */
@@ -202,6 +175,12 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         }
     }
 
+    /**
+     * This method is used to ask the player which Objective card he wants to keep
+     * @param sc is the player' Scanner
+     * @param objectiveCards are the 2 possible objective Cards to choose between
+     * @return the objectiveCard chosen by the player
+     */
     public ObjectiveCard askChoosePersonalObjective(Scanner sc, List<ObjectiveCard> objectiveCards) {
         int choice = -1;
         while (true) {
@@ -223,6 +202,12 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         }
     }
 
+    /**
+     * This method is used to ask the player which card he wants to play
+     * @param sc is the player' Scanner
+     * @param personalPlayer is the player who wants to play a card
+     * @return the chosen card, null if the user inserted an invalid index
+     */
     public PlayableCard askPlayCard(Scanner sc, Player personalPlayer) {
         int cardIndex = -1;
         System.out.println("Hand:");
@@ -233,7 +218,7 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         System.out.println("Which card you've got do you want to play? Type the index of the card.");
         try {
             cardIndex = sc.nextInt();
-            if (personalPlayer.getPlayerDeck()[cardIndex] != null) {
+            if ((cardIndex>=0)&&(cardIndex<3)&&(personalPlayer.getPlayerDeck()[cardIndex] != null)) {
                 return personalPlayer.getPlayerDeck()[cardIndex];
             } else {
                 System.out.println("Not a valid index, returning to menu.");
@@ -246,6 +231,12 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         }
     }
 
+    /**
+     * This method is used to ask the user which side he wants to play the card
+     * @param sc is the player' Scanner
+     * @param card is the card he is playing
+     * @return true if the card has to be played face up, false if it has to be played face down
+     */
     public boolean askCardOrientation(Scanner sc, PlayableCard card) {
         int selection = 0;
         System.out.println("Would you like to play it upwards(1) or downwards(2)?");
@@ -267,6 +258,13 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         }
     }
 
+    /**
+     * This method is used to ask the user where he wants to play his card
+     * @param sc is the player' Scanner
+     * @param playableCard is the card he is playing
+     * @param board is its board
+     * @return the coordinates where the player wants to play the card, null if he inserted an invalid position
+     */
     public Coordinates askCoordinates(Scanner sc, PlayableCard playableCard, Board board) {
         String coordinates;
         System.out.println("In which coordinates do you want to play the card? Type in (x,y) format.");
@@ -289,6 +287,14 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         }
     }
 
+    /**
+     * This method is used to ask the player which card he wants to draw after he played a card
+     * @param goldDeck is the deck containing the gold cards
+     * @param resourceDeck is the deck containing the resource cards
+     * @param visibileCards are the 4 cards faced-up on the table
+     * @param sc is the player' Scanner
+     * @return the card the player wants to draw
+     */
     public PlayableCard askCardToDraw(PlayableDeck goldDeck, PlayableDeck resourceDeck, List<PlayableCard> visibileCards, Scanner sc) {
         printDrawableCards(goldDeck, resourceDeck, visibileCards);
         int cardIndex = -1;
@@ -313,6 +319,10 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         }
     }
 
+    /**
+     * This method is used to print some playableCard ( player Hand, drawable cards...)
+     * @param cardsToPrint are the cards that have to be printed
+     */
     public void printPlayableCards(List<PlayableCard> cardsToPrint) {
         String firstRow = "";
         String secondRow = "";
@@ -325,6 +335,7 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         String indexString="";
         int index=0;
         int nSpaces = 0;
+        int nDecks=2;
         boolean evenNSpaces = false;
         String cardColor;
 
@@ -337,6 +348,16 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                 }else{
                     cardColor=ANSIFormatter.ANSI_WHITE;
                 }
+                if((cardsToPrint.size()==6)&&(nDecks>0)){
+                    nDecks--;
+                    firstRow=firstRow.concat(" _____________________");
+                    secondRow=secondRow.concat("|          "+ANSIFormatter.ANSI_RED+"?"+rst+"          |");
+                    thirdRow=thirdRow.concat("|    THIS SIDE WILL   |");
+                    fourthRow=fourthRow.concat("|    BE SHOWN ONLY    |");
+                    fifthRow=fifthRow.concat("|    WHEN THE CARD    |");
+                    sixthRow=sixthRow.concat("|      IS DRAWN       |");
+                    seventhRow=seventhRow.concat("|_____________________|");
+                }else{
                 firstRow = firstRow.concat(cardColor + " _____________________" + rst);
                 secondRow = secondRow.concat(cardColor + "|" + rst);
                 thirdRow = thirdRow.concat(cardColor + "|" + rst);
@@ -444,6 +465,7 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                     sixthRow = sixthRow.concat(cardColor + "   |" + rst);
                     seventhRow = seventhRow.concat(cardColor + "___|" + rst);
                 }
+                }
 
                 indexString=indexString.concat("     ");
                 firstRow = firstRow.concat("      ");
@@ -467,7 +489,7 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         System.out.println(fifthRow);
         System.out.println(sixthRow);
         System.out.println(seventhRow);
-
+//BACK
         firstRow="";
         secondRow="";
         thirdRow="";
@@ -485,8 +507,22 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                 }
 
                 firstRow = firstRow.concat(cardColor+" _____________________"+rst);
-                secondRow = secondRow.concat(cardColor+"|  |               |  |"+rst);
-                thirdRow = thirdRow.concat(cardColor+"|__|               |__|"+rst);
+                secondRow = secondRow.concat(cardColor + "|" + rst);
+                thirdRow = thirdRow.concat(cardColor + "|" + rst);
+                if (!card.get_back_up_left().equals(AngleType.ABSENT)) {
+                    secondRow = secondRow.concat(abbreviations.get(card.get_back_up_left()) + cardColor + " |               " + rst);
+                    thirdRow = thirdRow.concat(cardColor + "__|               " + rst);
+                } else {
+                    secondRow = secondRow.concat("                  ");
+                    thirdRow = thirdRow.concat("                  ");
+                }
+                if (!card.get_back_up_right().equals(AngleType.ABSENT)) {
+                    secondRow = secondRow.concat(cardColor + "| " + rst + abbreviations.get(card.get_back_up_right()) + cardColor + "|" + rst);
+                    thirdRow = thirdRow.concat(cardColor + "|__|" + rst);
+                } else {
+                    secondRow = secondRow.concat(cardColor + "   |" + rst);
+                    thirdRow = thirdRow.concat(cardColor + "   |" + rst);
+                }
 
                 pointsString = "|";
 
@@ -514,9 +550,31 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                     pointsString = " " + pointsString;
                 }
                 fourthRow=fourthRow.concat(cardColor+"|   "+rst+pointsString+cardColor+"   |"+rst);
-                fifthRow = fifthRow.concat(cardColor+"|__                 __|"+rst);
-                sixthRow = sixthRow.concat(cardColor+"|  |               |  |"+rst);
-                seventhRow = seventhRow.concat(cardColor+"|__|_______________|__|"+rst);
+
+                fifthRow=fifthRow.concat(cardColor+"|"+rst);
+                sixthRow=sixthRow.concat(cardColor+"|"+rst);
+                seventhRow=seventhRow.concat(cardColor+"|"+rst);
+
+                if (!card.get_back_down_left().equals(AngleType.ABSENT)) {
+                    fifthRow = fifthRow.concat(cardColor + "__" + rst);
+                    sixthRow = sixthRow.concat(abbreviations.get(card.get_back_down_left()) + cardColor + " |               " + rst);
+                    seventhRow = seventhRow.concat(cardColor + "__|_______________" + rst);
+                } else {
+                    fifthRow = fifthRow.concat("  ");
+                    sixthRow = sixthRow.concat("                  ");
+                    seventhRow = seventhRow.concat(cardColor + "__________________" + rst);
+                }
+                fifthRow = fifthRow.concat("                 ");
+                if (!card.get_back_down_right().equals(AngleType.ABSENT)) {
+                    fifthRow = fifthRow.concat(cardColor + "__|" + rst);
+                    sixthRow = sixthRow.concat(cardColor + "| " + rst + abbreviations.get(card.get_back_down_right()) + cardColor + "|" + rst);
+                    seventhRow = seventhRow.concat(cardColor + "|__|" + rst);
+                } else {
+                    fifthRow = fifthRow.concat(cardColor + "  |" + rst);
+                    sixthRow = sixthRow.concat(cardColor + "   |" + rst);
+                    seventhRow = seventhRow.concat(cardColor + "___|" + rst);
+                }
+
                 firstRow = firstRow.concat("      ");
                 secondRow = secondRow.concat("     ");
                 thirdRow = thirdRow.concat("     ");
@@ -541,7 +599,6 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
 
     /**
      * This method is used to print the cards a Player is keeping in is hands
-     *
      * @param playerDeck is the collection of cards the Player has in his hands
      */
     public void printHand(PlayableCard[] playerDeck) {
@@ -705,20 +762,6 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         }
     }
 
-    /*boolean personalObjective = true;
-        System.out.println("These are the objective cards: ");
-        for (ObjectiveCard objCard : objectiveCards) {
-            if (personalObjective) {
-                System.out.println("This is your PERSONAL objective card.");
-            }
-            System.out.print(objCard.getId() + " ");
-            if (personalObjective) {
-                System.out.println("");
-                personalObjective = false;
-            }
-        }
-        System.out.println("");
-     */
 
     /**
      * This method prints all the resources and objects that are "visible" on the player's board
@@ -738,15 +781,55 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
      * @param board is the player' selected board
      */
     public void printTable(Board board) {
+        /*
+        String firstRow="";
+        String secondRow="";
+        String thirdRow="";
+        String fourthRow="";
+        String fifthRow="";
+        String sixthRow="";
+        String seventhRow="";
+        String pointsString="";
+        boolean firstCardToPrintFound=false;
+        String cardColor;
+
+
         for (int i = 0; i < board.getBoardDimensions(); i++) {
             for (int j = 0; j < board.getBoardDimensions(); j++) {
-                if (board.getTable()[i][j] == null) {
-                    System.out.print("");
+                PlayableCard currCard= board.getTable()[i][j];
+                if (currCard == null) {
+                    if(firstCardToPrintFound) {
+                        firstRow = firstRow.concat("                       ");
+                        secondRow = secondRow.concat("                       ");
+                        thirdRow = thirdRow.concat("                       ");
+                        fourthRow = fourthRow.concat("                       ");
+                        fifthRow = fifthRow.concat("                       ");
+                        sixthRow = sixthRow.concat("                       ");
+                        seventhRow = seventhRow.concat("                       ");
+                    }
                 } else {
-                    System.out.print(board.getTable()[i][j].getId() + " ");
+                    if(!firstCardToPrintFound) {
+                        firstCardToPrintFound = true;
+                    }
+                    if((currCard.getId()<81)||(currCard.getId()>86)) {
+                        cardColor = cardColors.get(currCard.getCentralResources().get(0));
+                    }else{
+                        cardColor=ANSIFormatter.ANSI_WHITE;
+                    }
+                    firstRow = firstRow.concat(cardColor + " _____________________" + rst);
+                    secondRow = secondRow.concat(cardColor + "|" + rst);
+                    thirdRow = thirdRow.concat(cardColor + "|" + rst);
+
+                    if((currCard.getPosition().findUpLeft()==null)||((currCard.getPosition().findUpLeft()!=null)&&(board.getTable()[currCard.getPosition().findUpLeft().getX()][currCard.getPosition().findUpLeft().getY()].getPlayOrder()<currCard.getPlayOrder()))){ //se la carta in alto a sinistra non c'è
+                        secondRow.concat("");
+                    }else{
+
+                    }
                 }
             }
         }
+
+         */
     }
 
     /**
@@ -754,23 +837,19 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
      * @param players are the players in the game
      */
     public void printScoreBoard(List<Player> players) {
-        Map<Integer,Player> map= new HashMap<>();
-        for(Player p: players){
-            map.put(p.getPoints(),p);
-
-        }
-        List<Integer> sortedList = players.stream().map(Player::getPoints).sorted().toList();
-        for(int k = 0; k < sortedList.size(); k++){
-            System.out.println(map.get(k).getNickname());
-        }
-        /*
-        for (int k = 0; k < sortedList.size(); k++) {
+        players.sort(Comparator.comparingInt(Player::getPoints));
+        Collections.reverse(players);
+        for (int i = 0;i < players.size(); i++) {
             System.out.println((i + 1) + "_ " + players.get(i).getNickname() + " scored " + players.get(i).getPoints() + " points!");
         }
-
-         */
     }
 
+    /**
+     * This method prints the drawable cards on the play table
+     * @param goldDeck is the deck containing the gold cards
+     * @param resourceDeck is the deck containing the resource cards
+     * @param visibileCards are the 4 cards faced-up on the table
+     */
     public void printDrawableCards(PlayableDeck goldDeck, PlayableDeck resourceDeck, List<PlayableCard> visibileCards) {
         System.out.println(ANSIFormatter.ANSI_GREEN+"These are the drawable cards."+rst);
         List<PlayableCard> tmp= new ArrayList<>();
@@ -779,93 +858,45 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         tmp.addAll(visibileCards);
 
         printPlayableCards(tmp);
-    }
-
-    public void askNumPlayers() {
 
     }
-
-
     public static void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 
+    /**
+     * This method is used to correctly print the menu to the user and capture his input
+     * @param isPlaying is true if the player is currently the one in turn
+     * @param console is the BufferedReader of the player
+     * @return the index of the action the player wants to perform, -1 if anything was inserted by the user or if there was a bad input
+     */
     public int showMenuAndWaitForSelection(boolean isPlaying, BufferedReader console) {
-        boolean ok = false;
-        Integer value = 0;
-        if (firstMenu) {
-            System.out.println(firstMenu);
-            System.out.println("These are the action you can perform");
-            System.out.println("| " + ANSIFormatter.ANSI_RED + "0" + ANSIFormatter.ANSI_RESET + " - Leave the game                     |");
-            System.out.println("| " + ANSIFormatter.ANSI_RED + "1" + ANSIFormatter.ANSI_RESET + " - Check the cards in your hand       |");
-            System.out.println("| " + ANSIFormatter.ANSI_RED + "2" + ANSIFormatter.ANSI_RESET + " - Check the objective cards          |");// si possono unire
-            System.out.println("| " + ANSIFormatter.ANSI_RED + "3" + ANSIFormatter.ANSI_RESET + " - Check the drawable cards           |");
-            System.out.println("| " + ANSIFormatter.ANSI_RED + "4" + ANSIFormatter.ANSI_RESET + " - Check someone else's board         |");
-            System.out.println("| " + ANSIFormatter.ANSI_RED + "5" + ANSIFormatter.ANSI_RESET + " - Check the points scored            |");
-            System.out.println("| " + ANSIFormatter.ANSI_RED + "6" + ANSIFormatter.ANSI_RESET + " - Send a message in the chat         |");
-            if (isPlaying) {
-                System.out.println("| " + ANSIFormatter.ANSI_RED + "7" + ANSIFormatter.ANSI_RESET + " - Play a card                        |"); //the draw will be called after the play action
-            }
-            firstMenu = false;
-        } else {
-            if (previousIsPlayingAttribute != isPlaying) {
-//                System.out.println("attributo isPlaying cambiato");
-                System.out.println("These are the action you can perform");
-                System.out.println("| " + ANSIFormatter.ANSI_RED + "0" + ANSIFormatter.ANSI_RESET + " - Leave the game                     |");
-                System.out.println("| " + ANSIFormatter.ANSI_RED + "1" + ANSIFormatter.ANSI_RESET + " - Check the cards in your hand       |");
-                System.out.println("| " + ANSIFormatter.ANSI_RED + "2" + ANSIFormatter.ANSI_RESET + " - Check the objective cards          |");// si possono unire
-                System.out.println("| " + ANSIFormatter.ANSI_RED + "3" + ANSIFormatter.ANSI_RESET + " - Check the drawable cards           |");
-                System.out.println("| " + ANSIFormatter.ANSI_RED + "4" + ANSIFormatter.ANSI_RESET + " - Check someone else's board         |");
-                System.out.println("| " + ANSIFormatter.ANSI_RED + "5" + ANSIFormatter.ANSI_RESET + " - Check the points scored            |");
-                System.out.println("| " + ANSIFormatter.ANSI_RED + "6" + ANSIFormatter.ANSI_RESET + " - Send a message in the chat         |");
-                if (isPlaying) {
-                    System.out.println("| " + ANSIFormatter.ANSI_RED + "7" + ANSIFormatter.ANSI_RESET + " - Play a card                        |"); //the draw will be called after the play action
-                }
-            }
-        }
-        previousIsPlayingAttribute = isPlaying;
-
+        String value = "";
+        int intValue = -1;
+        gameTurn(isPlaying);
         try {
             if (console.ready()) { //ready restituisce true se c'è una riga da leggere
-                value = Integer.parseInt(console.readLine());
-                if (value != null) {
-                    int intValue = value;
-                    if (((isPlaying) && (intValue == 7))||((intValue>=0)&&(intValue<=6))) {
-                        System.out.println("value taken");
-                    } else if ((intValue < 0) || (intValue > 6)) {
-                        System.out.println("Please, insert one of the possible values. ");
-                        value = -1;
-                    }
-                    else {
-                        System.out.println("Please type a number. ");
-                        value = -1;
-                    }
+                value = console.readLine();
+                if (value.equalsIgnoreCase("menu")) {
+                    printMenu(isPlaying);
                 } else {
-                    value = -1;
-                }
-            } else { //se la console non è ready
-                value = -1;
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return value;
-
-    }
-}
-
-    /*menuThread=new Thread(()->{ //that's needed only for tui
-            Scanner sc=new Scanner(System.in);
-            while(inGame){
-                if(sc.nextLine().equals("menu")){
-                    if(personalPlayer.getNickname().equals(playersInTheGame.get(0).getNickname())){
-                        azioni giocatore di turno
-                    }else{
-                   azioni giocatore non di turno
+                    intValue = Integer.parseInt(value);
+                    if((intValue>=0)&&(intValue<=6)||(isPlaying&&intValue==7)) {
+                        return intValue;
+                    }else {
+                        System.out.println("Please, insert one of the possible values.");
+                        intValue = -1;
                     }
                 }
+            }else{ //se la console non è ready
+                    intValue = -1;
             }
-        });
-        menuThread.start();
-     */
+            } catch(IOException e){
+                System.out.println("Error while reading the input, try again");
+            }catch(NumberFormatException e){
+                System.out.println("Please, insert one of the possible values.");
+            }
+            return intValue;
+        }
+}

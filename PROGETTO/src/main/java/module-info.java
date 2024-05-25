@@ -14,6 +14,7 @@ module CODEX {
     exports CODEX.distributed.RMI;
     exports CODEX.distributed; //da capire un attimo se servono davvero sti exports, mal che vada lasciamoli
     exports CODEX.utils;
+    exports CODEX.Exceptions;
     exports CODEX.controller;
     exports CODEX.org.model;
     exports CODEX.view.TUI;

@@ -11,9 +11,7 @@ import CODEX.utils.ErrorsAssociatedWithExceptions;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.EmptyStackException;
-import java.util.List;
+import java.util.*;
 
 public class GameController extends UnicastRemoteObject implements GameControllerInterface {
 
@@ -26,7 +24,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     private List<Player> gamePlayers;
     private int numberOfPlayers;
     private int id;
-    private List<Observer> clientsConnected;
+    private Map<String, Observer> clientsConnected;
 
     /**
      * Class constructor, initialises lastRounds and lastDrawingRounds to 10
@@ -39,7 +37,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         lastDrawingRounds=10;
         winners=new ArrayList<>();
         gamePlayers= new ArrayList<>();
-        clientsConnected= new ArrayList<>();
+        clientsConnected= new HashMap<>();
         numberOfPlayers=0;
         id=0;
     }
@@ -51,11 +49,11 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     public void createGame (List<Player> gamePlayers) throws RemoteException  {
         game = new Game(gamePlayers, id);
         //adding Observers to Game and Player classes
-        for(Observer obs: clientsConnected){
+        for(Observer obs: clientsConnected.values()){
             game.addObserver(obs);
         }
         for(Player p: gamePlayers){
-            for(Observer obs: clientsConnected){
+            for(Observer obs: clientsConnected.values()){
                 p.addObserver(obs);
             }
         }
@@ -281,10 +279,20 @@ public class GameController extends UnicastRemoteObject implements GameControlle
            if (receivers.size() == game.getnPlayers()) {
                receivers.remove(sender);
                tmp=game.startGeneralChat();
+               for(Observer obs: clientsConnected.values()){
+                   tmp.addObserver(obs);
+               }
                tmp.sendMessage(new ChatMessage(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
            }else {
                receivers.remove(sender);
                tmp = game.startChat(sender, receivers.get(0));
+               for(Player p: receivers){
+                   for(String nickname: clientsConnected.keySet()){
+                       if(p.getNickname().equals(nickname)){
+                           tmp.addObserver(clientsConnected.get(nickname));
+                       }
+                   }
+               }
                tmp.sendMessage(new ChatMessage(message, sender, receivers, new Timestamp(System.currentTimeMillis())));
            }
         game.setLastEvent(ErrorsAssociatedWithExceptions.OK);
@@ -475,22 +483,24 @@ public class GameController extends UnicastRemoteObject implements GameControlle
 
     /**
      * This method allows the ServerController to add a Client connected to the specific GameController
+     * @param nickname is the nickname of the Client
      * @param client is the new added Client
      */
-    public void addClient(Observer client){
-        if(!clientsConnected.contains(client)){
-            clientsConnected.add(client);
+    public void addClient(String nickname, Observer client){
+        if(!clientsConnected.containsValue(client)){
+            clientsConnected.put(nickname, client);
         }
     }
 
     /**
      * This method is called remotely by the RMIClient when he asks to create a Lobby or join a Lobby
+     * @param nickname is the nickname of the Client
      * @param ro is the client who is joining the game
      */
-    public void addRMIClient(ClientRMIInterface ro){
+    public void addRMIClient(String nickname, ClientRMIInterface ro){
         WrappedObserver wrapObs= new WrappedObserver(ro);
-        if(!clientsConnected.contains(wrapObs)){
-            clientsConnected.add(wrapObs);
+        if(!clientsConnected.containsValue(wrapObs)){
+            clientsConnected.put(nickname, wrapObs);
         }
     }
 }

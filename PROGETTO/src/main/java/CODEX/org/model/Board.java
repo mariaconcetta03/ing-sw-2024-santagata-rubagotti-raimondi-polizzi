@@ -3,7 +3,7 @@ import java.io.Serializable;
 import java.util.*;
 import CODEX.utils.Observable;
 
-public class Board extends Observable implements Serializable  { //TODO why OBSERVABLE?
+public class Board implements Serializable  { //TODO why OBSERVABLE?
     private static final int numCarte=80;
     private int playOrder=0;
     private Set<Coordinates> playablePositions;
@@ -233,7 +233,7 @@ public class Board extends Observable implements Serializable  { //TODO why OBSE
 
     /**
      * Adding all the positions where the angle is ABSENT (players can't use that angle)
-     * @param card
+     * @param card is the card for which we are updating the unplayable positions
      *
      */
     public void updateUnplayablePositions(PlayableCard card) {
@@ -267,7 +267,7 @@ public class Board extends Observable implements Serializable  { //TODO why OBSE
     }
     /**
      * Adding all the positions where the player can place a card in the future
-     * @param card
+     * @param card is the card for which we are updating the playable positions
      */
     public void updatePlayablePositions(PlayableCard card) {
         //if it is not present in a unplayable position, it adds all the corners!= ABSENT
@@ -289,7 +289,7 @@ public class Board extends Observable implements Serializable  { //TODO why OBSE
                 playablePositions.add(card.getPosition().findDownLeft());
             }
         } else {
-            //If played on the back side, all the angles are present @TODO PROBLEMS WITH BASECARD 86
+            //If played on the back side, all the angles are present
             if (!unPlayablePositions.contains(card.getPosition().findUpRight())) {
                 playablePositions.add(card.getPosition().findUpRight());
             }
@@ -313,14 +313,14 @@ public class Board extends Observable implements Serializable  { //TODO why OBSE
     }
     /**
      * Getter method
-     * @return
+     * @return a Set containing the positions where it's impossible to play a card
      */
     public Set<Coordinates> getUnPlayablePositions() {
         return unPlayablePositions;
     }
     /**
      * Getter method
-     * @return
+     * @return the board dimension (calculated by the number of players)
      */
     public int getBoardDimensions() {
         return boardDimensions;
