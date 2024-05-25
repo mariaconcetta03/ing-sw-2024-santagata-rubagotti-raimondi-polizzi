@@ -9,7 +9,7 @@ import CODEX.controller.ServerController;
 import CODEX.distributed.ClientActionsInterface;
 import CODEX.distributed.messages.SCKMessage;
 import CODEX.org.model.*;
-import CODEX.utils.Event;
+import CODEX.utils.ErrorsAssociatedWithExceptions;
 import CODEX.utils.Observable;
 import CODEX.utils.Observer;
 import CODEX.utils.executableMessages.serverMessages.ServerError;
@@ -358,7 +358,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             ServerMessage serverMessage=new ServerOk();
             writeTheStream(new SCKMessage(serverMessage));
         }catch (IllegalArgumentException e){
-            ServerError serverError=new ServerError(Event.UNABLE_TO_PLAY_CARD);
+            ServerError serverError=new ServerError(ErrorsAssociatedWithExceptions.UNABLE_TO_PLAY_CARD);
             ServerMessage serverMessage=serverError;
             writeTheStream(new SCKMessage(serverMessage));
         }catch (RemoteException e){

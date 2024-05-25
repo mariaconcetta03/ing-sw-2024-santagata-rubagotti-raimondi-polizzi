@@ -1,6 +1,6 @@
 package CODEX.Exceptions;
 
-import CODEX.utils.Event;
+import CODEX.utils.ErrorsAssociatedWithExceptions;
 
 public class CardNotOwnedException extends Exception implements ExceptionAssociatedWithAnEvent{
     /**
@@ -12,7 +12,7 @@ public class CardNotOwnedException extends Exception implements ExceptionAssocia
     }
 
     @Override
-    public Event getAssociatedEvent() {
-        return Event.OBJECTIVE_CARD_NOT_OWNED;
+    public ErrorsAssociatedWithExceptions getAssociatedEvent() {
+        return ErrorsAssociatedWithExceptions.OBJECTIVE_CARD_NOT_OWNED;
     }
 }

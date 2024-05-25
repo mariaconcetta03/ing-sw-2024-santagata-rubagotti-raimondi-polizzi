@@ -1,11 +1,11 @@
 package CODEX.utils.executableMessages.serverMessages;
 
 import CODEX.distributed.Socket.ClientSCK;
-import CODEX.utils.Event; //questa è la enum: bisogna cambiare nome per non confondersi
+import CODEX.utils.ErrorsAssociatedWithExceptions;
 
 public class ServerError implements ServerMessage{
-    private final Event event;
-    public ServerError(Event event){
+    private final ErrorsAssociatedWithExceptions event;
+    public ServerError(ErrorsAssociatedWithExceptions event){
         this.event=event;
     }
     @Override

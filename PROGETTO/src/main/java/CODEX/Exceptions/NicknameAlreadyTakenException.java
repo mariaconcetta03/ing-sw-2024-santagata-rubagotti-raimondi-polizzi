@@ -1,6 +1,6 @@
 package CODEX.Exceptions;
 
-import CODEX.utils.Event;
+import CODEX.utils.ErrorsAssociatedWithExceptions;
 
 public class NicknameAlreadyTakenException extends Exception implements ExceptionAssociatedWithAnEvent{
     /**
@@ -12,7 +12,7 @@ public class NicknameAlreadyTakenException extends Exception implements Exceptio
     }
 
     @Override
-    public Event getAssociatedEvent() {
-        return Event.NICKNAME_ALREADY_TAKEN;
+    public ErrorsAssociatedWithExceptions getAssociatedEvent() {
+        return ErrorsAssociatedWithExceptions.NICKNAME_ALREADY_TAKEN;
     }
 }

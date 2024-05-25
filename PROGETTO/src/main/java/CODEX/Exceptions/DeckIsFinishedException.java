@@ -1,6 +1,7 @@
 package CODEX.Exceptions;
 
-import CODEX.utils.Event;
+import CODEX.utils.ErrorsAssociatedWithExceptions;
+
 
 public class DeckIsFinishedException extends Exception implements ExceptionAssociatedWithAnEvent {
 
@@ -13,7 +14,7 @@ public class DeckIsFinishedException extends Exception implements ExceptionAssoc
     }
 
     @Override
-    public Event getAssociatedEvent() {
+    public ErrorsAssociatedWithExceptions getAssociatedEvent() {
         return null; //qual è l'evento associato?
     }
 }

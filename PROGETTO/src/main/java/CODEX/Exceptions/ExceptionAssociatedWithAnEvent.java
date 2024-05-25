@@ -1,8 +1,9 @@
 package CODEX.Exceptions;
 
-import CODEX.utils.Event;
+import CODEX.utils.ErrorsAssociatedWithExceptions;
+
 
 public interface ExceptionAssociatedWithAnEvent{
-    public Event getAssociatedEvent();
+    public ErrorsAssociatedWithExceptions getAssociatedEvent();
 
 }

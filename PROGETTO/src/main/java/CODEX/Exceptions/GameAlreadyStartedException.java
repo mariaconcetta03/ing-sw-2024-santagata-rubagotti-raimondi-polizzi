@@ -1,6 +1,6 @@
 package CODEX.Exceptions;
 
-import CODEX.utils.Event;
+import CODEX.utils.ErrorsAssociatedWithExceptions;
 
 public class GameAlreadyStartedException extends Exception implements ExceptionAssociatedWithAnEvent {
     /**
@@ -12,7 +12,7 @@ public class GameAlreadyStartedException extends Exception implements ExceptionA
     }
 
     @Override
-    public Event getAssociatedEvent() {
-        return Event.GAME_ALREADY_STARTED;
+    public ErrorsAssociatedWithExceptions getAssociatedEvent() {
+        return ErrorsAssociatedWithExceptions.GAME_ALREADY_STARTED;
     }
 }

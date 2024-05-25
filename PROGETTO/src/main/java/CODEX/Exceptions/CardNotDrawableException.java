@@ -1,6 +1,6 @@
 package CODEX.Exceptions;
 
-import CODEX.utils.Event;
+import CODEX.utils.ErrorsAssociatedWithExceptions;
 
 public class CardNotDrawableException extends Exception implements ExceptionAssociatedWithAnEvent{
     public CardNotDrawableException(String errormessage){
@@ -8,7 +8,7 @@ public class CardNotDrawableException extends Exception implements ExceptionAsso
     }
 
     @Override
-    public Event getAssociatedEvent() {
-        return Event.UNABLE_TO_PLAY_CARD;
+    public ErrorsAssociatedWithExceptions getAssociatedEvent() {
+        return ErrorsAssociatedWithExceptions.UNABLE_TO_PLAY_CARD;
     }
 }

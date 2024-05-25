@@ -1,6 +1,7 @@
 package CODEX.Exceptions;
 
-import CODEX.utils.Event;
+import CODEX.utils.ErrorsAssociatedWithExceptions;
+
 
 public class FullLobbyException extends Exception implements ExceptionAssociatedWithAnEvent {
     /**
@@ -12,7 +13,7 @@ public class FullLobbyException extends Exception implements ExceptionAssociated
     }
 
     @Override
-    public Event getAssociatedEvent() {
-        return Event.FULL_LOBBY;
+    public ErrorsAssociatedWithExceptions getAssociatedEvent() {
+        return ErrorsAssociatedWithExceptions.FULL_LOBBY;
     }
 }

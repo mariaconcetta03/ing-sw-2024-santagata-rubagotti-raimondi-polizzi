@@ -1,9 +1,8 @@
 package CODEX.org.model;
 import CODEX.Exceptions.CardNotDrawableException;
 
-import CODEX.utils.Event;
+import CODEX.utils.ErrorsAssociatedWithExceptions;
 import CODEX.utils.Observable;
-import CODEX.utils.executableMessages.clientMessages.ClientMessage;
 import CODEX.utils.executableMessages.events.*;
 
 import java.io.Serializable;
@@ -48,7 +47,7 @@ public class Game extends Observable implements Serializable {
 
     private List<Chat> chats; // contains all the chats started during the game
     private List<Pawn> alreadySelectedColors;
-    private Event lastEvent; // this flag gives some essential information about the last event which occurred in this Game
+    private ErrorsAssociatedWithExceptions lastEvent; // this flag gives some essential information about the last event which occurred in this Game
 
 
 //maybe we can make the GameController check if the numPlayer is okay, and pass to Game a List with all the players
@@ -625,7 +624,7 @@ public class Game extends Observable implements Serializable {
      * Getter method
      * @return lastEvent which occurred in this game
      */
-    public Event getLastEvent() {
+    public ErrorsAssociatedWithExceptions getLastEvent() {
         return lastEvent;
     }
 
@@ -686,11 +685,11 @@ public class Game extends Observable implements Serializable {
      * Setter method
      * @param lastEvent which occurred in this game
      */
-    public void setLastEvent(Event lastEvent) { //per far funzionare tcp NON devono venire notificati i messaggi di essore qui
+    public void setLastEvent(ErrorsAssociatedWithExceptions lastEvent) { //per far funzionare tcp NON devono venire notificati i messaggi di essore qui
         this.lastEvent = lastEvent;
-        if(lastEvent.equals(Event.SETUP_PHASE_2)||lastEvent.equals(Event.GAME_LEFT)) {
+        if(lastEvent.equals(ErrorsAssociatedWithExceptions.SETUP_PHASE_2)||lastEvent.equals(ErrorsAssociatedWithExceptions.GAME_LEFT)) {
             try {
-                notifyObservers(new setUpPhaseFinishedEvent());
+                notifyObservers(new setUpPhaseFinishedEvent()); //GAME_LEFT non è incluso
             } catch (RemoteException e) {
             }
         }

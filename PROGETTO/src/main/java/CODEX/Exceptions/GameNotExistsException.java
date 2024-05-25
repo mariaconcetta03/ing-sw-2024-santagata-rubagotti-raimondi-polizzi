@@ -1,6 +1,7 @@
 package CODEX.Exceptions;
 
-import CODEX.utils.Event;
+import CODEX.utils.ErrorsAssociatedWithExceptions;
+
 
 public class GameNotExistsException extends Exception implements ExceptionAssociatedWithAnEvent{
     /**
@@ -12,7 +13,7 @@ public class GameNotExistsException extends Exception implements ExceptionAssoci
     }
 
     @Override
-    public Event getAssociatedEvent() {
-        return Event.GAME_NOT_EXISTS;
+    public ErrorsAssociatedWithExceptions getAssociatedEvent() {
+        return ErrorsAssociatedWithExceptions.GAME_NOT_EXISTS;
     }
 }
