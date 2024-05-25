@@ -83,7 +83,15 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                     } catch (IOException | ClassNotFoundException e) {
                         System.out.println("lost the connection...Bye, bye");
                         System.err.println(e.getMessage());
-                        throw new RuntimeException(e);
+                        try {
+                            running=false;
+                            input.close();
+                            output.close();
+                            socket.close();
+                        } catch (IOException ex) { //needed for the close clause
+                            throw new RuntimeException(ex);
+                        }
+                        timer.cancel(); // Ferma il timer
                     }
                     if(sckMessage!=null) {
                         react(sckMessage);
@@ -119,7 +127,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         boolean check=e.executeSCKServerSide();
         if(check){ //true if the game state has changed to 'STARTED'
 
-            /*
+
             this.pongReceived=true; //initialization
             this.timer = new Timer(true); //isDaemon==true -> maintenance activities performed as long as the application is running
             //we need to use ping-pong messages because sometimes the connection seems to be open (we do not receive any I/O exception) but it is not.
@@ -144,9 +152,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                         timer.cancel(); // Ferma il timer
                     }
                 }
-            }, 0, 100000); // Esegui ogni 100 secondi
+            }, 0, 10000); // Esegui ogni 10 secondi
 
-             */
+
         }
 
         writeTheStream(new SCKMessage(e));
@@ -360,13 +368,15 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             ServerMessage serverMessage=new ServerOk();
             writeTheStream(new SCKMessage(serverMessage));
             running=false; //così mi si fermano i thread interni
-            try {
+            try { //we close all we have to close
+                running=false;
                 input.close();
                 output.close();
                 socket.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } catch (IOException ex) { //needed for the close clause
+                throw new RuntimeException(ex);
             }
+            timer.cancel(); // Ferma il timer
         }catch (RemoteException | IllegalArgumentException e){
             System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
         }

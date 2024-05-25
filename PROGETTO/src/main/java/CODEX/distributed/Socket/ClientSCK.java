@@ -615,10 +615,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
  //update
 
-    //taken from RMIClient
-    public void finishedSetupPhase2() throws RemoteException{
-        updateRound(playersInTheGame);
-    }
+
 
 
     @Override
@@ -699,7 +696,7 @@ public class ClientSCK implements ClientGeneralInterface {
                     if (selectedView == 1) {
                         System.out.println("I received the updatePersonalObjective.");
 
-
+                        /*
                         boolean ok = false;
                         while (!ok) {
                             System.out.println("sto chiedendo alla tui di stamparmi il player deck");
@@ -718,9 +715,11 @@ public class ClientSCK implements ClientGeneralInterface {
                             }
                         }
 
+                         */
 
 
-                        /*
+
+
 
                         new Thread(()->{ //per ricevere i ping
                             boolean ok = false;
@@ -743,7 +742,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
                         }).start();;
 
-                         */
+
 
 
 
@@ -758,7 +757,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
     @Override
     public void finishedSetUpPhase() throws RemoteException {
-
+        updateRound(playersInTheGame);
     }
 
 
@@ -844,7 +843,7 @@ public class ClientSCK implements ClientGeneralInterface {
         if(this.turnCounter==0){ //we enter here only one time: the second time that updateRound is called
             //the second time that updateRound is called we have all that is need to call playBaseCard (see the model server side)
 
-
+            /*
             try {
                 System.out.println("la tui mi chiede il lato della base card");
                 if(personalPlayer.getPlayerDeck()[0]!=null) {
@@ -859,8 +858,10 @@ public class ClientSCK implements ClientGeneralInterface {
 
             }
 
+             */
 
-            /*
+
+
            new Thread(()->{ //per riuscire a ricevere i ping
                 try {
                     System.out.println("la tui mi chiede il lato della base card");
@@ -874,7 +875,7 @@ public class ClientSCK implements ClientGeneralInterface {
                 }
             }).start();
 
-             */
+
 
 
 
@@ -919,7 +920,7 @@ public class ClientSCK implements ClientGeneralInterface {
                 inGame=true;
                 System.out.println("The game has started!");
 
-                /*
+
                 //to check the connection
                 this.pongReceived=true; //initialization
                 this.timer = new Timer(true); //isDaemon==true -> maintenance activities performed as long as the application is running
@@ -960,9 +961,9 @@ public class ClientSCK implements ClientGeneralInterface {
                             timer.cancel(); // Ferma il timer
                         }
                     }
-                }, 0, 100000); // Esegui ogni 100 secondi
+                }, 0, 10000); // Esegui ogni 10 secondi
 
-                 */
+
 
             } else if (gameState.equals(Game.GameState.ENDING)) {
 
