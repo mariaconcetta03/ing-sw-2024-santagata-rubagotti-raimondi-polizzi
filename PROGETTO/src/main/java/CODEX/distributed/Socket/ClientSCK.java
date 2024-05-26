@@ -294,14 +294,28 @@ public class ClientSCK implements ClientGeneralInterface {
             System.out.println("Nickname correctly selected!");
             this.checkAvailableLobby();
             printLobby(lobbyId);
-            System.out.println("Type -1 if you want to create a new lobby, or the lobby id if you want to join it (if there are any available)");
             ok=false;
             int gameSelection=0;
             while(!ok) {
+                System.out.println("Type -1 if you want to create a new lobby, or the lobby id if you want to join it (if there are any available)");
+                System.out.println("Type -2  to refresh the available lobbies.");
                 try {
                     sc=new Scanner(System.in);
                     gameSelection = sc.nextInt();
-                    ok=true;
+                    if(gameSelection==-2){
+                        this.checkAvailableLobby();
+                        if(!(lobbyId.isEmpty())) {
+                            System.out.println("If you want you can join an already created lobby. These are the ones available:");
+                            printLobby(lobbyId);
+                        }else {
+                            System.out.println("There are no lobby available");
+                        }
+                    }
+                    else if((gameSelection!=-1)&&(!lobbyId.contains(gameSelection))){
+                        System.out.println("You wrote a wrong ID, try again.");
+                    }else{
+                        ok = true;
+                    }
                 } catch (InputMismatchException e) {
                     System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
                 }
