@@ -143,22 +143,22 @@ public class GUIBaseCardController {
         ctr.setRmiClient(rmiClient);
         if (network == 1) {
             ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", now choose your");
-            while (rmiClient.getPersonalPlayer().getPlayerDeck(0) == null || rmiClient.getPersonalPlayer().getPlayerDeck(1) == null ||rmiClient.getPersonalPlayer().getPlayerDeck(2) == null || rmiClient.getPersonalPlayer().getPersonalObjectives().get(0) == null || rmiClient.getPersonalPlayer().getPersonalObjectives().get(1) == null){
+            while (rmiClient.getPersonalPlayer().getPlayerDeck()[0] == null || rmiClient.getPersonalPlayer().getPlayerDeck()[1] == null ||rmiClient.getPersonalPlayer().getPlayerDeck()[2] == null || rmiClient.getPersonalPlayer().getPersonalObjectives().size() < 2){
                 System.out.println("giving initial cards..."); // ATTENZIONE!! LE CARTE NON VENGONO DATE IN MODO CORRETTO
             }
 
-            ctr.setCard1(rmiClient.getPersonalPlayer().getPlayerDeck(0).getId());
-            ctr.setCard2(rmiClient.getPersonalPlayer().getPlayerDeck(1).getId());
-            ctr.setCard3(rmiClient.getPersonalPlayer().getPlayerDeck(2).getId());
+            ctr.setCard1(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId());
+            ctr.setCard2(rmiClient.getPersonalPlayer().getPlayerDeck()[1].getId());
+            ctr.setCard3(rmiClient.getPersonalPlayer().getPlayerDeck()[2].getId());
             ctr.setObjCard1(rmiClient.getPersonalPlayer().getPersonalObjectives().get(0).getId());
             ctr.setObjCard2(rmiClient.getPersonalPlayer().getPersonalObjectives().get(1).getId());
-            ctr.setBaseCard(rmiClient.getPersonalPlayer().getBoard().getTable()[0][0].getId(), rmiClient.getPersonalPlayer().getBoard().getTable()[0][0].getOrientation());
+            ctr.setBaseCard(rmiClient.getPersonalPlayer().getBoard().getTable()[rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2][rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2].getId(), rmiClient.getPersonalPlayer().getBoard().getTable()[rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2][rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2].getOrientation());
             // (0,0) because our base card is always in the center of the table!
         } else if (network == 2) {
             ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", now choose your");
-            ctr.setCard1(clientSCK.getPersonalPlayer().getPlayerDeck(0).getId());
-            ctr.setCard2(clientSCK.getPersonalPlayer().getPlayerDeck(1).getId());
-            ctr.setCard3(clientSCK.getPersonalPlayer().getPlayerDeck(2).getId());
+            ctr.setCard1(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId());
+            ctr.setCard2(clientSCK.getPersonalPlayer().getPlayerDeck()[1].getId());
+            ctr.setCard3(clientSCK.getPersonalPlayer().getPlayerDeck()[2].getId());
             ctr.setObjCard1(clientSCK.getPersonalPlayer().getPersonalObjectives().get(0).getId());
             ctr.setObjCard2(clientSCK.getPersonalPlayer().getPersonalObjectives().get(1).getId());
             ctr.setBaseCard(clientSCK.getPersonalPlayer().getBoard().getTable()[0][0].getId(), clientSCK.getPersonalPlayer().getBoard().getTable()[0][0].getOrientation());
