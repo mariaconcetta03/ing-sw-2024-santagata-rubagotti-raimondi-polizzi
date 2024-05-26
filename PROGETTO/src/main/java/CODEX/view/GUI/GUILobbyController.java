@@ -214,16 +214,19 @@ public class GUILobbyController {
             ctr = fxmlLoader.getController();
         }
 
-        // setting the parameters in the new controller
+        // setting the parameters in the new controller, also the BASE CARD (front and back)
         ctr.setStage(stage);
         ctr.setNetwork(network);
         ctr.setClientSCK(clientSCK);
         ctr.setRmiClient(rmiClient);
-        ctr.setBaseCard1(50); // CORRETTO !!!
-        if (network == 1) {
-            ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", which side do you want to play your base card?");
+       if (network == 1) {
+        ctr.setBaseCard1(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId()); // OK
+        ctr.setBaseCard2(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId());
+        ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", which side do you want to play your base card?");
         } else if (network == 2) {
-            ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", which side do you want to play your base card?");
+           ctr.setBaseCard1(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId()); // OK
+           ctr.setBaseCard2(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId());
+           ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", which side do you want to play your base card?");
         }
 
         // old dimensions and position

@@ -29,7 +29,33 @@
                            </font></Label>
                      </children></VBox>
                </children></HBox>
-            <ImageView fx:id="baseCard1" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+            <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <ImageView fx:id="baseCard1" fitHeight="204.7" fitWidth="300.0" onMouseClicked="#selectedFront" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets top="100.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <Separator opacity="0.0" prefWidth="200.0" />
+                  <ImageView fx:id="baseCard2" fitHeight="204.7" fitWidth="300.0" onMouseClicked="#selectedBack" pickOnBounds="true" preserveRatio="true">
+                     <HBox.margin>
+                        <Insets top="100.0" />
+                     </HBox.margin>
+                  </ImageView>
+               </children>
+            </HBox>
+            <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+               <VBox.margin>
+                  <Insets top="100.0" />
+               </VBox.margin>
+               <children>
+                  <Label text="Press the side you prefer!" textFill="WHITE">
+                     <font>
+                        <Font name="Georgia Bold" size="24.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
          </children></VBox>
 
    </children>

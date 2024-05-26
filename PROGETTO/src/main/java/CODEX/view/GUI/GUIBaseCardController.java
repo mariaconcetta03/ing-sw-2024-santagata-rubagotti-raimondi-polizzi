@@ -2,8 +2,10 @@ package CODEX.view.GUI;
 
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
+import CODEX.org.model.Coordinates;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.awt.image.*;
@@ -14,6 +16,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.Objects;
 import javafx.scene.control.Label;
 public class GUIBaseCardController {
@@ -28,6 +32,11 @@ public class GUIBaseCardController {
     @FXML
     private ImageView baseCard1;
 
+    @FXML
+    private ImageView baseCard2;
+
+    private boolean baseCardPlayed = false;
+
     public void setBaseCard1(int cardID) {
         String path;
         path = "/images/cards/front/ (" + cardID + ").png";
@@ -35,6 +44,55 @@ public class GUIBaseCardController {
         baseCard1.setImage(image);
     }
 
+    public void setBaseCard2(int cardID) {
+        String path;
+        path = "/images/cards/back/ (" + cardID + ").png";
+        Image image = new Image(getClass().getResourceAsStream(path));
+        baseCard2.setImage(image);
+    }
+
+    public void selectedFront() {
+        if (network == 1 && !baseCardPlayed) {
+            try {
+                rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], true);
+
+            } catch (RemoteException | NotBoundException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (network == 2 && !baseCardPlayed) {
+            try {
+                clientSCK.playBaseCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], true);
+            } catch (RemoteException | NotBoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        System.out.println("selezionato fronte");
+        baseCardPlayed = true;
+        changeScene();
+    }
+
+    public void selectedBack() {
+        if (network == 1 ) {
+            try {
+                if(!baseCardPlayed) {
+                    rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], false);
+                }
+            } catch (RemoteException | NotBoundException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (network == 2) {
+            try {
+                if(!baseCardPlayed) {
+                    clientSCK.playBaseCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], false);
+                    }
+                } catch (RemoteException | NotBoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        System.out.println("Selezionato retro");
+        baseCardPlayed = true;
+        changeScene();
+    }
 
     GUIObjectiveController ctr;
 
@@ -50,11 +108,11 @@ public class GUIBaseCardController {
     }
 
 
-    void setClientSCK (ClientSCK client) {
+    void setClientSCK(ClientSCK client) {
         this.clientSCK = client;
     }
 
-    void setNetwork (int network) {
+    void setNetwork(int network) {
         this.network = network;
     }
 
@@ -64,16 +122,46 @@ public class GUIBaseCardController {
     }
 
 
-
-
-    public void changeScene(){
+    public void changeScene() {
         // let's show the new window!
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/objectiveCard.fxml"));
-        Scene scene;
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/objective.fxml"));
+        Parent root = null;
         try {
-            scene = new Scene(fxmlLoader.load());
+            root = fxmlLoader.load();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+
+        while (ctr == null) {
+            ctr = fxmlLoader.getController();
+        }
+
+        // setting the parameters in the new controller, also the BASE CARD (front and back)
+        ctr.setStage(stage);
+        ctr.setNetwork(network);
+        ctr.setClientSCK(clientSCK);
+        ctr.setRmiClient(rmiClient);
+        if (network == 1) {
+            ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", now choose your");
+            while (rmiClient.getPersonalPlayer().getPlayerDeck(0) == null || rmiClient.getPersonalPlayer().getPlayerDeck(1) == null ||rmiClient.getPersonalPlayer().getPlayerDeck(2) == null || rmiClient.getPersonalPlayer().getPersonalObjectives().get(0) == null || rmiClient.getPersonalPlayer().getPersonalObjectives().get(1) == null){
+                System.out.println("giving initial cards..."); // ATTENZIONE!! LE CARTE NON VENGONO DATE IN MODO CORRETTO
+            }
+
+            ctr.setCard1(rmiClient.getPersonalPlayer().getPlayerDeck(0).getId());
+            ctr.setCard2(rmiClient.getPersonalPlayer().getPlayerDeck(1).getId());
+            ctr.setCard3(rmiClient.getPersonalPlayer().getPlayerDeck(2).getId());
+            ctr.setObjCard1(rmiClient.getPersonalPlayer().getPersonalObjectives().get(0).getId());
+            ctr.setObjCard2(rmiClient.getPersonalPlayer().getPersonalObjectives().get(1).getId());
+            ctr.setBaseCard(rmiClient.getPersonalPlayer().getBoard().getTable()[0][0].getId(), rmiClient.getPersonalPlayer().getBoard().getTable()[0][0].getOrientation());
+            // (0,0) because our base card is always in the center of the table!
+        } else if (network == 2) {
+            ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", now choose your");
+            ctr.setCard1(clientSCK.getPersonalPlayer().getPlayerDeck(0).getId());
+            ctr.setCard2(clientSCK.getPersonalPlayer().getPlayerDeck(1).getId());
+            ctr.setCard3(clientSCK.getPersonalPlayer().getPlayerDeck(2).getId());
+            ctr.setObjCard1(clientSCK.getPersonalPlayer().getPersonalObjectives().get(0).getId());
+            ctr.setObjCard2(clientSCK.getPersonalPlayer().getPersonalObjectives().get(1).getId());
+            ctr.setBaseCard(clientSCK.getPersonalPlayer().getBoard().getTable()[0][0].getId(), clientSCK.getPersonalPlayer().getBoard().getTable()[0][0].getOrientation());
         }
 
         // old dimensions and position
@@ -83,6 +171,9 @@ public class GUIBaseCardController {
         double y = stage.getY();
 
         // new scene
+        Scene scene;
+        scene = new Scene(root);
+
         stage.setScene(scene);
 
         // setting the od values of position and dimension
@@ -91,13 +182,7 @@ public class GUIBaseCardController {
         stage.setX(x);
         stage.setY(y);
 
-        // setting the parameters in the new controller
-        ctr = fxmlLoader.getController();
-        ctr.setStage(stage);
-        ctr.setNetwork(network);
-        ctr.setClientSCK(clientSCK);
-        ctr.setRmiClient(rmiClient);
+
         stage.show();
     }
-
 }

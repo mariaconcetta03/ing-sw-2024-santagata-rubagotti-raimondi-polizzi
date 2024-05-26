@@ -207,6 +207,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException, NotBoundException {
         this.gameController.playBaseCard(nickname, baseCard, orientation);
+//        for (int i = 0; i<gameController.getGame().getPlayers().size(); i++) {
+//            if ((personalPlayer.getNickname()).equals(gameController.getGame().getPlayers().get(i).getNickname())) {
+//                this.personalPlayer = gameController.getGame().getPlayers().get(i);
+//            }
+//        }
     }
 
 
@@ -894,7 +899,7 @@ int choice=-1;
     public void updateGameState(Game.GameState gameState) throws RemoteException {
         if(gameState.equals(Game.GameState.STARTED)){
             inGame=true;
-        } 
+        }
         if (selectedView == 1) {
             if(gameState.equals(Game.GameState.STARTED)) {
                 System.out.println(ANSIFormatter.ANSI_RED+"The game has started!"+ANSIFormatter.ANSI_RESET);
