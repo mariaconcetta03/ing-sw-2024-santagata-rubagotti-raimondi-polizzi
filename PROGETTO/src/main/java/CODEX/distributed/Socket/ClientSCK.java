@@ -171,10 +171,9 @@ public class ClientSCK implements ClientGeneralInterface {
     //}
 
 
-    public List<Integer> getAvailableLobbies() throws RemoteException {
-        List<Integer> lobbies = new ArrayList<>();
-        lobbies.addAll(this.lobbyId);
-        return lobbies;
+    public HashSet<Integer> getAvailableLobbies() throws RemoteException {
+        checkAvailableLobby(); // update in the clientsck
+       return lobbyId;
     }
 
 

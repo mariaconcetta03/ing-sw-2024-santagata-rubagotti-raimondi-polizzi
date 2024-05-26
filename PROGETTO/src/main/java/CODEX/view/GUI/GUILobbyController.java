@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class GUILobbyController {
 
@@ -62,7 +61,7 @@ public class GUILobbyController {
     @FXML
     Button refreshButton;
 
-    GUIInGameController ctr;
+    GUIBaseCardController ctr;
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -123,9 +122,11 @@ public class GUILobbyController {
             }
         } else if (network == 2) { // TCP
              try {
-                 clientSCK.checkAvailableLobby();
                  availableLobbies.getItems().clear();
-                 setAvailableLobbies(clientSCK.getAvailableLobbies());
+                 clientSCK.checkAvailableLobby();
+                 setAvailableLobbies(clientSCK.getAvailableLobbies().stream().toList());
+                 System.out.println("le lobby disponibili sono:");
+                 clientSCK.printLobby(clientSCK.getAvailableLobbies());
                  if (clientSCK.getAvailableLobbies().isEmpty()) {
                      showNoLobbyError();
                  } else {
@@ -135,7 +136,6 @@ public class GUILobbyController {
                   throw new RuntimeException(e);
              }
         }
-
     }
 
 
@@ -191,33 +191,28 @@ public class GUILobbyController {
             }
            Platform.runLater(this::changeScene);
             // platform.runLater grants that this method is called in the JAVAFX Application thread
+           // "this::changeScene" used for a reference to a NON static method (becomes a runnable)
        });
        t.start();
-
-
     }
-
-//            if(network == 1) {
-//                try {
-//                        rmiClient.getGameController().checkNPlayers(); // game può essere iniziato e settato a started se si hano raggiunto il numero necessario
-//                    } catch (RemoteException e) {
-//                        throw new RuntimeException(e);
-//                }
-//             } else if (network == 2) {
-//                clientSCK.checkNPlayers(); // game può essere iniziato e settato a started se si hano raggiunto il numero necessario
-//
-//            }
 
 
 
     public void changeScene(){
         // let's show the new window!
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/inGame.fxml"));
-        Scene scene;
-        try {
-            scene = new Scene(fxmlLoader.load());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/baseCard.fxml"));
+
+        // setting the parameters in the new controller
+        ctr = fxmlLoader.getController();
+        ctr.setStage(stage);
+        ctr.setNetwork(network);
+        ctr.setClientSCK(clientSCK);
+        ctr.setRmiClient(rmiClient);
+        ctr.setBaseCard1(50);
+        if (network == 1) {
+            ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", which side do you want to play your base card?");
+        } else if (network == 2) {
+            ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", which side do you want to play your base card?");
         }
 
         // old dimensions and position
@@ -227,6 +222,12 @@ public class GUILobbyController {
         double y = stage.getY();
 
         // new scene
+        Scene scene;
+        try {
+            scene = new Scene(fxmlLoader.load());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         stage.setScene(scene);
 
         // setting the od values of position and dimension
@@ -235,7 +236,7 @@ public class GUILobbyController {
         stage.setX(x);
         stage.setY(y);
 
-        ctr = fxmlLoader.getController();
+
         stage.show();
     }
 
