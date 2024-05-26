@@ -42,6 +42,17 @@ public class GUIObjectiveController {
     private ImageView baseCard;
 
 
+    // ------------ C O M E    F U N Z I O N A    U P D A T E R O U N D ? ----------------
+    // QUANDO SCELGO LA CARTA ALLORA FACCIO CHOOSEOBJCARD
+    // PARTONO GLI UPDATE (quando tutti hanno sceltop la carta obiettivo allora inizia il gioco effettivo)
+    // arriva update di finishedsetupphase (nella tui chiama updateround), se nella gui serve altro allora aggiuntare roba senza
+    // modificare robe della tui (selectedview = 1).
+    // questo va a chiamare update rpound nella terza volta, e questo è quello che dice chi sta giocando e chi no e la partita
+    // è iniziata. ora si puo iniziare a giocare
+
+    // @TODO mettere le scritte per far capire al client cosa sta succedendo (es hai scelto la carta fronte... ecc)
+
+
 
     @FXML
     public void setLabelWithPlayerName(String text) {
@@ -54,12 +65,14 @@ public class GUIObjectiveController {
             String path;
             path = "/images/cards/back/ (" + card1ID + ").png";
             Image image = new Image(getClass().getResourceAsStream(path));
-            objCard1.setImage(image);
+            card1.setImage(image);
+            orientationCard1 = false;
         }else{
             String path;
             path = "/images/cards/front/ (" + card1ID + ").png";
             Image image = new Image(getClass().getResourceAsStream(path));
-            objCard1.setImage(image);
+            card1.setImage(image);
+            orientationCard1 = true;
         }
     }
 
@@ -69,12 +82,14 @@ public class GUIObjectiveController {
             String path;
             path = "/images/cards/back/ (" + card2ID + ").png";
             Image image = new Image(getClass().getResourceAsStream(path));
-            objCard1.setImage(image);
+            card2.setImage(image);
+            orientationCard2 = false;
         }else{
             String path;
             path = "/images/cards/front/ (" + card2ID + ").png";
             Image image = new Image(getClass().getResourceAsStream(path));
-            objCard1.setImage(image);
+            card2.setImage(image);
+            orientationCard2 = true;
         }
     }
 
@@ -83,12 +98,14 @@ public class GUIObjectiveController {
             String path;
             path = "/images/cards/back/ (" + card3ID + ").png";
             Image image = new Image(getClass().getResourceAsStream(path));
-            objCard1.setImage(image);
+            card3.setImage(image);
+            orientationCard3 = false;
         }else{
             String path;
             path = "/images/cards/front/ (" + card3ID + ").png";
             Image image = new Image(getClass().getResourceAsStream(path));
-            objCard1.setImage(image);
+            card3.setImage(image);
+            orientationCard3 = true;
         }
     }
 

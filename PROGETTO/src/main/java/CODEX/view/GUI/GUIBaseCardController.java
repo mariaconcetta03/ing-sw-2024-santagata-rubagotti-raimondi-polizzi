@@ -161,7 +161,7 @@ public class GUIBaseCardController {
             ctr.setCard3(clientSCK.getPersonalPlayer().getPlayerDeck()[2].getId());
             ctr.setObjCard1(clientSCK.getPersonalPlayer().getPersonalObjectives().get(0).getId());
             ctr.setObjCard2(clientSCK.getPersonalPlayer().getPersonalObjectives().get(1).getId());
-            ctr.setBaseCard(clientSCK.getPersonalPlayer().getBoard().getTable()[0][0].getId(), clientSCK.getPersonalPlayer().getBoard().getTable()[0][0].getOrientation());
+            ctr.setBaseCard(clientSCK.getPersonalPlayer().getBoard().getTable()[rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2][rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2].getId(), clientSCK.getPersonalPlayer().getBoard().getTable()[rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2][rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2].getOrientation());
         }
 
         // old dimensions and position
