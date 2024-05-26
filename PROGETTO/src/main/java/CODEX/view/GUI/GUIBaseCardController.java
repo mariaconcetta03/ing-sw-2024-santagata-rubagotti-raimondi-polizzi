@@ -84,7 +84,6 @@ public class GUIBaseCardController {
             baseCardPlayed = true;
             changeScene();
         });
-
         }).start();
     }
 

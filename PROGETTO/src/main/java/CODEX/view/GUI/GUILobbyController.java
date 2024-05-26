@@ -222,11 +222,11 @@ public class GUILobbyController {
        if (network == 1) {
         ctr.setBaseCard1(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId()); // OK
         ctr.setBaseCard2(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId());
-        ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", which side do you want to play your base card?");
+        ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", which side do you");
         } else if (network == 2) {
            ctr.setBaseCard1(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId()); // OK
            ctr.setBaseCard2(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId());
-           ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", which side do you want to play your base card?");
+           ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", which side do you");
         }
 
         // old dimensions and position
