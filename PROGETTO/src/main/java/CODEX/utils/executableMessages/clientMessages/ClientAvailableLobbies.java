@@ -14,7 +14,7 @@ public class ClientAvailableLobbies implements ClientMessage{
     public void execute(ClientHandlerThread clientHandlerThread) {
         List<Integer> list = new ArrayList<>();
         try {
-            list.addAll(clientHandlerThread.getServerController().getAllGameControllers().keySet());
+            list.addAll(clientHandlerThread.getServerController().getAvailableGameControllersId());
         } catch (RemoteException ignored) {
         }
         ServerMessage serverMessage=new ServerAvailableLobbies(list);
