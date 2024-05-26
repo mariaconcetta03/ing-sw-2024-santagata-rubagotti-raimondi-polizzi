@@ -3,6 +3,7 @@ package CODEX.view.GUI;
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
 import CODEX.org.model.Coordinates;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -35,6 +36,9 @@ public class GUIBaseCardController {
     @FXML
     private ImageView baseCard2;
 
+    @FXML
+    Label stateLabel;
+
     private boolean baseCardPlayed = false;
 
     public void setBaseCard1(int cardID) {
@@ -52,6 +56,13 @@ public class GUIBaseCardController {
     }
 
     public void selectedFront() {
+        // first thread of JAVA FX ==> modifies the label on the screen
+        Platform.runLater(() -> {
+            stateLabel.setText("Front side selected! Now wait for everyone to choose.");
+        });
+
+        // second general thread (executed after the first one)
+        new Thread(() -> {
         if (network == 1 && !baseCardPlayed) {
             try {
                 rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], true);
@@ -66,32 +77,50 @@ public class GUIBaseCardController {
                 throw new RuntimeException(e);
             }
         }
-        System.out.println("selezionato fronte");
-        baseCardPlayed = true;
-        changeScene();
+
+        // third thread to change the scene always in JAVA FX thread
+        Platform.runLater(() -> {
+            System.out.println("selezionato fronte");
+            baseCardPlayed = true;
+            changeScene();
+        });
+
+        }).start();
     }
 
     public void selectedBack() {
-        if (network == 1 ) {
-            try {
-                if(!baseCardPlayed) {
-                    rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], false);
-                }
-            } catch (RemoteException | NotBoundException e) {
-                throw new RuntimeException(e);
-            }
-        } else if (network == 2) {
-            try {
-                if(!baseCardPlayed) {
-                    clientSCK.playBaseCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], false);
+        // first thread of JAVA FX ==> modifies the label on the screen
+        Platform.runLater(() -> {
+            stateLabel.setText("Back side selected! Now wait for everyone to choose.");
+        });
+
+        // second general thread (executed after the first one)
+        new Thread(() -> {
+            if (network == 1) {
+                try {
+                    if (!baseCardPlayed) {
+                        rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], false);
                     }
                 } catch (RemoteException | NotBoundException e) {
-                throw new RuntimeException(e);
+                    throw new RuntimeException(e);
+                }
+            } else if (network == 2) {
+                try {
+                    if (!baseCardPlayed) {
+                        clientSCK.playBaseCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], false);
+                    }
+                } catch (RemoteException | NotBoundException e) {
+                    throw new RuntimeException(e);
+                }
             }
-        }
-        System.out.println("Selezionato retro");
-        baseCardPlayed = true;
-        changeScene();
+
+            // third thread to change the scene always in JAVA FX thread
+            Platform.runLater(() -> {
+                baseCardPlayed = true;
+                changeScene();
+                System.out.println("Selezionato retro");
+            });
+        }).start();
     }
 
     GUIObjectiveController ctr;
