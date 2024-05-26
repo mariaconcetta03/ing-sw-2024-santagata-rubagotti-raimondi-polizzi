@@ -9,9 +9,11 @@ import CODEX.org.model.Game;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
@@ -201,14 +203,23 @@ public class GUILobbyController {
     public void changeScene(){
         // let's show the new window!
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/baseCard.fxml"));
+        Parent root = null;
+        try {
+            root = fxmlLoader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        while (ctr == null) {
+            ctr = fxmlLoader.getController();
+        }
 
         // setting the parameters in the new controller
-        ctr = fxmlLoader.getController();
         ctr.setStage(stage);
         ctr.setNetwork(network);
         ctr.setClientSCK(clientSCK);
         ctr.setRmiClient(rmiClient);
-        ctr.setBaseCard1(50);
+        ctr.setBaseCard1(50); // CORRETTO !!!
         if (network == 1) {
             ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", which side do you want to play your base card?");
         } else if (network == 2) {
@@ -223,11 +234,8 @@ public class GUILobbyController {
 
         // new scene
         Scene scene;
-        try {
-            scene = new Scene(fxmlLoader.load());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        scene = new Scene(root);
+
         stage.setScene(scene);
 
         // setting the od values of position and dimension
@@ -238,7 +246,8 @@ public class GUILobbyController {
 
 
         stage.show();
-    }
+}
+
 
     public void joinLobby() {
         fullLobby.setOpacity(0);

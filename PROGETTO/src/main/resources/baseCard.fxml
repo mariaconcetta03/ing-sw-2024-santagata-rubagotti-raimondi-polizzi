@@ -15,7 +15,7 @@
 
                   <VBox prefHeight="140.0" prefWidth="1352.0">
                      <children>
-                         <Label fx:id="labelWithPlayerName2" alignment="TOP_CENTER" contentDisplay="CENTER" prefHeight="52.0" prefWidth="1350.0" text="&lt;nickname&gt;, which side do you" textAlignment="CENTER" textFill="WHITE">
+                         <Label fx:id="labelWithPlayerName" alignment="TOP_CENTER" contentDisplay="CENTER" prefHeight="52.0" prefWidth="1350.0" text="&lt;nickname&gt;, which side do you" textAlignment="CENTER" textFill="WHITE">
                              <font>
                                  <Font name="Georgia" size="37.0" />
                              </font>

@@ -15,21 +15,22 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
-
+import javafx.scene.control.Label;
 public class GUIBaseCardController {
-    RMIClient rmiClient;
-    ClientSCK clientSCK;
-    Stage stage;
+
+    private RMIClient rmiClient;
+    private ClientSCK clientSCK;
+    private Stage stage;
 
     @FXML
-    Label labelWithPlayerName;
+    private Label labelWithPlayerName;
 
     @FXML
-    ImageView baseCard1;
+    private ImageView baseCard1;
 
     public void setBaseCard1(int cardID) {
         String path;
-        path = "/images/cards/front/" + cardID + ".png";
+        path = "/images/cards/front/ (" + cardID + ").png";
         Image image = new Image(getClass().getResourceAsStream(path));
         baseCard1.setImage(image);
     }
@@ -57,6 +58,7 @@ public class GUIBaseCardController {
         this.network = network;
     }
 
+    @FXML
     public void setLabelWithPlayerName(String text) {
         this.labelWithPlayerName.setText(text);
     }
