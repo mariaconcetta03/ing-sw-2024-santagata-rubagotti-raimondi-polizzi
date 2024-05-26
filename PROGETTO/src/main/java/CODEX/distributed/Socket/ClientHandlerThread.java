@@ -137,8 +137,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                     if(pongReceived) {
                         pongReceived=false;
                         CODEX.utils.executableMessages.serverMessages.ServerMessage serverMessage= new ServerPing();
-                        writeTheStream(new SCKMessage(serverMessage)); //first ping
-                        writeTheStream(new SCKMessage(serverMessage)); //second ping
+                        writeTheStream(new SCKMessage(serverMessage));
                     }else{ //there are no pongs received
                         System.out.println("the connection has been interrupted...Bye bye");
                         try {
@@ -302,10 +301,8 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     @Override
     public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) {
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        System.out.println("sono in playBaseCard dell'handler");
         try {
             this.gameController.playBaseCard(nickname, baseCard, orientation);
-            System.out.println("sto per scrivere ok in playBaseCard dell'handler");
             ServerMessage serverMessage=new ServerOk();
             writeTheStream(new SCKMessage(serverMessage));
         }catch (RemoteException ignored){

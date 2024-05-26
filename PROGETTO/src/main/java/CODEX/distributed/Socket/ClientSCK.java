@@ -103,6 +103,7 @@ public class ClientSCK implements ClientGeneralInterface {
         this.inputStream = new ObjectInputStream(socket.getInputStream()); //what ClientHandlerThread writes in its socket's output stream ends up here
 
         this.running = true;
+        this.inGame=false; //this will become true when the state of the Game will change in STARTED
         this.responseReceived = false; //initialized false to enter the while inside every ClientGeneralInterface method
         this.actionLock = new Object();
         this.outputLock = new Object();
@@ -119,13 +120,12 @@ public class ClientSCK implements ClientGeneralInterface {
                                 modifyClientSide(sckMessage); //questo è bloccante-> meglio utilizzare un thread...a meno che non vogliamo fare una modifica alla volta
                             } catch (Exception e) {
                                 System.err.println(e.getMessage());
-                                System.err.println(e.getCause().getMessage());
+                                running = false;
+                                inGame=false;
                                 try { //devo fermare i thread lanciati all'interno di questo thread
                                     inputStream.close();
                                     outputStream.close();
                                     socket.close();
-                                    running = false;
-                                    inGame=false;
                                 } catch (IOException ex) { //this catch is needed for the close statements
                                     throw new RuntimeException(ex);
                                 }
@@ -494,24 +494,12 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException, NotBoundException {
         synchronized (actionLock) {
-            System.out.println("instanzio un clientMessage");
             ClientMessage clientMessage=new PlayBaseCard(nickname,baseCard,orientation);
             try {
                 sendMessage(new SCKMessage(clientMessage));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            /*
-            while (!responseReceived) {
-                try {
-                    System.out.println("aspetto una risposta");
-                    actionLock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-             */
         }
     }
 
@@ -666,12 +654,6 @@ public class ClientSCK implements ClientGeneralInterface {
     public void updatePlayerDeck(String playerNickname, PlayableCard[] playerDeck) throws RemoteException {
         //we have to change the view and the local model
         System.out.println("I received the UpdatePlayerDeck.");
-        if(playerDeck[0]!=null){
-            System.out.println(playerDeck[0].getId());
-        }
-        else {
-            System.out.println("update con carta nulla");
-        }
         if(playerNickname.equals(personalPlayer.getNickname())){
             personalPlayer.setPlayerDeck(playerDeck);
         }else {
@@ -696,35 +678,9 @@ public class ClientSCK implements ClientGeneralInterface {
                     if (selectedView == 1) {
                         System.out.println("I received the updatePersonalObjective.");
 
-                        /*
-                        boolean ok = false;
-                        while (!ok) {
-                            System.out.println("sto chiedendo alla tui di stamparmi il player deck");
-                            tuiView.printHand(personalPlayer.getPlayerDeck());
-                            try {
-                                ObjectiveCard tmp=tuiView.askChoosePersonalObjective(sc, personalPlayer.getPersonalObjectives());
-                                chooseObjectiveCard(personalPlayer.getNickname(),tmp);
-                                ok = true;
-                                personalPlayer.setPersonalObjective(tmp);
-                                System.out.println("You've correctly chosen your objective card!");
-                            }catch (RemoteException |NotBoundException e){
-                                System.out.println("Unable to communicate with the server! Shutting down.");
-                                System.exit(-1);
-                            }catch (CardNotOwnedException e){ //questa eccezione però non viene lanciata da nessuno (nè dal controller nè dalla tui)
-                                System.out.println("You don't own this card.");
-                            }
-                        }
-
-                         */
-
-
-
-
-
                         new Thread(()->{ //per ricevere i ping
                             boolean ok = false;
                             while (!ok) {
-                                System.out.println("sto chiedendo alla tui di stamparmi il player deck");
                                 tuiView.printHand(personalPlayer.getPlayerDeck());
                                 try {
                                     ObjectiveCard tmp=tuiView.askChoosePersonalObjective(sc, personalPlayer.getPersonalObjectives());
@@ -732,7 +688,7 @@ public class ClientSCK implements ClientGeneralInterface {
                                     ok = true;
                                     personalPlayer.setPersonalObjective(tmp);
                                     System.out.println("You've correctly chosen your objective card!");
-                                }catch (RemoteException |NotBoundException e){
+                                }catch (RemoteException |NotBoundException e){ //sarebbe 'ignored'
                                     System.out.println("Unable to communicate with the server! Shutting down.");
                                     System.exit(-1);
                                 }catch (CardNotOwnedException e){ //questa eccezione però non viene lanciata da nessuno (nè dal controller nè dalla tui)
@@ -741,11 +697,6 @@ public class ClientSCK implements ClientGeneralInterface {
                             }
 
                         }).start();;
-
-
-
-
-
 
                     } else if (selectedView == 2) {
                         //gui
@@ -837,54 +788,29 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException { //taken from RMIClient
-        if (selectedView == 1) {
-            //we have to change the view and the local model @TODO differenziare TUI e GUI
+        if (selectedView == 1) { //TUI
+
             System.out.println("I received the updateRound.");
             playersInTheGame = newPlayingOrder; //when turnCounter==-1 we have to initialize this list
             if (this.turnCounter == 0) { //we enter here only one time: the second time that updateRound is called
                 //the second time that updateRound is called we have all that is need to call playBaseCard (see the model server side)
 
-            /*
-            try {
-                System.out.println("la tui mi chiede il lato della base card");
-                if(personalPlayer.getPlayerDeck()[0]!=null) {
-                    System.out.println(personalPlayer.getPlayerDeck()[0].getId());
-                }else {
-                    System.out.println("carte base nulla");
-                }
-                boolean choice=tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]);
-                System.out.println("chiamo playBaseCard");
-                playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0],choice);
-            } catch (NotBoundException | RemoteException ignored) { //non si verifica
-
-            }
-
-             */
-
-
-                new Thread(() -> { //per riuscire a ricevere i ping
+                new Thread(() -> { //per riuscire a ricevere i ping (e rispondere con un pong)
                     try {
-                        System.out.println("la tui mi chiede il lato della base card");
                         boolean choice = tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]);
-                        System.out.println("chiamo playBaseCard");
                         playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0], choice);
-                    } catch (NotBoundException e) { //non si verifica
-                        throw new RuntimeException(e);
-                    } catch (RemoteException e) { //non si verifica
-                        throw new RuntimeException(e);
+                    } catch (NotBoundException|RemoteException ignored) { //non si verifica
                     }
                 }).start();
-
-
             }
             if (this.turnCounter >= 1) { //we enter here from the third time included that updateRound is called
                 //before starting the thread that prints the menu we communicate which is the player that is playing
                 if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
                     setIsPlaying(true);
-                    System.out.println("You are playing");
+                    System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
                 } else {
                     setIsPlaying(false);
-                    System.out.println("You are not playing");
+                    System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
                 }
                 if (this.turnCounter == 1) { //we enter here the third time (finishedSetupPhase2())
                     //we have to start the thread that prints the menu
@@ -899,8 +825,19 @@ public class ClientSCK implements ClientGeneralInterface {
             }
             turnCounter++; //first time: -1 -> 0, second time 0 -> 1  so from the second time on we enter if(turnCounter>=1)
         }
-        else if (selectedView == 2) {
+        else if (selectedView == 2) { //GUI
+            playersInTheGame = newPlayingOrder;
+            if (this.turnCounter == 0){
+                //chiamo playBaseCard : se uso un thread per farlo posso continuare a ricevere e a rispondere a ping
+            }
+            if (this.turnCounter >= 1){
+                //dico ai giocatori chi sta giocando e chi no
 
+                if (this.turnCounter == 1){ //questo è il terzo turno
+                    //dal terzo turno è possibile vedere il menù e selezionarne i punti del menù, la TUI qui lancia un thread che va per tutta la partita
+                }
+            }
+            turnCounter++; //quando il model fa un updateRound per la terza volta siamo in turnCounter==1 e si può iniziare a selezionare il menù
         }
     }
 
@@ -933,8 +870,7 @@ public class ClientSCK implements ClientGeneralInterface {
                             pongReceived=false;
                             try {
                                 ClientMessage clientMessage=new ClientPing();
-                                sendMessage(new SCKMessage(clientMessage)); //first ping
-                                sendMessage(new SCKMessage(clientMessage)); //second ping
+                                sendMessage(new SCKMessage(clientMessage));
                             } catch (IOException e) { //the connection doesn't is open (and it doesn't seem to be open)
                                 System.out.println("the connection has been interrupted....Bye bye");
                                 try { //we close all we have to close
@@ -1040,8 +976,19 @@ public class ClientSCK implements ClientGeneralInterface {
                             inGame = false;
                             leaveGame(personalPlayer.getNickname());
                             System.out.println("You left the game.");
-                            this.resetAttributes();
-                            this.waitingRoom();
+                            //qui bisogna chiudere gli stream e la socket
+                            running = false;
+                            try { //devo fermare i thread lanciati all'interno di questo thread
+                                inputStream.close();
+                                outputStream.close();
+                                socket.close();
+                            } catch (IOException ex) { //this catch is needed for the close statements
+                                throw new RuntimeException(ex);
+                            }
+                            if(this.timer!=null){ //this is null if the game is not already started
+                                this.timer.cancel(); //we don't need to check the connection anymore
+                            }
+                            System.exit(-1);
                             break;
                         case 1:
                             tuiView.printHand(personalPlayer.getPlayerDeck());
@@ -1150,21 +1097,6 @@ public class ClientSCK implements ClientGeneralInterface {
             //gui
         }
     } //usciti da qui restituiamo il lock della syn e quindi se c'è stato un update su isPlaying la prossima chiamata ne terrà conto
-
-    private void resetAttributes() {
-        String tmp= personalPlayer.getNickname();
-        this.personalPlayer=new Player();
-        this.personalPlayer.setNickname(tmp);
-        this.goldDeck=null;
-        this.resourceDeck=null;
-        this.resourceCard1=null;
-        this.resourceCard2=null;
-        this.goldCard1=null;
-        this.goldCard2=null;
-        this.turnCounter=-1;  //credo sia per capire se è il primo turno (e quindi bisogna scegliere tra le carte base
-        this.playersInTheGame=null;
-        //this.gameController=null; //dovrebbe servire solo per RMI
-    }
 
 
     public static class Settings { //this is an attribute. (qui ci sono indirizzo e porta del server locale
