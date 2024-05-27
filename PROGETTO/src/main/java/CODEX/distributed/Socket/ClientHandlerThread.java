@@ -149,6 +149,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                             throw new RuntimeException(e);
                         }
                         timer.cancel(); // Ferma il timer
+                        gameController.disconnection(); //bisogna settare qualche parametro in caso di più client che si disconnettono in contemporanea
                     }
                 }
             }, 0, 10000); // Esegui ogni 10 secondi
@@ -191,6 +192,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                 throw new RuntimeException(ex);
             }
             timer.cancel(); // Ferma il timer
+            gameController.disconnection();
         }
     }
 

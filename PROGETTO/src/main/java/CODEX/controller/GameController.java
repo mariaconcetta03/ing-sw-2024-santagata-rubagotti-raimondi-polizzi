@@ -526,7 +526,15 @@ public class GameController extends UnicastRemoteObject implements GameControlle
             if ((currentTime - lastHeartbeatTimesOfEachPlayer.get(nickname)) / 1000 > TIMEOUT) {
                 System.out.println("Client connection lost");
                 //caso in cui il client risulta irragiungibile->handleDisconnection: vanno avvisati i player e chiuso tutto
+                disconnection(); //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
             }
         }, 0, TIMEOUT, TimeUnit.SECONDS);
+    }
+    public void disconnection(){ //notify con disconnectionEvent
+        //ATTENZIONE: togliere dagli observers il client che ha effettuato la disconnessione prima di mandare notify all
+        //nel caso di più disconnessioni contemporanee potrebbero non essere tolti tutti coloro che hannno fatto la disconnessione
+        //dagli observers e quindi potrebbero venir lanciate eccezioni.
+        //ATTENZIONE: la disconnessione potrebbe venir rilevata da una RemoteException al posto che da un heartbeat: anche in quel caso va chiamato disconnection()
+
     }
 }

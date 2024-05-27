@@ -8,12 +8,16 @@ import java.rmi.RemoteException;
 public class disconnectionEvent implements Event {  //sostituisce quello che prima era l'evento di GAME_LEFT
     @Override
     public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
-        //client.
+        client.handleDisconnection();
     }
 
     @Override
     public void executeSCK(ClientGeneralInterface client) {
-        //to be decided
+        try {
+            client.handleDisconnection();
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

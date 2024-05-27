@@ -939,6 +939,27 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void handleDisconnection() throws RemoteException {
         //chiudere stream, socket, timer e thread
+        if(selectedView==1) {
+            running=false;
+            inGame=false;
+            try {
+                inputStream.close();
+                outputStream.close();
+                socket.close();
+            } catch (IOException e) { //needed for the close clause
+                throw new RuntimeException(e);
+            }
+            //the TimerTask that checks the connection should end by itself when the application ends
+            this.timer.cancel(); //to be sure
+            System.out.println("A disconnection happened.");
+            Timer timer = new Timer();
+            try {
+                timer.wait(5000);
+            } catch (InterruptedException e) {
+            }
+        }else if(selectedView==2) {
+        }
+        System.exit(-1);
     }
 
     @Override

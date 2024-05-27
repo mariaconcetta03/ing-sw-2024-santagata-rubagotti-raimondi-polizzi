@@ -946,7 +946,10 @@ int choice=-1;
     public void handleDisconnection() throws RemoteException {
         if(selectedView==1) {
             try {
-                executor.shutdown();
+                this.executor.shutdown();
+                this.schedulerToCheckReceivedHeartBeat.shutdown();
+                this.schedulerToSendHeartbeat.shutdown(); //va prima chiuso l'heartbeat receiver lato server?
+
             } catch (Exception e) {
             }
             System.out.println("A disconnection happened.");
