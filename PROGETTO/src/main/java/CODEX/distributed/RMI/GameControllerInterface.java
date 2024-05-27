@@ -28,4 +28,7 @@ public interface GameControllerInterface extends Remote {
 
     void leaveGame(String nickname)throws RemoteException;
     void checkNPlayers() throws RemoteException;
+
+    void heartbeat() throws RemoteException;
+    void startHeartbeat() throws RemoteException;
 }

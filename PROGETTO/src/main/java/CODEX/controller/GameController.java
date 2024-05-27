@@ -12,8 +12,13 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class GameController extends UnicastRemoteObject implements GameControllerInterface {
+    private static final int TIMEOUT = 10; // seconds
+    private long lastHeartbeatTime;
 
 
     private ServerController serverController;
@@ -502,5 +507,22 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         if(!clientsConnected.containsValue(wrapObs)){
             clientsConnected.put(nickname, wrapObs);
         }
+    }
+    public void heartbeat() throws RemoteException{
+        lastHeartbeatTime = System.currentTimeMillis();
+        System.out.println("Received heartbeat at " + lastHeartbeatTime);
+    }
+    public void startHeartbeat() throws RemoteException {
+        lastHeartbeatTime = System.currentTimeMillis();
+        startHeartbeatMonitor();
+    }
+    private void startHeartbeatMonitor() {
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleAtFixedRate(() -> {
+            long currentTime = System.currentTimeMillis();
+            if ((currentTime - lastHeartbeatTime) / 1000 > TIMEOUT) {
+                System.out.println("Client connection lost");
+            }
+        }, 0, TIMEOUT, TimeUnit.SECONDS);
     }
 }

@@ -35,6 +35,8 @@ import java.util.concurrent.*;
 
 
 public class RMIClient extends UnicastRemoteObject implements ClientGeneralInterface, ClientRMIInterface {
+    private static final int HEARTBEAT_INTERVAL = 5; // seconds
+    private ScheduledExecutorService scheduler;
     private ServerRMIInterface SRMIInterface; //following the slides' instructions
 
     ExecutorService executor;
@@ -899,6 +901,16 @@ int choice=-1;
     public void updateGameState(Game.GameState gameState) throws RemoteException {
         if(gameState.equals(Game.GameState.STARTED)){
             inGame=true;
+            this.gameController.startHeartbeat(); //il gameController inizia a segnarsi se gli arrivano heartBeat
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1); //bisogna fare lo shutdown quando il gioco termina (con ENDED o con una disconnessione)
+            scheduler.scheduleAtFixedRate(() -> {
+                try {
+                    gameController.heartbeat(); //in gameController però la prima volta che viene scritta la variabile lastHeartbeatTime è in startHeartbeat
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+                System.out.println("Sent heartbeat");
+            }, 0, HEARTBEAT_INTERVAL, TimeUnit.SECONDS);
         }
         if (selectedView == 1) {
             if(gameState.equals(Game.GameState.STARTED)) {
@@ -913,6 +925,7 @@ int choice=-1;
             } else if (gameState.equals(Game.GameState.ENDING)) {
                 System.out.println("Ending condition triggered.");
             }else if(gameState.equals(Game.GameState.ENDED)){
+                this.scheduler.shutdownNow(); //va fermato subito l'heartBeat? quando il GameController cessa di esistere?
                 System.out.println("The game has ended.");
                 tuiView.printScoreBoard(playersInTheGame);
             }
