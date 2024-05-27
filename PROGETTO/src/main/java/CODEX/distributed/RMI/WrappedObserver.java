@@ -6,12 +6,15 @@ import CODEX.utils.Observer;
 import CODEX.utils.executableMessages.events.Event;
 
 import java.rmi.RemoteException;
+import java.util.concurrent.ScheduledExecutorService;
 
 
 /**
  * This class represents a CLIENT as an OBSERVER
  */
 public class WrappedObserver implements Observer {
+    public ScheduledExecutorService scheduler;
+    private static final int HEARTBEAT_INTERVAL = 5; // seconds
     private ClientRMIInterface remoteClient;
     private String nickname;
 
@@ -40,7 +43,7 @@ public class WrappedObserver implements Observer {
      * @param obs is the observable who called the notify
      */
     public void update(Observable obs, Event e) throws RemoteException {
-        e.execute(remoteClient);
+        e.execute(remoteClient,this);
     }
 
 
@@ -63,6 +66,15 @@ public class WrappedObserver implements Observer {
     @Override
     public String getNickname() throws RemoteException {
         return this.nickname;
+    }
+    public ScheduledExecutorService getScheduler(){
+        return this.scheduler;
+    }
+    public void setScheduler(ScheduledExecutorService scheduledExecutorService){
+        this.scheduler=scheduledExecutorService;
+    }
+    public int getHeartbeatInterval(){
+        return this.HEARTBEAT_INTERVAL;
     }
 
 }

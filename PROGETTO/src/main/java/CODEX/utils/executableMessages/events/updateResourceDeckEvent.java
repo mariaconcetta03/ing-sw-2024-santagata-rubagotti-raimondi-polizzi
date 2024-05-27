@@ -1,6 +1,7 @@
 package CODEX.utils.executableMessages.events;
 
 import CODEX.distributed.ClientGeneralInterface;
+import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.PlayableDeck;
 
 import java.rmi.RemoteException;
@@ -11,7 +12,7 @@ public class updateResourceDeckEvent implements Event {
         this.resourceDeck=resourceDeck;
     }
     @Override
-    public void execute(ClientGeneralInterface client) throws RemoteException {
+    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.updateResourceDeck(resourceDeck);
     }
     @Override

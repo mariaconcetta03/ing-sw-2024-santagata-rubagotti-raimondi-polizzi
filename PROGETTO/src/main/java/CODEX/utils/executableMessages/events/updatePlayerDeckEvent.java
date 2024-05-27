@@ -1,11 +1,10 @@
 package CODEX.utils.executableMessages.events;
 
 import CODEX.distributed.ClientGeneralInterface;
+import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.PlayableCard;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class updatePlayerDeckEvent implements Event {
     private String playerNickname;
@@ -19,7 +18,7 @@ public class updatePlayerDeckEvent implements Event {
 
 
     @Override
-    public void execute(ClientGeneralInterface client) throws RemoteException {
+    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.updatePlayerDeck(playerNickname, playerDeck);
     }
     @Override

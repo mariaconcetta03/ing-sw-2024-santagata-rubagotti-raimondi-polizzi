@@ -1,6 +1,7 @@
 package CODEX.utils.executableMessages.events;
 
 import CODEX.distributed.ClientGeneralInterface;
+import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.Pawn;
 import CODEX.org.model.Player;
 
@@ -16,7 +17,7 @@ public class updatePlayerPawnEvent implements Event {
     }
 
     @Override
-    public void execute(ClientGeneralInterface client) throws RemoteException {
+    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.updatePawns(player, pawn);
     }
     @Override

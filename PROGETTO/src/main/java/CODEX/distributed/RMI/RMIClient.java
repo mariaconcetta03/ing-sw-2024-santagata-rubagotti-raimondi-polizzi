@@ -36,7 +36,10 @@ import java.util.concurrent.*;
 
 public class RMIClient extends UnicastRemoteObject implements ClientGeneralInterface, ClientRMIInterface {
     private static final int HEARTBEAT_INTERVAL = 5; // seconds
-    private ScheduledExecutorService scheduler;
+    private static final int TIMEOUT = 10; // seconds
+    private ScheduledExecutorService schedulerToSendHeartbeat;
+    ScheduledExecutorService schedulerToCheckReceivedHeartBeat;
+    private long lastHeartbeatTime;
     private ServerRMIInterface SRMIInterface; //following the slides' instructions
 
     ExecutorService executor;
@@ -902,8 +905,8 @@ int choice=-1;
         if(gameState.equals(Game.GameState.STARTED)){
             inGame=true;
             this.gameController.startHeartbeat(); //il gameController inizia a segnarsi se gli arrivano heartBeat
-            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1); //bisogna fare lo shutdown quando il gioco termina (con ENDED o con una disconnessione)
-            scheduler.scheduleAtFixedRate(() -> {
+            this.schedulerToSendHeartbeat = Executors.newScheduledThreadPool(1); //bisogna fare lo shutdown quando il gioco termina (con ENDED o con una disconnessione)
+            this.schedulerToSendHeartbeat.scheduleAtFixedRate(() -> {
                 try {
                     gameController.heartbeat(); //in gameController però la prima volta che viene scritta la variabile lastHeartbeatTime è in startHeartbeat
                 } catch (RemoteException e) {
@@ -925,7 +928,7 @@ int choice=-1;
             } else if (gameState.equals(Game.GameState.ENDING)) {
                 System.out.println("Ending condition triggered.");
             }else if(gameState.equals(Game.GameState.ENDED)){
-                this.scheduler.shutdownNow(); //va fermato subito l'heartBeat? quando il GameController cessa di esistere?
+                this.schedulerToSendHeartbeat.shutdownNow(); //va fermato subito l'heartBeat? quando il GameController cessa di esistere?
                 System.out.println("The game has ended.");
                 tuiView.printScoreBoard(playersInTheGame);
             }
@@ -1010,6 +1013,26 @@ int choice=-1;
 
     public boolean getInGame() {
         return inGame;
+    }
+
+    public void heartbeat(){
+        lastHeartbeatTime = System.currentTimeMillis();
+        System.out.println("Received heartbeat at " + lastHeartbeatTime);
+    }
+
+    public void startHeartbeat() throws RemoteException {
+        lastHeartbeatTime = System.currentTimeMillis();
+        startHeartbeatMonitor();
+    }
+    private void startHeartbeatMonitor() { //scheduler.shutdownNow(); in caso di connection lost o Game ENDED
+        this.schedulerToCheckReceivedHeartBeat = Executors.newScheduledThreadPool(1);
+        this.schedulerToCheckReceivedHeartBeat.scheduleAtFixedRate(() -> {
+            long currentTime = System.currentTimeMillis();
+            if ((currentTime - lastHeartbeatTime) / 1000 > TIMEOUT) {
+                System.out.println("Server connection lost");
+                //caso in cui il server risulta irragiungibile
+            }
+        }, 0, TIMEOUT, TimeUnit.SECONDS);
     }
 }
 

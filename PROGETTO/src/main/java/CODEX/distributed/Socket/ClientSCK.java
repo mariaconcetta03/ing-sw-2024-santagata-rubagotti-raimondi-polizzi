@@ -938,7 +938,17 @@ public class ClientSCK implements ClientGeneralInterface {
 
     @Override
     public void handleDisconnection() throws RemoteException {
+        //chiudere stream, socket, timer e thread
+    }
 
+    @Override
+    public void heartbeat() throws RemoteException {
+        //c'è solo in RMI...
+    }
+
+    @Override
+    public void startHeartbeat() throws RemoteException {
+        //c'è solo in RMI...
     }
 
 

@@ -1,6 +1,7 @@
 package CODEX.utils.executableMessages.clientMessages;
 
 import CODEX.distributed.ClientGeneralInterface;
+import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.distributed.Socket.ClientHandlerThread;
 import CODEX.org.model.Game;
 import CODEX.utils.executableMessages.events.Event;
@@ -22,7 +23,7 @@ public interface ClientMessage extends Serializable {
         }
 
         @Override
-        public void execute(ClientGeneralInterface client) throws RemoteException {
+        public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
             client.updateGameState(gameState);
         }
         @Override

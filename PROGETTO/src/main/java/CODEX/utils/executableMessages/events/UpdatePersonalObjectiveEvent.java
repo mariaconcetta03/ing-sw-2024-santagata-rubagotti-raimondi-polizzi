@@ -1,6 +1,7 @@
 package CODEX.utils.executableMessages.events;
 
 import CODEX.distributed.ClientGeneralInterface;
+import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.ObjectiveCard;
 
 import java.rmi.RemoteException;
@@ -15,7 +16,7 @@ public class UpdatePersonalObjectiveEvent implements Event {
     }
 
     @Override
-    public void execute(ClientGeneralInterface client) throws RemoteException {
+    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.updatePersonalObjective(personalObjCard, nickname);
     }
     @Override

@@ -1,10 +1,13 @@
 package CODEX.utils.executableMessages.events;
 
-import CODEX.distributed.ClientActionsInterface;
 import CODEX.distributed.ClientGeneralInterface;
+import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.Game;
 
 import java.rmi.RemoteException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class updateGameStateEvent implements Event{
@@ -18,8 +21,29 @@ public class updateGameStateEvent implements Event{
         }
 
         @Override
-        public void execute(ClientGeneralInterface client) throws RemoteException {
+        public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
             client.updateGameState(gameState);
+            if(gameState.equals(Game.GameState.STARTED)){
+                client.startHeartbeat();
+                ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1); //bisogna fare lo shutdown quando il gioco termina (con ENDED o con una disconnessione)
+                scheduler.scheduleAtFixedRate(() -> {
+                    try {
+                        client.heartbeat(); //in gameController però la prima volta che viene scritta la variabile lastHeartbeatTime è in startHeartbeat
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.out.println("Sent heartbeat");
+                }, 0, wrappedObserver.getHeartbeatInterval(), TimeUnit.SECONDS);
+                wrappedObserver.setScheduler(scheduler);
+            }
+            /*
+            if(gameState.equals(Game.GameState.ENDED)){
+            wrappedObserver.getScheduler().shutdownNow();
+            }
+
+             */
+
+
         }
         @Override
         public void executeSCK(ClientGeneralInterface client) {

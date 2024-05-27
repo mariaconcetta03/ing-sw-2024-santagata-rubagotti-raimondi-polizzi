@@ -1,6 +1,7 @@
 package CODEX.utils.executableMessages.events;
 
 import CODEX.distributed.ClientGeneralInterface;
+import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.Player;
 
 import java.rmi.RemoteException;
@@ -13,7 +14,7 @@ public class updatePlayersOrderEvent implements Event { //questo era prima l'eve
         this.newPlayingOrder = newPlayingOrder;
     }
     @Override
-    public void execute(ClientGeneralInterface client) throws RemoteException {
+    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.updateRound(newPlayingOrder);
     }
     @Override
