@@ -904,11 +904,11 @@ int choice=-1;
     public void updateGameState(Game.GameState gameState) throws RemoteException {
         if(gameState.equals(Game.GameState.STARTED)){
             inGame=true;
-            this.gameController.startHeartbeat(); //il gameController inizia a segnarsi se gli arrivano heartBeat
+            this.gameController.startHeartbeat(this.personalPlayer.getNickname()); //il gameController inizia a segnarsi se gli arrivano heartBeat
             this.schedulerToSendHeartbeat = Executors.newScheduledThreadPool(1); //bisogna fare lo shutdown quando il gioco termina (con ENDED o con una disconnessione)
             this.schedulerToSendHeartbeat.scheduleAtFixedRate(() -> {
                 try {
-                    gameController.heartbeat(); //in gameController però la prima volta che viene scritta la variabile lastHeartbeatTime è in startHeartbeat
+                    gameController.heartbeat(this.personalPlayer.getNickname()); //in gameController però la prima volta che viene scritta la variabile lastHeartbeatTime è in startHeartbeat
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
                 }

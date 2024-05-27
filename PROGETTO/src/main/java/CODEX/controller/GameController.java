@@ -18,14 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GameController extends UnicastRemoteObject implements GameControllerInterface {
     private static final int TIMEOUT = 10; // seconds
-    private long lastHeartbeatTime=0; //ATTENZIONE: va creata per ogni player (dalle due alle 4 variabili)
-    /*
-    private long lastHeartbeatTime1=0;
-    private long lastHeartbeatTime2=0;
-    private long lastHeartbeatTime3=0;
-    private long lastHeartbeatTime4=0;
-
-     */
+    Map <String, Long> lastHeartbeatTimesOfEachPlayer;
 
     private ServerController serverController;
     private Game game;
@@ -51,6 +44,8 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         clientsConnected= new HashMap<>();
         numberOfPlayers=0;
         id=0;
+        lastHeartbeatTimesOfEachPlayer=new HashMap<>();
+
     }
 
     /**
@@ -514,22 +509,21 @@ public class GameController extends UnicastRemoteObject implements GameControlle
             clientsConnected.put(nickname, wrapObs);
         }
     }
-    public void heartbeat() throws RemoteException{ //qui va passato l'identificativo del player per settare il lastHeartbeatTime giusto
-        lastHeartbeatTime = System.currentTimeMillis();
-        System.out.println("Received heartbeat at " + lastHeartbeatTime);
+    public void heartbeat(String nickname) throws RemoteException{ //qui va passato l'identificativo del player per settare il lastHeartbeatTime giusto
+        lastHeartbeatTimesOfEachPlayer.put(nickname,System.currentTimeMillis());
+        System.out.println("Received heartbeat at " + lastHeartbeatTimesOfEachPlayer.get(nickname)+ " from "+ nickname);
     }
-    public void startHeartbeat() throws RemoteException {
-        lastHeartbeatTime = System.currentTimeMillis();
-        startHeartbeatMonitor();
+    public void startHeartbeat(String nickname) throws RemoteException { //viene chiamato una sola volta, prima del primo heartbeat
+        lastHeartbeatTimesOfEachPlayer.put(nickname,System.currentTimeMillis());
+        startHeartbeatMonitor(nickname);
     }
 
 
-    //un unico thread per tutti i player, ognuno il suo lastHeartbeatTime. vengono tutti controllati in un unico thread
-    private void startHeartbeatMonitor() { //scheduler.shutdownNow(); in caso di connection lost o Game ENDED
+    private void startHeartbeatMonitor(String nickname) { //scheduler.shutdownNow(); in caso di connection lost o Game ENDED
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(() -> {
             long currentTime = System.currentTimeMillis();
-            if ((currentTime - lastHeartbeatTime) / 1000 > TIMEOUT) { //bisogna però creare un lastHeartbeatTime per ogni player
+            if ((currentTime - lastHeartbeatTimesOfEachPlayer.get(nickname)) / 1000 > TIMEOUT) {
                 System.out.println("Client connection lost");
                 //caso in cui il client risulta irragiungibile->handleDisconnection: vanno avvisati i player e chiuso tutto
             }
