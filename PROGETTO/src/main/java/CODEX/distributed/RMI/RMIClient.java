@@ -1029,11 +1029,32 @@ int choice=-1;
     }
     private void startHeartbeatMonitor() { //scheduler.shutdownNow(); in caso di connection lost o Game ENDED
         this.schedulerToCheckReceivedHeartBeat = Executors.newScheduledThreadPool(1);
-        this.schedulerToCheckReceivedHeartBeat.scheduleAtFixedRate(() -> {
+        var lambdaContext = new Object() {
+            ScheduledFuture<?> heartbeatTask;
+        };
+        lambdaContext.heartbeatTask= this.schedulerToCheckReceivedHeartBeat.scheduleAtFixedRate(() -> {
             long currentTime = System.currentTimeMillis();
             if ((currentTime - lastHeartbeatTime) / 1000 > TIMEOUT) {
                 System.out.println("Server connection lost");
                 //caso in cui il server risulta irragiungibile
+                if (lambdaContext.heartbeatTask != null && !lambdaContext.heartbeatTask.isCancelled()) {
+                    lambdaContext.heartbeatTask.cancel(true);
+                }
+                // taken from handleDisconnection()
+                try {
+                    this.executor.shutdown();
+                    this.schedulerToSendHeartbeat.shutdown(); //va prima chiuso l'heartbeat receiver lato server?
+
+                } catch (Exception e) {
+                }
+                //System.out.println("A disconnection happened.");
+                Timer timer = new Timer();
+                try {
+                    timer.wait(5000);
+                } catch (InterruptedException e) {
+                }
+
+                this.schedulerToCheckReceivedHeartBeat.shutdown();
             }
         }, 0, TIMEOUT, TimeUnit.SECONDS);
     }

@@ -8,16 +8,21 @@ import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.*;
 import CODEX.utils.Observer;
 import CODEX.utils.ErrorsAssociatedWithExceptions;
+import CODEX.utils.executableMessages.events.disconnectionEvent;
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class GameController extends UnicastRemoteObject implements GameControllerInterface {
     private static final int TIMEOUT = 10; // seconds
+    private boolean disconnection=false; //per controllare quando fermare gli heartbeat agli altri player che non si sono disconnessi ma che giocavano con uno che si è disconnesso
+    private boolean firstDisconnection=true; //per chiamre disconnection() solo per il primo player che si disconnette
     Map <String, Long> lastHeartbeatTimesOfEachPlayer;
 
     private ServerController serverController;
@@ -521,12 +526,23 @@ public class GameController extends UnicastRemoteObject implements GameControlle
 
     private void startHeartbeatMonitor(String nickname) { //scheduler.shutdownNow(); in caso di connection lost o Game ENDED
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.scheduleAtFixedRate(() -> {
+        var lambdaContext = new Object() {
+            ScheduledFuture<?> heartbeatTask;
+        };
+        lambdaContext.heartbeatTask =scheduler.scheduleAtFixedRate(() -> {
             long currentTime = System.currentTimeMillis();
-            if ((currentTime - lastHeartbeatTimesOfEachPlayer.get(nickname)) / 1000 > TIMEOUT) {
+            if ((currentTime - lastHeartbeatTimesOfEachPlayer.get(nickname)) / 1000 > TIMEOUT||disconnection) { //se un solo player si disconnette si finisce di mandare heartbeat a tutti gli altri player
+                disconnection=true;
                 System.out.println("Client connection lost");
+                if (lambdaContext.heartbeatTask != null && !lambdaContext.heartbeatTask.isCancelled()) {
+                    lambdaContext.heartbeatTask.cancel(true);
+                }
+                scheduler.shutdown();
                 //caso in cui il client risulta irragiungibile->handleDisconnection: vanno avvisati i player e chiuso tutto
-                disconnection(); //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
+                if(firstDisconnection){
+                    firstDisconnection=false; //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
+                    disconnection(); //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
+                }
             }
         }, 0, TIMEOUT, TimeUnit.SECONDS);
     }
@@ -536,5 +552,27 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         //dagli observers e quindi potrebbero venir lanciate eccezioni.
         //ATTENZIONE: la disconnessione potrebbe venir rilevata da una RemoteException al posto che da un heartbeat: anche in quel caso va chiamato disconnection()
 
+
+        //scopiazzo quello che era leaveGame senza mandare gli update che mostrano i vincitori con i relativi punti
+
+        game.setLastEvent(new disconnectionEvent());
+    }
+
+    // lato client quando i vari metodi del GameController lanciano un'eccezione:
+    // disconnection=true; //questo solo per RMI forse
+    // if(firstDisconnection){
+    //   firstDisconnection=false; //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
+    //   disconnection(); //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
+    // }
+    //devo usre questi getter per farlo:
+    public boolean getDisconnection(){
+        return this.disconnection;
+    }
+    public boolean getFirstDisconnection(){
+        return this.firstDisconnection;
+    }
+
+    public void setFirstDisconnection(boolean firstDisconnection) {
+        this.firstDisconnection=firstDisconnection;
     }
 }

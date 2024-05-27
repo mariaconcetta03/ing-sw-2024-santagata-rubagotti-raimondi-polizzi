@@ -695,5 +695,15 @@ public class Game extends Observable implements Serializable {
         }
 
     }
+    public void setLastEvent(Event event){
+        try {
+            notifyObservers(event); //disconnectionEvent
+        } catch (RemoteException ignored) { //in caso di connection lost
+            //se mentre notifico di connection lost mi vengono lanciate RemoteException i casi sono due:
+            //1. sto facendo la notify proprio al player per cui è stata chiamata disconnection()
+            //2. altri player nel frattempo si sono disconnessi
+            //in entrambi i casi ignoro l'eccezione perchè tanto dopo queste notify devo chiudere tutto
+        }
+    }
 
 }
