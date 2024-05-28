@@ -626,10 +626,14 @@ public class ClientSCK implements ClientGeneralInterface {
             System.out.println("I received the board.");
             personalPlayer.setBoard(board);
         } else {
-            for (Player p : playersInTheGame) {
-                if (boardOwner.equals(p.getNickname())) {
-                    p.setBoard(board);
+            if(playersInTheGame!=null) {
+                for (Player p : playersInTheGame) {
+                    if (boardOwner.equals(p.getNickname())) {
+                        p.setBoard(board);
+                    }
                 }
+            }else{
+                System.out.println("null in updateBoard");
             }
             if (selectedView == 1) {
                 System.out.println("I received the board di un altro.");
@@ -670,10 +674,14 @@ public class ClientSCK implements ClientGeneralInterface {
         if(playerNickname.equals(personalPlayer.getNickname())){
             personalPlayer.setPlayerDeck(playerDeck);
         }else {
-            for (Player p : playersInTheGame) {
-                if (playerNickname.equals(p.getNickname())) {
-                    p.setPlayerDeck(playerDeck);
+            if(playersInTheGame!=null) {
+                for (Player p : playersInTheGame) {
+                    if (playerNickname.equals(p.getNickname())) {
+                        p.setPlayerDeck(playerDeck);
+                    }
                 }
+            }else {
+                System.out.println("null in updatePlayerDeck");
             }
         }
         if (selectedView == 1) {
@@ -839,7 +847,11 @@ public class ClientSCK implements ClientGeneralInterface {
             turnCounter++; //first time: -1 -> 0, second time 0 -> 1  so from the second time on we enter if(turnCounter>=1)
         }
         else if (selectedView == 2) { //GUI
+            System.out.println("I received the updateRound.");
             playersInTheGame = newPlayingOrder;
+            if(playersInTheGame!=null){
+                System.out.println("e diverso da null");
+            }
             if (this.turnCounter == 0){
                 //chiamo playBaseCard : se uso un thread per farlo posso continuare a ricevere e a rispondere a ping
             }
@@ -933,6 +945,10 @@ public class ClientSCK implements ClientGeneralInterface {
             }
         } else if (selectedView == 2) {
             //guiView.updateGameState(game)
+            if(gameState.equals(Game.GameState.STARTED)) {
+                inGame = true;
+                System.out.println("The game has started!");
+            }
         }
     }
 
@@ -1141,6 +1157,10 @@ public class ClientSCK implements ClientGeneralInterface {
             //gui
         }
     } //usciti da qui restituiamo il lock della syn e quindi se c'è stato un update su isPlaying la prossima chiamata ne terrà conto
+
+    public boolean getInGame() {
+        return this.inGame;
+    }
 
 
     public static class Settings { //this is an attribute. (qui ci sono indirizzo e porta del server locale

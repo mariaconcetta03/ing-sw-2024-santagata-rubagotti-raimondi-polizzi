@@ -186,7 +186,7 @@ public class GUILobbyController {
                         lobbyHasStarted = true;
                     }
                 } else if (network == 2) {
-                    if (clientSCK.getPersonalPlayer().getGame() != null && clientSCK.getPersonalPlayer().getGame().getState() == Game.GameState.STARTED) {
+                    if (clientSCK.getInGame()) {
                         lobbyHasStarted = true;
                     }
                 }

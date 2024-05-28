@@ -111,7 +111,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public static class Settings { //this is an attribute
         static int PORT = 1099; // free ports: from 49152 to 65535, 1099 standard port for RMI registry
-        static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
+        static String SERVER_NAME = "172.20.10.3"; // LOCALHOST (every client has the same virtual server at this @address)
     }
 
 
