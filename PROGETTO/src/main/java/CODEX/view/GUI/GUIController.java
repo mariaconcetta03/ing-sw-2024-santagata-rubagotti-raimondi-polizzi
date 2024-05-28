@@ -28,6 +28,9 @@ public class GUIController {
 
     private int network = 0; // it means that user hasn't chosen (1 = rmi  2 = sck)
     RMIClient rmiClient = new RMIClient();
+    {
+        rmiClient.setSelectedView(1);
+    }
     ClientSCK clientSCK;
 
     public void setStage(Stage stage) {
@@ -44,6 +47,7 @@ public class GUIController {
     {
         try {
             clientSCK = new ClientSCK();
+            clientSCK.setSelectedView(2);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
