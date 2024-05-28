@@ -16,6 +16,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.nio.Buffer;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -99,8 +100,8 @@ public class ClientSCK implements ClientGeneralInterface {
 
         //in this way the stream is converted into objects
         //forse però dovrei usare dei buffer per non perdere nessun messaggio
-        this.outputStream = new ObjectOutputStream(socket.getOutputStream());
-        this.inputStream = new ObjectInputStream(socket.getInputStream()); //what ClientHandlerThread writes in its socket's output stream ends up here
+        this.outputStream = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+        this.inputStream = new ObjectInputStream(new BufferedInputStream(socket.getInputStream())); //what ClientHandlerThread writes in its socket's output stream ends up here
 
         this.running = true;
         this.inGame=false; //this will become true when the state of the Game will change in STARTED
@@ -1164,7 +1165,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
 
     public static class Settings { //this is an attribute. (qui ci sono indirizzo e porta del server locale
-        static int PORT = 50000; // free ports: from 49152 to 65535, 1099 default port for RMI registry
+        static int PORT = 9090; // free ports: from 49152 to 65535, 1099 default port for RMI registry
         static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
     }
     public void setIsPlaying(boolean isPlaying){

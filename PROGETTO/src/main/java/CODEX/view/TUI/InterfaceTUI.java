@@ -810,6 +810,7 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         int emptySpaces = 0;
         boolean isFirstColumn = true;
         boolean isFirstRow = true;
+        boolean firstCardOfTheRowFound=false;
 
         for (int j = board.getUpperLimit().getY(); j >= board.getBottomLimit().getY(); j--) {
             firstRow = "";
@@ -857,6 +858,10 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                 }
                 if (isFirstRow) {
                     if (currCard != null) {
+                        if(!firstCardOfTheRowFound){
+                            firstCardOfTheRowFound=true;
+                        }
+                        emptySpaces=0;
                         firstRow = firstRow.concat(" _____________________ ");
                         secondRow = secondRow.concat("|");
                         thirdRow=thirdRow.concat("|");
@@ -961,21 +966,21 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                         } else { //stampo angolo in alto a destra di downLeftCard
                             if (downLeftCard.getOrientation()) {
                                 if (!downLeftCard.get_front_up_right().equals(AngleType.ABSENT)) {
-                                    fifthRow = fifthRow.concat(cardColor + "__               " + rst);
+                                    fifthRow = fifthRow.concat(cardColor + "__                 " + rst);
                                     sixthRow = sixthRow.concat(abbreviations.get(downLeftCard.get_front_up_right()) + cardColor + " |" + rst);
                                     seventhRow = seventhRow.concat(cardColor + "__|_______________" + rst);
                                 } else {
-                                    fifthRow = fifthRow.concat("                 ");
+                                    fifthRow = fifthRow.concat("                   ");
                                     sixthRow = sixthRow.concat("   ");
                                     seventhRow = seventhRow.concat(cardColor + "__________________" + rst);
                                 }
                             } else {
                                 if (!downLeftCard.get_back_up_right().equals(AngleType.ABSENT)) {
-                                    fifthRow = fifthRow.concat(cardColor + "__               " + rst);
+                                    fifthRow = fifthRow.concat(cardColor + "__                 " + rst);
                                     sixthRow = sixthRow.concat(abbreviations.get(downLeftCard.get_back_up_right()) + cardColor + " |" + rst);
                                     seventhRow = seventhRow.concat(cardColor + "__|_______________" + rst);
                                 } else {
-                                    fifthRow = fifthRow.concat("                 ");
+                                    fifthRow = fifthRow.concat("                   ");
                                     sixthRow = sixthRow.concat("   ");
                                     seventhRow = seventhRow.concat(cardColor + "__________________" + rst);
                                 }
@@ -1026,9 +1031,9 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                             }
                         }else{//devo stampare l'angolo in altro a sinistra di downRightCard
                             if(downRightCard.getOrientation()){
-                                if (!downRightCard.get_front_down_right().equals(AngleType.ABSENT)) {
+                                if (!downRightCard.get_front_up_left().equals(AngleType.ABSENT)) {
                                     fifthRow = fifthRow.concat(cardColor + "__|" + rst);
-                                    sixthRow = sixthRow.concat(cardColor + "| " + rst + abbreviations.get(downRightCard.get_front_down_right()) + cardColor + "|" + rst);
+                                    sixthRow = sixthRow.concat(cardColor + "| " + rst + abbreviations.get(downRightCard.get_front_up_left()) + cardColor + "|" + rst);
                                     seventhRow = seventhRow.concat(cardColor + "|__|" + rst);
                                 } else {
                                     fifthRow = fifthRow.concat(cardColor + "  |" + rst);
@@ -1036,9 +1041,9 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                                     seventhRow = seventhRow.concat(cardColor + "___|" + rst);
                                 }
                             }else{
-                                if (!downRightCard.get_back_down_right().equals(AngleType.ABSENT)) {
+                                if (!downRightCard.get_back_up_left().equals(AngleType.ABSENT)) {
                                     fifthRow = fifthRow.concat(cardColor + "__|" + rst);
-                                    sixthRow = sixthRow.concat(cardColor + "| " + rst + abbreviations.get(downRightCard.get_back_down_right()) + cardColor + "|" + rst);
+                                    sixthRow = sixthRow.concat(cardColor + "| " + rst + abbreviations.get(downRightCard.get_back_up_left()) + cardColor + "|" + rst);
                                     seventhRow = seventhRow.concat(cardColor + "|__|" + rst);
                                 } else {
                                     fifthRow = fifthRow.concat(cardColor + "  |" + rst);
@@ -1048,68 +1053,180 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                             }
                         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                         } else{ //LA CURRCARD E NULLA
                         emptySpaces++;
                             if (underCurrCard == null) {
-
+                                if(!firstCardOfTheRowFound){
+                                    firstRow=firstRow.concat("                   ");
+                                    secondRow=secondRow.concat("                   ");
+                                    thirdRow=thirdRow.concat("                   ");
+                                    fourthRow=fourthRow.concat("                   ");
+                                    fifthRow=fifthRow.concat("                   ");
+                                    sixthRow=sixthRow.concat("                   ");
+                                    seventhRow=seventhRow.concat("                   ");
+                                }else{
+                                    if(emptySpaces%2==0){
+                                        firstRow=firstRow.concat("                       ");
+                                        secondRow=secondRow.concat("                       ");
+                                        thirdRow=thirdRow.concat("                       ");
+                                        fourthRow=fourthRow.concat("                       ");
+                                        fifthRow=fifthRow.concat("                       ");
+                                        sixthRow=sixthRow.concat("                       ");
+                                        seventhRow=seventhRow.concat("                       ");
+                                    }else{
+                                        firstRow=firstRow.concat("               ");
+                                        secondRow=secondRow.concat("               ");
+                                        thirdRow=thirdRow.concat("               ");
+                                        fourthRow=fourthRow.concat("               ");
+                                        fifthRow=fifthRow.concat("               ");
+                                        sixthRow=sixthRow.concat("               ");
+                                        seventhRow=seventhRow.concat("               ");
+                                    }
+                                }
                             } else {
                                 if (((emptySpaces > 1) || (isFirstColumn)) && (nextCard == null)) {
-                                    //stampa carta intera
-                                } else if ((emptySpaces > 1) && nextCard != null) {
-                                    //stampa parte sinistra carta fino a prima dell'angolo destro
+                                    firstRow=firstRow.concat("                       ");
+                                    secondRow=secondRow.concat("                       ");
+                                    thirdRow=thirdRow.concat("                       ");
+                                    fourthRow=fourthRow.concat("                       ");
+                                    fifthRow=fifthRow.concat(" _____________________ ");
+                                    sixthRow=sixthRow.concat("|");
+                                    seventhRow=seventhRow.concat("|");
+                                    //ANGOLO ALTO SINISTRO
+                                    if(underCurrCard.getOrientation()){
+                                        if (!underCurrCard.get_front_up_left().equals(AngleType.ABSENT)) {
+                                            sixthRow = sixthRow.concat(abbreviations.get(underCurrCard.get_front_up_left()) + cardColor + " |               " + rst);
+                                            seventhRow = seventhRow.concat(cardColor + "__|               " + rst);
+                                        } else {
+                                            sixthRow = sixthRow.concat("                  ");
+                                            seventhRow = seventhRow.concat("                  ");
+                                        }
+                                    } else {
+                                        if (!underCurrCard.get_back_up_left().equals(AngleType.ABSENT)) {
+                                            sixthRow = sixthRow.concat(abbreviations.get(underCurrCard.get_back_up_left()) + cardColor + " |               " + rst);
+                                            seventhRow = seventhRow.concat(cardColor + "__|               " + rst);
+                                        } else {
+                                            sixthRow = sixthRow.concat("                  ");
+                                            seventhRow = seventhRow.concat("                  ");
+                                        }
+                                    }
+
+                                    //ANGOLO ALTO DESTRO
+                                    if (underCurrCard.getOrientation()) { //nella prima riga non ci sono carte sopra
+                                        if (!underCurrCard.get_front_up_right().equals(AngleType.ABSENT)) {
+                                            sixthRow = sixthRow.concat(cardColor + "| " + rst + abbreviations.get(underCurrCard.get_front_up_right()) + cardColor + "|" + rst);
+                                            seventhRow = seventhRow.concat(cardColor + "|__|" + rst);
+                                        } else {
+                                            sixthRow = sixthRow.concat(cardColor + "   |" + rst);
+                                            seventhRow = seventhRow.concat(cardColor + "   |" + rst);
+                                        }
+                                    } else {
+                                        if (!underCurrCard.get_back_up_right().equals(AngleType.ABSENT)) {
+                                            sixthRow = sixthRow.concat(cardColor + "| " + rst + abbreviations.get(underCurrCard.get_back_up_right()) + cardColor + "|" + rst);
+                                            seventhRow = seventhRow.concat(cardColor + "|__|" + rst);
+                                        } else {
+                                            sixthRow = sixthRow.concat(cardColor + "   |" + rst);
+                                            seventhRow = seventhRow.concat(cardColor + "   |" + rst);
+                                        }
+                                    }
+
+                                } else if (((emptySpaces > 1)||(isFirstColumn)) && nextCard != null) {
+                                    firstRow=firstRow.concat("                   ");
+                                    secondRow=secondRow.concat("                   ");
+                                    thirdRow=thirdRow.concat("                   ");
+                                    fourthRow=fourthRow.concat("                   ");
+                                    fifthRow=fifthRow.concat(" __________________");
+                                    sixthRow=sixthRow.concat("|");
+                                    seventhRow=seventhRow.concat("|");
+                                    //ANGOLO ALTO SINISTRO
+                                    if(underCurrCard.getOrientation()){
+                                        if (!underCurrCard.get_front_up_left().equals(AngleType.ABSENT)) {
+                                            sixthRow = sixthRow.concat(abbreviations.get(underCurrCard.get_front_up_left()) + cardColor + " |               " + rst);
+                                            seventhRow = seventhRow.concat(cardColor + "__|               " + rst);
+                                        } else {
+                                            sixthRow = sixthRow.concat("                  ");
+                                            seventhRow = seventhRow.concat("                  ");
+                                        }
+                                    } else {
+                                        if (!underCurrCard.get_back_up_left().equals(AngleType.ABSENT)) {
+                                            sixthRow = sixthRow.concat(abbreviations.get(underCurrCard.get_back_up_left()) + cardColor + " |               " + rst);
+                                            seventhRow = seventhRow.concat(cardColor + "__|               " + rst);
+                                        } else {
+                                            sixthRow = sixthRow.concat("                  ");
+                                            seventhRow = seventhRow.concat("                  ");
+                                        }
+                                    }
+
                                 } else if ((emptySpaces == 1) && nextCard == null) {
-                                    //stampa parte destra carta, da dopo l'angolo sinistro
+                                    firstRow=firstRow.concat("                   ");
+                                    secondRow=secondRow.concat("                   ");
+                                    thirdRow=thirdRow.concat("                   ");
+                                    fourthRow=fourthRow.concat("                   ");
+                                    fifthRow=fifthRow.concat("__________________ ");
+                                    sixthRow=sixthRow.concat("               ");
+                                    seventhRow=seventhRow.concat("               ");
+
+                                    //ANGOLO ALTO DESTRO
+                                    if (underCurrCard.getOrientation()) { //nella prima riga non ci sono carte sopra
+                                        if (!underCurrCard.get_front_up_right().equals(AngleType.ABSENT)) {
+                                            sixthRow = sixthRow.concat(cardColor + "| " + rst + abbreviations.get(underCurrCard.get_front_up_right()) + cardColor + "|" + rst);
+                                            seventhRow = seventhRow.concat(cardColor + "|__|" + rst);
+                                        } else {
+                                            sixthRow = sixthRow.concat(cardColor + "   |" + rst);
+                                            seventhRow = seventhRow.concat(cardColor + "   |" + rst);
+                                        }
+                                    } else {
+                                        if (!underCurrCard.get_back_up_right().equals(AngleType.ABSENT)) {
+                                            sixthRow = sixthRow.concat(cardColor + "| " + rst + abbreviations.get(underCurrCard.get_back_up_right()) + cardColor + "|" + rst);
+                                            seventhRow = seventhRow.concat(cardColor + "|__|" + rst);
+                                        } else {
+                                            sixthRow = sixthRow.concat(cardColor + "   |" + rst);
+                                            seventhRow = seventhRow.concat(cardColor + "   |" + rst);
+                                        }
+                                    }
+
                                 } else if ((emptySpaces == 1) && nextCard != null) {
-                                    //stampa lineetta
+                                    firstRow=firstRow.concat("               ");
+                                    secondRow=secondRow.concat("               ");
+                                    thirdRow=thirdRow.concat("               ");
+                                    fourthRow=fourthRow.concat("               ");
+                                    fifthRow=fifthRow.concat("_______________");
+                                    sixthRow=sixthRow.concat("               ");
+                                    seventhRow=seventhRow.concat("               ");
                                 }
                             }
                         }
 
                     } else {
+                    break;
                         //non siamo piu nella prima riga devo stampare solo 4 righe
                     }
+                    }
 
-
-                    if (!firstRow.isBlank()) {
-                        System.out.println(firstRow);
-                    }
-                    if (!secondRow.isBlank()) {
-                        System.out.println(secondRow);
-                    }
-                    if (!thirdRow.isBlank()) {
-                        System.out.println(thirdRow);
-                    }
-                    if (!fourthRow.isBlank()) {
-                        System.out.println(fourthRow);
-                    }
-                    if (!fifthRow.isBlank()) {
-                        System.out.println(fifthRow);
-                    }
-                    if (!sixthRow.isBlank()) {
-                        System.out.println(sixthRow);
-                    }
-                    if (!seventhRow.isBlank()) {
-                        System.out.println(seventhRow);
-                    }
-                }
+        if (!firstRow.isBlank()) {
+            System.out.println(firstRow);
+        }
+        if (!secondRow.isBlank()) {
+            System.out.println(secondRow);
+        }
+        if (!thirdRow.isBlank()) {
+            System.out.println(thirdRow);
+        }
+        if (!fourthRow.isBlank()) {
+            System.out.println(fourthRow);
+        }
+        if (!fifthRow.isBlank()) {
+            System.out.println(fifthRow);
+        }
+        if (!sixthRow.isBlank()) {
+            System.out.println(sixthRow);
+        }
+        if (!seventhRow.isBlank()) {
+            System.out.println(seventhRow);
+        }
                 isFirstColumn = true;
                 isFirstRow = false;
+                firstCardOfTheRowFound=false;
             }
             printAvailableResources(board);
             printPlayablePositions(board);
