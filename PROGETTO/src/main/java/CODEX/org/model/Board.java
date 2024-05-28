@@ -180,7 +180,7 @@ public class Board implements Serializable  {
             playOrder++;
 
             //updating the extreme positions
-            if(position.getY()>upperLimit.getY()){
+            if((position.getY()>upperLimit.getY())||((position.getY()==upperLimit.getY())&&position.getX()<upperLimit.getX())){
                 upperLimit=position;
             }
             if(position.getY()<bottomLimit.getY()){
@@ -368,5 +368,21 @@ public class Board implements Serializable  {
      */
     public Map<Coordinates, AngleType> getPlayedCards() {
         return playedCards;
+    }
+
+    public Coordinates getUpperLimit() {
+        return upperLimit;
+    }
+
+    public Coordinates getBottomLimit() {
+        return bottomLimit;
+    }
+
+    public Coordinates getLeftLimit() {
+        return leftLimit;
+    }
+
+    public Coordinates getRightLimit() {
+        return rightLimit;
     }
 }

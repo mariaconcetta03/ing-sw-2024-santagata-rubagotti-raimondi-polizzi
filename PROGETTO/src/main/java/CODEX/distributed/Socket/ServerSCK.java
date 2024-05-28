@@ -3,6 +3,7 @@ package CODEX.distributed.Socket;
 import CODEX.controller.ServerController;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -42,7 +43,8 @@ public class ServerSCK extends UnicastRemoteObject {
             System.err.println(e.getMessage()); // Porta non disponibile
             return;
         }
-        System.out.println("Server ready");
+        System.out.println("TCP Server ready");
+        System.out.println("Server IP address: "+Inet4Address.getLocalHost().getHostAddress());
         //The maximum queue length for incoming connection indications (a request to connect) is set to 50.
         //If a connection indication arrives when the queue is full, the connection is refused
         while (true) {
