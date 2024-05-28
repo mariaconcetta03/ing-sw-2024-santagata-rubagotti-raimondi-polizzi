@@ -24,6 +24,7 @@ public class ClientLauncher {
             if(selection==1){
                 selected=true;
                 try {
+                    System.setProperty("java.rmi.server.hostname", "172.20.10.6");
                     RMIClient rmiClient = new RMIClient();
                     rmiClient.setSelectedView(selection);
                     rmiClient.SRMIInterfaceFromRegistry();
