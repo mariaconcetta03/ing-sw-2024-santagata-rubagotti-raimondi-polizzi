@@ -368,9 +368,10 @@ public class ClientSCK implements ClientGeneralInterface {
                 System.exit(-1);
             }
         } else {
-            String[] network = new String[1];
-            network[0] = "TCP";
-            InterfaceGUI.main(network);
+            // NOTHING
+//            String[] network = new String[1];
+//            network[0] = "TCP";
+//            InterfaceGUI.main(network);
         }
 
     }

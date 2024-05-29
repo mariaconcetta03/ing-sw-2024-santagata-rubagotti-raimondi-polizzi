@@ -18,10 +18,10 @@ import javafx.stage.Stage;
 public class GUINicknameController {
 
     private int network = 0; // it means that user hasn't chosen (1 = rmi  2 = sck)
-    RMIClient rmiClient = new RMIClient();
-    {
-        rmiClient.setSelectedView(1);
-    }
+
+
+
+    RMIClient rmiClient;
     ClientSCK clientSCK;
 
     public void setStage(Stage stage) {
@@ -30,25 +30,17 @@ public class GUINicknameController {
 
     private Stage stage;
 
-
-
     boolean correctNickname = false;
 
 
-    {
-        try {
-            clientSCK = new ClientSCK();
-            clientSCK.setSelectedView(2);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 
     @FXML
     private TextField nickname;
 
     @FXML
     private Label nicknameUsed;
+
 
 
     public GUINicknameController() throws RemoteException {
@@ -74,8 +66,7 @@ public class GUINicknameController {
     }
 
 
-    @FXML
-    protected void sendNickname() throws IOException {
+    public void sendNickname() throws IOException {
 
         System.out.println(nickname.getCharacters());
         System.out.println("prec NET" + network);
@@ -86,9 +77,7 @@ public class GUINicknameController {
             clientSCK.setErrorState (false);
             try {
                 clientSCK.chooseNickname(nickname.getCharacters().toString());
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            } catch (NotBoundException e) {
+            } catch (RemoteException | NotBoundException e) {
                 throw new RuntimeException(e);
             }
             correctNickname = clientSCK.setNickname(nickname.getCharacters().toString());
@@ -136,9 +125,18 @@ public class GUINicknameController {
                 ctr.setNetwork(2);
             }
         }
+
     }
 
 
+
+    public void setRmiClient(RMIClient rmiClient) {
+        this.rmiClient = rmiClient;
+    }
+
+    public void setClientSCK(ClientSCK clientSCK) {
+        this.clientSCK = clientSCK;
+    }
 
 
 

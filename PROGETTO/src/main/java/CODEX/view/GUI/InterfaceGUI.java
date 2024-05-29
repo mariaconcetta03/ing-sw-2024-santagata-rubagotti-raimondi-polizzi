@@ -36,7 +36,6 @@ public class InterfaceGUI extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/loading.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         mainStage.setScene(scene);
-        mainStage.show();
         // GUINicknameController controller = fxmlLoader.getController(); // obtaining the GUI controller
 //        while (controller == null) {
 //            System.out.println("controller NULLO");
@@ -45,6 +44,9 @@ public class InterfaceGUI extends Application {
         GUILoadingController controller = fxmlLoader.getController();
         controller.setNetwork(network); // setting the network RMI or TCP in the GUI Nickname controller
         controller.setStage(mainStage);
+
+        mainStage.show();
+
     }
 
 
