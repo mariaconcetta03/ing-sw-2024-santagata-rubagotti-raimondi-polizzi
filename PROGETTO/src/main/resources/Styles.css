@@ -2,3 +2,10 @@
     -fx-background-image: url("images/others/Intestazione_Codex_Naturalis.jpg");
     -fx-background-size: cover; /* Adatta l'immagine all'AnchorPane */
 }
+
+
+.loading_pane {
+    -fx-background-image: url("images/others/Loading.png");
+    -fx-background-size: cover; /* Adatta l'immagine all'AnchorPane */
+}
+

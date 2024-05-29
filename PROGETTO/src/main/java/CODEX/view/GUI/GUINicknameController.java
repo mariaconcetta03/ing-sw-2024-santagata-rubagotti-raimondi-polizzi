@@ -1,30 +1,21 @@
 package CODEX.view.GUI;
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
-import CODEX.view.TUI.InterfaceTUI;
 import javafx.fxml.FXML;
-import java.awt.*;
+
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-public class GUIController {
-
-
-
-    @FXML
-    private MenuButton menuButton;
-
+public class GUINicknameController {
 
     private int network = 0; // it means that user hasn't chosen (1 = rmi  2 = sck)
     RMIClient rmiClient = new RMIClient();
@@ -37,7 +28,7 @@ public class GUIController {
         this.stage = stage;
     }
 
-    Stage stage;
+    private Stage stage;
 
 
 
@@ -60,18 +51,28 @@ public class GUIController {
     private Label nicknameUsed;
 
 
-    public GUIController() throws RemoteException {
+    public GUINicknameController() throws RemoteException {
     }
 
+
+//    public static void showNicknameScene() {
+//        FXMLLoader fmxlLoader = new FXMLLoader(GUINicknameController.class.getResource("/nickname.fxml"));
+//        Parent root;
+//        try {
+//            root = fmxlLoader.load();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//        Scene nicknameScene = new Scene(root);
+//        stage.setScene(nicknameScene);
+//        stage.show();
+//    }
 
 
     public void setNetwork(int network) {
         this.network = network;
     }
 
-    public boolean isCorrectNickname() {
-        return correctNickname;
-    }
 
     @FXML
     protected void sendNickname() throws IOException {

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CODEX.view.GUI.GUILoadingController">
+    <children>
+        <VBox alignment="TOP_CENTER" layoutY="61.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="844.0" prefWidth="1350.0" styleClass="loading_pane" stylesheets="@Styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox alignment="TOP_CENTER" prefHeight="42.0" prefWidth="1350.0">
+               <VBox.margin>
+                  <Insets top="40.0" />
+               </VBox.margin>
+               <children>
+                  <Label alignment="TOP_CENTER" text="Click here to continue" textFill="WHITE">
+                     <font>
+                        <Font name="Georgia Bold Italic" size="43.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+         </children></VBox>
+      <Button fx:id="startButton" mnemonicParsing="false" onAction="#startClicked" opacity="0.0" prefHeight="844.0" prefWidth="1350.0" text="S T A R T" textAlignment="CENTER" textFill="#0a10bc">
+         <font>
+            <Font name="Georgia" size="36.0" />
+         </font>
+      </Button>
+    </children>
+</AnchorPane>

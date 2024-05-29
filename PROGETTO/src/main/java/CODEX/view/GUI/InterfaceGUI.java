@@ -8,7 +8,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
@@ -22,16 +24,29 @@ public class InterfaceGUI extends Application {
 
 
     @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/nickname.fxml"));
+    public void start(Stage mainStage) throws IOException {
+        Image icon = new Image(getClass().getResourceAsStream("/images/others/Codex_Icon.png"));
+        mainStage.getIcons().add(icon);
+        mainStage.setTitle("Codex Naturalis");
+        mainStage.centerOnScreen();
+        mainStage.initStyle(StageStyle.UNDECORATED);
+        mainStage.setResizable(false);
+        mainStage.setAlwaysOnTop(true);
+
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/loading.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        stage.setTitle("Codex Naturalis");
-        stage.setScene(scene);
-        GUIController controller = fxmlLoader.getController(); // obtaining the GUI controller
-        controller.setNetwork(getNetwork()); // setting the network RMI or TCP
-        controller.setStage(stage);
-        stage.show();
+        mainStage.setScene(scene);
+        mainStage.show();
+        // GUINicknameController controller = fxmlLoader.getController(); // obtaining the GUI controller
+//        while (controller == null) {
+//            System.out.println("controller NULLO");
+//        }
+
+        GUILoadingController controller = fxmlLoader.getController();
+        controller.setNetwork(network); // setting the network RMI or TCP in the GUI Nickname controller
+        controller.setStage(mainStage);
     }
+
 
 
 
@@ -45,7 +60,7 @@ public class InterfaceGUI extends Application {
         } else {
             System.out.println("NON E NESSUN CASO");
         }
-        launch((String) null); // COSA FA LAUNCH?? BISOGNA CAPIRLO
+        Application.launch((String) null); // COSA FA LAUNCH?? BISOGNA CAPIRLO
     }
 
 
@@ -56,10 +71,6 @@ public class InterfaceGUI extends Application {
 
 public InterfaceGUI () {
 
-}
-
-public int getNetwork(){
-       return network;
 }
 
 
