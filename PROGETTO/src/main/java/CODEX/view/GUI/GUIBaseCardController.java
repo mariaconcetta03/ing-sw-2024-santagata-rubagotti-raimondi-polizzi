@@ -183,9 +183,22 @@ public class GUIBaseCardController {
             ctr.setBaseCard(rmiClient.getPersonalPlayer().getBoard().getTable()[rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2][rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2].getId(), rmiClient.getPersonalPlayer().getBoard().getTable()[rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2][rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2].getOrientation());
             // (0,0) because our base card is always in the center of the table!
         } else if (network == 2) {
+            Object guiLock=clientSCK.getGuiLock();
+            synchronized (guiLock) {
+                while (clientSCK.getPersonalPlayer().getPersonalObjectives().size() < 2) { //arriva l'update delle due objective card tra cui scegliere dopo l'update del player deck
+                    try {
+                        guiLock.wait();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            /*
             while (clientSCK.getPersonalPlayer().getPlayerDeck()[0] == null || clientSCK.getPersonalPlayer().getPlayerDeck()[1] == null ||clientSCK.getPersonalPlayer().getPlayerDeck()[2] == null || clientSCK.getPersonalPlayer().getPersonalObjectives().size() < 2){
                 System.out.println("giving initial cards..."); // ATTENZIONE!! LE CARTE NON VENGONO DATE IN MODO CORRETTO
             }
+
+             */
             ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", now choose your");
             ctr.setCard1(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId());
             ctr.setCard2(clientSCK.getPersonalPlayer().getPlayerDeck()[1].getId());

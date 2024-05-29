@@ -75,6 +75,7 @@ public class ClientSCK implements ClientGeneralInterface {
     private int turnCounter = -1;
     private final Object outputLock;
     private boolean nicknameSet = false;
+    private final Object guiLock;
 
     //ATTENZIONE: se si chiama un metodo della ClientActionsInterface all'interno di un metodo di update bisogna per forza
     //usare un thread perchè i metodi della ClientActionsInterface aspettano l'OK di ritorno che non può venire letto
@@ -97,6 +98,8 @@ public class ClientSCK implements ClientGeneralInterface {
 
         personalPlayer = new Player();
         this.inputLock = new Object();
+
+        this.guiLock=new Object();
 
         //in this way the stream is converted into objects
         //forse però dovrei usare dei buffer per non perdere nessun messaggio
@@ -722,6 +725,9 @@ public class ClientSCK implements ClientGeneralInterface {
 
                     } else if (selectedView == 2) {
                         //gui
+                        synchronized (guiLock){
+                            guiLock.notify();
+                        }
                     }
 
             }
@@ -1184,6 +1190,10 @@ public class ClientSCK implements ClientGeneralInterface {
 
     public Game.GameState getGameState () {
         return player.getGame().getState();
+    }
+
+    public Object getGuiLock(){
+        return this.guiLock;
     }
 }
 
