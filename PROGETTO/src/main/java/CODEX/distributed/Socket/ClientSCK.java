@@ -873,6 +873,9 @@ public class ClientSCK implements ClientGeneralInterface {
 
                 if (this.turnCounter == 1){ //questo è il terzo turno
                     //dal terzo turno è possibile vedere il menù e selezionarne i punti del menù, la TUI qui lancia un thread che va per tutta la partita
+                    synchronized (guiLock){
+                        guiLock.notify();
+                    }
                 }
             }
             turnCounter++; //quando il model fa un updateRound per la terza volta siamo in turnCounter==1 e si può iniziare a selezionare il menù

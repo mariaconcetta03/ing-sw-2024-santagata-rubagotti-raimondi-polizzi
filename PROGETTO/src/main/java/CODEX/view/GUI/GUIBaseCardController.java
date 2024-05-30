@@ -181,8 +181,8 @@ public class GUIBaseCardController {
             ctr.setCard1(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId());
             ctr.setCard2(rmiClient.getPersonalPlayer().getPlayerDeck()[1].getId());
             ctr.setCard3(rmiClient.getPersonalPlayer().getPlayerDeck()[2].getId());
-            ctr.setObjCard1(rmiClient.getPersonalPlayer().getPersonalObjectives().get(0).getId());
-            ctr.setObjCard2(rmiClient.getPersonalPlayer().getPersonalObjectives().get(1).getId());
+            ctr.setObjCard1(rmiClient.getPersonalPlayer().getPersonalObjectives().get(0).getId()); // 1 --> 0
+            ctr.setObjCard2(rmiClient.getPersonalPlayer().getPersonalObjectives().get(1).getId()); // 2 --> 1
             ctr.setBaseCard(rmiClient.getPersonalPlayer().getBoard().getTable()[rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2][rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2].getId(), rmiClient.getPersonalPlayer().getBoard().getTable()[rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2][rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2].getOrientation());
             // (0,0) because our base card is always in the center of the table!
 

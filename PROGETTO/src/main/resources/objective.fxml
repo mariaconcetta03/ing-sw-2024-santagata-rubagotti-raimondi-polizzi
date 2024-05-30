@@ -34,13 +34,13 @@
                     </children></HBox>
                 <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                     <children>
-                        <ImageView fx:id="objCard1" fitHeight="204.7" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="objCard1" fitHeight="204.7" fitWidth="300.0" onMouseClicked="#selectedLeftObjective" pickOnBounds="true" preserveRatio="true">
                             <HBox.margin>
                                 <Insets top="70.0" />
                             </HBox.margin>
                         </ImageView>
                         <Separator opacity="0.0" prefWidth="200.0" />
-                        <ImageView fx:id="objCard2" fitHeight="204.7" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="objCard2" fitHeight="204.7" fitWidth="300.0" onMousePressed="#selectedRightObjective" pickOnBounds="true" preserveRatio="true">
                             <HBox.margin>
                                 <Insets top="70.0" />
                             </HBox.margin>
@@ -52,7 +52,7 @@
                         <Insets top="20.0" />
                     </VBox.margin>
                     <children>
-                        <Label text="Press the objective you prefer!" textFill="WHITE">
+                        <Label fx:id="selectionLabel" alignment="CENTER" prefHeight="29.0" prefWidth="909.0" text="Press the objective you prefer!" textFill="WHITE">
                             <font>
                                 <Font name="Georgia Bold" size="24.0" />
                             </font>

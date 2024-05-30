@@ -894,6 +894,22 @@ int choice=-1;
             turnCounter++;
         } else if (selectedView==2) {
             //gui
+            System.out.println("I received the updateRound.");
+            //playersInTheGame = newPlayingOrder;
+            if (this.turnCounter == 0){
+                //chiamo playBaseCard : se uso un thread per farlo posso continuare a ricevere e a rispondere a ping
+            }
+            if (this.turnCounter >= 1){
+                //dico ai giocatori chi sta giocando e chi no
+
+                if (this.turnCounter == 1){ //questo è il terzo turno
+                    //dal terzo turno è possibile vedere il menù e selezionarne i punti del menù, la TUI qui lancia un thread che va per tutta la partita
+                    synchronized (guiLock){
+                        guiLock.notify();
+                    }
+                }
+            }
+            turnCounter++; //quando il model fa un updateRound per la terza volta siamo in turnCounter==1 e si può iniziare a selezionare il menù
         }
     }
     public void updateRound(Player p) throws RemoteException{}

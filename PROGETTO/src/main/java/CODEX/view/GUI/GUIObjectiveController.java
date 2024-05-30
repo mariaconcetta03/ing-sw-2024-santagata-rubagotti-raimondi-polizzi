@@ -2,8 +2,10 @@ package CODEX.view.GUI;
 
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,15 +13,17 @@ import javafx.stage.Stage;
 
 import javafx.scene.control.Label;
 import java.io.IOException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 
 public class GUIObjectiveController {
 
     @FXML
     private Label labelWithPlayerName;
     @FXML
-    private ImageView objCard1;
+    private ImageView objCard1; // LEFT
     @FXML
-    private ImageView objCard2;
+    private ImageView objCard2; // RIGHT
     @FXML
     private ImageView card1;
     @FXML
@@ -28,6 +32,11 @@ public class GUIObjectiveController {
     private ImageView card3;
     @FXML
     private ImageView baseCard;
+    @FXML
+    private Label selectionLabel;
+    // 1. "Press the objective you prefer!"
+    // 2. "Right objective selected. Now wait for everyone to choose."
+    // 3. "Left objective selected. Now wait for everyone to choose."
 
     private RMIClient rmiClient;
     private ClientSCK clientSCK;
@@ -39,8 +48,7 @@ public class GUIObjectiveController {
     private boolean orientationCard3 = true;
     private int card3ID;
     private int network = 0; //1 = rmi  2 = sck
-
-
+    private boolean objectiveSelected = false;
 
 
 
@@ -51,6 +59,144 @@ public class GUIObjectiveController {
     // modificare robe della tui (selectedview = 1).
     // questo va a chiamare update rpound nella terza volta, e questo è quello che dice chi sta giocando e chi no e la partita
     // è iniziata. ora si puo iniziare a giocare
+
+
+    public void selectedRightObjective () {
+        Platform.runLater(() -> {
+        selectionLabel.setText("Right objective selected. Now wait for everyone to choose.");
+        });
+
+        new Thread(() -> {
+            if (network == 1 && !objectiveSelected) {
+
+                    try {
+                        rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(1));
+                    } catch (RemoteException | NotBoundException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                } else if (network == 2 && !objectiveSelected) {
+                    try {
+                        clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(1));
+                    } catch (RemoteException | NotBoundException e) {
+                        throw new RuntimeException(e);
+                    }
+            }
+
+            // third thread to change the scene always in JAVA FX thread
+            Platform.runLater(() -> {
+                System.out.println("selezionato destra");
+                objectiveSelected = true;
+                  changeScene();
+              });
+        }).start();
+    }
+
+
+    public void selectedLeftObjective () { // objectiveCard 1 --> get(0)
+        Platform.runLater(() -> {
+            selectionLabel.setText("Left objective selected. Now wait for everyone to choose.");
+        });
+
+        new Thread(() -> {
+            if (network == 1 && !objectiveSelected) {
+                try {
+                    rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(0));
+                } catch (RemoteException | NotBoundException e) {
+                    throw new RuntimeException(e);
+                }
+            } else if (network == 2 && !objectiveSelected) {
+                try {
+                    clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(0));
+                } catch (RemoteException | NotBoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            // third thread to change the scene always in JAVA FX thread
+            Platform.runLater(() -> {
+                System.out.println("selezionato sinistra");
+                objectiveSelected = true;
+                changeScene();
+            });
+        }).start();
+    }
+
+
+    public void changeScene() {
+        // let's show the new window!
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/game.fxml"));
+        Parent root = null;
+        try {
+            root = fxmlLoader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        GUIGameController ctr = null;
+        while (ctr == null) {
+            ctr = fxmlLoader.getController();
+        }
+
+        // setting the parameters in the new controller
+        ctr.setStage(stage);
+        ctr.setNetwork(network);
+        ctr.setClientSCK(clientSCK);
+        ctr.setRmiClient(rmiClient);
+
+        if (network == 1) {
+            System.out.println("il player ha scelto obiettivo con ID: " + rmiClient.getPersonalPlayer().getPersonalObjective());
+            Object guiLock = rmiClient.getGuiLock();
+            synchronized (guiLock) {
+                boolean finishedSetup=false;
+                while (!finishedSetup) { //finchè non sono stati ricevuti tutti gli update affinchè il gioco possa iniziare
+                    try {
+                        guiLock.wait();
+                        finishedSetup=true;
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        } else if (network == 2) {
+            System.out.println("il player ha scelto obiettivo con ID: " + clientSCK.getPersonalPlayer().getPersonalObjective());
+            Object guiLock = clientSCK.getGuiLock();
+            synchronized (guiLock) {
+                boolean finishedSetup=false;
+                while (!finishedSetup) { //finchè non sono stati ricevuti tutti gli update affinchè il gioco possa iniziare
+                    try {
+                        guiLock.wait();
+                        finishedSetup=true;
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+        System.out.println("la wait è finita");
+
+        ctr.setAllFeatures();
+
+        // old dimensions and position
+        double width = stage.getWidth();
+        double height = stage.getHeight();
+        double x = stage.getX();
+        double y = stage.getY();
+
+        // new scene
+        Scene scene;
+        scene = new Scene(root);
+
+        stage.setScene(scene);
+
+        // setting the od values of position and dimension
+        stage.setWidth(width);
+        stage.setHeight(height);
+        stage.setX(x);
+        stage.setY(y);
+
+        stage.show();
+    }
 
 
 

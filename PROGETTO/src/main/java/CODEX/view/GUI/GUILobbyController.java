@@ -268,43 +268,47 @@ public class GUILobbyController {
 
 
     public void createNewLobby(){
-        wrongNumber.setOpacity(0);
-        int number;
-            if(network == 1){
-                try {
-                    String input = createText.getText();
-                    number = Integer.parseInt(input);
+            wrongNumber.setOpacity(0);
+            int number;
+            if (network == 1) {
 
-                    if (number >= 2 && number <=4) {
-                        rmiClient.createLobby(rmiClient.getPersonalPlayer().getNickname(), number);
-                        updateAvailableLobbies();
-                        setWaitingPlayers();
-                    }
-                    else {
+                String input = createText.getText();
+                if (!(input.isBlank())) {
+                    number = Integer.parseInt(input);
+                    if (number >= 2 && number <= 4) {
+                            try {
+                                rmiClient.createLobby(rmiClient.getPersonalPlayer().getNickname(), number);
+                                updateAvailableLobbies();
+                                setWaitingPlayers();
+                            } catch(RemoteException | NotBoundException e){
+                                throw new RuntimeException(e);
+                            }
+                        } else {
+                            wrongNumber.setOpacity(1);
+                        }
+                    } else {
                         wrongNumber.setOpacity(1);
                     }
 
-
-                } catch (RemoteException | NotBoundException e) {
-                    throw new RuntimeException(e);
-                }
             } else if (network == 2) {
-                try {
-                    String input = createText.getText();
+                String input = createText.getText();
+                if(!(input.isBlank())){
                     number = Integer.parseInt(input);
-                    if (number >= 2 && number <=4) {
-                        clientSCK.createLobby(clientSCK.getPersonalPlayer().getNickname(), number);
+                    if (number >= 2 && number <= 4) {
+                        clientSCK.setErrorState(false);
+                        try {
+                            clientSCK.createLobby(clientSCK.getPersonalPlayer().getNickname(), number);
+                        } catch (Exception ignored) {
+                        }
                         updateAvailableLobbies();
                         setWaitingPlayers();
-                    }
-                    else {
+                    } else {
                         wrongNumber.setOpacity(1);
                     }
-                } catch (RemoteException | NotBoundException e) {
-                    throw new RuntimeException(e);
+                } else {
+                    wrongNumber.setOpacity(1);
                 }
             }
-
     }
 
     public void setRmiClient(RMIClient client) {
