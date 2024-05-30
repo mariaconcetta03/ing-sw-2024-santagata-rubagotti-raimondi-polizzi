@@ -3,6 +3,7 @@ package CODEX.view.GUI;
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
 import CODEX.org.model.Coordinates;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +22,8 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Objects;
 import javafx.scene.control.Label;
+import javafx.util.Duration;
+
 public class GUIBaseCardController {
 
     @FXML
@@ -55,10 +58,8 @@ public class GUIBaseCardController {
     }
 
     public void selectedFront() {
-        // first thread of JAVA FX ==> modifies the label on the screen
-        Platform.runLater(() -> {
-            stateLabel.setText("Front side selected! Now wait for everyone to choose.");
-        });
+
+
 
         // second general thread (executed after the first one)
         new Thread(() -> {
@@ -78,18 +79,18 @@ public class GUIBaseCardController {
 
         // third thread to change the scene always in JAVA FX thread
         Platform.runLater(() -> {
+            stateLabel.setText("Front side selected! Now wait for everyone to choose.");
             System.out.println("selezionato fronte");
             baseCardPlayed = true;
-            changeScene();
+            //changeScene();
+            PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
+            pause.setOnFinished(event -> changeScene());
+            pause.play();
         });
         }).start();
     }
 
     public void selectedBack() {
-        // first thread of JAVA FX ==> modifies the label on the screen
-       Platform.runLater(() -> {
-           stateLabel.setText("Back side selected! Now wait for everyone to choose.");
-       });
 
         // second general thread (executed after the first one)
         new Thread(() -> {
@@ -113,9 +114,13 @@ public class GUIBaseCardController {
 
             // third thread to change the scene always in JAVA FX thread
             Platform.runLater(() -> {
+                stateLabel.setText("Back side selected! Now wait for everyone to choose.");
                 baseCardPlayed = true;
                 System.out.println("Selezionato retro");
-                changeScene();
+                //changeScene();
+                PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
+                pause.setOnFinished(event -> changeScene());
+                pause.play();
             });
         }).start();
     }

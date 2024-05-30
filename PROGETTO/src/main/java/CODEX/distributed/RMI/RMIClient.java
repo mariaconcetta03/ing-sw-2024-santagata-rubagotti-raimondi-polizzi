@@ -36,6 +36,7 @@ import java.util.concurrent.*;
 
 public class RMIClient extends UnicastRemoteObject implements ClientGeneralInterface, ClientRMIInterface {
     private final Object guiLock;
+    private boolean finishedSetup=false;
     private static final int HEARTBEAT_INTERVAL = 5; // seconds
     private static final int TIMEOUT = 10; // seconds
     private ScheduledExecutorService schedulerToSendHeartbeat;
@@ -910,6 +911,7 @@ int choice=-1;
                 if (this.turnCounter == 1){ //questo è il terzo turno
                     //dal terzo turno è possibile vedere il menù e selezionarne i punti del menù, la TUI qui lancia un thread che va per tutta la partita
                     synchronized (guiLock){
+                        finishedSetup=true;
                         guiLock.notify();
                     }
                 }
@@ -1089,6 +1091,10 @@ int choice=-1;
 
     public Object getGuiLock(){
         return this.guiLock;
+    }
+
+    public boolean getFinishedSetup(){
+        return this.finishedSetup;
     }
 }
 

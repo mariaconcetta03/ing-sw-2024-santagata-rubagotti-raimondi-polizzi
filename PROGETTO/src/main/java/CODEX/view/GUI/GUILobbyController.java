@@ -270,44 +270,24 @@ public class GUILobbyController {
     public void createNewLobby(){
             wrongNumber.setOpacity(0);
             int number;
-            if (network == 1) {
-
-                String input = createText.getText();
-                if (!(input.isBlank())) {
-                    number = Integer.parseInt(input);
-                    if (number >= 2 && number <= 4) {
-                            try {
-                                rmiClient.createLobby(rmiClient.getPersonalPlayer().getNickname(), number);
-                                updateAvailableLobbies();
-                                setWaitingPlayers();
-                            } catch(RemoteException | NotBoundException e){
-                                throw new RuntimeException(e);
-                            }
-                        } else {
-                            wrongNumber.setOpacity(1);
-                        }
-                    } else {
-                        wrongNumber.setOpacity(1);
+            String input = createText.getText();
+            if (!input.isBlank() && (input.equals("2") || input.equals("3") || input.equals("4"))) {
+                if (network == 1) {
+                    try {
+                        rmiClient.createLobby(rmiClient.getPersonalPlayer().getNickname(), Integer.parseInt(input));
+                    } catch (RemoteException | NotBoundException e) {
+                        throw new RuntimeException(e);
                     }
-
-            } else if (network == 2) {
-                String input = createText.getText();
-                if(!(input.isBlank())){
-                    number = Integer.parseInt(input);
-                    if (number >= 2 && number <= 4) {
-                        clientSCK.setErrorState(false);
-                        try {
-                            clientSCK.createLobby(clientSCK.getPersonalPlayer().getNickname(), number);
-                        } catch (Exception ignored) {
-                        }
-                        updateAvailableLobbies();
-                        setWaitingPlayers();
-                    } else {
-                        wrongNumber.setOpacity(1);
+                } else if (network==2) {
+                    try {
+                        clientSCK.createLobby(clientSCK.getPersonalPlayer().getNickname(), Integer.parseInt(input));
+                    } catch (Exception ignored) {
                     }
-                } else {
-                    wrongNumber.setOpacity(1);
                 }
+                updateAvailableLobbies();
+                setWaitingPlayers();
+            } else {
+                wrongNumber.setOpacity(1);
             }
     }
 

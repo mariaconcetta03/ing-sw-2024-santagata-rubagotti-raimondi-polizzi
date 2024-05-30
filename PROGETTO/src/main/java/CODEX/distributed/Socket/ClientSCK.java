@@ -36,6 +36,7 @@ import java.util.*;
  */
 public class ClientSCK implements ClientGeneralInterface {
     private boolean errorState = false;
+    private boolean finishedSetup=false;
     private HashSet<Integer> lobbyId;
     private final Socket socket;
 
@@ -874,6 +875,7 @@ public class ClientSCK implements ClientGeneralInterface {
                 if (this.turnCounter == 1){ //questo è il terzo turno
                     //dal terzo turno è possibile vedere il menù e selezionarne i punti del menù, la TUI qui lancia un thread che va per tutta la partita
                     synchronized (guiLock){
+                        finishedSetup=true;
                         guiLock.notify();
                     }
                 }
@@ -1203,6 +1205,9 @@ public class ClientSCK implements ClientGeneralInterface {
 
     public Object getGuiLock(){
         return this.guiLock;
+    }
+    public boolean getFinishedSetup(){
+        return this.finishedSetup;
     }
 }
 

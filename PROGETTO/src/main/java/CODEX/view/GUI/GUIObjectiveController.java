@@ -2,6 +2,7 @@ package CODEX.view.GUI;
 
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +13,8 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import javafx.scene.control.Label;
+import javafx.util.Duration;
+
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -62,41 +65,43 @@ public class GUIObjectiveController {
 
 
     public void selectedRightObjective () {
-        Platform.runLater(() -> {
-        selectionLabel.setText("Right objective selected. Now wait for everyone to choose.");
-        });
+
 
         new Thread(() -> {
             if (network == 1 && !objectiveSelected) {
 
-                    try {
-                        rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(1));
-                    } catch (RemoteException | NotBoundException e) {
-                        throw new RuntimeException(e);
-                    }
+                try {
+                    rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(1));
+                } catch (RemoteException | NotBoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }else if (network == 2 && !objectiveSelected) {
+                try {
+                    clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(1));
+                } catch (RemoteException | NotBoundException e) {
+                    throw new RuntimeException(e);
+                }
 
-                } else if (network == 2 && !objectiveSelected) {
-                    try {
-                        clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(1));
-                    } catch (RemoteException | NotBoundException e) {
-                        throw new RuntimeException(e);
-                    }
             }
+
 
             // third thread to change the scene always in JAVA FX thread
             Platform.runLater(() -> {
+                System.out.println("sto per chiamare il selectionLabel");
+                selectionLabel.setText("Right objective selected. Now wait for everyone to choose.");
                 System.out.println("selezionato destra");
                 objectiveSelected = true;
-                  changeScene();
+                //changeScene();
+                // Aggiungi un ritardo prima di cambiare scena
+                PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
+                pause.setOnFinished(event -> changeScene());
+                pause.play();
               });
         }).start();
     }
 
 
     public void selectedLeftObjective () { // objectiveCard 1 --> get(0)
-        Platform.runLater(() -> {
-            selectionLabel.setText("Left objective selected. Now wait for everyone to choose.");
-        });
 
         new Thread(() -> {
             if (network == 1 && !objectiveSelected) {
@@ -113,11 +118,17 @@ public class GUIObjectiveController {
                 }
             }
 
+
             // third thread to change the scene always in JAVA FX thread
             Platform.runLater(() -> {
+                selectionLabel.setText("Left objective selected. Now wait for everyone to choose.");
                 System.out.println("selezionato sinistra");
                 objectiveSelected = true;
-                changeScene();
+                //changeScene();
+                // Aggiungi un ritardo prima di cambiare scena
+                PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
+                pause.setOnFinished(event -> changeScene());
+                pause.play();
             });
         }).start();
     }
@@ -148,11 +159,11 @@ public class GUIObjectiveController {
             System.out.println("il player ha scelto obiettivo con ID: " + rmiClient.getPersonalPlayer().getPersonalObjective());
             Object guiLock = rmiClient.getGuiLock();
             synchronized (guiLock) {
-                boolean finishedSetup=false;
+                boolean finishedSetup=rmiClient.getFinishedSetup(); //se qui è già true non ho bisogno di entrare nel while che fa la wait
                 while (!finishedSetup) { //finchè non sono stati ricevuti tutti gli update affinchè il gioco possa iniziare
                     try {
                         guiLock.wait();
-                        finishedSetup=true;
+                        finishedSetup=rmiClient.getFinishedSetup();
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
@@ -162,11 +173,11 @@ public class GUIObjectiveController {
             System.out.println("il player ha scelto obiettivo con ID: " + clientSCK.getPersonalPlayer().getPersonalObjective());
             Object guiLock = clientSCK.getGuiLock();
             synchronized (guiLock) {
-                boolean finishedSetup=false;
+                boolean finishedSetup=clientSCK.getFinishedSetup(); //se qui è già true non ho bisogno di entrare nel while che fa la wait
                 while (!finishedSetup) { //finchè non sono stati ricevuti tutti gli update affinchè il gioco possa iniziare
                     try {
                         guiLock.wait();
-                        finishedSetup=true;
+                        finishedSetup=clientSCK.getFinishedSetup();
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
