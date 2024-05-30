@@ -26,7 +26,7 @@ public class ClientLauncher {
                 try {
                     System.setProperty("java.rmi.server.hostname", "172.20.10.6");
                     RMIClient rmiClient = new RMIClient();
-                    rmiClient.setSelectedView(selection);
+                    rmiClient.setSelectedView(1); //TUI
                     rmiClient.SRMIInterfaceFromRegistry();
                     InterfaceTUI.clearScreen();
                     //connect the client
@@ -39,19 +39,24 @@ public class ClientLauncher {
                 }
                 //generate client RMI
             }else if(selection == 2){
+                RMIClient rmiClient=null; //bisogna gestirlo con un'eccezione se dopo il try rimane null
+                try {
+                    rmiClient = new RMIClient();
+                    rmiClient.setSelectedView(2); //GUI
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
                 selected=true;
                 String[] network = new String[1];
                 network[0] = "RMI";
-                InterfaceGUI.main(network);
+                InterfaceGUI interfaceGUI=new InterfaceGUI(network,null,rmiClient);
+                interfaceGUI.main();
             }else if(selection==3){
                 selected=true;
                 try {
                     ClientSCK clientSCK = new ClientSCK(); //per TCP dobbiamo solo chiedere porte disponibili lato client
-                    if(selection==3){
-                        clientSCK.setSelectedView(1);
-                    }else{
-                        clientSCK.setSelectedView(2);
-                    }
+                    clientSCK.setSelectedView(1); //TUI
+
                     clientSCK.waitingRoom();
                     //connect the client
                 }catch(IOException e){
@@ -59,10 +64,18 @@ public class ClientLauncher {
                     System.exit(-1);
                 } //non so se vadano gestite in altra maniera, potremmo chiudere tutto e riprovare
             } else if (selection==4) {
+                ClientSCK clientSCK=null;
+                try {
+                    clientSCK = new ClientSCK();
+                    clientSCK.setSelectedView(2); //GUI
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 selected = true;
                 String[] network = new String[1];
                 network[0] = "TCP";
-                InterfaceGUI.main(network);
+                InterfaceGUI interfaceGUI=new InterfaceGUI(network,clientSCK,null);
+                interfaceGUI.main();
             }
             else{
                 System.out.println("Please type 1 (RMI+TUI), 2 (RMI+GUI), 3 (TCP+TUI), 4 (TCP+GUI)");

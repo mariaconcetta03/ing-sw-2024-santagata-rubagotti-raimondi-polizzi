@@ -21,8 +21,8 @@ public class GUINicknameController {
 
 
 
-    RMIClient rmiClient;
-    ClientSCK clientSCK;
+    private RMIClient rmiClient;
+    private ClientSCK clientSCK;
 
     public void setStage(Stage stage) {
         this.stage = stage;

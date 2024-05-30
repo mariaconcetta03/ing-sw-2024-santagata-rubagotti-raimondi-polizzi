@@ -26,42 +26,49 @@ public class GUILoadingController {
     Button startButton;
 
 
-    private int network = 0; // it means that user hasn't chosen (1 = rmi  2 = sck)
-    private RMIClient rmiClient;
-    private ClientSCK clientSCK;
+    private int network; // it means that user hasn't chosen (1 = rmi  2 = sck)
     private Stage stage;
+    private RMIClient rmiClient=null;
+    private ClientSCK clientSCK=null;
 
 
 
 
 
     public void startClicked () throws IOException {
+        System.out.println("sono in startClicked()");
+
 
         // CREATING THE CORRECT CLIENT
-        if (network == 1) {
-            try {
-                rmiClient = new RMIClient();
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
-            rmiClient.setSelectedView(2);
-        } else if (network == 2) {
-            try {
-                clientSCK = new ClientSCK();
-                clientSCK.setSelectedView(2);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+
+//        if (network == 1) {
+//            try {
+//                rmiClient = new RMIClient();
+//            } catch (RemoteException e) {
+//                throw new RuntimeException(e);
+//            }
+//            rmiClient.setSelectedView(2);
+//        } else if (network == 2) {
+//            System.out.println("sono in network 2");
+//            try {
+//                clientSCK = new ClientSCK();
+//                clientSCK.setSelectedView(2);
+//                System.out.println("ho creato il client sck");
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
+
+
 
         // CLOSING THE OLD WINDOW
-        stage.close();
+        //stage.close();
 
         // SETTING AND OPENING THE NEW WINDOW
-        stage = new Stage();
-        Image icon = new Image(getClass().getResourceAsStream("/images/others/Codex_Icon.png"));
-        stage.getIcons().add(icon);
-        stage.setTitle("Codex Naturalis");
+        //stage = new Stage();
+        //Image icon = new Image(getClass().getResourceAsStream("/images/others/Codex_Icon.png"));
+        //stage.getIcons().add(icon);
+        //stage.setTitle("Codex Naturalis");
         System.out.println("sto per fare fxmlloader di nickname... arriverà un messaggio di conferma quando ho finito");
         FXMLLoader fxmlLoader = new FXMLLoader(GUILoadingController.class.getResource("/nickname.fxml"));
         Parent root = fxmlLoader.load();
@@ -71,8 +78,11 @@ public class GUILoadingController {
         GUINicknameController controller = fxmlLoader.getController();
         controller.setNetwork(network);
         controller.setStage(stage);
-        controller.setClientSCK(clientSCK);
-        controller.setRmiClient(rmiClient);
+        if(clientSCK!=null){
+            controller.setClientSCK(clientSCK);
+        }else if (rmiClient!=null){
+            controller.setRmiClient(rmiClient);
+        }
         stage.show();
     }
 
@@ -87,6 +97,13 @@ public class GUILoadingController {
 
     public void setNetwork(int network) {
         this.network = network;
+    }
+
+    public void setClientSCK(ClientSCK clientSCK){
+        this.clientSCK=clientSCK;
+    }
+    public void setRmiClient(RMIClient rmiClient){
+        this.rmiClient=rmiClient;
     }
 
 

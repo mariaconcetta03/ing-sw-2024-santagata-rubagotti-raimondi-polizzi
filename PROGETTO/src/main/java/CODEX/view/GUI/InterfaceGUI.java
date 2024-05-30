@@ -3,24 +3,21 @@ package CODEX.view.GUI;
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.IOException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 
 import static javafx.application.Application.launch;
 
 // THIS IS THE CORRECT CLASS
 public class InterfaceGUI extends Application {
-    private static int network ; // 1 = RMI   2 = TCP
+    private int network ; // 1 = RMI   2 = TCP
+    private ClientSCK clientSCK;
+    private RMIClient rmiClient;
 
 
     @Override
@@ -42,7 +39,10 @@ public class InterfaceGUI extends Application {
 //        }
 
         GUILoadingController controller = fxmlLoader.getController();
+        System.out.println(controller.startButton);
         controller.setNetwork(network); // setting the network RMI or TCP in the GUI Nickname controller
+        controller.setClientSCK(clientSCK);
+        controller.setRmiClient(rmiClient);
         controller.setStage(mainStage);
 
         mainStage.show();
@@ -52,24 +52,27 @@ public class InterfaceGUI extends Application {
 
 
 
-    public static void main(String[] args) {
-        if (args[0].equals("RMI")) {
-            network = 1;
-            System.out.println("Hai scelto RMI");
-        } else if (args[0].equals("TCP")) {
-            network = 2;
-            System.out.println("Hai scelto TCP");
-        } else {
-            System.out.println("NON E NESSUN CASO");
-        }
+    public void main() {
         Application.launch((String) null); // COSA FA LAUNCH?? BISOGNA CAPIRLO
     }
 
 
 
-//public InterfaceGUI (int network) {
-  //      this.network = network;
-//}
+public InterfaceGUI (String[] args, ClientSCK clientSCK, RMIClient rmiClient){
+     if (args[0].equals("RMI")) {
+        this.network = 1;
+        System.out.println("Hai scelto RMI");
+     } else if (args[0].equals("TCP")) {
+        this.network = 2;
+        System.out.println("Hai scelto TCP");
+     } else {
+        System.out.println("NON E NESSUN CASO");
+     }
+     this.clientSCK=clientSCK;
+     this.rmiClient=rmiClient;
+     
+     
+}
 
 public InterfaceGUI () {
 
