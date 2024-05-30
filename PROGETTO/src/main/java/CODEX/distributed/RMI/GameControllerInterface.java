@@ -20,7 +20,7 @@ public interface GameControllerInterface extends Remote {
 
     void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard)throws RemoteException;
 
-    void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation)throws RemoteException;
+    void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation)throws RemoteException, IllegalArgumentException;
 
     void choosePawnColor(String chooserNickname, Pawn selectedColor)throws RemoteException;
 

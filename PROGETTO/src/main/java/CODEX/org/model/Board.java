@@ -238,15 +238,19 @@ public class Board implements Serializable  {
      * @param card is the card the Player has just placed
      * @return boolean that indicates if the Player has enough resources to play the specific card
      */
-    public boolean enoughResources (PlayableCard card) { // CONTROLLARE SE SI PUò USARE per pattern
-        if ((card.getNeededResources()!=null)) {
-            for (AngleType t : card.getNeededResources().keySet()) {
-                if (!numResources.containsKey(t) || (numResources.get(t) < card.getNeededResources().get(t))) {
-                    return false;
+    public boolean enoughResources (PlayableCard card) {
+        if(card.getOrientation()) { //if played on the front
+            if ((card.getNeededResources() != null)) {
+                for (AngleType t : card.getNeededResources().keySet()) {
+                    if (!numResources.containsKey(t) || (numResources.get(t) < card.getNeededResources().get(t))) {
+                        return false;
+                    }
                 }
+                return true;
+            } else {
+                return true;
             }
-            return true;
-        } else {
+        }else{ //if played on the back no need of resources
             return true;
         }
     }

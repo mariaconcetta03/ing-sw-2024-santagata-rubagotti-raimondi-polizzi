@@ -7,6 +7,7 @@ import CODEX.view.TUI.ANSIFormatter;
 import CODEX.view.TUI.InterfaceTUI;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.InputMismatchException;
@@ -24,7 +25,7 @@ public class ClientLauncher {
             if(selection==1){
                 selected=true;
                 try {
-                    System.setProperty("java.rmi.server.hostname", "172.20.10.6");
+                    System.setProperty("java.rmi.server.hostname", Inet4Address.getLocalHost().getHostAddress()); //don't if it works also for @mcs
                     RMIClient rmiClient = new RMIClient();
                     rmiClient.setSelectedView(1); //TUI
                     rmiClient.SRMIInterfaceFromRegistry();

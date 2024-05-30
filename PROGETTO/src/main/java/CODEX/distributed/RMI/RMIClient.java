@@ -196,7 +196,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @throws RemoteException
      * @throws NotBoundException
      */
-    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, NotBoundException {
+    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, NotBoundException, IllegalArgumentException {
         this.gameController.playCard(nickname, selectedCard, position, orientation);
     }
 
@@ -360,6 +360,7 @@ int choice=-1;
                         ok = true;
                     } catch (RemoteException | NotBoundException e) {
                         errorCounter++;
+                        e.printStackTrace();
                         System.out.println("Error in the client-server communication. Try again.");
                     } catch (NicknameAlreadyTakenException ex) {
                         System.out.println("Nickname is already taken! Please try again.");
@@ -551,14 +552,18 @@ int choice=-1;
                                 orientation = tuiView.askCardOrientation(sc, card);
                             coordinates = tuiView.askCoordinates(sc, card, personalPlayer.getBoard());
                             if (coordinates != null) {
-                                this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
-                                tmp = new ArrayList<>();
-                                tmp.add(resourceCard1);
-                                tmp.add(resourceCard2);
-                                tmp.add(goldCard1);
-                                tmp.add(goldCard2);
-                                card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
-                                this.drawCard(personalPlayer.getNickname(), card);
+                                try {
+                                    this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
+                                    tmp = new ArrayList<>();
+                                    tmp.add(resourceCard1);
+                                    tmp.add(resourceCard2);
+                                    tmp.add(goldCard1);
+                                    tmp.add(goldCard2);
+                                    card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
+                                    this.drawCard(personalPlayer.getNickname(), card);
+                                }catch (IllegalArgumentException e ){
+                                    System.out.println("You can't play this card! Returning to menu..."); //@TODO differenziare eccezioni per non giocabilità e non abbastanza risorse?
+                                }
                             } else {
                                 System.out.println("you can't play this card...returning to menu");
                             }
@@ -934,7 +939,7 @@ int choice=-1;
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
                 }
-                System.out.println("Sent heartbeat");
+                //System.out.println("Sent heartbeat");
             }, 0, HEARTBEAT_INTERVAL, TimeUnit.SECONDS);
         }
         if (selectedView == 1) {
@@ -1042,7 +1047,7 @@ int choice=-1;
 
     public void heartbeat(){
         lastHeartbeatTime = System.currentTimeMillis();
-        System.out.println("Received heartbeat at " + lastHeartbeatTime);
+        //System.out.println("Received heartbeat at " + lastHeartbeatTime);
     }
 
     public void startHeartbeat() throws RemoteException {
