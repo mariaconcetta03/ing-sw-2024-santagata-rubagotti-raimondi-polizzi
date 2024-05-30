@@ -49,8 +49,7 @@ public class ClientLauncher {
                 selected=true;
                 String[] network = new String[1];
                 network[0] = "RMI";
-                InterfaceGUI interfaceGUI=new InterfaceGUI(network,null,rmiClient);
-                interfaceGUI.main();
+                InterfaceGUI.main(network, null, rmiClient);
             }else if(selection==3){
                 selected=true;
                 try {
@@ -74,8 +73,7 @@ public class ClientLauncher {
                 selected = true;
                 String[] network = new String[1];
                 network[0] = "TCP";
-                InterfaceGUI interfaceGUI=new InterfaceGUI(network,clientSCK,null);
-                interfaceGUI.main();
+                InterfaceGUI.main(network, clientSCK, null);
             }
             else{
                 System.out.println("Please type 1 (RMI+TUI), 2 (RMI+GUI), 3 (TCP+TUI), 4 (TCP+GUI)");

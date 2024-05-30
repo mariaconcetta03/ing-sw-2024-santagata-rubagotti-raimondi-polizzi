@@ -35,6 +35,7 @@ import java.util.concurrent.*;
 
 
 public class RMIClient extends UnicastRemoteObject implements ClientGeneralInterface, ClientRMIInterface {
+    private final Object guiLock;
     private static final int HEARTBEAT_INTERVAL = 5; // seconds
     private static final int TIMEOUT = 10; // seconds
     private ScheduledExecutorService schedulerToSendHeartbeat;
@@ -101,6 +102,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @throws RemoteException
      */
     public RMIClient() throws RemoteException {
+        this.guiLock=new Object();
         personalPlayer= new Player();
     }
 
@@ -687,6 +689,9 @@ int choice=-1;
                         });
                     } else if (selectedView == 2) {
                         //gui
+                        synchronized (guiLock){
+                            guiLock.notify();
+                        }
                     }
 
             }
@@ -1058,6 +1063,11 @@ int choice=-1;
                 this.schedulerToCheckReceivedHeartBeat.shutdown();
             }
         }, 0, TIMEOUT, TimeUnit.SECONDS);
+    }
+
+
+    public Object getGuiLock(){
+        return this.guiLock;
     }
 }
 

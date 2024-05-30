@@ -13,33 +13,35 @@ import javafx.scene.control.Label;
 import java.io.IOException;
 
 public class GUIObjectiveController {
-    RMIClient rmiClient;
-    ClientSCK clientSCK;
-    Stage stage;
 
     @FXML
-    Label labelWithPlayerName;
+    private Label labelWithPlayerName;
     @FXML
     private ImageView objCard1;
     @FXML
     private ImageView objCard2;
     @FXML
     private ImageView card1;
-
-    private boolean orientationCard1 = true;
-    private int card1ID;
     @FXML
     private ImageView card2;
-    private boolean orientationCard2 = true;
-    private int card2ID;
-
     @FXML
     private ImageView card3;
-    private boolean orientationCard3 = true;
-    private int card3ID;
-
     @FXML
     private ImageView baseCard;
+
+    private RMIClient rmiClient;
+    private ClientSCK clientSCK;
+    private Stage stage;
+    private boolean orientationCard1 = true;
+    private int card1ID;
+    private boolean orientationCard2 = true;
+    private int card2ID;
+    private boolean orientationCard3 = true;
+    private int card3ID;
+    private int network = 0; //1 = rmi  2 = sck
+
+
+
 
 
     // ------------ C O M E    F U N Z I O N A    U P D A T E R O U N D ? ----------------
@@ -50,11 +52,8 @@ public class GUIObjectiveController {
     // questo va a chiamare update rpound nella terza volta, e questo è quello che dice chi sta giocando e chi no e la partita
     // è iniziata. ora si puo iniziare a giocare
 
-    // @TODO mettere le scritte per far capire al client cosa sta succedendo (es hai scelto la carta fronte... ecc)
 
 
-
-    @FXML
     public void setLabelWithPlayerName(String text) {
         this.labelWithPlayerName.setText(text);
     }
@@ -93,6 +92,7 @@ public class GUIObjectiveController {
         }
     }
 
+
     public void changeOrientationCard3(){
         if(orientationCard3) {
             String path;
@@ -109,6 +109,7 @@ public class GUIObjectiveController {
         }
     }
 
+
     public void setObjCard1(int cardID) {
         String path;
         path = "/images/cards/front/ (" + cardID + ").png";
@@ -124,6 +125,7 @@ public class GUIObjectiveController {
         objCard2.setImage(image);
     }
 
+
     public void setCard1(int cardID) {
         String path;
         path = "/images/cards/front/ (" + cardID + ").png";
@@ -131,6 +133,7 @@ public class GUIObjectiveController {
         card1.setImage(image);
         card1ID = cardID;
     }
+
 
     public void setCard2(int cardID) {
         String path;
@@ -140,6 +143,7 @@ public class GUIObjectiveController {
         card2ID = cardID;
     }
 
+
     public void setCard3(int cardID) {
         String path;
         path = "/images/cards/front/ (" + cardID + ").png";
@@ -147,6 +151,7 @@ public class GUIObjectiveController {
         card3.setImage(image);
         card3ID = cardID;
     }
+
 
     public void setBaseCard(int cardID, boolean orientation) {
         String path;
@@ -161,30 +166,21 @@ public class GUIObjectiveController {
 
 
 
-
-
-
-    int network = 0; //1 = rmi  2 = sck
-
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
-
-    void setRmiClient(RMIClient client) {
+    public void setRmiClient(RMIClient client) {
         this.rmiClient = client;
     }
 
-
-    void setClientSCK (ClientSCK client) {
+    public void setClientSCK (ClientSCK client) {
         this.clientSCK = client;
     }
 
-    void setNetwork (int network) {
+    public void setNetwork (int network) {
         this.network = network;
     }
-
-
 
 
 }

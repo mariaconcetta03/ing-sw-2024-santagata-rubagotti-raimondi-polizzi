@@ -17,53 +17,26 @@ import javafx.stage.Stage;
 
 public class GUINicknameController {
 
+    @FXML
+    private TextField nickname;
+    @FXML
+    private Label nicknameUsed;
+
+
     private int network = 0; // it means that user hasn't chosen (1 = rmi  2 = sck)
-
-
-
     private RMIClient rmiClient;
     private ClientSCK clientSCK;
-
     public void setStage(Stage stage) {
         this.stage = stage;
     }
-
     private Stage stage;
-
     boolean correctNickname = false;
-
-
-
-
-    @FXML
-    private TextField nickname;
-
-    @FXML
-    private Label nicknameUsed;
 
 
 
     public GUINicknameController() throws RemoteException {
     }
 
-
-//    public static void showNicknameScene() {
-//        FXMLLoader fmxlLoader = new FXMLLoader(GUINicknameController.class.getResource("/nickname.fxml"));
-//        Parent root;
-//        try {
-//            root = fmxlLoader.load();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        Scene nicknameScene = new Scene(root);
-//        stage.setScene(nicknameScene);
-//        stage.show();
-//    }
-
-
-    public void setNetwork(int network) {
-        this.network = network;
-    }
 
 
     public void sendNickname() throws IOException {
@@ -109,7 +82,7 @@ public class GUINicknameController {
             stage.setX(x);
             stage.setY(y);
 
-            // setting the dynamic parameters of the new window
+             // setting the dynamic parameters of the new window
             System.out.println("NET" + network);
 
             if (network == 1) {
@@ -125,7 +98,6 @@ public class GUINicknameController {
                 ctr.setNetwork(2);
             }
         }
-
     }
 
 
@@ -138,25 +110,10 @@ public class GUINicknameController {
         this.clientSCK = clientSCK;
     }
 
-
-
-    // RIVEDERE FUNZIONAMENTO DI JAVA FX!!!
-    // IL MAIN DEVE PROSEGUIRE, E DOPO DI ESSO IN RMI CLIENT NON VA FATTO ESEGUIRE NIENTE!
-    // I CONTROLLI SUL NICKNAME VALIDO OPPURE NO SI DEVONO FARE DIRETTAMENTE DA INTERFACCIA GRAFICA
-    // (possibilità di avere 2 interfacce una per rmi e una per sck, oppure ho 2 attributi, vedo se sono rmi o se
-    // sono socket). COSI DOPO QUESTA COSA GESTISCE TUTTO L'INTERFACCIA GRAFICA.
-    // MAIN RITORNA STATIC
-
-
-
-
-
-
-
-
-
-
-        // QUI DEVO FAR CAMBIARE LA SCHERMATA!
+    public void setNetwork(int network) {
+        this.network = network;
     }
+
+}
 
 

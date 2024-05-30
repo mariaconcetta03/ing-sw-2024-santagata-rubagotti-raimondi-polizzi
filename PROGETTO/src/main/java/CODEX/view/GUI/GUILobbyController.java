@@ -23,60 +23,45 @@ import java.util.List;
 public class GUILobbyController {
 
     @FXML
-    Label labelWithPlayerName;
-
-    RMIClient rmiClient;
-    ClientSCK clientSCK;
-    int network = 0; //1 = rmi  2 = sck
-
-
-
+    private Label labelWithPlayerName;
     @FXML
-    ComboBox<Integer> availableLobbies;
-
+    private ComboBox<Integer> availableLobbies;
     @FXML
-    Label lobbyError1;
+    private Label lobbyError1;
     @FXML
-    Label lobbyError2;
+    private Label lobbyError2;
     @FXML
-    Label lobbyError3;
+    private Label lobbyError3;
     @FXML
-    Button joinButton;
+    private Button joinButton;
     @FXML
-    Label waitingPlayers;
+    private Label waitingPlayers;
     @FXML
-    Button createButton;
+    private Button createButton;
     @FXML
-    TextField createText;
+    private TextField createText;
     @FXML
-    Label createLabel;
+    private Label createLabel;
     @FXML
-    Label question1;
+    private Label question1;
     @FXML
-    Label question2;
+    private Label question2;
     @FXML
-    Label wrongNumber;
+    private Label wrongNumber;
     @FXML
-    Label joinLabel;
+    private Label joinLabel;
     @FXML
-    Label fullLobby;
+    private Label fullLobby;
     @FXML
-    Button refreshButton;
-
-    GUIBaseCardController ctr;
-
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
-
-    Stage stage;
+    private Button refreshButton;
 
 
+    private RMIClient rmiClient;
+    private ClientSCK clientSCK;
+    private int network = 0; //1 = rmi  2 = sck
+    private GUIBaseCardController ctr;
+    private Stage stage;
 
-
-    public void setLabelWithPlayerName(String text) {
-        this.labelWithPlayerName.setText(text);
-    }
 
 
     public void setAvailableLobbies(List<Integer> lobby){
@@ -249,7 +234,7 @@ public class GUILobbyController {
 
 
         stage.show();
-}
+    }
 
 
     public void joinLobby() {
@@ -281,9 +266,10 @@ public class GUILobbyController {
         }
     }
 
-public void createNewLobby(){
+
+    public void createNewLobby(){
         wrongNumber.setOpacity(0);
-    int number;
+        int number;
             if(network == 1){
                 try {
                     String input = createText.getText();
@@ -319,22 +305,26 @@ public void createNewLobby(){
                 }
             }
 
-}
+    }
 
-    void setRmiClient(RMIClient client) {
+    public void setRmiClient(RMIClient client) {
              this.rmiClient = client;
     }
 
-
-    void setClientSCK (ClientSCK client) {
+    public void setClientSCK (ClientSCK client) {
         this.clientSCK = client;
     }
 
-    void setNetwork (int network) {
+    public void setNetwork (int network) {
         this.network = network;
     }
 
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
 
-
+    public void setLabelWithPlayerName(String text) {
+        this.labelWithPlayerName.setText(text);
+    }
 
 }

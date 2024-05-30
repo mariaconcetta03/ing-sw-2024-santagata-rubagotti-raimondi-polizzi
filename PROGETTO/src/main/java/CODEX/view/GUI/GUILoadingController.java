@@ -22,10 +22,6 @@ import javafx.stage.StageStyle;
 
 public class GUILoadingController {
 
-    @FXML
-    Button startButton;
-
-
     private int network; // it means that user hasn't chosen (1 = rmi  2 = sck)
     private Stage stage;
     private RMIClient rmiClient=null;
@@ -34,50 +30,27 @@ public class GUILoadingController {
 
 
 
-
     public void startClicked () throws IOException {
         System.out.println("sono in startClicked()");
 
+        stage.close();
+        stage = new Stage();
 
-        // CREATING THE CORRECT CLIENT
-
-//        if (network == 1) {
-//            try {
-//                rmiClient = new RMIClient();
-//            } catch (RemoteException e) {
-//                throw new RuntimeException(e);
-//            }
-//            rmiClient.setSelectedView(2);
-//        } else if (network == 2) {
-//            System.out.println("sono in network 2");
-//            try {
-//                clientSCK = new ClientSCK();
-//                clientSCK.setSelectedView(2);
-//                System.out.println("ho creato il client sck");
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
-
-
-
-        // CLOSING THE OLD WINDOW
-        //stage.close();
-
-        // SETTING AND OPENING THE NEW WINDOW
-        //stage = new Stage();
-        //Image icon = new Image(getClass().getResourceAsStream("/images/others/Codex_Icon.png"));
-        //stage.getIcons().add(icon);
-        //stage.setTitle("Codex Naturalis");
+        Image icon = new Image(getClass().getResourceAsStream("/images/others/Codex_Icon.png"));
+        stage.getIcons().add(icon);
+        stage.setTitle("Codex Naturalis");
         System.out.println("sto per fare fxmlloader di nickname... arriverà un messaggio di conferma quando ho finito");
         FXMLLoader fxmlLoader = new FXMLLoader(GUILoadingController.class.getResource("/nickname.fxml"));
         Parent root = fxmlLoader.load();
         System.out.println("ho finito fxmlloader di nickname");
         Scene scene = new Scene(root);
         stage.setScene(scene);
+        stage.setResizable(true);
         GUINicknameController controller = fxmlLoader.getController();
         controller.setNetwork(network);
         controller.setStage(stage);
+        stage.show();
+
         if(clientSCK!=null){
             controller.setClientSCK(clientSCK);
         }else if (rmiClient!=null){
@@ -89,11 +62,9 @@ public class GUILoadingController {
 
 
 
-
     public void setStage(Stage stage) {
         this.stage = stage;
     }
-
 
     public void setNetwork(int network) {
         this.network = network;
@@ -102,9 +73,9 @@ public class GUILoadingController {
     public void setClientSCK(ClientSCK clientSCK){
         this.clientSCK=clientSCK;
     }
+
     public void setRmiClient(RMIClient rmiClient){
         this.rmiClient=rmiClient;
     }
-
 
 }

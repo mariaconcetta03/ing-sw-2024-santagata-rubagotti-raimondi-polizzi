@@ -23,23 +23,22 @@ import java.util.Objects;
 import javafx.scene.control.Label;
 public class GUIBaseCardController {
 
+    @FXML
+    private Label labelWithPlayerName;
+    @FXML
+    private ImageView baseCard1;
+    @FXML
+    private ImageView baseCard2;
+    @FXML
+    private Label stateLabel;
+
     private RMIClient rmiClient;
     private ClientSCK clientSCK;
     private Stage stage;
-
-    @FXML
-    private Label labelWithPlayerName;
-
-    @FXML
-    private ImageView baseCard1;
-
-    @FXML
-    private ImageView baseCard2;
-
-    @FXML
-    Label stateLabel;
-
     private boolean baseCardPlayed = false;
+    private GUIObjectiveController ctr;
+    private int network = 0; //1 = rmi  2 = sck
+
 
     public void setBaseCard1(int cardID) {
         String path;
@@ -66,7 +65,6 @@ public class GUIBaseCardController {
         if (network == 1 && !baseCardPlayed) {
             try {
                 rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], true);
-
             } catch (RemoteException | NotBoundException e) {
                 throw new RuntimeException(e);
             }
@@ -89,9 +87,9 @@ public class GUIBaseCardController {
 
     public void selectedBack() {
         // first thread of JAVA FX ==> modifies the label on the screen
-        Platform.runLater(() -> {
-            stateLabel.setText("Back side selected! Now wait for everyone to choose.");
-        });
+       Platform.runLater(() -> {
+           stateLabel.setText("Back side selected! Now wait for everyone to choose.");
+       });
 
         // second general thread (executed after the first one)
         new Thread(() -> {
@@ -116,15 +114,13 @@ public class GUIBaseCardController {
             // third thread to change the scene always in JAVA FX thread
             Platform.runLater(() -> {
                 baseCardPlayed = true;
-                changeScene();
                 System.out.println("Selezionato retro");
+                changeScene();
             });
         }).start();
     }
 
-    GUIObjectiveController ctr;
 
-    int network = 0; //1 = rmi  2 = sck
 
     public void setStage(Stage stage) {
         this.stage = stage;
@@ -169,12 +165,19 @@ public class GUIBaseCardController {
         ctr.setNetwork(network);
         ctr.setClientSCK(clientSCK);
         ctr.setRmiClient(rmiClient);
-        if (network == 1) {
-            ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", now choose your");
-            while (rmiClient.getPersonalPlayer().getPlayerDeck()[0] == null || rmiClient.getPersonalPlayer().getPlayerDeck()[1] == null ||rmiClient.getPersonalPlayer().getPlayerDeck()[2] == null || rmiClient.getPersonalPlayer().getPersonalObjectives().size() < 2){
-                System.out.println("giving initial cards..."); // ATTENZIONE!! LE CARTE NON VENGONO DATE IN MODO CORRETTO
-            }
 
+        if (network == 1) {
+            Object guiLock=rmiClient.getGuiLock();
+            synchronized (guiLock) {
+                while (rmiClient.getPersonalPlayer().getPersonalObjectives().size() < 2) { //arriva l'update delle due objective card tra cui scegliere dopo l'update del player deck
+                    try {
+                        guiLock.wait();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", now choose your");
             ctr.setCard1(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId());
             ctr.setCard2(rmiClient.getPersonalPlayer().getPlayerDeck()[1].getId());
             ctr.setCard3(rmiClient.getPersonalPlayer().getPlayerDeck()[2].getId());
@@ -182,6 +185,7 @@ public class GUIBaseCardController {
             ctr.setObjCard2(rmiClient.getPersonalPlayer().getPersonalObjectives().get(1).getId());
             ctr.setBaseCard(rmiClient.getPersonalPlayer().getBoard().getTable()[rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2][rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2].getId(), rmiClient.getPersonalPlayer().getBoard().getTable()[rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2][rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2].getOrientation());
             // (0,0) because our base card is always in the center of the table!
+
         } else if (network == 2) {
             Object guiLock=clientSCK.getGuiLock();
             synchronized (guiLock) {
@@ -193,12 +197,6 @@ public class GUIBaseCardController {
                     }
                 }
             }
-            /*
-            while (clientSCK.getPersonalPlayer().getPlayerDeck()[0] == null || clientSCK.getPersonalPlayer().getPlayerDeck()[1] == null ||clientSCK.getPersonalPlayer().getPlayerDeck()[2] == null || clientSCK.getPersonalPlayer().getPersonalObjectives().size() < 2){
-                System.out.println("giving initial cards..."); // ATTENZIONE!! LE CARTE NON VENGONO DATE IN MODO CORRETTO
-            }
-
-             */
             ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", now choose your");
             ctr.setCard1(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId());
             ctr.setCard2(clientSCK.getPersonalPlayer().getPlayerDeck()[1].getId());
@@ -225,7 +223,6 @@ public class GUIBaseCardController {
         stage.setHeight(height);
         stage.setX(x);
         stage.setY(y);
-
 
         stage.show();
     }
