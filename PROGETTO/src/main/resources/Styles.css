@@ -9,8 +9,14 @@
     -fx-background-size: cover; /* Adatta l'immagine all'AnchorPane */
 }
 
+.tot {
+    -fx-background-image: url("images/others/TotalBlack.png");
+    -fx-background-size: cover; /* Adatta l'immagine all'AnchorPane */
+}
 
 .game_pane {
     -fx-background-image: url("images/others/Game_Background.jpg");
     -fx-background-size: cover; /* Adatta l'immagine all'AnchorPane */
 }
+
+

@@ -64,6 +64,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     }
 
     private Player personalPlayer;
+
+
+
     private List<Player> playersInTheGame;
     private ObjectiveCard commonObjective1, commonObjective2;
     private boolean inGame=false;
@@ -1001,6 +1004,12 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     public boolean getFinishedSetup(){
         return this.finishedSetup;
+    }
+
+
+
+    public List<Player> getPlayersInTheGame() {
+        return playersInTheGame;
     }
 }
 

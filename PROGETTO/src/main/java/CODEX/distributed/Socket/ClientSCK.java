@@ -166,6 +166,10 @@ public class ClientSCK implements ClientGeneralInterface {
             }
         }).start();
     }
+
+    public List<Player> getPlayersInTheGame(){
+        return this.playersInTheGame;
+    }
     public void setLobbyId(List<Integer>list){
         lobbyId.addAll(list);
     }

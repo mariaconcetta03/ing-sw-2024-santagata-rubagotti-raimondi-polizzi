@@ -2,14 +2,77 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CODEX.view.GUI.GUIGameController">
-    <children>
-        <VBox alignment="TOP_CENTER" layoutY="61.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="844.0" prefWidth="1350.0" styleClass="game_pane" stylesheets="@Styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            </VBox>
-
-    </children>
+   <children>
+      <VBox fx:id="myBlackPane" alignment="TOP_CENTER" layoutY="80.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="764.0" prefWidth="1350.0" styleClass="game_pane" stylesheets="@Styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Pane prefHeight="68.0" prefWidth="1350.0" style="-fx-background-color: black;">
+               <children>
+                  <HBox alignment="CENTER_LEFT" prefHeight="68.0" prefWidth="1350.0">
+                     <children>
+                        <VBox alignment="CENTER_LEFT" prefHeight="68.0" prefWidth="457.0">
+                           <children>
+                              <Label fx:id="turnLabel" prefHeight="29.0" prefWidth="411.0" text="It's &lt;nickname&gt;'s turn" textFill="WHITE">
+                                 <font>
+                                    <Font name="Georgia" size="24.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER_LEFT" prefHeight="68.0" prefWidth="340.0">
+                           <children>
+                              <Label fx:id="points1" prefHeight="21.0" prefWidth="344.0" text="Player 1: 1 pt" textFill="WHITE">
+                                 <font>
+                                    <Font name="Georgia" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="points2" prefHeight="27.0" prefWidth="346.0" text="Player 2: 2 pt" textFill="WHITE">
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font name="Georgia" size="18.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER_LEFT" layoutX="467.0" layoutY="10.0" prefHeight="68.0" prefWidth="340.0">
+                           <children>
+                              <Label fx:id="points3" prefHeight="21.0" prefWidth="344.0" text="Player 3: 1 pt" textFill="WHITE">
+                                 <font>
+                                    <Font name="Georgia" size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="points4" prefHeight="27.0" prefWidth="346.0" text="Player 4: 2 pt" textFill="WHITE">
+                                 <VBox.margin>
+                                    <Insets top="5.0" />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font name="Georgia" size="18.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </Pane>
+         </children>
+      </VBox>
+      <StackPane AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="14.0">
+         <children>
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#leaveGame" prefHeight="38.0" prefWidth="139.0" text="LEAVE GAME" textFill="#c90101">
+               <font>
+                  <Font name="Georgia Bold" size="15.0" />
+               </font>
+            </Button>
+         </children>
+      </StackPane>
+   </children>
 </AnchorPane>
