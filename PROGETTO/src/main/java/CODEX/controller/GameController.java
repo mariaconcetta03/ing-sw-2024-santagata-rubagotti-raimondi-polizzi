@@ -561,6 +561,9 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         //scopiazzo quello che era leaveGame senza mandare gli update che mostrano i vincitori con i relativi punti
 
         game.setLastEvent(new disconnectionEvent());
+        for(Player p: gamePlayers) {
+            serverController.getAllNicknames().remove(p.getNickname());
+        }
     }
 
     // lato client quando i vari metodi del GameController lanciano un'eccezione:

@@ -4,14 +4,10 @@ import CODEX.Exceptions.*;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.org.model.*;
 
-import CODEX.view.GUI.InterfaceGUI;
 import CODEX.view.TUI.ANSIFormatter;
 import CODEX.view.TUI.InterfaceTUI;
-import javafx.stage.Stage;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -74,6 +70,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private boolean isPlaying= false;
     private boolean baseCard= false;
     private boolean nicknameSet = false;
+    private List<ChatMessage> messages;
 
 
     public GameControllerInterface getGameController() {
@@ -104,6 +101,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         this.printLock = new Object();
         this.guiLock=new Object();
         personalPlayer= new Player();
+        messages=new ArrayList<>();
     }
 
 
@@ -491,6 +489,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                                     System.out.println("Now type the message you want to send: ");
                                     answer = sc.nextLine();
                                     sendMessage(personalPlayer.getNickname(), receivers, answer);
+                                    System.out.println("Message correctly sent!");
                                 } else {
                                     System.out.println("There is no such player in this lobby! Try again.");
                                 }
@@ -739,18 +738,25 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
     }
 
+    @Override
+    public void updateChat(Chat chat) throws RemoteException {
+
+    }
 
 
     /**
      * This is an update method
-     * @param chat which needs to be updated MEGLIO AGGIUNGERE UN SOLO MESSAGGIO MAGARI
+     * @param message which needs to be updated MEGLIO AGGIUNGERE UN SOLO MESSAGGIO MAGARI
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updateChat(Chat chat) throws RemoteException {//ha senso creare un chatHandler nel model
-
+    public void updateChat(ChatMessage message) throws RemoteException {//ha senso creare un chatHandler nel model
+        messages.add(message);
         if (selectedView == 1) {
-            //System.out.println("You received a message.");
+            if(!message.getSender().getNickname().equals(personalPlayer.getNickname())) {
+                System.out.println(ANSIFormatter.ANSI_YELLOW+"You received a message from "+message.getSender().getNickname()+"!"+ANSIFormatter.ANSI_RESET);
+            }
+            tuiView.printChat(messages, message.getSender().getNickname(), personalPlayer.getNickname());
         } else if (selectedView == 2) {
             //guiView.updateChat(chat)
         }
@@ -771,23 +777,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             //System.out.println("I received the pawns.");
         } else if (selectedView == 2) {
             //guiView.updatePawns(player, pawn)
-        }
-    }
-
-
-
-    /**
-     * This is an update method
-     * @param player which selected a new nickname NON SERVE
-     * @param nickname chosen nickname string
-     * @throws RemoteException if an exception happens while communicating with the remote
-     */
-    @Override
-    public void updateNickname(Player player, String nickname) throws RemoteException {
-        if (selectedView == 1) {
-            //System.out.println("I received the nickname.");
-        } else if (selectedView == 2) {
-            //guiView.updateNickname(player, nickname)
         }
     }
 
@@ -913,13 +902,15 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public void handleDisconnection() throws RemoteException {
         if(selectedView==1) {
             System.out.println("Oh no! Someone disconnected!");
+            /*
             try {
                 this.executor.shutdown();
                 this.schedulerToCheckReceivedHeartBeat.shutdown();
                 this.schedulerToSendHeartbeat.shutdown(); //va prima chiuso l'heartbeat receiver lato server?
 
-            } catch (Exception e) {
-            }
+            } catch (SecurityException e) {}
+
+             */
             System.out.println("A disconnection happened. Closing the game.");
             System.exit(-1);
 

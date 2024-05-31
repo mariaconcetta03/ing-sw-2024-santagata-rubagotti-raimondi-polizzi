@@ -18,8 +18,10 @@ public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
     void updateGoldCard1(PlayableCard card) throws RemoteException;
     void updateGoldCard2(PlayableCard card) throws RemoteException;
     void updateChat(Chat chat) throws RemoteException;
+
+    void updateChat(ChatMessage message) throws RemoteException;
+
     void updatePawns(Player player, Pawn pawn) throws RemoteException;
-    void updateNickname(Player player, String nickname) throws RemoteException;
     void updateRound(List<Player> newPlayingOrder) throws RemoteException;
     void updateGameState(Game.GameState  gameState) throws RemoteException;
     void updateCommonObjectives(ObjectiveCard objCard1, ObjectiveCard objCard2) throws RemoteException;

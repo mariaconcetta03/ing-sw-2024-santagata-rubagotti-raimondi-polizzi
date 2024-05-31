@@ -48,7 +48,6 @@ public class ClientSCK implements ClientGeneralInterface {
     private int selectedView;
     private InterfaceTUI tuiView;
     //private InterfaceGUI guiView;
-    private Board board;
     private final ObjectOutputStream outputStream;
     private final ObjectInputStream inputStream;
     //private final Thread threadCheckConnection;
@@ -804,6 +803,11 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
     @Override
+    public void updateChat(ChatMessage message) throws RemoteException {
+
+    }
+
+    @Override
     public void updatePawns(Player player, Pawn pawn) throws RemoteException {
         //we have to change the view and the local model
         if (selectedView == 1) {
@@ -813,15 +817,6 @@ public class ClientSCK implements ClientGeneralInterface {
         }
     }
 
-    @Override
-    public void updateNickname(Player player, String nickname) throws RemoteException {
-        //we have to change the view and the local model
-        if (selectedView == 1) {
-            System.out.println("I received the updateNickname.");
-        } else if (selectedView == 2) {
-            //guiView.updateNickname(player, nickname)
-        }
-    }
     @Override
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException { //taken from RMIClient
         if (selectedView == 1) { //TUI

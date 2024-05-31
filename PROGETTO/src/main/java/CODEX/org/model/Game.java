@@ -675,6 +675,10 @@ public class Game extends Observable implements Serializable {
         this.currentPlayer = player;
     }
 
+    /**
+     * Getter method
+     * @return a List containing the already selected pawn colors
+     */
     public List<Pawn> getAlreadySelectedColors() {
         return alreadySelectedColors;
     }

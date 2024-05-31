@@ -1,7 +1,9 @@
 package CODEX.org.model;
 import CODEX.utils.Observable;
+import CODEX.utils.executableMessages.events.updateChatEvent;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,9 +36,10 @@ public class Chat extends Observable implements Serializable {
      * This method add a new message to the chat ("sending" it)
      * @param mess It's the message sent by the player
      */
-    public void sendMessage (ChatMessage mess) {
+    public void sendMessage (ChatMessage mess) throws RemoteException {
         this.messages.add(mess);
-        //notifyObservers(new Message(mess, Event.NEW_MESSAGE)); TODO de-commentare, terrei una size controllata della list a lato client
+        notifyObservers(new updateChatEvent(mess)); //inviamo il solo nuovo messaggio, se la chat diventa enorme è uno
+        //spreco assurdo inviarla tutta tramite la rete ogni volta
     }
 
 

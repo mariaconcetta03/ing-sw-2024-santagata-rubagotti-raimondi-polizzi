@@ -130,16 +130,16 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
      */
     public void printMenu(boolean isPlaying){
         System.out.println("These are the action you can perform");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "menu" + ANSIFormatter.ANSI_RESET + " - Print the menu                  |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "0" + ANSIFormatter.ANSI_RESET + " - Leave the game                     |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "1" + ANSIFormatter.ANSI_RESET + " - Check the cards in your hand       |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "2" + ANSIFormatter.ANSI_RESET + " - Check the objective cards          |");// si possono unire
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "3" + ANSIFormatter.ANSI_RESET + " - Check the drawable cards           |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "4" + ANSIFormatter.ANSI_RESET + " - Check someone else's board         |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "5" + ANSIFormatter.ANSI_RESET + " - Check the points scored            |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "6" + ANSIFormatter.ANSI_RESET + " - Send a message in the chat         |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "menu" + ANSIFormatter.ANSI_RESET + " - Print the menu                      |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "0" + ANSIFormatter.ANSI_RESET + " - Leave the game                         |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "1" + ANSIFormatter.ANSI_RESET + " - Check the cards in your hand           |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "2" + ANSIFormatter.ANSI_RESET + " - Check the objective cards              |");// si possono unire
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "3" + ANSIFormatter.ANSI_RESET + " - Check the drawable cards               |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "4" + ANSIFormatter.ANSI_RESET + " - Check yours or someone else's board    |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "5" + ANSIFormatter.ANSI_RESET + " - Check the points scored                |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "6" + ANSIFormatter.ANSI_RESET + " - Send a message in the chat             |");
         if (isPlaying) {
-            System.out.println("| " + ANSIFormatter.ANSI_RED + "7" + ANSIFormatter.ANSI_RESET + " - Play a card                        |"); //the draw will be called after the play action
+            System.out.println("| " + ANSIFormatter.ANSI_RED + "7" + ANSIFormatter.ANSI_RESET + " - Play a card                            |"); //the draw will be called after the play action
         }
     }
 
@@ -193,6 +193,7 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                 if (choice == 0) {
                     return objectiveCards.get(0);
                 } else if (choice == 1) {
+
                     return objectiveCards.get(1);
                 } else {
                     System.out.println("Please insert a valid number.");
@@ -1633,8 +1634,27 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
      * @param messages are all the messages the client received
      * @param user is the person we are chatting with
      */
-    public void printChat(List<ChatMessage> messages, String user){
+    public void printChat(List<ChatMessage> messages, String user, String personalNickname){//@TODO DA RIFARE
         System.out.println("These are the last 20 messages of the chat with "+user+":");
+       // int index=messages.size();
+        int counter=0;
+        List<String> tmpMessageUsersNicknames;
+        List<String> nicknamesToCheck=new ArrayList<>();
+        nicknamesToCheck.add(user);
+        nicknamesToCheck.add(personalNickname);
+
+
+        for(int i= messages.size()-1;(i>0)&&(counter<20);i--){
+                tmpMessageUsersNicknames= new ArrayList<>();
+                for(Player p: messages.get(i).getReceiver()) {
+                    tmpMessageUsersNicknames.add(p.getNickname());
+                }
+                tmpMessageUsersNicknames.add(messages.get(i).getSender().getNickname());
+                if(tmpMessageUsersNicknames.containsAll(nicknamesToCheck)){
+                    System.out.println(messages.get(i).getSender()+"["+messages.get(i).getTimestamp()+"]: "+messages.get(i).getMessage());
+                    counter++;
+                }
+        }
 
     }
     public static void clearScreen() {
