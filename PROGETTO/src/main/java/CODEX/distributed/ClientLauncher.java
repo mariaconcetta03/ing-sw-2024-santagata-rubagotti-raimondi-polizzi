@@ -48,6 +48,11 @@ public class ClientLauncher {
                 try {
                     rmiClient = new RMIClient();
                     rmiClient.setSelectedView(2); //GUI
+                    try {
+                        rmiClient.SRMIInterfaceFromRegistry();
+                    } catch (NotBoundException e) {
+                        throw new RuntimeException(e);
+                    }
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
                 }
