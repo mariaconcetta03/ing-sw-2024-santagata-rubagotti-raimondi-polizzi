@@ -6,14 +6,21 @@ import CODEX.org.model.ObjectiveCard;
 import CODEX.org.model.PlayableCard;
 import CODEX.org.model.PlayableDeck;
 import CODEX.org.model.Player;
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
+import javafx.util.Duration;
 
+import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Timer;
 
 public class GUIGameController {
 
@@ -76,6 +83,35 @@ public class GUIGameController {
                 throw new RuntimeException(e);
             }
         }
+        //changeScene():
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gameLeaved.fxml"));
+        Parent root = null;
+        try {
+            root = fxmlLoader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        double width = stage.getWidth();
+        double height = stage.getHeight();
+        double x = stage.getX();
+        double y = stage.getY();
+
+        // new scene
+        Scene scene;
+        scene = new Scene(root);
+
+        stage.setScene(scene);
+
+        // setting the od values of position and dimension
+        stage.setWidth(width);
+        stage.setHeight(height);
+        stage.setX(x);
+        stage.setY(y);
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
+        pause.setOnFinished(event -> stage.close());
+        pause.play();
     }
 
 

@@ -1,6 +1,6 @@
 package CODEX.org.model;
 import CODEX.utils.Observable;
-import CODEX.utils.executableMessages.events.updateChatEvent;
+//import CODEX.utils.executableMessages.events.updateChatEvent;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -38,7 +38,7 @@ public class Chat extends Observable implements Serializable {
      */
     public void sendMessage (ChatMessage mess) throws RemoteException {
         this.messages.add(mess);
-        notifyObservers(new updateChatEvent(mess)); //inviamo il solo nuovo messaggio, se la chat diventa enorme è uno
+        //notifyObservers(new updateChatEvent(mess)); //inviamo il solo nuovo messaggio, se la chat diventa enorme è uno
         //spreco assurdo inviarla tutta tramite la rete ogni volta
     }
 

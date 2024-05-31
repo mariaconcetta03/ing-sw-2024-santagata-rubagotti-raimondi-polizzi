@@ -184,7 +184,6 @@ public class GUIObjectiveController {
                 }
             }
         }
-        System.out.println("la wait è finita");
 
         ctr.setAllFeatures();
 

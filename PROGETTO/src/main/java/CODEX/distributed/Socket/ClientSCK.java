@@ -87,13 +87,11 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws IOException
      */
     public ClientSCK() throws IOException { //we call this constructor after we ask the IP address and the port of the server
-        System.out.println("sono in ClientSCK()");
         this.socket = new Socket();
         // this.socket.connect(new InetSocketAddress(Settings.SERVER_NAME, Settings.PORT), 1000); //the address and the port of the server
         InetAddress inetAddress = InetAddress.getByName("localhost");
         int port = 1085; // Porta del server
         SocketAddress socketAddress = new InetSocketAddress(inetAddress, port);
-        System.out.println("mi connetto");
         socket.connect(socketAddress);
 
         lobbyId = new HashSet<>();
@@ -105,7 +103,6 @@ public class ClientSCK implements ClientGeneralInterface {
 
         //in this way the stream is converted into objects
         //forse però dovrei usare dei buffer per non perdere nessun messaggio
-        System.out.println("stream");
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
         this.inputStream = new ObjectInputStream(socket.getInputStream()); //what ClientHandlerThread writes in its socket's output stream ends up here
 
@@ -114,10 +111,8 @@ public class ClientSCK implements ClientGeneralInterface {
         this.responseReceived = false; //initialized false to enter the while inside every ClientGeneralInterface method
         this.actionLock = new Object();
         this.outputLock = new Object();
-        System.out.println("thread");
         new Thread(() -> {
             while (running) {
-                System.out.println("syn");
                 synchronized (inputLock) {
                     try {
                         SCKMessage sckMessage = (SCKMessage) this.inputStream.readObject(); //così non abbiamo più bisogno della funzione receiveMessage
@@ -161,7 +156,6 @@ public class ClientSCK implements ClientGeneralInterface {
                         break; //se per esempio il flusso viene interrotto (dovrebbe venire lanciata un eccezione di Input/Output)
                     }
                 }
-                System.out.println("fine syn");
 
             }
         }).start();
@@ -863,9 +857,6 @@ public class ClientSCK implements ClientGeneralInterface {
         else if (selectedView == 2) { //GUI
             System.out.println("I received the updateRound.");
             playersInTheGame = newPlayingOrder;
-            if(playersInTheGame!=null){
-                System.out.println("e diverso da null");
-            }
             if (this.turnCounter == 0){
                 //chiamo playBaseCard : se uso un thread per farlo posso continuare a ricevere e a rispondere a ping
             }
