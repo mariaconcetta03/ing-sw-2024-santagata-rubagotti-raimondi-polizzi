@@ -17,7 +17,11 @@ public class ClientLauncher {
     public static void main(String[] args) {
         boolean selected=false;
         int selection=0;
+        String serverAddress="";
         Scanner sc=new Scanner(System.in);
+
+        System.out.println("Insert the Server's Ip address: ");
+        serverAddress=sc.nextLine(); //@TODO se blank è localHost, non fa ancora nulla
         System.out.println(ANSIFormatter.ANSI_BLUE+"Choose a connection protocol and an interface:"+ANSIFormatter.ANSI_RESET+": \n-Type 1 for RMI+TUI\n-Type 2 for RMI+GUI\n-Type 3 for TCP+TUI\n-Type 4 for TCP+GUI");
         do{
             try {
@@ -29,7 +33,7 @@ public class ClientLauncher {
                     RMIClient rmiClient = new RMIClient();
                     rmiClient.setSelectedView(1); //TUI
                     rmiClient.SRMIInterfaceFromRegistry();
-                    InterfaceTUI.clearScreen();
+                    InterfaceTUI.clearScreen(); //@TODO NON SERVE A NIENTE?
                     //connect the client
                     rmiClient.waitingRoom(); //selection of nicknames and lobby functionalities
                 }catch (RemoteException | NotBoundException e){

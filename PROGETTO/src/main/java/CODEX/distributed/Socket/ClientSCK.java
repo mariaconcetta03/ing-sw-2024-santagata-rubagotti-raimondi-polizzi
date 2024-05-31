@@ -703,6 +703,7 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
     //taken from RMIClient
+    @Override
     public void updatePersonalObjective(ObjectiveCard card, String nickname) throws RemoteException {
         if (personalPlayer.getNickname().equals(nickname)) {
             personalPlayer.addPersonalObjective(card);
@@ -821,7 +822,7 @@ public class ClientSCK implements ClientGeneralInterface {
             //guiView.updateNickname(player, nickname)
         }
     }
-
+    @Override
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException { //taken from RMIClient
         if (selectedView == 1) { //TUI
 
@@ -886,6 +887,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
 
     //taken from RMIClient
+    @Override
     public void updateCommonObjectives(ObjectiveCard card1, ObjectiveCard card2) throws RemoteException{
         System.out.println("I received the updateCommonObjectives.");
         this.commonObjective1=card1;
@@ -1140,7 +1142,7 @@ public class ClientSCK implements ClientGeneralInterface {
                             Coordinates coordinates;
                             card = tuiView.askPlayCard(sc, personalPlayer);
                             if (card != null) {
-                                orientation = tuiView.askCardOrientation(sc, card);
+                                orientation = tuiView.askCardOrientation(sc);
                                 coordinates = tuiView.askCoordinates(sc, card, personalPlayer.getBoard());
                                 if (coordinates != null) {
                                     this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);

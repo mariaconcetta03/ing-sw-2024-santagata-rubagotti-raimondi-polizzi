@@ -1,6 +1,7 @@
 package CODEX.distributed.RMI;
 
 
+import CODEX.distributed.ClientGeneralInterface;
 import CODEX.utils.Observable;
 import CODEX.utils.Observer;
 import CODEX.utils.executableMessages.events.Event;
@@ -15,7 +16,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class WrappedObserver implements Observer {
     public ScheduledExecutorService scheduler;
     private static final int HEARTBEAT_INTERVAL = 5; // seconds
-    private ClientRMIInterface remoteClient;
+    private ClientGeneralInterface remoteClient;
     private String nickname;
 
 
@@ -32,7 +33,7 @@ public class WrappedObserver implements Observer {
      * Class constructor
      * @param ro the RMIClient
      */
-    public WrappedObserver(ClientRMIInterface ro) {
+    public WrappedObserver(ClientGeneralInterface ro) {
         remoteClient = ro;
     }
 

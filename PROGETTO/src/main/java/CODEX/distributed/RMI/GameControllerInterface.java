@@ -1,5 +1,6 @@
 package CODEX.distributed.RMI;
 
+import CODEX.distributed.ClientGeneralInterface;
 import CODEX.org.model.*;
 
 import java.rmi.Remote;
@@ -12,7 +13,7 @@ public interface GameControllerInterface extends Remote {
 
     Game getGame()throws RemoteException;
 
-    void addRMIClient(String nickname, ClientRMIInterface rmiClient)throws RemoteException;
+    void addRMIClient(String nickname, ClientGeneralInterface rmiClient)throws RemoteException;
 
     void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation)throws RemoteException;
 

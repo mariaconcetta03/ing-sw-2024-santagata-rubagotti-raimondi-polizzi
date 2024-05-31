@@ -2,13 +2,14 @@ package CODEX.controller;
 
 import CODEX.Exceptions.CardNotDrawableException;
 import CODEX.Exceptions.CardNotOwnedException;
-import CODEX.distributed.RMI.ClientRMIInterface;
+import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.GameControllerInterface;
 import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.*;
 import CODEX.utils.Observer;
 import CODEX.utils.ErrorsAssociatedWithExceptions;
 import CODEX.utils.executableMessages.events.disconnectionEvent;
+import CODEX.utils.executableMessages.events.updatePlayersOrderEvent;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -405,9 +406,11 @@ public class GameController extends UnicastRemoteObject implements GameControlle
             commonObj2.addPointsToPlayer(game.getPlayers().get(i));
             personalObjective.addPointsToPlayer(game.getPlayers().get(i));
         }
-
+        game.setLastEvent(new updatePlayersOrderEvent(game.getPlayers())); //lista aggiornata con i punti
         // checking the winner(s)
-        winners = game.winner();
+        winners = game.winner(); //@TODO dovremmo comunicare noi dal Server il vincitore ai client
+
+        /*
         if(winners.size()==1) { //just for testing
             System.out.println(winners.get(0).getNickname() + " WON!!!");
         }else if(winners.size()>1){
@@ -416,6 +419,8 @@ public class GameController extends UnicastRemoteObject implements GameControlle
             }
             System.out.println("tied!");
         }
+
+         */
         game.setLastEvent (ErrorsAssociatedWithExceptions.OK);
     }
 
@@ -508,7 +513,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * @param nickname is the nickname of the Client
      * @param ro is the client who is joining the game
      */
-    public void addRMIClient(String nickname, ClientRMIInterface ro){
+    public void addRMIClient(String nickname, ClientGeneralInterface ro){
         WrappedObserver wrapObs= new WrappedObserver(ro);
         if(!clientsConnected.containsValue(wrapObs)){
             clientsConnected.put(nickname, wrapObs);
