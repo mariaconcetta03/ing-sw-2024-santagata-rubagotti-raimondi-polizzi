@@ -905,7 +905,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public void handleDisconnection() throws RemoteException {
         if(selectedView==1) {
             System.out.println("Oh no! Someone disconnected!");
-            /*
             try {
                 this.executor.shutdown();
                 this.schedulerToCheckReceivedHeartBeat.shutdown();
@@ -913,9 +912,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
             } catch (SecurityException e) {}
 
-             */
             System.out.println("A disconnection happened. Closing the game.");
-            System.exit(-1);
+            new Thread(()->{System.exit(-1);}); //uso un thread se no questa chiamata non ritorna
 
             /*
             Timer timer = new Timer();
