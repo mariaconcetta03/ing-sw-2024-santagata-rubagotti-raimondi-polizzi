@@ -197,13 +197,19 @@ public class GUIObjectiveController {
         Scene scene;
         scene = new Scene(root);
 
-        stage.setScene(scene);
+        //passo al ClientSCK il ctr
+        if(network==2){ //tcp
+            clientSCK.setGuiGameController(ctr);
+        }
+
+        stage.setScene(scene); //viene già qui mostrata la scena : nel caso in in cui arrivi prima un evento di disconnessione questa scena non verrà mai mostrata
 
         // setting the od values of position and dimension
         stage.setWidth(width);
         stage.setHeight(height);
         stage.setX(x);
         stage.setY(y);
+
 
         stage.show();
     }
@@ -336,6 +342,10 @@ public class GUIObjectiveController {
 
     public void setNetwork (int network) {
         this.network = network;
+    }
+
+    public void handleDisconnection(){
+        //mostro una scena che dice che qualcuno si è disconnesso e poi chiudo lo stage
     }
 
 

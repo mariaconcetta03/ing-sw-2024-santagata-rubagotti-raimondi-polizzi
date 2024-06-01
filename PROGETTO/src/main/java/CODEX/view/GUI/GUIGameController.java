@@ -203,4 +203,8 @@ public class GUIGameController {
         // SETTING THE CURRENT PLAYER (is the first in the list)
         // SETTING THE PAWNS
     }
+
+    public void handleDisconnection(){
+        //mostro una scena che dice che qualcuno si è disconnesso e poi chiudo lo stage
+    }
 }
