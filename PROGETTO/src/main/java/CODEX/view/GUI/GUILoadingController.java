@@ -18,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -45,6 +46,20 @@ public class GUILoadingController {
         Parent root = fxmlLoader.load();
         System.out.println("ho finito fxmlloader di nickname");
         Scene scene = new Scene(root);
+        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+
+        stage.setWidth(primaryScreenBounds.getWidth() * 0.8);
+        stage.setHeight(primaryScreenBounds.getHeight() * 0.8);
+
+//        Bind the stage size to screen dimensions (optional, for dynamic resizing)
+//        stage.widthProperty().bind(Bindings.createDoubleBinding(() ->
+//                        Screen.getPrimary().getVisualBounds().getWidth() * 0.8,
+//                Screen.getPrimary().visualBoundsProperty()));
+//        stag.heightProperty().bind(Bindings.createDoubleBinding(() ->
+//                        Screen.getPrimary().getVisualBounds().getHeight() * 0.8,
+//                Screen.getPrimary().visualBoundsProperty()));
+
+
         stage.setScene(scene);
         stage.setResizable(true);
         GUINicknameController controller = fxmlLoader.getController();

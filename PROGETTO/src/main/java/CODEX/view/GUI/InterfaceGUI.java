@@ -32,7 +32,7 @@ public class InterfaceGUI extends Application {
         mainStage.setAlwaysOnTop(true);
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/loading.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
+        Scene scene = new Scene(fxmlLoader.load(), 700, 450);
         mainStage.setScene(scene);
 
         GUILoadingController controller = fxmlLoader.getController();

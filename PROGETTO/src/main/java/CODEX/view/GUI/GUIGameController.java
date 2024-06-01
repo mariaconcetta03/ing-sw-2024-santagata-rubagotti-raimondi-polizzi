@@ -50,7 +50,7 @@ public class GUIGameController {
 
 
 
-    public void setTurnLabel() {
+    public void setTurnLabel() { //ok
         if (network == 1) {
             if (rmiClient.getPlayersInTheGame().get(0).getNickname().equals(rmiClient.getPersonalPlayer().getNickname())) {
                 this.turnLabel.setText("It's your turn!");
