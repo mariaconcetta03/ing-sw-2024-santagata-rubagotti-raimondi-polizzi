@@ -207,7 +207,4 @@ public class GUIGameController {
         // SETTING THE PAWNS
     }
 
-    public void handleDisconnection(){
-        //mostro una scena che dice che qualcuno si è disconnesso e poi chiudo lo stage
-    }
 }

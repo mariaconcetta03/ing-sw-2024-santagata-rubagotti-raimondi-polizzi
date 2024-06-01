@@ -40,15 +40,13 @@ import java.util.*;
  * through the socket to be processed
  */
 public class ClientSCK implements ClientGeneralInterface {
-    private GUIBaseCardController guiBaseCardController=null;
-    private GUIObjectiveController guiObjectiveController=null;
-    private GUIGameController guiGameController=null;
-    private final Object guiControllersLock;
+    private boolean guiClosed=false;
+    private boolean aDisconnectionHappened=false;
+    private final Object disconnectionLock=new Object();
     private boolean errorState = false;
     private boolean finishedSetup=false;
     private HashSet<Integer> lobbyId;
     private final Socket socket;
-    private String phase;
 
     public Player getPersonalPlayer() {
         return personalPlayer;
@@ -110,8 +108,7 @@ public class ClientSCK implements ClientGeneralInterface {
         this.inputLock = new Object();
 
         this.guiLock=new Object();
-        this.guiControllersLock=new Object();
-        phase=new String("baseCardController");
+
 
         //in this way the stream is converted into objects
         //forse però dovrei usare dei buffer per non perdere nessun messaggio
@@ -993,40 +990,31 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void handleDisconnection() throws RemoteException { //arriva prima l'update che mette inGame=true
         //chiudere stream, socket, timer e thread
+        if(selectedView==1){ //TUI
+            handleDisconnectionFunction();
+        }
+        else if(selectedView==2) { //GUI -> da migliorare perchè blocca la scelta della carta
 
-        if(selectedView==2) { //GUI
-            synchronized (guiControllersLock) {
-                if (this.phase.equals("baseCardController")) {
-                    while (this.guiBaseCardController == null) { //qui si blocca lo stream di input su cui leggiamo gli update
-                        try {
-                            guiBaseCardController.wait(); //la notify è nel set
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
+            /*
+            synchronized (disconnectionLock) {
+                aDisconnectionHappened=true;
+                disconnectionLock.notify();
+            }
+            synchronized (disconnectionLock){
+                while(!guiClosed){
+                    try {
+                        disconnectionLock.wait();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
                     }
-                    this.guiBaseCardController.handleDisconnection();
-                } else if (this.phase.equals("objectiveController")) {
-                    this.guiObjectiveController.handleDisconnection();
-                } else if (this.phase.equals("gameController")) {
-                    this.guiGameController.handleDisconnection();
                 }
             }
-        }
-        // TUI + GUI
-        running=false;
-        inGame=false;
-        try {
-            inputStream.close();
-            outputStream.close();
-            socket.close();
-        } catch (IOException e) { //needed for the close clause
-            throw new RuntimeException(e);
-        }
-        //the TimerTask that checks the connection should end by itself when the application ends
-        this.timer.cancel(); //to be sure
-        System.out.println("A disconnection happened.");
 
-        System.exit(0);
+             */
+            handleDisconnectionFunction();
+
+        }
+
     }
 
     @Override
@@ -1213,49 +1201,37 @@ public class ClientSCK implements ClientGeneralInterface {
         return this.inGame;
     }
 
-    public GUIBaseCardController getGuiBaseCardController() {
-        synchronized (guiControllersLock) {
-            return guiBaseCardController;
-        }
+    public Object getDisconnectionLock() {
+        return disconnectionLock;
     }
 
-    public void setGuiBaseCardController(GUIBaseCardController guiBaseCardController) {
-        synchronized (guiControllersLock) {
-            this.guiBaseCardController = guiBaseCardController;
-            this.guiObjectiveController=null;
-            this.guiGameController=null;
-            guiControllersLock.notify(); //da adesso in poi handleDisconnection può notificare una disconnessione
-        }
+    public boolean getADisconnectionHappened() {
+        return aDisconnectionHappened;
     }
 
-    public GUIObjectiveController getGuiObjectiveController() {
-        synchronized (guiControllersLock) {
-            return guiObjectiveController;
+    private void handleDisconnectionFunction(){
+        // TUI + GUI
+        running=false;
+        inGame=false;
+        try {
+            inputStream.close();
+            outputStream.close();
+            socket.close();
+        } catch (IOException e) { //needed for the close clause
+            throw new RuntimeException(e);
         }
+        //the TimerTask that checks the connection should end by itself when the application ends
+        if(this.timer!=null) {
+            this.timer.cancel(); //to be sure
+        }
+        System.out.println("A disconnection happened.");
+
+        System.exit(0);
+
     }
 
-    public void setGuiObjectiveController(GUIObjectiveController guiObjectiveController) {
-        synchronized (guiControllersLock) {
-            this.guiObjectiveController = guiObjectiveController;
-            this.guiBaseCardController =null;
-            this.guiGameController=null;
-            this.phase=new String("objectiveController");
-        }
-    }
-
-    public GUIGameController getGuiGameController() {
-        synchronized (guiControllersLock) {
-            return guiGameController;
-        }
-    }
-
-    public void setGuiGameController(GUIGameController guiGameController) {
-        synchronized (guiControllersLock) {
-            this.guiGameController = guiGameController;
-            this.guiBaseCardController =null;
-            this.guiObjectiveController=null;
-            this.phase=new String("gameController");
-        }
+    public void setGuiClosed(boolean guiClosed) {
+        this.guiClosed = guiClosed;
     }
 
 
