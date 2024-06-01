@@ -221,10 +221,7 @@ public class GUIBaseCardController {
         Scene scene;
         scene = new Scene(root);
 
-        //passo al ClientSCK il ctr
-        if(network==2){ //tcp
-            clientSCK.setGuiObjectiveController(ctr);
-        }
+
 
         stage.setScene(scene); //viene già qui mostrata la scena : nel caso in in cui arrivi prima un evento di disconnessione questa scena non verrà mai mostrata
 
@@ -237,8 +234,65 @@ public class GUIBaseCardController {
 
         stage.show();
     }
-    public void handleDisconnection(){
-        //mostro una scena che dice che qualcuno si è disconnesso e poi chiudo lo stage
+
+
+    public void checkDisconnection(){  //da migliorare: blocca la scelta della carta
+        /*
+
+        synchronized (clientSCK.getDisconnectionLock()) {
+            if(!clientSCK.getADisconnectionHappened()) {
+                while (!clientSCK.getADisconnectionHappened()) {
+                    try {
+                        clientSCK.getDisconnectionLock().wait();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+
+        System.out.println("rilevata disconnessione");
+        //changeScene():
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/handleDisconnection.fxml"));
+        Parent root = null;
+        try {
+            root = fxmlLoader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        double width = stage.getWidth();
+        double height = stage.getHeight();
+        double x = stage.getX();
+        double y = stage.getY();
+
+        // new scene
+        Scene scene;
+        scene = new Scene(root);
+
+        stage.setScene(scene);
+
+        // setting the od values of position and dimension
+        stage.setWidth(width);
+        stage.setHeight(height);
+        stage.setX(x);
+        stage.setY(y);
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(9)); // 2 secondi di ritardo
+        pause.setOnFinished(event -> stageClose());
+        pause.play();
+
+         */
+
 
     }
+    private void stageClose(){
+        stage.close();
+        synchronized (clientSCK.getDisconnectionLock()){
+            clientSCK.setGuiClosed(true);
+            clientSCK.getDisconnectionLock().notify();
+        }
+    }
+
+
 }
