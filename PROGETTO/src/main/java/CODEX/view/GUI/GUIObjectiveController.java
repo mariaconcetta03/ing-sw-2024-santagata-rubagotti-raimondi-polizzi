@@ -197,6 +197,12 @@ public class GUIObjectiveController {
         Scene scene;
         scene = new Scene(root);
 
+    try {
+            ctr.setAllFeatures();
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+
 
         stage.setScene(scene); //viene già qui mostrata la scena : nel caso in in cui arrivi prima un evento di disconnessione questa scena non verrà mai mostrata
 
@@ -205,7 +211,6 @@ public class GUIObjectiveController {
         stage.setHeight(height);
         stage.setX(x);
         stage.setY(y);
-
 
         stage.show();
     }
