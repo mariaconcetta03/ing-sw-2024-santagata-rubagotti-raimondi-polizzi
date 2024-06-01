@@ -994,23 +994,26 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void handleDisconnection() throws RemoteException { //arriva prima l'update che mette inGame=true
         //chiudere stream, socket, timer e thread
-        // TUI + GUI
-        synchronized (guiControllersLock){
-            if(this.phase.equals("baseCardController")) {
-                while (this.guiBaseCardController == null) { //qui si blocca lo stream di input su cui leggiamo gli update
-                    try {
-                        guiBaseCardController.wait(); //la notify è nel set
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+
+        if(selectedView==2) { //GUI
+            synchronized (guiControllersLock) {
+                if (this.phase.equals("baseCardController")) {
+                    while (this.guiBaseCardController == null) { //qui si blocca lo stream di input su cui leggiamo gli update
+                        try {
+                            guiBaseCardController.wait(); //la notify è nel set
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
+                    this.guiBaseCardController.handleDisconnection();
+                } else if (this.phase.equals("objectiveController")) {
+                    this.guiObjectiveController.handleDisconnection();
+                } else if (this.phase.equals("gameController")) {
+                    this.guiGameController.handleDisconnection();
                 }
-                this.guiBaseCardController.handleDisconnection();
-            } else if (this.phase.equals("objectiveController")) {
-                this.guiObjectiveController.handleDisconnection();
-            }else if (this.phase.equals("gameController")) {
-                this.guiGameController.handleDisconnection();
             }
         }
+        // TUI + GUI
         running=false;
         inGame=false;
         try {
