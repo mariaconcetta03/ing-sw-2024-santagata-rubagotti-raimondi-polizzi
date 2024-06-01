@@ -94,7 +94,13 @@ public class GUIObjectiveController {
                 //changeScene();
                 // Aggiungi un ritardo prima di cambiare scena
                 PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
-                pause.setOnFinished(event -> changeScene());
+                pause.setOnFinished(event -> {
+                    try {
+                        changeScene();
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
                 pause.play();
               });
         }).start();
@@ -127,14 +133,20 @@ public class GUIObjectiveController {
                 //changeScene();
                 // Aggiungi un ritardo prima di cambiare scena
                 PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
-                pause.setOnFinished(event -> changeScene());
+                pause.setOnFinished(event -> {
+                    try {
+                        changeScene();
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
                 pause.play();
             });
         }).start();
     }
 
 
-    public void changeScene() {
+    public void changeScene() throws RemoteException {
         // let's show the new window!
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/game.fxml"));
         Parent root = null;
