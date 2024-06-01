@@ -710,7 +710,7 @@ public class ClientSCK implements ClientGeneralInterface {
         System.out.println("I received the UpdatePlayerDeck.");
         if(playerNickname.equals(personalPlayer.getNickname())){
             personalPlayer.setPlayerDeck(playerDeck);
-        }else {
+        }
             if(playersInTheGame!=null) {
                 for (Player p : playersInTheGame) {
                     if (playerNickname.equals(p.getNickname())) {
@@ -720,7 +720,6 @@ public class ClientSCK implements ClientGeneralInterface {
             }else {
                 System.out.println("null in updatePlayerDeck");
             }
-        }
         if (selectedView == 1) {
 
         } else if (selectedView == 2) {

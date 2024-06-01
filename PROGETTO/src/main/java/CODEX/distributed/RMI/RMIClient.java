@@ -618,7 +618,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public void updatePlayerDeck (String playerNickname, PlayableCard[] playerDeck) throws RemoteException {
         if(playerNickname.equals(personalPlayer.getNickname())){
             personalPlayer.setPlayerDeck(playerDeck);
-        }else {
             for (Player p : playersInTheGame) {
                 if (playerNickname.equals(p.getNickname())) {
                     p.setPlayerDeck(playerDeck);
