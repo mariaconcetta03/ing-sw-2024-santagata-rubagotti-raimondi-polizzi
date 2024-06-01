@@ -123,46 +123,48 @@ public class ClientSCK implements ClientGeneralInterface {
         new Thread(() -> {
             while (running) {
                 synchronized (inputLock) {
-                    try {
-                        SCKMessage sckMessage = (SCKMessage) this.inputStream.readObject(); //così non abbiamo più bisogno della funzione receiveMessage
-                        if (sckMessage != null) {
-                            //System.out.println("messaggio ricevuto da ClienSCK non nullo");
-                            //il fatto che sia BLOCCANTE è POSITIVO: gli update vengono fatti in ordine di arrivo e quindi quando riceviamo SETUP_PHASE_2 siamo sicuri di aver veramente ricevuto già tutto
-                            try {
-                                modifyClientSide(sckMessage); //questo è bloccante-> meglio utilizzare un thread...a meno che non vogliamo fare una modifica alla volta
-                            } catch (Exception e) {
-                                System.err.println(e.getMessage());
-                                running = false;
-                                inGame=false;
-                                try { //devo fermare i thread lanciati all'interno di questo thread
-                                    inputStream.close();
-                                    outputStream.close();
-                                    socket.close();
-                                } catch (IOException ex) { //this catch is needed for the close statements
-                                    throw new RuntimeException(ex);
+                    if (!aDisconnectionHappened) {
+                        try {
+                            SCKMessage sckMessage = (SCKMessage) this.inputStream.readObject(); //così non abbiamo più bisogno della funzione receiveMessage
+                            if (sckMessage != null) {
+                                //System.out.println("messaggio ricevuto da ClienSCK non nullo");
+                                //il fatto che sia BLOCCANTE è POSITIVO: gli update vengono fatti in ordine di arrivo e quindi quando riceviamo SETUP_PHASE_2 siamo sicuri di aver veramente ricevuto già tutto
+                                try {
+                                    modifyClientSide(sckMessage); //questo è bloccante-> meglio utilizzare un thread...a meno che non vogliamo fare una modifica alla volta
+                                } catch (Exception e) {
+                                    System.err.println(e.getMessage());
+                                    running = false;
+                                    inGame = false;
+                                    try { //devo fermare i thread lanciati all'interno di questo thread
+                                        inputStream.close();
+                                        outputStream.close();
+                                        socket.close();
+                                    } catch (IOException ex) { //this catch is needed for the close statements
+                                        throw new RuntimeException(ex);
+                                    }
+                                    if (this.timer != null) { //this is null if the game is not already started
+                                        this.timer.cancel(); //we don't need to check the connection anymore
+                                    }
+                                    break;
                                 }
-                                if(this.timer!=null){ //this is null if the game is not already started
-                                    this.timer.cancel(); //we don't need to check the connection anymore
-                                }
-                                break;
                             }
+                        } catch (Exception e) { //se il server si disconnette
+                            System.out.println("lost connection...Bye, bye");
+                            System.err.println(e.getMessage());
+                            try { //devo fermare i thread lanciati all'interno di questo thread
+                                inputStream.close();
+                                outputStream.close();
+                                socket.close();
+                                running = false;
+                                inGame = false;
+                            } catch (IOException ex) { //this catch is needed for the close statements
+                                throw new RuntimeException(ex);
+                            }
+                            if (this.timer != null) { //this is null if the game is not already started
+                                this.timer.cancel(); //we don't need to check the connection anymore
+                            }
+                            break; //se per esempio il flusso viene interrotto (dovrebbe venire lanciata un eccezione di Input/Output)
                         }
-                    } catch (Exception e) { //se il server si disconnette
-                        System.out.println("lost connection...Bye, bye");
-                        System.err.println(e.getMessage());
-                        try { //devo fermare i thread lanciati all'interno di questo thread
-                            inputStream.close();
-                            outputStream.close();
-                            socket.close();
-                            running = false;
-                            inGame=false;
-                        } catch (IOException ex) { //this catch is needed for the close statements
-                            throw new RuntimeException(ex);
-                        }
-                        if(this.timer!=null){ //this is null if the game is not already started
-                            this.timer.cancel(); //we don't need to check the connection anymore
-                        }
-                        break; //se per esempio il flusso viene interrotto (dovrebbe venire lanciata un eccezione di Input/Output)
                     }
                 }
 
@@ -214,24 +216,26 @@ public class ClientSCK implements ClientGeneralInterface {
      */
     public void sendMessage(SCKMessage sckMessage) throws IOException { //ATTENTION: this method is called ONLY inside ClientGeneralInterface methods
         synchronized (outputLock) {
-            try {
-                responseReceived = false;
-                errorState=false;
-                outputStream.writeObject(sckMessage);
-                outputStream.flush();
-                outputStream.reset();
-            } catch (IOException e) {
-                System.out.println("lost connection...Bye, bye");
-                try { //devo fermare i thread lanciati all'interno di questo thread
-                    inputStream.close();
-                    outputStream.close();
-                    socket.close(); //the ClientSCK will receive an exception
-                    running = false;
-                } catch (IOException ex) { //this catch is needed for the close statements
-                    throw new RuntimeException(ex);
+            if (!aDisconnectionHappened) {
+                try {
+                    responseReceived = false;
+                    errorState = false;
+                    outputStream.writeObject(sckMessage);
+                    outputStream.flush();
+                    outputStream.reset();
+                } catch (IOException e) {
+                    System.out.println("lost connection...Bye, bye");
+                    try { //devo fermare i thread lanciati all'interno di questo thread
+                        inputStream.close();
+                        outputStream.close();
+                        socket.close(); //the ClientSCK will receive an exception
+                        running = false;
+                    } catch (IOException ex) { //this catch is needed for the close statements
+                        throw new RuntimeException(ex);
+                    }
+                    System.err.println("Server not available!");
+                    System.exit(-1); //this is a shutdown of the VirtualMachine
                 }
-                System.err.println("Server not available!");
-                System.exit(-1); //this is a shutdown of the VirtualMachine
             }
         }
     }
@@ -615,18 +619,20 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException {
         //abbiamo deciso che quando un giocatore vuole lasciare il gioco il server riceve una disconnessione
-        try { //we close all we have to close
-            running=false;
-            inGame=false;
-            inputStream.close();
-            outputStream.close();
-            socket.close();
-        } catch (IOException ex) { //needed for the close clause
-            throw new RuntimeException(ex);
-        }
-        timer.cancel(); // Ferma il timer
-        System.exit(0); //status 0 -> no errors
 
+        if (!aDisconnectionHappened) {
+            try { //we close all we have to close
+                running = false;
+                inGame = false;
+                inputStream.close();
+                outputStream.close();
+                socket.close();
+            } catch (IOException ex) { //needed for the close clause
+                throw new RuntimeException(ex);
+            }
+            timer.cancel(); // Ferma il timer
+            System.exit(0); //status 0 -> no errors
+        }
 
         /*
         synchronized (actionLock) {
@@ -989,11 +995,18 @@ public class ClientSCK implements ClientGeneralInterface {
 
     @Override
     public void handleDisconnection() throws RemoteException { //arriva prima l'update che mette inGame=true
+        System.out.println("evento disconnessione arrivato");
+
         //chiudere stream, socket, timer e thread
         if(selectedView==1){ //TUI
             handleDisconnectionFunction();
         }
         else if(selectedView==2) { //GUI -> da migliorare perchè blocca la scelta della carta
+            synchronized (guiLock){
+                aDisconnectionHappened=true;
+                guiLock.notify(); //nel caso in cui la gui sta facendo la wait di un evento (che dopo questa discconnessione non si verificherà mai)
+            }
+
 
             /*
             synchronized (disconnectionLock) {
@@ -1011,7 +1024,9 @@ public class ClientSCK implements ClientGeneralInterface {
             }
 
              */
-            handleDisconnectionFunction();
+
+
+            //handleDisconnectionFunction(); viene chiamata direttamente dalla gui
 
         }
 
@@ -1071,7 +1086,7 @@ public class ClientSCK implements ClientGeneralInterface {
             if(intChoice!=-1) { //dopo ogni azione della tui si può ristampare il menù (possiamo farlo da qui o direttamente nella tui)
                 try {
                     switch (intChoice) {
-                        case 0:
+                        case 0:  // if (!aDisconnectionHappened)
                             inGame = false;
                             leaveGame(personalPlayer.getNickname());
                             System.out.println("You left the game.");
@@ -1209,7 +1224,7 @@ public class ClientSCK implements ClientGeneralInterface {
         return aDisconnectionHappened;
     }
 
-    private void handleDisconnectionFunction(){
+    public void handleDisconnectionFunction(){
         // TUI + GUI
         running=false;
         inGame=false;

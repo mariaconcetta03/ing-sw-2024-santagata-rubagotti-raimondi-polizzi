@@ -186,50 +186,56 @@ public class GUIObjectiveController {
             Object guiLock = clientSCK.getGuiLock();
             synchronized (guiLock) {
                 boolean finishedSetup=clientSCK.getFinishedSetup(); //se qui è già true non ho bisogno di entrare nel while che fa la wait
-                while (!finishedSetup) { //finchè non sono stati ricevuti tutti gli update affinchè il gioco possa iniziare
-                    try {
-                        guiLock.wait();
-                        finishedSetup=clientSCK.getFinishedSetup();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                if(!clientSCK.getADisconnectionHappened()) {
+                    while (!finishedSetup) { //finchè non sono stati ricevuti tutti gli update affinchè il gioco possa iniziare
+                        try {
+                            guiLock.wait();
+                            finishedSetup = clientSCK.getFinishedSetup();
+                            if(clientSCK.getADisconnectionHappened()){
+                                break; //usciamo dal ciclo while
+                            }
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
             }
         }
-
-        ctr.setAllFeatures();
-
-        // old dimensions and position
-        double width = stage.getWidth();
-        double height = stage.getHeight();
-        double x = stage.getX();
-        double y = stage.getY();
-
-        // new scene
-        Scene scene;
-        scene = new Scene(root);
-
-    try {
+        if ((network == 1)||(network == 2&&!clientSCK.getADisconnectionHappened())) {
             ctr.setAllFeatures();
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
+
+            // old dimensions and position
+            double width = stage.getWidth();
+            double height = stage.getHeight();
+            double x = stage.getX();
+            double y = stage.getY();
+
+            // new scene
+            Scene scene;
+            scene = new Scene(root);
+
+            try {
+                ctr.setAllFeatures();
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+
+            //passo al ClientSCK il ctr
+            //      if(network==2){ //tcp
+            //        clientSCK.setGuiGameController(ctr);
+            //  }
+
+            stage.setScene(scene); //viene già qui mostrata la scena : nel caso in in cui arrivi prima un evento di disconnessione questa scena non verrà mai mostrata
+
+            // setting the od values of position and dimension
+            stage.setWidth(width);
+            stage.setHeight(height);
+            stage.setX(x);
+            stage.setY(y);
+
+
+            stage.show();
         }
-
-        //passo al ClientSCK il ctr
-  //      if(network==2){ //tcp
-    //        clientSCK.setGuiGameController(ctr);
-      //  }
-
-        stage.setScene(scene); //viene già qui mostrata la scena : nel caso in in cui arrivi prima un evento di disconnessione questa scena non verrà mai mostrata
-
-        // setting the od values of position and dimension
-        stage.setWidth(width);
-        stage.setHeight(height);
-        stage.setX(x);
-        stage.setY(y);
-
-
-        stage.show();
     }
 
 

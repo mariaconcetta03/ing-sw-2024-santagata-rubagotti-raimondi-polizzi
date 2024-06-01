@@ -234,7 +234,9 @@ public class GUILobbyController {
         stage.setX(x);
         stage.setY(y);
 
-        ctr.checkDisconnection();
+        if(network==2) { //implementato solo per tcp
+            ctr.startPeriodicDisconnectionCheck();
+        }
 
         //stage.show(); //si fa solo se cambia lo stage
     }

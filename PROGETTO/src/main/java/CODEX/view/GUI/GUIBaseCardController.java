@@ -21,6 +21,10 @@ import java.net.URL;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import javafx.scene.control.Label;
 import javafx.util.Duration;
 
@@ -37,6 +41,7 @@ public class GUIBaseCardController {
 
     private RMIClient rmiClient;
     private ClientSCK clientSCK;
+    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private Stage stage;
     private boolean baseCardPlayed = false;
     private GUIObjectiveController ctr;
@@ -194,49 +199,59 @@ public class GUIBaseCardController {
         } else if (network == 2) {
             Object guiLock=clientSCK.getGuiLock();
             synchronized (guiLock) {
-                while (clientSCK.getPersonalPlayer().getPersonalObjectives().size() < 2) { //arriva l'update delle due objective card tra cui scegliere dopo l'update del player deck
-                    try {
-                        guiLock.wait();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                if(!clientSCK.getADisconnectionHappened()) {
+                    while (clientSCK.getPersonalPlayer().getPersonalObjectives().size() < 2) { //arriva l'update delle due objective card tra cui scegliere dopo l'update del player deck
+
+                        try {
+                            guiLock.wait(); //la notify viene messa sia nell'evento atteso sia nell' handleDisconnection in SCK
+                            if(clientSCK.getADisconnectionHappened()){
+                                break; //usciamo dal ciclo while
+                            }
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+
                     }
                 }
             }
-            ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", now choose your");
-            ctr.setCard1(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId());
-            ctr.setCard2(clientSCK.getPersonalPlayer().getPlayerDeck()[1].getId());
-            ctr.setCard3(clientSCK.getPersonalPlayer().getPlayerDeck()[2].getId());
-            ctr.setObjCard1(clientSCK.getPersonalPlayer().getPersonalObjectives().get(0).getId());
-            ctr.setObjCard2(clientSCK.getPersonalPlayer().getPersonalObjectives().get(1).getId());
-            ctr.setBaseCard(clientSCK.getPersonalPlayer().getBoard().getTable()[clientSCK.getPersonalPlayer().getBoard().getBoardDimensions()/2][clientSCK.getPersonalPlayer().getBoard().getBoardDimensions()/2].getId(), clientSCK.getPersonalPlayer().getBoard().getTable()[clientSCK.getPersonalPlayer().getBoard().getBoardDimensions()/2][clientSCK.getPersonalPlayer().getBoard().getBoardDimensions()/2].getOrientation());
+            if(!clientSCK.getADisconnectionHappened()) {
+                ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", now choose your");
+                ctr.setCard1(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId());
+                ctr.setCard2(clientSCK.getPersonalPlayer().getPlayerDeck()[1].getId());
+                ctr.setCard3(clientSCK.getPersonalPlayer().getPlayerDeck()[2].getId());
+                ctr.setObjCard1(clientSCK.getPersonalPlayer().getPersonalObjectives().get(0).getId());
+                ctr.setObjCard2(clientSCK.getPersonalPlayer().getPersonalObjectives().get(1).getId());
+                ctr.setBaseCard(clientSCK.getPersonalPlayer().getBoard().getTable()[clientSCK.getPersonalPlayer().getBoard().getBoardDimensions() / 2][clientSCK.getPersonalPlayer().getBoard().getBoardDimensions() / 2].getId(), clientSCK.getPersonalPlayer().getBoard().getTable()[clientSCK.getPersonalPlayer().getBoard().getBoardDimensions() / 2][clientSCK.getPersonalPlayer().getBoard().getBoardDimensions() / 2].getOrientation());
+            }
         }
+        if ((network == 1)||(network == 2&&!clientSCK.getADisconnectionHappened())) {
 
-        // old dimensions and position
-        double width = stage.getWidth();
-        double height = stage.getHeight();
-        double x = stage.getX();
-        double y = stage.getY();
+            // old dimensions and position
+            double width = stage.getWidth();
+            double height = stage.getHeight();
+            double x = stage.getX();
+            double y = stage.getY();
 
-        // new scene
-        Scene scene;
-        scene = new Scene(root);
-
-
-
-        stage.setScene(scene); //viene già qui mostrata la scena : nel caso in in cui arrivi prima un evento di disconnessione questa scena non verrà mai mostrata
-
-        // setting the od values of position and dimension
-        stage.setWidth(width);
-        stage.setHeight(height);
-        stage.setX(x);
-        stage.setY(y);
+            // new scene
+            Scene scene;
+            scene = new Scene(root);
 
 
-        stage.show();
+            stage.setScene(scene); //viene già qui mostrata la scena : nel caso in in cui arrivi prima un evento di disconnessione questa scena non verrà mai mostrata
+
+            // setting the od values of position and dimension
+            stage.setWidth(width);
+            stage.setHeight(height);
+            stage.setX(x);
+            stage.setY(y);
+
+
+            stage.show();
+        }
     }
 
 
-    public void checkDisconnection(){  //da migliorare: blocca la scelta della carta
+    public void checkDisconnection() {  //da migliorare: blocca la scelta della carta
         /*
 
         synchronized (clientSCK.getDisconnectionLock()) {
@@ -283,15 +298,51 @@ public class GUIBaseCardController {
         pause.play();
 
          */
-
-
     }
+
+    public void startPeriodicDisconnectionCheck() {
+        scheduler.scheduleAtFixedRate(() -> {
+            if (clientSCK.getADisconnectionHappened()) {
+                Platform.runLater(() -> {
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/handleDisconnection.fxml"));
+                    Parent root = null;
+                    try {
+                        root = fxmlLoader.load();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    double width = stage.getWidth();
+                    double height = stage.getHeight();
+                    double x = stage.getX();
+                    double y = stage.getY();
+
+                    // new scene
+                    Scene scene;
+                    scene = new Scene(root);
+
+                    stage.setScene(scene);
+
+                    // setting the od values of position and dimension
+                    stage.setWidth(width);
+                    stage.setHeight(height);
+                    stage.setX(x);
+                    stage.setY(y);
+
+                    PauseTransition pause = new PauseTransition(Duration.seconds(6)); // 2 secondi di ritardo
+                    pause.setOnFinished(event -> stageClose());
+                    pause.play();
+                });
+                scheduler.shutdown(); // Stop the scheduler if the condition is met
+            }
+        }, 0, 1, TimeUnit.SECONDS); // Check every second
+    }
+
+
+
     private void stageClose(){
         stage.close();
-        synchronized (clientSCK.getDisconnectionLock()){
-            clientSCK.setGuiClosed(true);
-            clientSCK.getDisconnectionLock().notify();
-        }
+        clientSCK.handleDisconnectionFunction();
     }
 
 
