@@ -82,18 +82,26 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                         sckMessage = (SCKMessage) this.input.readObject();
                     } catch (IOException | ClassNotFoundException e) {
                         System.out.println("lost the connection...Bye, bye");
-                        System.err.println(e.getMessage());
+                        //System.err.println(e.getMessage());
+                        running=false;
                         try {
-                            running=false;
                             input.close();
                             output.close();
                             socket.close();
                         } catch (IOException ex) { //needed for the close clause
-                            throw new RuntimeException(ex);
+                            //throw new RuntimeException(ex);
                         }
                         timer.cancel(); // Ferma il timer
+                        System.out.println(gameController.getFirstDisconnection());
+                        if(gameController.getFirstDisconnection()){
+                            gameController.setFirstDisconnection(false); //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
+                            gameController.disconnection();; //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
+                        }
+                        //interrompo questo ClientHandlerThread
+                        Thread.currentThread().interrupt();
+                        System.out.println("appena chiamato interrupt");
                     }
-                    if(sckMessage!=null) {
+                    if(sckMessage!=null&&running) {
                         react(sckMessage);
                     }
                 }
@@ -138,6 +146,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                         pongReceived=false;
                         CODEX.utils.executableMessages.serverMessages.ServerMessage serverMessage= new ServerPing();
                         writeTheStream(new SCKMessage(serverMessage));
+
                     }else{ //there are no pongs received
                         System.out.println("the connection has been interrupted...Bye bye");
                         try {
@@ -146,9 +155,10 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                             output.close();
                             socket.close();
                         } catch (IOException e) { //needed for the close clause
-                            throw new RuntimeException(e);
+                            //throw new RuntimeException(e);
                         }
                         timer.cancel(); // Ferma il timer
+                        System.out.println(gameController.getFirstDisconnection());
                         if(gameController.getFirstDisconnection()){
                             gameController.setFirstDisconnection(false); //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
                             gameController.disconnection();; //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
@@ -179,23 +189,32 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     //writeTheStream will be called in the method react (maybe inside the methods of the ClientActionsInterface) to tell the client what the controller has effectively done
     //writeTheStream will also be called in the method update (we have it because ClientHandlerThread is a listener) to tell the client what is changed in the model
     synchronized public void writeTheStream(SCKMessage sckMessage){ //this is the stream the real client can read
-        try {
-            output.writeObject(sckMessage);
-            output.flush();
-            output.reset();
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-            System.out.println("the connection has been interrupted....Bye bye");
-            try { //we close all we have to close
-                running=false;
-                input.close();
-                output.close();
-                socket.close();
-            } catch (IOException ex) { //needed for the close clause
-                throw new RuntimeException(ex);
+        if(running) {
+            try {
+                output.writeObject(sckMessage);
+                output.flush();
+                output.reset();
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+                System.out.println("the connection has been interrupted....Bye bye");
+                try { //we close all we have to close
+                    running = false;
+                    input.close();
+                    output.close();
+                    socket.close();
+                } catch (IOException ex) { //needed for the close clause
+                    //throw new RuntimeException(ex);
+                }
+                timer.cancel(); // Ferma il timer
+                System.out.println(gameController.getFirstDisconnection());
+                if (gameController.getFirstDisconnection()) {
+                    gameController.setFirstDisconnection(false); //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
+                    gameController.disconnection(); //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
+                }
+                Thread.currentThread().interrupt();
             }
-            timer.cancel(); // Ferma il timer
-            gameController.disconnection();
+        }else {
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -364,6 +383,10 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
 
     @Override
     public void leaveGame(String nickname){
+        //abbiamo deciso che quando un giocatore vuole lasciare il gioco il server riceve una disconnessione
+        //quindi questa funzione non verrà mai chiamata
+
+        /*
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
         try {
             this.gameController.leaveGame(nickname);  //questo metodo prima di aggiornare gli altri giocatori dovrebbe togliere dalla lista di listeners quello che l'ha chiamato
@@ -382,7 +405,12 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         }catch (RemoteException | IllegalArgumentException e){
             System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
         }
+
+         */
+
     }
+
+
 
 
     //end of methods to be implemented taken from ClientActionsInterface

@@ -224,7 +224,7 @@ public class GUILobbyController {
         Scene scene;
         scene = new Scene(root);
 
-        stage.setScene(scene);
+        stage.setScene(scene); //questo è il momento in cui la nuova scena viene mostrata
 
         // setting the od values of position and dimension
         stage.setWidth(width);
@@ -233,7 +233,7 @@ public class GUILobbyController {
         stage.setY(y);
 
 
-        stage.show();
+        //stage.show(); //si fa solo se cambia lo stage
     }
 
 

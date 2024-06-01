@@ -7,9 +7,14 @@ import CODEX.distributed.messages.SCKMessage;
 import CODEX.org.model.*;
 
 import CODEX.utils.executableMessages.clientMessages.*;
+import CODEX.view.GUI.GUIBaseCardController;
+import CODEX.view.GUI.GUIGameController;
+import CODEX.view.GUI.GUIObjectiveController;
 import CODEX.view.GUI.InterfaceGUI;
 import CODEX.view.TUI.ANSIFormatter;
 import CODEX.view.TUI.InterfaceTUI;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -35,6 +40,10 @@ import java.util.*;
  * through the socket to be processed
  */
 public class ClientSCK implements ClientGeneralInterface {
+    private GUIBaseCardController guiBaseCardController=null;
+    private GUIObjectiveController guiObjectiveController=null;
+    private GUIGameController guiGameController=null;
+    private final Object guiControllersLock;
     private boolean errorState = false;
     private boolean finishedSetup=false;
     private HashSet<Integer> lobbyId;
@@ -100,6 +109,7 @@ public class ClientSCK implements ClientGeneralInterface {
         this.inputLock = new Object();
 
         this.guiLock=new Object();
+        this.guiControllersLock=new Object();
 
         //in this way the stream is converted into objects
         //forse però dovrei usare dei buffer per non perdere nessun messaggio
@@ -605,6 +615,21 @@ public class ClientSCK implements ClientGeneralInterface {
 
     @Override
     public void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException {
+        //abbiamo deciso che quando un giocatore vuole lasciare il gioco il server riceve una disconnessione
+        try { //we close all we have to close
+            running=false;
+            inGame=false;
+            inputStream.close();
+            outputStream.close();
+            socket.close();
+        } catch (IOException ex) { //needed for the close clause
+            throw new RuntimeException(ex);
+        }
+        timer.cancel(); // Ferma il timer
+        System.exit(0); //status 0 -> no errors
+
+
+        /*
         synchronized (actionLock) {
             ClientMessage clientMessage=new LeaveGame(nickname);
             try {
@@ -620,6 +645,8 @@ public class ClientSCK implements ClientGeneralInterface {
                 }
             }
         }
+
+         */
     }
 
  //update
@@ -965,27 +992,26 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void handleDisconnection() throws RemoteException {
         //chiudere stream, socket, timer e thread
-        if(selectedView==1) {
-            running=false;
-            inGame=false;
-            try {
-                inputStream.close();
-                outputStream.close();
-                socket.close();
-            } catch (IOException e) { //needed for the close clause
-                throw new RuntimeException(e);
-            }
-            //the TimerTask that checks the connection should end by itself when the application ends
-            this.timer.cancel(); //to be sure
-            System.out.println("A disconnection happened.");
-            Timer timer = new Timer();
-            try {
-                timer.wait(5000);
-            } catch (InterruptedException e) {
-            }
-        }else if(selectedView==2) {
+        // TUI + GUI
+        running=false;
+        inGame=false;
+        try {
+            inputStream.close();
+            outputStream.close();
+            socket.close();
+        } catch (IOException e) { //needed for the close clause
+            throw new RuntimeException(e);
         }
-        System.exit(-1);
+        //the TimerTask that checks the connection should end by itself when the application ends
+        this.timer.cancel(); //to be sure
+        System.out.println("A disconnection happened.");
+        /*
+        PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
+        pause.setOnFinished(event -> System.exit(0));
+        pause.play();
+
+         */
+        System.exit(0);
     }
 
     @Override
@@ -1170,6 +1196,48 @@ public class ClientSCK implements ClientGeneralInterface {
 
     public boolean getInGame() {
         return this.inGame;
+    }
+
+    public GUIBaseCardController getGuiBaseCardController() {
+        synchronized (guiControllersLock) {
+            return guiBaseCardController;
+        }
+    }
+
+    public void setGuiBaseCardController(GUIBaseCardController guiBaseCardController) {
+        synchronized (guiControllersLock) {
+            this.guiBaseCardController = guiBaseCardController;
+            this.guiObjectiveController=null;
+            this.guiGameController=null;
+        }
+    }
+
+    public GUIObjectiveController getGuiObjectiveController() {
+        synchronized (guiControllersLock) {
+            return guiObjectiveController;
+        }
+    }
+
+    public void setGuiObjectiveController(GUIObjectiveController guiObjectiveController) {
+        synchronized (guiControllersLock) {
+            this.guiObjectiveController = guiObjectiveController;
+            this.guiBaseCardController =null;
+            this.guiGameController=null;
+        }
+    }
+
+    public GUIGameController getGuiGameController() {
+        synchronized (guiControllersLock) {
+            return guiGameController;
+        }
+    }
+
+    public void setGuiGameController(GUIGameController guiGameController) {
+        synchronized (guiControllersLock) {
+            this.guiGameController = guiGameController;
+            this.guiBaseCardController =null;
+            this.guiObjectiveController=null;
+        }
     }
 
 
