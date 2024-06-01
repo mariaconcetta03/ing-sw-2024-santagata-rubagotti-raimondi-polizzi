@@ -11,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
 import javafx.util.Duration;
@@ -20,7 +19,6 @@ import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.Timer;
 
 public class GUIGameController {
 
@@ -84,7 +82,7 @@ public class GUIGameController {
             }
         }
         //changeScene():
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gameLeaved.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gameLeft.fxml"));
         Parent root = null;
         try {
             root = fxmlLoader.load();
