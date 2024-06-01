@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
@@ -63,6 +64,17 @@
                   </HBox>
                </children>
             </Pane>
+            <HBox alignment="TOP_CENTER" prefHeight="106.0" prefWidth="1350.0">
+               <children>
+                  <ImageView fx:id="player2Card1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                  <Separator opacity="0.0" prefWidth="10.0" />
+                  <ImageView fx:id="player2Card2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                  <Separator opacity="0.0" prefWidth="10.0" />
+                  <ImageView fx:id="player2Card3" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+               </children>
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin></HBox>
          </children>
       </VBox>
       <StackPane AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="14.0">

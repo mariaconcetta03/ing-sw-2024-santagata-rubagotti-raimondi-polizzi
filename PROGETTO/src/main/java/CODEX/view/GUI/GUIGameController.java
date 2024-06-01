@@ -117,6 +117,10 @@ public class GUIGameController {
      *
      */
     public void setPoints(){
+        int rmiPlayer = 0;
+        int order = 0;
+        int sckPlayer = 0;
+
         if(network == 1){
             for (Player p: playersInOrder) {
                 int counter = 0;
@@ -134,16 +138,15 @@ public class GUIGameController {
                             this.points4.setText(p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(counter2).getPoints()) + " pt");
                         }
                     }
-                    counter2++;
+                    rmiPlayer++;
                 }
                 counter++;
             }
 
         }else if (network == 2){
             for (Player p: playersInOrder) {
-                int counter = 0;
+                sckPlayer = 0;
                 for (Player p2 : clientSCK.getPlayersInTheGame()) {
-                    int counter2 = 0;
                     if (p.getNickname().equals(p2.getNickname())) {
                         // devo aggiornare i punti di quel player
                         if (counter == 0) {
