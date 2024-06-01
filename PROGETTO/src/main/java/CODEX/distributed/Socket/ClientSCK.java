@@ -48,6 +48,7 @@ public class ClientSCK implements ClientGeneralInterface {
     private boolean finishedSetup=false;
     private HashSet<Integer> lobbyId;
     private final Socket socket;
+    private String phase;
 
     public Player getPersonalPlayer() {
         return personalPlayer;
@@ -110,6 +111,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
         this.guiLock=new Object();
         this.guiControllersLock=new Object();
+        phase=new String("baseCardController");
 
         //in this way the stream is converted into objects
         //forse però dovrei usare dei buffer per non perdere nessun messaggio
@@ -990,9 +992,25 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
     @Override
-    public void handleDisconnection() throws RemoteException {
+    public void handleDisconnection() throws RemoteException { //arriva prima l'update che mette inGame=true
         //chiudere stream, socket, timer e thread
         // TUI + GUI
+        synchronized (guiControllersLock){
+            if(this.phase.equals("baseCardController")) {
+                while (this.guiBaseCardController == null) { //qui si blocca lo stream di input su cui leggiamo gli update
+                    try {
+                        guiBaseCardController.wait(); //la notify è nel set
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                this.guiBaseCardController.handleDisconnection();
+            } else if (this.phase.equals("objectiveController")) {
+                this.guiObjectiveController.handleDisconnection();
+            }else if (this.phase.equals("gameController")) {
+                this.guiGameController.handleDisconnection();
+            }
+        }
         running=false;
         inGame=false;
         try {
@@ -1005,12 +1023,7 @@ public class ClientSCK implements ClientGeneralInterface {
         //the TimerTask that checks the connection should end by itself when the application ends
         this.timer.cancel(); //to be sure
         System.out.println("A disconnection happened.");
-        /*
-        PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
-        pause.setOnFinished(event -> System.exit(0));
-        pause.play();
 
-         */
         System.exit(0);
     }
 
@@ -1209,6 +1222,7 @@ public class ClientSCK implements ClientGeneralInterface {
             this.guiBaseCardController = guiBaseCardController;
             this.guiObjectiveController=null;
             this.guiGameController=null;
+            guiControllersLock.notify(); //da adesso in poi handleDisconnection può notificare una disconnessione
         }
     }
 
@@ -1223,6 +1237,7 @@ public class ClientSCK implements ClientGeneralInterface {
             this.guiObjectiveController = guiObjectiveController;
             this.guiBaseCardController =null;
             this.guiGameController=null;
+            this.phase=new String("objectiveController");
         }
     }
 
@@ -1237,6 +1252,7 @@ public class ClientSCK implements ClientGeneralInterface {
             this.guiGameController = guiGameController;
             this.guiBaseCardController =null;
             this.guiObjectiveController=null;
+            this.phase=new String("gameController");
         }
     }
 

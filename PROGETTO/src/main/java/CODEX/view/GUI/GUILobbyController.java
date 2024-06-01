@@ -232,6 +232,11 @@ public class GUILobbyController {
         stage.setX(x);
         stage.setY(y);
 
+        //passo al ClientSCK il ctr
+        if(network==2){ //tcp
+            clientSCK.setGuiBaseCardController(ctr);
+        } //da adesso in poi la gui puo mostrare un evento di disconnessione (una cosa che va fatta dopo la prima stage.setScene(scene);)
+
 
         //stage.show(); //si fa solo se cambia lo stage
     }
