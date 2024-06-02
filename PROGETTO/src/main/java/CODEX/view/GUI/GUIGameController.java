@@ -27,8 +27,6 @@ public class GUIGameController {
 
     private PlayableDeck goldDeck;
     private PlayableDeck resourceDeck;
-    private ObjectiveCard commonObj1;
-    private ObjectiveCard commonObj2;
     private PlayableCard resourceCard1;
     private PlayableCard resourceCard2;
     private PlayableCard goldCard1;
@@ -74,6 +72,20 @@ public class GUIGameController {
     private ImageView player4Card2;
     @FXML
     private ImageView player4Card3;
+    @FXML
+    private ImageView commonObj1;
+    @FXML
+    private ImageView commonObj2;
+    @FXML
+    private ImageView personalObj;
+    @FXML
+    private Label player1Nickname;
+    @FXML
+    private Label player2Nickname;
+    @FXML
+    private Label player3Nickname;
+    @FXML
+    private Label player4Nickname;
 
 
 
@@ -288,54 +300,108 @@ public class GUIGameController {
      */
     public void setAllFeatures() throws RemoteException {
         System.out.println("STO SETTANDO TUTTE LE FEATURES");
+
+        // SETTING THE LABEL WITH THE CORRECT NAME OF THE PLAYER IN TURN
         setTurnLabel();
-        // i giocatori vengono settati correttamente!!
+
+
         if (this.network == 1) {
 
+            // PRINTING THE PLAYERS IN THE GAME
             for (Player p : rmiClient.getPlayersInTheGame()) {
                 System.out.println("giocatore: " + p.getNickname());
             }
 
-            // IL PLAYER 1 SONO SEMPRE "IO"
+            // THE FIRST PLAYER IT'S ALWAYS ME NOW! (IN PLAYERSINORDER)
             setPlayersInOrder(rmiClient.getPlayersInTheGame());
-
             List<Player> newList = new ArrayList<>();
             newList.add(rmiClient.getPersonalPlayer());
             for (Player p: playersInOrder) {
-                if (!p.getNickname().equals(rmiClient.getPersonalPlayer().getNickname()) ){
+                if (!p.getNickname().equals(rmiClient.getPersonalPlayer().getNickname())){
                     newList.add(p);
                 }
             }
-
             playersInOrder = newList; // aggiungo in prima posizione il PERSONAL PLAYER
+            System.out.println("ECCO I NUOVI PLAYERS IN ORDER CON ME COME PRIMA POSIZIONE!");
+            for (Player p: playersInOrder) {
+                System.out.println("nickname: " + p.getNickname());
+            }
 
 
+            // SETTING THE PERSONAL OBJECTIVE
+            String path;
+            path = "/images/cards/front/ (" + rmiClient.getPersonalPlayer().getPersonalObjective().getId() + ").png";
+            Image persObj = new Image(getClass().getResourceAsStream(path));
+            personalObj.setImage(persObj);
+
+
+            // SETTING THE 2 COMMON OBJECTIVES
+            path = "/images/cards/front/ (" + rmiClient.getCommonObjective1().getId() + ").png";
+            Image obj1 = new Image(getClass().getResourceAsStream(path));
+            commonObj1.setImage(obj1);
+
+            path = "/images/cards/front/ (" + rmiClient.getCommonObjective2().getId() + ").png";
+            Image obj2 = new Image(getClass().getResourceAsStream(path));
+            commonObj2.setImage(obj2);
+
+
+            // SETTING THE POINTS, THE NICKNAMES AND THE CARDS IN HAND
             if (rmiClient.getPlayersInTheGame().size() == 2) {
                 points1.setOpacity(1);
                 points2.setOpacity(1);
                 points3.setOpacity(0);
                 points4.setOpacity(0);
+                player1Nickname.setText(playersInOrder.get(0).getNickname());
+                player2Nickname.setText(playersInOrder.get(1).getNickname());
+                player1Nickname.setOpacity(1);
+                player2Nickname.setOpacity(1);
+                player3Nickname.setOpacity(0);
+                player4Nickname.setOpacity(0);
+                setPlayer1Cards();
+                setPlayer2Cards();
             } else if (rmiClient.getPlayersInTheGame().size() == 3) {
                 points1.setOpacity(1);
                 points2.setOpacity(1);
                 points3.setOpacity(1);
                 points4.setOpacity(0);
+                player1Nickname.setText(playersInOrder.get(0).getNickname());
+                player2Nickname.setText(playersInOrder.get(1).getNickname());
+                player3Nickname.setText(playersInOrder.get(2).getNickname());
+                player1Nickname.setOpacity(1);
+                player2Nickname.setOpacity(1);
+                player3Nickname.setOpacity(1);
+                player4Nickname.setOpacity(0);
+                setPlayer1Cards();
+                setPlayer2Cards();
+                setPlayer3Cards();
             } else if (rmiClient.getPlayersInTheGame().size() == 4) {
                 points1.setOpacity(1);
                 points2.setOpacity(1);
                 points3.setOpacity(1);
                 points4.setOpacity(1);
+                player1Nickname.setText(playersInOrder.get(0).getNickname());
+                player2Nickname.setText(playersInOrder.get(1).getNickname());
+                player3Nickname.setText(playersInOrder.get(2).getNickname());
+                player4Nickname.setText(playersInOrder.get(3).getNickname());
+                player1Nickname.setOpacity(1);
+                player2Nickname.setOpacity(1);
+                player3Nickname.setOpacity(1);
+                player4Nickname.setOpacity(1);
+                setPlayer1Cards();
+                setPlayer2Cards();
+                setPlayer3Cards();
+                setPlayer4Cards();
             }
 
         } else if (this.network == 2) {
 
+            // PRINTING THE PLAYERS IN THE GAME
             for (Player p: clientSCK.getPlayersInTheGame()) {
                 System.out.println("giocatore: " + p.getNickname());
             }
 
-
+            // THE FIRST PLAYER IT'S ALWAYS ME NOW! (IN PLAYERSINORDER)
             setPlayersInOrder(clientSCK.getPlayersInTheGame());
-
             List<Player> newList = new ArrayList<>();
             newList.add(clientSCK.getPersonalPlayer());
             for (Player p: playersInOrder) {
@@ -343,37 +409,84 @@ public class GUIGameController {
                     newList.add(p);
                 }
             }
-
             playersInOrder = newList; // aggiungo in prima posizione il PERSONAL PLAYER
-
-            for (int i = 1; i<playersInOrder.size(); i++) {
-                if ((playersInOrder.get(i).getNickname()).equals(clientSCK.getPersonalPlayer().getNickname())) {
-                    playersInOrder.remove(i);
-                }
+            System.out.println("ECCO I NUOVI PLAYERS IN ORDER CON ME COME PRIMA POSIZIONE!");
+            for (Player p: playersInOrder) {
+                System.out.println("nickname: " + p.getNickname());
             }
 
+
+            // SETTING THE PERSONAL OBJECTIVE
+            String path;
+            path = "/images/cards/front/ (" + clientSCK.getPersonalPlayer().getPersonalObjective().getId() + ").png";
+            Image persObj = new Image(getClass().getResourceAsStream(path));
+            personalObj.setImage(persObj);
+
+
+            // SETTING THE 2 COMMON OBJECTIVES
+            path = "/images/cards/front/ (" + clientSCK.getCommonObjective1().getId() + ").png";
+            Image obj1 = new Image(getClass().getResourceAsStream(path));
+            commonObj1.setImage(obj1);
+
+            path = "/images/cards/front/ (" + clientSCK.getCommonObjective2().getId() + ").png";
+            Image obj2 = new Image(getClass().getResourceAsStream(path));
+            commonObj2.setImage(obj2);
+
+
+            // SETTING THE POINTS, THE NICKNAMES AND THE CARDS IN HAND
             if (clientSCK.getPlayersInTheGame().size() == 2) {
                 points1.setOpacity(1);
                 points2.setOpacity(1);
                 points3.setOpacity(0);
                 points4.setOpacity(0);
+                player1Nickname.setText(playersInOrder.get(0).getNickname());
+                player2Nickname.setText(playersInOrder.get(1).getNickname());
+                player1Nickname.setOpacity(1);
+                player2Nickname.setOpacity(1);
+                player3Nickname.setOpacity(0);
+                player4Nickname.setOpacity(0);
+                setPlayer1Cards();
+                setPlayer2Cards();
             } else if (clientSCK.getPlayersInTheGame().size() == 3) {
                 points1.setOpacity(1);
                 points2.setOpacity(1);
                 points3.setOpacity(1);
                 points4.setOpacity(0);
+                player1Nickname.setText(playersInOrder.get(0).getNickname());
+                player2Nickname.setText(playersInOrder.get(1).getNickname());
+                player3Nickname.setText(playersInOrder.get(2).getNickname());
+                player1Nickname.setOpacity(1);
+                player2Nickname.setOpacity(1);
+                player3Nickname.setOpacity(1);
+                player4Nickname.setOpacity(0);
+                setPlayer1Cards();
+                setPlayer2Cards();
+                setPlayer3Cards();
             } else if (clientSCK.getPlayersInTheGame().size() == 4) {
                 points1.setOpacity(1);
                 points2.setOpacity(1);
                 points3.setOpacity(1);
                 points4.setOpacity(1);
+                player1Nickname.setText(playersInOrder.get(0).getNickname());
+                player2Nickname.setText(playersInOrder.get(1).getNickname());
+                player3Nickname.setText(playersInOrder.get(2).getNickname());
+                player4Nickname.setText(playersInOrder.get(3).getNickname());
+                player1Nickname.setOpacity(1);
+                player2Nickname.setOpacity(1);
+                player3Nickname.setOpacity(1);
+                player4Nickname.setOpacity(1);
+                setPlayer1Cards();
+                setPlayer2Cards();
+                setPlayer3Cards();
+                setPlayer4Cards();
             }
         }
+
+        // SETTING THE CORRECT NUMBER OF POINTS (UPDATE)
         setPoints();
 
-        // ANDRA MESSO UN IF CHE SETTA LE CARTE SOLO DEI GIOCAOTRI PRESENTI
-        setPlayer2Cards();
-        // SETTING THE PLAYER DECKS
+
+        // TODO:
         // SETTING THE CURRENT PLAYER (is the first in the list)
         // SETTING THE PAWNS
     }

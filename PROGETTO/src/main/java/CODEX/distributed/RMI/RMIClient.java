@@ -68,6 +68,15 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
 
     private List<Player> playersInTheGame;
+
+    public ObjectiveCard getCommonObjective1() {
+        return commonObjective1;
+    }
+
+    public ObjectiveCard getCommonObjective2() {
+        return commonObjective2;
+    }
+
     private ObjectiveCard commonObjective1, commonObjective2;
     private boolean inGame=false;
     private boolean isPlaying= false;
@@ -621,6 +630,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             for (Player p : playersInTheGame) {
                 if (playerNickname.equals(p.getNickname())) {
                     p.setPlayerDeck(playerDeck);
+                    System.out.println("ho settato un mazzo");
                 }
             }
         }
@@ -1010,7 +1020,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public List<Player> getPlayersInTheGame() {
         return playersInTheGame;
     }
+
 }
+
+
 
 
 

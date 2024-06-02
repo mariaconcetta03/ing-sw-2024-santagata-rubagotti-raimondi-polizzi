@@ -61,6 +61,15 @@ public class ClientSCK implements ClientGeneralInterface {
     //private final Thread threadCheckConnection;
     private Player player; //the nickname is saved somewhere
     private List<Player> playersInTheGame;
+
+    public ObjectiveCard getCommonObjective1() {
+        return commonObjective1;
+    }
+
+    public ObjectiveCard getCommonObjective2() {
+        return commonObjective2;
+    }
+
     private ObjectiveCard commonObjective1, commonObjective2;
     private Integer gameID;
 
