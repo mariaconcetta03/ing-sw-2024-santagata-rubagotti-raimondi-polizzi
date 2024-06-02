@@ -334,7 +334,7 @@ public class GUIBaseCardController {
                         stage.setX(x);
                         stage.setY(y);
 
-                        PauseTransition pause = new PauseTransition(Duration.seconds(6)); // 2 secondi di ritardo
+                        PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 3 secondi di ritardo
                         pause.setOnFinished(event -> stageClose());
                         pause.play();
                     });

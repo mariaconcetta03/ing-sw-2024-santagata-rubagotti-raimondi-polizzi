@@ -175,7 +175,7 @@ public class GUIGameController {
                 stage.setX(x);
                 stage.setY(y);
 
-                PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
+                PauseTransition pause = new PauseTransition(Duration.seconds(4)); // 4 secondi di ritardo
                 pause.setOnFinished(event -> stage.close());
                 pause.play();
                 if (network == 1) {
@@ -193,6 +193,8 @@ public class GUIGameController {
                 }
             }
         }
+
+
 
     }
 
