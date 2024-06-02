@@ -103,6 +103,9 @@
                                           <Separator opacity="0.0" orientation="VERTICAL" prefHeight="10.0" />
                                           <ImageView fx:id="player3Card3" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
                                        </children>
+                                       <HBox.margin>
+                                          <Insets left="15.0" />
+                                       </HBox.margin>
                                     </VBox>
                                     <VBox alignment="CENTER_LEFT" prefHeight="418.0" prefWidth="139.0">
                                        <children>
@@ -131,6 +134,9 @@
                                           <font>
                                              <Font name="Georgia Bold" size="15.0" />
                                           </font>
+                                             <VBox.margin>
+                                                <Insets right="10.0" />
+                                             </VBox.margin>
                                        </Label>
                                     </children>
                                     <HBox.margin>
@@ -168,14 +174,14 @@
             </HBox>
             <HBox alignment="TOP_CENTER" prefHeight="68.25" prefWidth="1350.0">
                <children>
-                  <ImageView fx:id="player1Card1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="player1Card1" fitHeight="68.25" fitWidth="100.0" onMouseClicked="#turnCard1" pickOnBounds="true" preserveRatio="true" />
                   <Separator opacity="0.0" prefWidth="10.0" />
-                  <ImageView fx:id="player1Card2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="player1Card2" fitHeight="68.25" fitWidth="100.0" onMouseClicked="#turnCard2" pickOnBounds="true" preserveRatio="true" />
                   <Separator opacity="0.0" prefWidth="10.0" />
-                  <ImageView fx:id="player1Card3" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="player1Card3" fitHeight="68.25" fitWidth="100.0" onMouseClicked="#turnCard3" pickOnBounds="true" preserveRatio="true" />
                </children>
                <VBox.margin>
-                  <Insets top="15.0" />
+                  <Insets bottom="15.0" top="15.0" />
                </VBox.margin></HBox>
          </children>
       </VBox>
@@ -188,9 +194,9 @@
             </Button>
          </children>
       </StackPane>
-      <StackPane prefHeight="225.0" prefWidth="161.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <StackPane prefHeight="200.0" prefWidth="150.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <children>
-            <VBox prefHeight="200.0" prefWidth="155.0">
+            <VBox prefHeight="200.0" prefWidth="126.0">
                <children>
                   <Label prefHeight="17.0" prefWidth="130.0" text="Common Objectives">
                      <font>
@@ -200,14 +206,14 @@
                         <Insets bottom="5.0" />
                      </VBox.margin>
                   </Label>
-                  <ImageView fx:id="commonObj1" fitHeight="88.72" fitWidth="130.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="commonObj1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
                   <Separator opacity="0.0" orientation="VERTICAL" prefHeight="10.0" />
-                  <ImageView fx:id="commonObj2" fitHeight="88.72" fitWidth="130.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="commonObj2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
                </children>
             </VBox>
          </children>
       </StackPane>
-      <StackPane prefHeight="225.0" prefWidth="139.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="180.0">
+      <StackPane prefHeight="200.0" prefWidth="130.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="160.0">
       <children>
          <VBox prefHeight="200.0" prefWidth="155.0">
             <children>
@@ -219,10 +225,51 @@
                      <Insets bottom="5.0" />
                   </VBox.margin>
                </Label>
-               <ImageView fx:id="personalObj" fitHeight="88.72" fitWidth="130.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="personalObj" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
             </children>
          </VBox>
       </children>
    </StackPane>
+      <StackPane prefHeight="200.0" prefWidth="344.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="15.0">
+         <children>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <HBox prefHeight="20.0" prefWidth="299.0">
+                     <children>
+                        <Label prefHeight="20.0" prefWidth="421.0" text="Decks                           Market's cards">
+                           <font>
+                              <Font name="Georgia Bold" size="12.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin></HBox>
+                  <HBox prefHeight="68.25" prefWidth="299.0">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                     <children>
+                     <ImageView fx:id="resourceDeck" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                        <Separator opacity="0.0" prefHeight="82.0" prefWidth="21.0" />
+                        <ImageView fx:id="resourceCard1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                        <Separator opacity="0.0" prefHeight="85.0" prefWidth="8.0" />
+                        <ImageView fx:id="resourceCard2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                     </children></HBox>
+                  <HBox prefHeight="88.72" prefWidth="299.0">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <children>
+                        <ImageView fx:id="goldDeck" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                        <Separator opacity="0.0" prefHeight="82.0" prefWidth="21.0" />
+                        <ImageView fx:id="goldCard1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                        <Separator opacity="0.0" prefHeight="85.0" prefWidth="8.0" />
+                        <ImageView fx:id="goldCard2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                     </children></HBox>
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
 </children>
 </AnchorPane>

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class GUILobbyController {
 
@@ -55,7 +56,7 @@ public class GUILobbyController {
     @FXML
     private Button refreshButton;
 
-
+    private ScheduledExecutorService scheduler;
     private RMIClient rmiClient;
     private ClientSCK clientSCK;
     private int network = 0; //1 = rmi  2 = sck
@@ -316,4 +317,7 @@ public class GUILobbyController {
         this.labelWithPlayerName.setText(text);
     }
 
+    public void setScheduler(ScheduledExecutorService scheduler) {
+        this.scheduler = scheduler;
+    }
 }

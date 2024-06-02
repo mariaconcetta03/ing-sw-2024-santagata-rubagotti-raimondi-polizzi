@@ -42,6 +42,8 @@ public class GUIBaseCardController {
     private RMIClient rmiClient;
     private ClientSCK clientSCK;
     private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private Object disconnectionLock=new Object();
+
     private Stage stage;
     private boolean baseCardPlayed = false;
     private GUIObjectiveController ctr;
@@ -171,6 +173,8 @@ public class GUIBaseCardController {
         }
 
         // setting the parameters in the new controller, also the BASE CARD (front and back)
+        ctr.setScheduler(scheduler);
+        ctr.setDisconnectionLock(disconnectionLock);
         ctr.setStage(stage);
         ctr.setNetwork(network);
         ctr.setClientSCK(clientSCK);
@@ -302,38 +306,40 @@ public class GUIBaseCardController {
 
     public void startPeriodicDisconnectionCheck() {
         scheduler.scheduleAtFixedRate(() -> {
-            if (clientSCK.getADisconnectionHappened()) {
-                Platform.runLater(() -> {
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/handleDisconnection.fxml"));
-                    Parent root = null;
-                    try {
-                        root = fxmlLoader.load();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+            synchronized (disconnectionLock) {
+                if (clientSCK.getADisconnectionHappened()) {
+                    Platform.runLater(() -> {
+                        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/handleDisconnection.fxml"));
+                        Parent root = null;
+                        try {
+                            root = fxmlLoader.load();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
 
-                    double width = stage.getWidth();
-                    double height = stage.getHeight();
-                    double x = stage.getX();
-                    double y = stage.getY();
+                        double width = stage.getWidth();
+                        double height = stage.getHeight();
+                        double x = stage.getX();
+                        double y = stage.getY();
 
-                    // new scene
-                    Scene scene;
-                    scene = new Scene(root);
+                        // new scene
+                        Scene scene;
+                        scene = new Scene(root);
 
-                    stage.setScene(scene);
+                        stage.setScene(scene);
 
-                    // setting the od values of position and dimension
-                    stage.setWidth(width);
-                    stage.setHeight(height);
-                    stage.setX(x);
-                    stage.setY(y);
+                        // setting the od values of position and dimension
+                        stage.setWidth(width);
+                        stage.setHeight(height);
+                        stage.setX(x);
+                        stage.setY(y);
 
-                    PauseTransition pause = new PauseTransition(Duration.seconds(6)); // 2 secondi di ritardo
-                    pause.setOnFinished(event -> stageClose());
-                    pause.play();
-                });
-                scheduler.shutdown(); // Stop the scheduler if the condition is met
+                        PauseTransition pause = new PauseTransition(Duration.seconds(6)); // 2 secondi di ritardo
+                        pause.setOnFinished(event -> stageClose());
+                        pause.play();
+                    });
+                    scheduler.shutdown(); // Stop the scheduler if the condition is met
+                }
             }
         }, 0, 1, TimeUnit.SECONDS); // Check every second
     }

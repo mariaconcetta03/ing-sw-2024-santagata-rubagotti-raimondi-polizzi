@@ -22,20 +22,22 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class GUIGameController {
 
-    private PlayableDeck goldDeck;
-    private PlayableDeck resourceDeck;
-    private PlayableCard resourceCard1;
-    private PlayableCard resourceCard2;
-    private PlayableCard goldCard1;
-    private PlayableCard goldCard2;
+
     private RMIClient rmiClient;
     private ClientSCK clientSCK;
     private Stage stage;
     private int network;
     private List<Player> playersInOrder;
+    private ScheduledExecutorService scheduler;
+    private Object disconnectionLock;
+    private boolean orientationCard1;
+    private boolean orientationCard2;
+    private boolean orientationCard3;
+
 
 
     @FXML
@@ -48,6 +50,20 @@ public class GUIGameController {
     private Label points3;
     @FXML
     private Label points4;
+//    private PlayableCard card1;
+//    private PlayableCard card2;
+//    private PlayableCard card3;
+//    private ObjectiveCard persObj;
+//    private ObjectiveCard commObj1;
+//    private ObjectiveCard commObj2;
+//    private PlayableDeck gDeck;
+//    private PlayableDeck rDeck;
+//    private PlayableCard rc1;
+//    private PlayableCard rc2;
+//    private PlayableCard gc1;
+//    private PlayableCard gc2;
+
+
     @FXML
     private ImageView player1Card1;
     @FXML
@@ -86,7 +102,18 @@ public class GUIGameController {
     private Label player3Nickname;
     @FXML
     private Label player4Nickname;
-
+    @FXML
+    private ImageView goldDeck;
+    @FXML
+    private ImageView resourceDeck;
+    @FXML
+    private ImageView resourceCard1;
+    @FXML
+    private ImageView resourceCard2;
+    @FXML
+    private ImageView goldCard1;
+    @FXML
+    private ImageView goldCard2;
 
 
 
@@ -109,48 +136,54 @@ public class GUIGameController {
 
 
     public void leaveGame() {
-        if (network == 1) {
-            try {
-                this.rmiClient.leaveGame(this.rmiClient.getPersonalPlayer().getNickname());
-            } catch (RemoteException | NotBoundException e) {
-                throw new RuntimeException(e);
-            }
-        } else if (network == 2) {
-            try {
-                this.clientSCK.leaveGame(this.clientSCK.getPersonalPlayer().getNickname());
-            } catch (RemoteException | NotBoundException e) {
-                throw new RuntimeException(e);
+        synchronized (disconnectionLock) { //o sono in leaveGame() o in startPeriodicDisconnectionCheck()
+            if (!clientSCK.getADisconnectionHappened()) { //se è avvenuta una disconnessione leaveGame non esegue niente
+                scheduler.shutdown(); //così nel caso avvenga una disconnessione mentre siamo in questa syn poi lo scheduler non va a toccare il client che ha già fatto la exit
+                //changeScene():
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gameLeft.fxml"));
+                Parent root = null;
+                try {
+                    root = fxmlLoader.load();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                double width = stage.getWidth();
+                double height = stage.getHeight();
+                double x = stage.getX();
+                double y = stage.getY();
+
+                // new scene
+                Scene scene;
+                scene = new Scene(root);
+
+                stage.setScene(scene);
+
+                // setting the od values of position and dimension
+                stage.setWidth(width);
+                stage.setHeight(height);
+                stage.setX(x);
+                stage.setY(y);
+
+                PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
+                pause.setOnFinished(event -> stage.close());
+                pause.play();
+                if (network == 1) {
+                    try {
+                        this.rmiClient.leaveGame(this.rmiClient.getPersonalPlayer().getNickname()); //lato server verrà mandato agli altri player evento disconnessione
+                    } catch (RemoteException | NotBoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else if (network == 2) {
+                    try { //in clientSCK viene fatta la exit
+                        this.clientSCK.leaveGame(this.clientSCK.getPersonalPlayer().getNickname()); //lato server verrà mandato agli altri player evento disconnessione
+                    } catch (RemoteException | NotBoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
         }
-        //changeScene():
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gameLeft.fxml"));
-        Parent root = null;
-        try {
-            root = fxmlLoader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
-        double width = stage.getWidth();
-        double height = stage.getHeight();
-        double x = stage.getX();
-        double y = stage.getY();
-
-        // new scene
-        Scene scene;
-        scene = new Scene(root);
-
-        stage.setScene(scene);
-
-        // setting the od values of position and dimension
-        stage.setWidth(width);
-        stage.setHeight(height);
-        stage.setX(x);
-        stage.setY(y);
-
-        PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
-        pause.setOnFinished(event -> stage.close());
-        pause.play();
     }
 
 
@@ -345,6 +378,32 @@ public class GUIGameController {
             commonObj2.setImage(obj2);
 
 
+            // SETTING THE 2 DECKS AND THE 4 MARKET'S CARDS
+            path = "/images/cards/back/ (" + rmiClient.getGoldDeck().checkFirstCard().getId() + ").png";
+            Image gd = new Image(getClass().getResourceAsStream(path));
+            goldDeck.setImage(gd);
+
+            path = "/images/cards/back/ (" + rmiClient.getResourceDeck().checkFirstCard().getId() + ").png";
+            Image rd = new Image(getClass().getResourceAsStream(path));
+            resourceDeck.setImage(rd);
+
+            path = "/images/cards/front/ (" + rmiClient.getResourceCard1().getId() + ").png";
+            Image rc1 = new Image(getClass().getResourceAsStream(path));
+            resourceCard1.setImage(rc1);
+
+            path = "/images/cards/front/ (" + rmiClient.getResourceCard2().getId() + ").png";
+            Image rc2 = new Image(getClass().getResourceAsStream(path));
+            resourceCard2.setImage(rc2);
+
+            path = "/images/cards/front/ (" + rmiClient.getGoldCard1().getId() + ").png";
+            Image gc1 = new Image(getClass().getResourceAsStream(path));
+            goldCard1.setImage(gc1);
+
+            path = "/images/cards/front/ (" + rmiClient.getGoldCard2().getId() + ").png";
+            Image gc2 = new Image(getClass().getResourceAsStream(path));
+            goldCard2.setImage(gc2);
+
+
             // SETTING THE POINTS, THE NICKNAMES AND THE CARDS IN HAND
             if (rmiClient.getPlayersInTheGame().size() == 2) {
                 points1.setOpacity(1);
@@ -393,6 +452,12 @@ public class GUIGameController {
                 setPlayer4Cards();
             }
 
+            // SETTING THE ORIENTATION OF MY 3 CARDS
+            orientationCard1 = true;
+            orientationCard2 = true;
+            orientationCard3 = true;
+
+
         } else if (this.network == 2) {
 
             // PRINTING THE PLAYERS IN THE GAME
@@ -431,6 +496,32 @@ public class GUIGameController {
             path = "/images/cards/front/ (" + clientSCK.getCommonObjective2().getId() + ").png";
             Image obj2 = new Image(getClass().getResourceAsStream(path));
             commonObj2.setImage(obj2);
+
+
+            // SETTING THE 2 DECKS AND THE 4 MARKET'S CARDS
+            path = "/images/cards/back/ (" + clientSCK.getGoldDeck().checkFirstCard().getId() + ").png";
+            Image gd = new Image(getClass().getResourceAsStream(path));
+            goldDeck.setImage(gd);
+
+            path = "/images/cards/back/ (" + clientSCK.getResourceDeck().checkFirstCard().getId() + ").png";
+            Image rd = new Image(getClass().getResourceAsStream(path));
+            resourceDeck.setImage(rd);
+
+            path = "/images/cards/front/ (" + clientSCK.getResourceCard1().getId() + ").png";
+            Image rc1 = new Image(getClass().getResourceAsStream(path));
+            resourceCard1.setImage(rc1);
+
+            path = "/images/cards/front/ (" + clientSCK.getResourceCard2().getId() + ").png";
+            Image rc2 = new Image(getClass().getResourceAsStream(path));
+            resourceCard2.setImage(rc2);
+
+            path = "/images/cards/front/ (" + clientSCK.getGoldCard1().getId() + ").png";
+            Image gc1 = new Image(getClass().getResourceAsStream(path));
+            goldCard1.setImage(gc1);
+
+            path = "/images/cards/front/ (" + clientSCK.getGoldCard2().getId() + ").png";
+            Image gc2 = new Image(getClass().getResourceAsStream(path));
+            goldCard2.setImage(gc2);
 
 
             // SETTING THE POINTS, THE NICKNAMES AND THE CARDS IN HAND
@@ -480,6 +571,11 @@ public class GUIGameController {
                 setPlayer3Cards();
                 setPlayer4Cards();
             }
+
+            // SETTING THE ORIENTATION OF MY 3 CARDS
+            orientationCard1 = true;
+            orientationCard2 = true;
+            orientationCard3 = true;
         }
 
         // SETTING THE CORRECT NUMBER OF POINTS (UPDATE)
@@ -492,7 +588,63 @@ public class GUIGameController {
     }
 
 
-    public void handleDisconnection(){
-        //mostro una scena che dice che qualcuno si è disconnesso e poi chiudo lo stage
+    public void turnCard1() {
+        if (orientationCard1) {
+            orientationCard1 = false;
+            String path;
+            path = "/images/cards/back/ (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
+            Image card1 = new Image(getClass().getResourceAsStream(path));
+            player1Card1.setImage(card1);
+        } else {
+            orientationCard1 = true;
+            String path;
+            path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
+            Image card1 = new Image(getClass().getResourceAsStream(path));
+            player1Card1.setImage(card1);
+        }
+    }
+
+    public void turnCard2() {
+        if (orientationCard2) {
+            orientationCard2 = false;
+            String path;
+            path = "/images/cards/back/ (" + playersInOrder.get(0).getPlayerDeck()[1].getId() + ").png";
+            Image card1 = new Image(getClass().getResourceAsStream(path));
+            player1Card2.setImage(card1);
+        } else {
+            orientationCard2 = true;
+            String path;
+            path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[1].getId() + ").png";
+            Image card1 = new Image(getClass().getResourceAsStream(path));
+            player1Card2.setImage(card1);
+        }
+    }
+
+    public void turnCard3() {
+        if (orientationCard3) {
+            orientationCard3 = false;
+            String path;
+            path = "/images/cards/back/ (" + playersInOrder.get(0).getPlayerDeck()[2].getId() + ").png";
+            Image card1 = new Image(getClass().getResourceAsStream(path));
+            player1Card3.setImage(card1);
+        } else {
+            orientationCard3 = true;
+            String path;
+            path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[2].getId() + ").png";
+            Image card1 = new Image(getClass().getResourceAsStream(path));
+            player1Card3.setImage(card1);
+        }
+    }
+
+
+
+
+
+    public void setScheduler(ScheduledExecutorService scheduler) {
+        this.scheduler = scheduler;
+    }
+
+    public void setDisconnectionLock(Object disconnectionLock) {
+        this.disconnectionLock = disconnectionLock;
     }
 }

@@ -84,6 +84,31 @@ public class ClientSCK implements ClientGeneralInterface {
     private Scanner sc;
     private PlayableCard resourceCard1;
     private PlayableCard resourceCard2;
+
+    public PlayableCard getResourceCard1() {
+        return resourceCard1;
+    }
+
+    public PlayableCard getResourceCard2() {
+        return resourceCard2;
+    }
+
+    public PlayableCard getGoldCard1() {
+        return goldCard1;
+    }
+
+    public PlayableCard getGoldCard2() {
+        return goldCard2;
+    }
+
+    public PlayableDeck getGoldDeck() {
+        return goldDeck;
+    }
+
+    public PlayableDeck getResourceDeck() {
+        return resourceDeck;
+    }
+
     private PlayableCard goldCard1;
     private PlayableCard goldCard2;
     private PlayableDeck goldDeck;
@@ -629,19 +654,19 @@ public class ClientSCK implements ClientGeneralInterface {
     public void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException {
         //abbiamo deciso che quando un giocatore vuole lasciare il gioco il server riceve una disconnessione
 
-        if (!aDisconnectionHappened) {
-            try { //we close all we have to close
-                running = false;
-                inGame = false;
-                inputStream.close();
-                outputStream.close();
-                socket.close();
-            } catch (IOException ex) { //needed for the close clause
-                throw new RuntimeException(ex);
-            }
-            timer.cancel(); // Ferma il timer
-            System.exit(0); //status 0 -> no errors
+        //if (!aDisconnectionHappened) non lo controllo perchè se viene rilevata sulla gui la disconnessione non viene premuto il tasto che porta a questa funzione
+        try { //we close all we have to close
+            running = false;
+            inGame = false;
+            inputStream.close();
+            outputStream.close();
+            socket.close();
+        } catch (IOException ex) { //needed for the close clause
+            throw new RuntimeException(ex);
         }
+        timer.cancel(); // Ferma il timer
+        System.exit(0); //status 0 -> no errors
+
 
         /*
         synchronized (actionLock) {
@@ -699,7 +724,7 @@ public class ClientSCK implements ClientGeneralInterface {
         //we have to change the view and the local model
         this.resourceDeck=resourceDeck;
         if (selectedView == 1) {
-            System.out.println("I received the updatePlayerDeck.");
+            System.out.println("I received the updateResourceDeck.");
         } else if (selectedView == 2) {
             //guiView.showUpdatedResourceDeck(this.resourceDeck)
         }
@@ -710,7 +735,7 @@ public class ClientSCK implements ClientGeneralInterface {
         //we have to change the view and the local model
         this.goldDeck=goldDeck;
         if (selectedView == 1) {
-            System.out.println("I received the updatePlayerDeck.");
+            System.out.println("I received the updateGoldDeck.");
         } else if (selectedView == 2) {
             //guiView.updateGoldDeck(goldDeck)
         }
@@ -719,19 +744,19 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void updatePlayerDeck(String playerNickname, PlayableCard[] playerDeck) throws RemoteException {
         //we have to change the view and the local model
-        System.out.println("I received the UpdatePlayerDeck.");
+        System.out.println("I received the updated "+playerNickname+"'s deck.");
         if(playerNickname.equals(personalPlayer.getNickname())){
             personalPlayer.setPlayerDeck(playerDeck);
         }
-            if(playersInTheGame!=null) {
-                for (Player p : playersInTheGame) {
-                    if (playerNickname.equals(p.getNickname())) {
-                        p.setPlayerDeck(playerDeck);
-                    }
+        if(playersInTheGame!=null) {
+            for (Player p : playersInTheGame) {
+                if (playerNickname.equals(p.getNickname())) {
+                    p.setPlayerDeck(playerDeck);
                 }
-            }else {
-                System.out.println("null in updatePlayerDeck");
             }
+        }else {
+            System.out.println("null in updatePlayerDeck");
+        }
         if (selectedView == 1) {
 
         } else if (selectedView == 2) {

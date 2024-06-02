@@ -542,7 +542,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     System.exit(-1);
                 }
             }
-        }else{
+        }else{ 
             //gui
         }
     }
@@ -625,15 +625,16 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     @Override
     public void updatePlayerDeck (String playerNickname, PlayableCard[] playerDeck) throws RemoteException {
-        if(playerNickname.equals(personalPlayer.getNickname())){
+        System.out.println("I received the updated "+playerNickname+"'s deck.");
+        if(playerNickname.equals(personalPlayer.getNickname())) {
             personalPlayer.setPlayerDeck(playerDeck);
-            for (Player p : playersInTheGame) {
-                if (playerNickname.equals(p.getNickname())) {
-                    p.setPlayerDeck(playerDeck);
-                    System.out.println("ho settato un mazzo");
-                }
+        }
+        for (Player p : playersInTheGame) {
+            if (playerNickname.equals(p.getNickname())) {
+                p.setPlayerDeck(playerDeck);
             }
         }
+
         if (selectedView == 1) {
             //System.out.println("I received the updated "+playerNickname+"'s deck.");
         } else if (selectedView == 2) {
@@ -1019,6 +1020,30 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     public List<Player> getPlayersInTheGame() {
         return playersInTheGame;
+    }
+
+    public PlayableCard getResourceCard1() {
+        return resourceCard1;
+    }
+
+    public PlayableCard getResourceCard2() {
+        return resourceCard2;
+    }
+
+    public PlayableCard getGoldCard1() {
+        return goldCard1;
+    }
+
+    public PlayableCard getGoldCard2() {
+        return goldCard2;
+    }
+
+    public PlayableDeck getGoldDeck() {
+        return goldDeck;
+    }
+
+    public PlayableDeck getResourceDeck() {
+        return resourceDeck;
     }
 
 }

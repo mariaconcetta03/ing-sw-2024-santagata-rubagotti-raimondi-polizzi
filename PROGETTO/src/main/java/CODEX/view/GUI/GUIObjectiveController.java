@@ -18,6 +18,7 @@ import javafx.util.Duration;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class GUIObjectiveController {
 
@@ -41,6 +42,8 @@ public class GUIObjectiveController {
     // 2. "Right objective selected. Now wait for everyone to choose."
     // 3. "Left objective selected. Now wait for everyone to choose."
 
+    private ScheduledExecutorService scheduler;
+    private Object disconnectionLock;
     private RMIClient rmiClient;
     private ClientSCK clientSCK;
     private Stage stage;
@@ -162,6 +165,8 @@ public class GUIObjectiveController {
         }
 
         // setting the parameters in the new controller
+        ctr.setDisconnectionLock(disconnectionLock);
+        ctr.setScheduler(scheduler);
         ctr.setStage(stage);
         ctr.setNetwork(network);
         ctr.setClientSCK(clientSCK);
@@ -369,5 +374,11 @@ public class GUIObjectiveController {
     }
 
 
+    public void setScheduler(ScheduledExecutorService scheduler) {
+        this.scheduler = scheduler;
+    }
 
+    public void setDisconnectionLock(Object disconnectionLock) {
+        this.disconnectionLock = disconnectionLock;
+    }
 }
