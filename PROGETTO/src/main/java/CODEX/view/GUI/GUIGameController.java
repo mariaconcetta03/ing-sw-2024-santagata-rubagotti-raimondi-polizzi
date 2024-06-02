@@ -630,6 +630,23 @@ public class GUIGameController {
     }
 
 
+    public void showP1Board(){
+        
+    }
+
+    public void showP2Board(){
+
+    }
+
+    public void showP3Board(){
+
+    }
+
+    public void showP4Board(){
+
+    }
+
+
 
 
 

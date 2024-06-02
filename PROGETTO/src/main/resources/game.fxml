@@ -64,7 +64,7 @@
                   </HBox>
                </children>
             </Pane>
-            <HBox fx:id="primo" alignment="TOP_CENTER" prefHeight="68.25" prefWidth="1350.0">
+            <HBox alignment="TOP_CENTER" prefHeight="68.25" prefWidth="1350.0">
                <children>
                   <ImageView fx:id="player2Card1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
                   <Separator opacity="0.0" prefWidth="10.0" />
@@ -288,13 +288,13 @@
                   <Separator opacity="0.0" orientation="VERTICAL" prefHeight="6.0" prefWidth="369.0" />
                   <HBox prefHeight="28.0" prefWidth="344.0">
                      <children>
-                        <Button fx:id="buttonP1Board" mnemonicParsing="false" prefHeight="25.0" prefWidth="160.0" text="Player 1">
+                        <Button fx:id="buttonP1Board" mnemonicParsing="false" onAction="#showP1Board" prefHeight="25.0" prefWidth="160.0" text="Player 1">
                            <font>
                               <Font name="Georgia" size="14.0" />
                            </font> 
                                </Button>
                         <Separator opacity="0.0" prefHeight="25.0" prefWidth="15.0" />
-                        <Button fx:id="buttonP2Board" mnemonicParsing="false" prefHeight="25.0" prefWidth="160.0" text="Player 2">
+                        <Button fx:id="buttonP2Board" mnemonicParsing="false" onAction="#showP2Board" prefHeight="25.0" prefWidth="160.0" text="Player 2">
                            <font>
                               <Font name="Georgia" size="14.0" />
                            </font></Button>
@@ -303,13 +303,13 @@
                   <Separator opacity="0.0" prefHeight="8.0" prefWidth="15.0" />
                   <HBox prefHeight="28.0" prefWidth="344.0">
                      <children>
-                        <Button fx:id="buttonP3Board" mnemonicParsing="false" prefHeight="25.0" prefWidth="160.0" text="Player 3">
+                        <Button fx:id="buttonP3Board" mnemonicParsing="false" onAction="#showP3Board" prefHeight="25.0" prefWidth="160.0" text="Player 3">
                            <font>
                               <Font name="Georgia" size="14.0" />
                            </font>
                         </Button>
                         <Separator opacity="0.0" prefHeight="25.0" prefWidth="15.0" />
-                        <Button fx:id="buttonP4Board" mnemonicParsing="false" prefHeight="25.0" prefWidth="160.0" text="Player 4">
+                        <Button fx:id="buttonP4Board" mnemonicParsing="false" onAction="#showP4Board" prefHeight="25.0" prefWidth="160.0" text="Player 4">
                            <font>
                               <Font name="Georgia" size="14.0" />
                            </font></Button>
@@ -319,6 +319,23 @@
             </VBox>
          </children>
       </StackPane>
-                  <ScrollPane prefHeight="377.0" prefWidth="1028.0" AnchorPane.bottomAnchor="197.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="154.0" AnchorPane.topAnchor="190.0" />
+                  <ScrollPane prefHeight="377.0" prefWidth="1028.0" AnchorPane.bottomAnchor="197.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="154.0" AnchorPane.topAnchor="190.0">
+         <content>
+            <GridPane prefHeight="265.0" prefWidth="620.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="NEVER" minWidth="100.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="NEVER" minWidth="100.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="68.25" prefHeight="68.25" vgrow="NEVER" />
+                <RowConstraints minHeight="68.25" prefHeight="68.25" vgrow="NEVER" />
+                <RowConstraints minHeight="68.25" prefHeight="68.25" vgrow="NEVER" />
+              </rowConstraints>
+               <children>
+                  <ImageView fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" translateX="-20.0" translateY="-20.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+               </children>
+            </GridPane>
+         </content></ScrollPane>
 </children>
 </AnchorPane>
