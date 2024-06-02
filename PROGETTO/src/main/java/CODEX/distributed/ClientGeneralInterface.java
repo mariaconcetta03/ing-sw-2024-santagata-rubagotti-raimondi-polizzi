@@ -27,6 +27,8 @@ public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
     void updateCommonObjectives(ObjectiveCard objCard1, ObjectiveCard objCard2) throws RemoteException;
     void updatePersonalObjective(ObjectiveCard personalObjective, String playerNickname) throws RemoteException;
     void finishedSetUpPhase() throws RemoteException;
+    void showWinner(List<Player> winners) throws RemoteException;
+    void updateLastMoves(int lastMoves) throws RemoteException;
     //fine update
 
     //DISCONNESSIONE

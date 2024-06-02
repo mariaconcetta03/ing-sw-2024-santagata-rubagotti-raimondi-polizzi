@@ -48,7 +48,7 @@ public class Game extends Observable implements Serializable {
     private List<Chat> chats; // contains all the chats started during the game
     private List<Pawn> alreadySelectedColors;
     private ErrorsAssociatedWithExceptions lastEvent; // this flag gives some essential information about the last event which occurred in this Game
-
+    private int lastMoves;
 
 //maybe we can make the GameController check if the numPlayer is okay, and pass to Game a List with all the players
     /**
@@ -78,6 +78,7 @@ public class Game extends Observable implements Serializable {
         this.objectiveCard1 = null;
         this.objectiveCard2 = null;
         this.alreadySelectedColors= new ArrayList<>();
+        this.lastMoves=-1;
     }
 
     /**
@@ -253,8 +254,7 @@ public class Game extends Observable implements Serializable {
     /**
      * This method ends the game
      */
-    public void endGame () {
-        state = GameState.ENDED;
+    public void endGame () throws RemoteException { setState(GameState.ENDED);
     }
 
 
@@ -268,7 +268,7 @@ public class Game extends Observable implements Serializable {
      * with the same "Points & Objectives completed" situation.
      * @return winner is the List containing the winner or the players who tied
      */
-    public List<Player> winner () {
+    public List<Player> winner () throws RemoteException {
         List<Player> winners = new ArrayList<>();
         int maxPoints = 0;
         for (int i = 0; i < this.players.size(); i++) { // looking for the highest points
@@ -303,6 +303,7 @@ public class Game extends Observable implements Serializable {
                 winners.remove(p);
             }
         }
+        notifyObservers(new winnerEvent(winners));
         return winners;
     }
 
@@ -407,6 +408,7 @@ public class Game extends Observable implements Serializable {
         }
         notifyObservers(new updateGoldCard1Event(goldCard1));
         notifyObservers(new updateGoldDeckEvent(goldDeck));
+        notifyObservers(new updateResourceDeckEvent(resourceDeck));
     }
 
     public void resetGoldCard2 () throws RemoteException {
@@ -419,6 +421,7 @@ public class Game extends Observable implements Serializable {
         }
         notifyObservers(new updateGoldCard2Event(goldCard2));
         notifyObservers(new updateGoldDeckEvent(goldDeck));
+        notifyObservers(new updateResourceDeckEvent(resourceDeck));
     }
 
     public void resetResourceCard1 () throws RemoteException {
@@ -431,6 +434,7 @@ public class Game extends Observable implements Serializable {
         }
         notifyObservers(new updateResourceCard1Event(resourceCard1));
         notifyObservers(new updateResourceDeckEvent(resourceDeck));
+        notifyObservers(new updateGoldDeckEvent(goldDeck));
     }
 
     public void resetResourceCard2 () throws RemoteException {
@@ -443,6 +447,7 @@ public class Game extends Observable implements Serializable {
         }
         notifyObservers(new updateResourceCard2Event(resourceCard2));
         notifyObservers(new updateResourceDeckEvent(resourceDeck));
+        notifyObservers(new updateGoldDeckEvent(goldDeck));
     }
 
 
@@ -710,4 +715,8 @@ public class Game extends Observable implements Serializable {
         }
     }
 
+    public void setLastMoves(int lastMoves) throws RemoteException {
+        this.lastMoves = lastMoves;
+        notifyObservers(new updateLastMovesEvent(this.lastMoves));
+    }
 }

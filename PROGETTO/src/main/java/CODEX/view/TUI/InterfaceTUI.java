@@ -298,18 +298,34 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
      */
     public PlayableCard askCardToDraw(PlayableDeck goldDeck, PlayableDeck resourceDeck, List<PlayableCard> visibileCards, Scanner sc) {
         printDrawableCards(goldDeck, resourceDeck, visibileCards);
+        PlayableCard returnCard;
         int cardIndex = -1;
         while (true) {
             System.out.println("Which card do you want to draw? Type 0 for the top goldDeck, 1 for the top resourceDeck.");
-            System.out.println("Type the index 2, 3, 4, 5 for one of the visible cards");
+            System.out.println("Type the index for one of the visible cards");
             try {
                 cardIndex = sc.nextInt();
                 if (cardIndex == 0) {
-                    return resourceDeck.checkFirstCard();
+                    try{
+                        returnCard=resourceDeck.checkFirstCard();
+                        return returnCard;
+                    }catch (EmptyStackException e){
+                        System.out.println("The resource deck is finished! Draw another card.");
+                    }
                 } else if (cardIndex == 1) {
-                    return goldDeck.checkFirstCard();
-                } else if ((cardIndex > 1) && (cardIndex < 6)) {
-                    return visibileCards.get(cardIndex - 2);
+                    try{
+                        returnCard=goldDeck.checkFirstCard();
+                        return returnCard;
+                    }catch (EmptyStackException e){
+                        System.out.println("The gold deck is finished! Draw another card.");
+                    }
+                } else if ((cardIndex > 1) && (cardIndex < 1+visibileCards.size())) {
+                    returnCard=visibileCards.get(cardIndex - 2);
+                    if(returnCard==null){
+                        System.out.println("Not a valid index, try again.");
+                    }else{
+                        return returnCard;
+                    }
                 } else {
                     System.out.println("Not a valid index, try again.");
                 }
@@ -338,12 +354,14 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         int nSpaces = 0;
         int nDecks=2;
         boolean evenNSpaces = false;
-        String cardColor;
+        String cardColor=ANSIFormatter.ANSI_WHITE;
 
         for (PlayableCard card : cardsToPrint) {
             if (card != null) {
                 if((card.getId()<81)||(card.getId()>86)) {
-                    cardColor = cardColors.get(card.getCentralResources().get(0));
+                    if(card.getId()>0) {
+                        cardColor = cardColors.get(card.getCentralResources().get(0));
+                    }
                     indexString=indexString.concat("          ("+index+")          ");
                     index++;
                 }else{
@@ -351,13 +369,43 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                 }
                 if((cardsToPrint.size()==6)&&(nDecks>0)){
                     nDecks--;
-                    firstRow=firstRow.concat(" _____________________");
-                    secondRow=secondRow.concat("|          "+ANSIFormatter.ANSI_RED+"?"+rst+"          |");
-                    thirdRow=thirdRow.concat("|    THIS SIDE WILL   |");
-                    fourthRow=fourthRow.concat("|    BE SHOWN ONLY    |");
-                    fifthRow=fifthRow.concat("|    WHEN THE CARD    |");
-                    sixthRow=sixthRow.concat("|      IS DRAWN       |");
-                    seventhRow=seventhRow.concat("|_____________________|");
+                    if(nDecks==1) {
+                        if (cardsToPrint.get(0).getId() != -1) {
+                            firstRow = firstRow.concat(" _____________________");
+                            secondRow = secondRow.concat("|          " + ANSIFormatter.ANSI_RED + "?" + rst + "          |");
+                            thirdRow = thirdRow.concat("|    THIS SIDE WILL   |");
+                            fourthRow = fourthRow.concat("|    BE SHOWN ONLY    |");
+                            fifthRow = fifthRow.concat("|    WHEN THE CARD    |");
+                            sixthRow = sixthRow.concat("|      IS DRAWN       |");
+                            seventhRow = seventhRow.concat("|_____________________|");
+                        } else {
+                            firstRow = firstRow.concat(" _____________________");
+                            secondRow = secondRow.concat("|                     |");
+                            thirdRow = thirdRow.concat("|     THE RESOURCE    |");
+                            fourthRow = fourthRow.concat("|        DECK         |");
+                            fifthRow = fifthRow.concat("|     IS FINISHED     |");
+                            sixthRow = sixthRow.concat("|         " + ANSIFormatter.ANSI_RED + ":(" + rst + "          |");
+                            seventhRow = seventhRow.concat("|_____________________|");
+                        }
+                    }else {
+                        if (cardsToPrint.get(1).getId() != -2) {
+                            firstRow = firstRow.concat(" _____________________");
+                            secondRow = secondRow.concat("|          " + ANSIFormatter.ANSI_RED + "?" + rst + "          |");
+                            thirdRow = thirdRow.concat("|    THIS SIDE WILL   |");
+                            fourthRow = fourthRow.concat("|    BE SHOWN ONLY    |");
+                            fifthRow = fifthRow.concat("|    WHEN THE CARD    |");
+                            sixthRow = sixthRow.concat("|      IS DRAWN       |");
+                            seventhRow = seventhRow.concat("|_____________________|");
+                        } else {
+                            firstRow = firstRow.concat(" _____________________");
+                            secondRow = secondRow.concat("|                     |");
+                            thirdRow = thirdRow.concat("|      THE GOLD       |");
+                            fourthRow = fourthRow.concat("|        DECK         |");
+                            fifthRow = fifthRow.concat("|     IS FINISHED     |");
+                            sixthRow = sixthRow.concat("|         " + ANSIFormatter.ANSI_RED + ":(" + rst + "          |");
+                            seventhRow = seventhRow.concat("|_____________________|");
+                        }
+                    }
                 }else{
                 firstRow = firstRow.concat(cardColor + " _____________________" + rst);
                 secondRow = secondRow.concat(cardColor + "|" + rst);
@@ -501,81 +549,98 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
 
         for (PlayableCard card : cardsToPrint) {
             if (card != null) {
-                if((card.getId()<81)||(card.getId()>86)) {
-                    cardColor = cardColors.get(card.getCentralResources().get(0));
-                }else{
-                    cardColor=ANSIFormatter.ANSI_WHITE;
-                }
-
-                firstRow = firstRow.concat(cardColor+" _____________________"+rst);
-                secondRow = secondRow.concat(cardColor + "|" + rst);
-                thirdRow = thirdRow.concat(cardColor + "|" + rst);
-                if (!card.get_back_up_left().equals(AngleType.ABSENT)) {
-                    secondRow = secondRow.concat(abbreviations.get(card.get_back_up_left()) + cardColor + " |               " + rst);
-                    thirdRow = thirdRow.concat(cardColor + "__|               " + rst);
-                } else {
-                    secondRow = secondRow.concat("                  ");
-                    thirdRow = thirdRow.concat("                  ");
-                }
-                if (!card.get_back_up_right().equals(AngleType.ABSENT)) {
-                    secondRow = secondRow.concat(cardColor + "| " + rst + abbreviations.get(card.get_back_up_right()) + cardColor + "|" + rst);
-                    thirdRow = thirdRow.concat(cardColor + "|__|" + rst);
-                } else {
-                    secondRow = secondRow.concat(cardColor + "   |" + rst);
-                    thirdRow = thirdRow.concat(cardColor + "   |" + rst);
-                }
-
-                pointsString = "|";
-
-                int k = 0;
-                for (AngleType a : card.getCentralResources()) {
-                    if ((card.getCentralResources().size() != 1) && (k != card.getCentralResources().size() - 1)) {
-                        k++;
-                        pointsString = pointsString.concat(  abbreviations.get(a)+", ");
+                if (card.getId() == -1) {
+                    firstRow = firstRow.concat(" _____________________");
+                    secondRow = secondRow.concat("|                     |");
+                    thirdRow = thirdRow.concat("|     THE RESOURCE    |");
+                    fourthRow = fourthRow.concat("|        DECK         |");
+                    fifthRow = fifthRow.concat("|     IS FINISHED     |");
+                    sixthRow = sixthRow.concat("|         "+ANSIFormatter.ANSI_RED+":("+rst+"          |");
+                    seventhRow = seventhRow.concat("|_____________________|");
+                } else if (card.getId() == -2) {
+                    firstRow = firstRow.concat(" _____________________");
+                    secondRow = secondRow.concat("|                     |");
+                    thirdRow = thirdRow.concat("|      THE GOLD       |");
+                    fourthRow = fourthRow.concat("|        DECK         |");
+                    fifthRow = fifthRow.concat("|     IS FINISHED     |");
+                    sixthRow = sixthRow.concat("|         "+ANSIFormatter.ANSI_RED+":("+rst+"          |");
+                    seventhRow = seventhRow.concat("|_____________________|");
+                }else {
+                    if ((card.getId() < 81) || (card.getId() > 86)) {
+                        cardColor = cardColors.get(card.getCentralResources().get(0));
                     } else {
-                        pointsString = pointsString.concat(abbreviations.get(a));
+                        cardColor = ANSIFormatter.ANSI_WHITE;
+                    }
+
+                    firstRow = firstRow.concat(cardColor + " _____________________" + rst);
+                    secondRow = secondRow.concat(cardColor + "|" + rst);
+                    thirdRow = thirdRow.concat(cardColor + "|" + rst);
+                    if (!card.get_back_up_left().equals(AngleType.ABSENT)) {
+                        secondRow = secondRow.concat(abbreviations.get(card.get_back_up_left()) + cardColor + " |               " + rst);
+                        thirdRow = thirdRow.concat(cardColor + "__|               " + rst);
+                    } else {
+                        secondRow = secondRow.concat("                  ");
+                        thirdRow = thirdRow.concat("                  ");
+                    }
+                    if (!card.get_back_up_right().equals(AngleType.ABSENT)) {
+                        secondRow = secondRow.concat(cardColor + "| " + rst + abbreviations.get(card.get_back_up_right()) + cardColor + "|" + rst);
+                        thirdRow = thirdRow.concat(cardColor + "|__|" + rst);
+                    } else {
+                        secondRow = secondRow.concat(cardColor + "   |" + rst);
+                        thirdRow = thirdRow.concat(cardColor + "   |" + rst);
+                    }
+
+                    pointsString = "|";
+
+                    int k = 0;
+                    for (AngleType a : card.getCentralResources()) {
+                        if ((card.getCentralResources().size() != 1) && (k != card.getCentralResources().size() - 1)) {
+                            k++;
+                            pointsString = pointsString.concat(abbreviations.get(a) + ", ");
+                        } else {
+                            pointsString = pointsString.concat(abbreviations.get(a));
+                        }
+                    }
+                    pointsString = pointsString.concat("|");
+                    nSpaces = cornerDistance - pointsString.length();
+                    if (nSpaces % 2 == 0) {
+                        evenNSpaces = true;
+                    } else {
+                        evenNSpaces = false;
+                    }
+                    nSpaces = nSpaces / 2;
+                    for (int i = 0; i < nSpaces; i++) {
+                        pointsString = " " + pointsString + " ";
+                    }
+                    if (!evenNSpaces) {
+                        pointsString = " " + pointsString;
+                    }
+                    fourthRow = fourthRow.concat(cardColor + "|   " + rst + pointsString + cardColor + "   |" + rst);
+
+                    fifthRow = fifthRow.concat(cardColor + "|" + rst);
+                    sixthRow = sixthRow.concat(cardColor + "|" + rst);
+                    seventhRow = seventhRow.concat(cardColor + "|" + rst);
+
+                    if (!card.get_back_down_left().equals(AngleType.ABSENT)) {
+                        fifthRow = fifthRow.concat(cardColor + "__" + rst);
+                        sixthRow = sixthRow.concat(abbreviations.get(card.get_back_down_left()) + cardColor + " |               " + rst);
+                        seventhRow = seventhRow.concat(cardColor + "__|_______________" + rst);
+                    } else {
+                        fifthRow = fifthRow.concat("  ");
+                        sixthRow = sixthRow.concat("                  ");
+                        seventhRow = seventhRow.concat(cardColor + "__________________" + rst);
+                    }
+                    fifthRow = fifthRow.concat("                 ");
+                    if (!card.get_back_down_right().equals(AngleType.ABSENT)) {
+                        fifthRow = fifthRow.concat(cardColor + "__|" + rst);
+                        sixthRow = sixthRow.concat(cardColor + "| " + rst + abbreviations.get(card.get_back_down_right()) + cardColor + "|" + rst);
+                        seventhRow = seventhRow.concat(cardColor + "|__|" + rst);
+                    } else {
+                        fifthRow = fifthRow.concat(cardColor + "  |" + rst);
+                        sixthRow = sixthRow.concat(cardColor + "   |" + rst);
+                        seventhRow = seventhRow.concat(cardColor + "___|" + rst);
                     }
                 }
-                pointsString=pointsString.concat("|");
-                nSpaces = cornerDistance - pointsString.length();
-                if (nSpaces % 2 == 0) {
-                    evenNSpaces = true;
-                } else {
-                    evenNSpaces = false;
-                }
-                nSpaces = nSpaces / 2;
-                for (int i = 0; i < nSpaces; i++) {
-                    pointsString = " " + pointsString + " ";
-                }
-                if (!evenNSpaces) {
-                    pointsString = " " + pointsString;
-                }
-                fourthRow=fourthRow.concat(cardColor+"|   "+rst+pointsString+cardColor+"   |"+rst);
-
-                fifthRow=fifthRow.concat(cardColor+"|"+rst);
-                sixthRow=sixthRow.concat(cardColor+"|"+rst);
-                seventhRow=seventhRow.concat(cardColor+"|"+rst);
-
-                if (!card.get_back_down_left().equals(AngleType.ABSENT)) {
-                    fifthRow = fifthRow.concat(cardColor + "__" + rst);
-                    sixthRow = sixthRow.concat(abbreviations.get(card.get_back_down_left()) + cardColor + " |               " + rst);
-                    seventhRow = seventhRow.concat(cardColor + "__|_______________" + rst);
-                } else {
-                    fifthRow = fifthRow.concat("  ");
-                    sixthRow = sixthRow.concat("                  ");
-                    seventhRow = seventhRow.concat(cardColor + "__________________" + rst);
-                }
-                fifthRow = fifthRow.concat("                 ");
-                if (!card.get_back_down_right().equals(AngleType.ABSENT)) {
-                    fifthRow = fifthRow.concat(cardColor + "__|" + rst);
-                    sixthRow = sixthRow.concat(cardColor + "| " + rst + abbreviations.get(card.get_back_down_right()) + cardColor + "|" + rst);
-                    seventhRow = seventhRow.concat(cardColor + "|__|" + rst);
-                } else {
-                    fifthRow = fifthRow.concat(cardColor + "  |" + rst);
-                    sixthRow = sixthRow.concat(cardColor + "   |" + rst);
-                    seventhRow = seventhRow.concat(cardColor + "___|" + rst);
-                }
-
                 firstRow = firstRow.concat("      ");
                 secondRow = secondRow.concat("     ");
                 thirdRow = thirdRow.concat("     ");
@@ -583,6 +648,7 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                 fifthRow = fifthRow.concat("     ");
                 sixthRow = sixthRow.concat("     ");
                 seventhRow = seventhRow.concat("     ");
+
             }
         }
         System.out.println(ANSIFormatter.ANSI_CYAN + "BACK:" + ANSIFormatter.ANSI_RESET);
@@ -1107,16 +1173,20 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                                     sixthRow=sixthRow.concat("                   ");
                                     seventhRow=seventhRow.concat("                   ");
                                 }else{
-                                    if(emptySpaces%2==0){
-                                        firstRow=firstRow.concat("                       ");
-                                        secondRow=secondRow.concat("                       ");
-                                        thirdRow=thirdRow.concat("                       ");
-                                        fourthRow=fourthRow.concat("                       ");
+                                    /*if(emptySpaces%2==0){ //@TODO modificato 15:03
                                         if(rightUnderCurrCard==null) {
-                                            fifthRow = fifthRow.concat("                       ");
-                                            sixthRow = sixthRow.concat("                       ");
-                                            seventhRow = seventhRow.concat("                       ");
+                                            firstRow=firstRow.concat("                   ");
+                                            secondRow=secondRow.concat("                   ");
+                                            thirdRow=thirdRow.concat("                   ");
+                                            fourthRow=fourthRow.concat("                   ");
+                                            fifthRow = fifthRow.concat("                   ");
+                                            sixthRow = sixthRow.concat("                   ");
+                                            seventhRow = seventhRow.concat("                   ");
                                         }else{
+                                            firstRow=firstRow.concat("               ");
+                                            secondRow=secondRow.concat("               ");
+                                            thirdRow=thirdRow.concat("               ");
+                                            fourthRow=fourthRow.concat("               ");
                                             fifthRow = fifthRow.concat("               ");
                                             sixthRow = sixthRow.concat("               ");
                                             seventhRow = seventhRow.concat("               ");
@@ -1130,9 +1200,30 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                                         fifthRow=fifthRow.concat("               ");
                                         sixthRow=sixthRow.concat("               ");
                                         seventhRow=seventhRow.concat("               ");
+                                   }
+                                     */
+                                    if((nextCard==null)&&(rightUnderCurrCard==null)){
+                                        firstRow=firstRow.concat("                   ");
+                                        secondRow=secondRow.concat("                   ");
+                                        thirdRow=thirdRow.concat("                   ");
+                                        fourthRow=fourthRow.concat("                   ");
+                                        fifthRow = fifthRow.concat("                   ");
+                                        sixthRow = sixthRow.concat("                   ");
+                                        seventhRow = seventhRow.concat("                   ");
+                                    }else{
+                                        firstRow=firstRow.concat("               ");
+                                        secondRow=secondRow.concat("               ");
+                                        thirdRow=thirdRow.concat("               ");
+                                        fourthRow=fourthRow.concat("               ");
+                                        fifthRow=fifthRow.concat("               ");
+                                        sixthRow=sixthRow.concat("               ");
+                                        seventhRow=seventhRow.concat("               ");
                                     }
                                 }
                             } else {
+                                if(!firstCardOfTheRowFound){
+                                    firstCardOfTheRowFound=true; //@TODO aggiunto 15:03
+                                }
                                 if (((emptySpaces > 1) || (isFirstColumn)) && (nextCard == null)) {
                                     firstRow=firstRow.concat("                       ");
                                     secondRow=secondRow.concat("                       ");
@@ -1411,19 +1502,22 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                         }else{
                             emptySpaces++;
                             if(underCurrCard==null){
+
                                 if(!firstCardOfTheRowFound){
                                     firstRow=firstRow.concat("                   ");
                                     secondRow=secondRow.concat("                   ");
                                     thirdRow=thirdRow.concat("                   ");
                                     fourthRow=fourthRow.concat("                   ");
                                 }else {
+                                    /*
                                     if (emptySpaces % 2 == 0) {
-                                        firstRow = firstRow.concat("                       ");
                                         if(rightUnderCurrCard==null) {
-                                            secondRow = secondRow.concat("                       ");
-                                            thirdRow = thirdRow.concat("                       ");
-                                            fourthRow= fourthRow.concat("                       ");
+                                            firstRow = firstRow.concat("                   ");
+                                            secondRow = secondRow.concat("                   ");
+                                            thirdRow = thirdRow.concat("                   ");
+                                            fourthRow= fourthRow.concat("                   ");
                                         }else{
+                                            firstRow=firstRow.concat("               ");
                                             secondRow = secondRow.concat("               ");
                                             thirdRow= thirdRow.concat("               ");
                                             fourthRow = fourthRow.concat("               ");
@@ -1435,9 +1529,24 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                                         thirdRow = thirdRow.concat("               ");
                                         fourthRow = fourthRow.concat("               ");
                                     }
+                                     */
+                                    if((nextCard==null)&&(rightUnderCurrCard==null)){
+                                        firstRow=firstRow.concat("                   ");
+                                        secondRow=secondRow.concat("                   ");
+                                        thirdRow=thirdRow.concat("                   ");
+                                        fourthRow=fourthRow.concat("                   ");
+                                    }else{
+                                        firstRow=firstRow.concat("               ");
+                                        secondRow=secondRow.concat("               ");
+                                        thirdRow=thirdRow.concat("               ");
+                                        fourthRow=fourthRow.concat("               ");
+                                    }
                                 }
-                            }else{
-                                if (((emptySpaces > 1) || (isFirstColumn)) && (nextCard == null)) { firstRow=firstRow.concat("                       ");
+                                }else{
+                                if(!firstCardOfTheRowFound){
+                                    firstCardOfTheRowFound=true; //@TODO aggiunto 15:03
+                                }
+                                if (((emptySpaces > 1) || (isFirstColumn)) && (nextCard == null)) {
                                     firstRow=firstRow.concat("                       ");
                                     secondRow=secondRow.concat(underCardColor+" _____________________ "+rst);
                                     thirdRow=thirdRow.concat(underCardColor+"|"+rst);
@@ -1621,9 +1730,22 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
      */
     public void printDrawableCards(PlayableDeck goldDeck, PlayableDeck resourceDeck, List<PlayableCard> visibileCards) {
         System.out.println(ANSIFormatter.ANSI_GREEN+"These are the drawable cards."+rst);
+        PlayableCard placeHolder;
         List<PlayableCard> tmp= new ArrayList<>();
-        tmp.add(resourceDeck.checkFirstCard());
-        tmp.add(goldDeck.checkFirstCard());
+        try {
+            tmp.add(resourceDeck.checkFirstCard());
+        }catch (EmptyStackException e){
+            placeHolder=new PlayableCard();
+            placeHolder.setId(-1);
+            tmp.add(placeHolder);
+        }
+        try {
+            tmp.add(goldDeck.checkFirstCard());
+        }catch (EmptyStackException e){
+            placeHolder=new PlayableCard();
+            placeHolder.setId(-2);
+            tmp.add(placeHolder);
+        }
         tmp.addAll(visibileCards);
 
         printPlayableCards(tmp);

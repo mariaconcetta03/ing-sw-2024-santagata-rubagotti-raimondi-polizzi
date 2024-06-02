@@ -65,7 +65,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     private Player personalPlayer;
 
-
+    int lastMoves=10;
 
     private List<Player> playersInTheGame;
 
@@ -518,13 +518,15 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                             if (coordinates != null) {
                                 try {
                                     this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
-                                    tmp = new ArrayList<>();
-                                    tmp.add(resourceCard1);
-                                    tmp.add(resourceCard2);
-                                    tmp.add(goldCard1);
-                                    tmp.add(goldCard2);
-                                    card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
-                                    this.drawCard(personalPlayer.getNickname(), card);
+                                    if(lastMoves>playersInTheGame.size()) {
+                                        tmp = new ArrayList<>();
+                                        tmp.add(resourceCard1);
+                                        tmp.add(resourceCard2);
+                                        tmp.add(goldCard1);
+                                        tmp.add(goldCard2);
+                                        card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
+                                        this.drawCard(personalPlayer.getNickname(), card);
+                                    }
                                 }catch (IllegalArgumentException e ){
                                     System.out.println("You can't play this card! Returning to menu..."); //@TODO differenziare eccezioni per non giocabilità e non abbastanza risorse?
                                 }
@@ -801,16 +803,25 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     @Override
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException {
         playersInTheGame = newPlayingOrder;
+
         if (selectedView == 1) {
             if (turnCounter != -1) {
                 if (turnCounter != 0) {
+                    if(lastMoves>0) {
                         if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
                             isPlaying = true;
                             System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
+                            if (lastMoves <= playersInTheGame.size()) {
+                                System.out.println("This is your last turn! You will not draw.");
+                            }
+
                         } else {
                             isPlaying = false;
                             System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
                         }
+                    }else{
+                        inGame=false;
+                    }
                         if (turnCounter == 1) {
                             executor.execute(() -> {
                                 try {
@@ -899,13 +910,34 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 System.out.println(ANSIFormatter.ANSI_RED+"Ending condition triggered: someone reached 20 points or both the deck are finished."+ANSIFormatter.ANSI_RESET);
             }else if(gameState.equals(Game.GameState.ENDED)){
                 System.out.println(ANSIFormatter.ANSI_RED+"The game has ended."+ANSIFormatter.ANSI_RESET);
-                this.schedulerToSendHeartbeat.shutdownNow(); //va fermato subito l'heartBeat? quando il GameController cessa di esistere?
+                //this.schedulerToSendHeartbeat.shutdownNow(); //va fermato subito l'heartBeat? quando il GameController cessa di esistere?
                 tuiView.printWinner(playersInTheGame, personalPlayer.getNickname());
-                System.exit(-1);
+                executor.execute(()->{System.exit(-1);});
             }
         } else if (selectedView == 2) {
 
         }
+    }
+    @Override
+    public void showWinner(List<Player> winners) throws RemoteException{
+        if(selectedView==1) {
+            if (winners.size() == 1) { //just for testing
+                System.out.println(winners.get(0).getNickname() + " WON!!!");
+            } else if (winners.size() > 1) {
+                for (Player p : winners) {
+                    System.out.print(p.getNickname() + ", ");
+                }
+                System.out.println("tied!");
+            }
+            //tuiView.printWinner(playersInTheGame, personalPlayer.getNickname());
+        }
+
+    }
+
+    @Override
+    public void updateLastMoves(int lastMoves) throws RemoteException {
+        this.lastMoves=lastMoves;
+        System.out.println("LAST MOVES "+this.lastMoves);
     }
 
     /**

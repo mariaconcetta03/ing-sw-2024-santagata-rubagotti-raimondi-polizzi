@@ -316,15 +316,17 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * have triggered the ENDING condition it decreases our indexes to determine when the Game has to end.
      * INTERNAL USE METHOD
      */
-    private void nextPhase()throws RemoteException, RemoteException {
+    private void nextPhase()throws RemoteException {
         if (game.getState() == Game.GameState.ENDING && lastRounds > 0) {
             lastRounds --;
+            game.setLastMoves(lastRounds);
             if(lastDrawingRounds>0) {
                 lastDrawingRounds--;
             }
             game.nextRound();
-        } else if (game.getState() == Game.GameState.ENDING && lastRounds == 0) { //20 points reached the players will have only another round
+        if (game.getState() == Game.GameState.ENDING && lastRounds == 0) { //20 points reached the players will have only another round
             endGame();
+        }
         } else if (game.getState() == Game.GameState.STARTED) {
             game.nextRound(); //the order of the players in the list will be changed
         }
@@ -346,12 +348,13 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                 }
             }
             if (firstPlayer > 0) {
-                lastRounds = lastRounds + firstPlayer-1; //ok
+                lastRounds = lastRounds + firstPlayer; //ok; tolto -1
                 lastDrawingRounds=firstPlayer;
             } else if (firstPlayer == 0) {
-                lastRounds = game.getnPlayers()*2-1; //se chi innesca ENDING è il firstPlayer
+                lastRounds = game.getnPlayers()*2; //se chi innesca ENDING è il firstPlayer; tolto -1
                 lastDrawingRounds=game.getnPlayers();
             }
+            game.setLastMoves(lastRounds);
         }
 
     /**

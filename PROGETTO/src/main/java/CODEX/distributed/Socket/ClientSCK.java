@@ -798,6 +798,16 @@ public class ClientSCK implements ClientGeneralInterface {
         updateRound(playersInTheGame);
     }
 
+    @Override
+    public void showWinner(List<Player> winners) throws RemoteException {
+
+    }
+
+    @Override
+    public void updateLastMoves(int lastMoves) throws RemoteException {
+
+    }
+
 
     @Override
     public void updateResourceCard1(PlayableCard card) throws RemoteException {
