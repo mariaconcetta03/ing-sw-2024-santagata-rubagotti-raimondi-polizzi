@@ -10,7 +10,7 @@
    <children>
       <VBox fx:id="myBlackPane" alignment="TOP_CENTER" layoutY="80.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="764.0" prefWidth="1350.0" styleClass="game_pane" stylesheets="@Styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Pane prefHeight="68.0" prefWidth="1350.0" style="-fx-background-color: black;">
+            <Pane minHeight="68.0" prefHeight="68.0" prefWidth="1350.0" style="-fx-background-color: black;">
                <children>
                   <HBox alignment="CENTER_LEFT" prefHeight="68.0" prefWidth="1350.0">
                      <children>
@@ -107,12 +107,15 @@
                                           <Insets left="15.0" />
                                        </HBox.margin>
                                     </VBox>
-                                    <VBox alignment="CENTER_LEFT" prefHeight="418.0" prefWidth="139.0">
+                                    <VBox alignment="CENTER_LEFT" prefHeight="418.0" prefWidth="131.0">
                                        <children>
-                                          <Label fx:id="player3Nickname" prefHeight="28.0" prefWidth="146.0" text="Player 3">
+                                          <Label fx:id="player3Nickname" alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="126.0" rotate="90.0" text="Player 3" textAlignment="CENTER">
                                              <font>
                                                 <Font name="Georgia Bold" size="15.0" />
                                              </font>
+                                             <VBox.margin>
+                                                <Insets left="-45.0" />
+                                             </VBox.margin>
                                           </Label>
                                        </children>
                                        <HBox.margin>
@@ -123,14 +126,14 @@
                               </HBox>
                            </children>
                         </Pane>
-                        <Pane prefHeight="418.0" prefWidth="529.0" HBox.hgrow="ALWAYS" />
-                        <Pane prefHeight="200.0" prefWidth="263.0" HBox.hgrow="NEVER">
+                        <Pane prefHeight="445.0" prefWidth="803.0" HBox.hgrow="ALWAYS" />
+                        <Pane prefHeight="445.0" prefWidth="304.0" HBox.hgrow="NEVER">
                         <children>
-                           <HBox layoutY="3.0" prefHeight="418.0" prefWidth="251.0">
+                           <HBox alignment="TOP_RIGHT" layoutY="3.0" prefHeight="418.0" prefWidth="290.0">
                               <children>
                                  <VBox alignment="CENTER_LEFT" prefHeight="418.0" prefWidth="139.0">
                                     <children>
-                                       <Label fx:id="player4Nickname" alignment="CENTER_RIGHT" prefHeight="28.0" prefWidth="146.0" text="Player 4">
+                                       <Label fx:id="player4Nickname" alignment="CENTER" prefHeight="28.0" prefWidth="146.0" rotate="-90.0" text="Player 4" translateX="50.0">
                                           <font>
                                              <Font name="Georgia Bold" size="15.0" />
                                           </font>
@@ -143,7 +146,7 @@
                                        <Insets left="10.0" />
                                     </HBox.margin>
                                  </VBox>
-                                 <VBox alignment="CENTER_LEFT" prefHeight="230.0" prefWidth="101.0">
+                                 <VBox alignment="CENTER_RIGHT" prefHeight="230.0" prefWidth="101.0">
                                     <children>
                                        <ImageView fx:id="player4Card1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
                                        <Separator opacity="0.0" orientation="VERTICAL" prefHeight="10.0" />
@@ -151,6 +154,9 @@
                                        <Separator opacity="0.0" orientation="VERTICAL" prefHeight="10.0" />
                                        <ImageView fx:id="player4Card3" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
                                     </children>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
                                  </VBox>
                               </children>
                            </HBox>
@@ -194,7 +200,7 @@
             </Button>
          </children>
       </StackPane>
-      <StackPane prefHeight="200.0" prefWidth="150.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <StackPane prefHeight="200.0" prefWidth="139.0" AnchorPane.bottomAnchor="-20.0" AnchorPane.rightAnchor="0.0">
          <children>
             <VBox prefHeight="200.0" prefWidth="126.0">
                <children>
@@ -213,7 +219,7 @@
             </VBox>
          </children>
       </StackPane>
-      <StackPane prefHeight="200.0" prefWidth="130.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="160.0">
+      <StackPane prefHeight="200.0" prefWidth="130.0" AnchorPane.bottomAnchor="-20.0" AnchorPane.rightAnchor="145.0">
       <children>
          <VBox prefHeight="200.0" prefWidth="155.0">
             <children>
@@ -230,7 +236,7 @@
          </VBox>
       </children>
    </StackPane>
-      <StackPane prefHeight="200.0" prefWidth="344.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="15.0">
+      <StackPane prefHeight="179.0" prefWidth="344.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="15.0">
          <children>
             <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
@@ -271,5 +277,48 @@
             </VBox>
          </children>
       </StackPane>
+      <StackPane prefHeight="99.0" prefWidth="344.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="80.0">
+         <children>
+            <VBox prefHeight="200.0" prefWidth="219.0">
+               <children>
+                  <Label text="Which player's board do you want to see?">
+                     <font>
+                        <Font name="Georgia Bold" size="16.0" />
+                     </font></Label>
+                  <Separator opacity="0.0" orientation="VERTICAL" prefHeight="6.0" prefWidth="369.0" />
+                  <HBox prefHeight="28.0" prefWidth="344.0">
+                     <children>
+                        <Button fx:id="buttonP1Board" mnemonicParsing="false" prefHeight="25.0" prefWidth="160.0" text="Player 1">
+                           <font>
+                              <Font name="Georgia" size="14.0" />
+                           </font> 
+                               </Button>
+                        <Separator opacity="0.0" prefHeight="25.0" prefWidth="15.0" />
+                        <Button fx:id="buttonP2Board" mnemonicParsing="false" prefHeight="25.0" prefWidth="160.0" text="Player 2">
+                           <font>
+                              <Font name="Georgia" size="14.0" />
+                           </font></Button>
+                     </children>
+                  </HBox>
+                  <Separator opacity="0.0" prefHeight="8.0" prefWidth="15.0" />
+                  <HBox prefHeight="28.0" prefWidth="344.0">
+                     <children>
+                        <Button fx:id="buttonP3Board" mnemonicParsing="false" prefHeight="25.0" prefWidth="160.0" text="Player 3">
+                           <font>
+                              <Font name="Georgia" size="14.0" />
+                           </font>
+                        </Button>
+                        <Separator opacity="0.0" prefHeight="25.0" prefWidth="15.0" />
+                        <Button fx:id="buttonP4Board" mnemonicParsing="false" prefHeight="25.0" prefWidth="160.0" text="Player 4">
+                           <font>
+                              <Font name="Georgia" size="14.0" />
+                           </font></Button>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </StackPane>
+                  <ScrollPane prefHeight="377.0" prefWidth="1028.0" AnchorPane.bottomAnchor="197.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="154.0" AnchorPane.topAnchor="190.0" />
 </children>
 </AnchorPane>

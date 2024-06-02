@@ -114,6 +114,16 @@ public class GUIGameController {
     private ImageView goldCard1;
     @FXML
     private ImageView goldCard2;
+    @FXML
+    private Button buttonP1Board;
+    @FXML
+    private Button buttonP2Board;
+    @FXML
+    private Button buttonP3Board;
+    @FXML
+    private Button buttonP4Board;
+
+
 
 
 
@@ -404,54 +414,6 @@ public class GUIGameController {
             goldCard2.setImage(gc2);
 
 
-            // SETTING THE POINTS, THE NICKNAMES AND THE CARDS IN HAND
-            if (rmiClient.getPlayersInTheGame().size() == 2) {
-                points1.setOpacity(1);
-                points2.setOpacity(1);
-                points3.setOpacity(0);
-                points4.setOpacity(0);
-                player1Nickname.setText(playersInOrder.get(0).getNickname());
-                player2Nickname.setText(playersInOrder.get(1).getNickname());
-                player1Nickname.setOpacity(1);
-                player2Nickname.setOpacity(1);
-                player3Nickname.setOpacity(0);
-                player4Nickname.setOpacity(0);
-                setPlayer1Cards();
-                setPlayer2Cards();
-            } else if (rmiClient.getPlayersInTheGame().size() == 3) {
-                points1.setOpacity(1);
-                points2.setOpacity(1);
-                points3.setOpacity(1);
-                points4.setOpacity(0);
-                player1Nickname.setText(playersInOrder.get(0).getNickname());
-                player2Nickname.setText(playersInOrder.get(1).getNickname());
-                player3Nickname.setText(playersInOrder.get(2).getNickname());
-                player1Nickname.setOpacity(1);
-                player2Nickname.setOpacity(1);
-                player3Nickname.setOpacity(1);
-                player4Nickname.setOpacity(0);
-                setPlayer1Cards();
-                setPlayer2Cards();
-                setPlayer3Cards();
-            } else if (rmiClient.getPlayersInTheGame().size() == 4) {
-                points1.setOpacity(1);
-                points2.setOpacity(1);
-                points3.setOpacity(1);
-                points4.setOpacity(1);
-                player1Nickname.setText(playersInOrder.get(0).getNickname());
-                player2Nickname.setText(playersInOrder.get(1).getNickname());
-                player3Nickname.setText(playersInOrder.get(2).getNickname());
-                player4Nickname.setText(playersInOrder.get(3).getNickname());
-                player1Nickname.setOpacity(1);
-                player2Nickname.setOpacity(1);
-                player3Nickname.setOpacity(1);
-                player4Nickname.setOpacity(1);
-                setPlayer1Cards();
-                setPlayer2Cards();
-                setPlayer3Cards();
-                setPlayer4Cards();
-            }
-
             // SETTING THE ORIENTATION OF MY 3 CARDS
             orientationCard1 = true;
             orientationCard2 = true;
@@ -524,59 +486,90 @@ public class GUIGameController {
             goldCard2.setImage(gc2);
 
 
-            // SETTING THE POINTS, THE NICKNAMES AND THE CARDS IN HAND
-            if (clientSCK.getPlayersInTheGame().size() == 2) {
-                points1.setOpacity(1);
-                points2.setOpacity(1);
-                points3.setOpacity(0);
-                points4.setOpacity(0);
-                player1Nickname.setText(playersInOrder.get(0).getNickname());
-                player2Nickname.setText(playersInOrder.get(1).getNickname());
-                player1Nickname.setOpacity(1);
-                player2Nickname.setOpacity(1);
-                player3Nickname.setOpacity(0);
-                player4Nickname.setOpacity(0);
-                setPlayer1Cards();
-                setPlayer2Cards();
-            } else if (clientSCK.getPlayersInTheGame().size() == 3) {
-                points1.setOpacity(1);
-                points2.setOpacity(1);
-                points3.setOpacity(1);
-                points4.setOpacity(0);
-                player1Nickname.setText(playersInOrder.get(0).getNickname());
-                player2Nickname.setText(playersInOrder.get(1).getNickname());
-                player3Nickname.setText(playersInOrder.get(2).getNickname());
-                player1Nickname.setOpacity(1);
-                player2Nickname.setOpacity(1);
-                player3Nickname.setOpacity(1);
-                player4Nickname.setOpacity(0);
-                setPlayer1Cards();
-                setPlayer2Cards();
-                setPlayer3Cards();
-            } else if (clientSCK.getPlayersInTheGame().size() == 4) {
-                points1.setOpacity(1);
-                points2.setOpacity(1);
-                points3.setOpacity(1);
-                points4.setOpacity(1);
-                player1Nickname.setText(playersInOrder.get(0).getNickname());
-                player2Nickname.setText(playersInOrder.get(1).getNickname());
-                player3Nickname.setText(playersInOrder.get(2).getNickname());
-                player4Nickname.setText(playersInOrder.get(3).getNickname());
-                player1Nickname.setOpacity(1);
-                player2Nickname.setOpacity(1);
-                player3Nickname.setOpacity(1);
-                player4Nickname.setOpacity(1);
-                setPlayer1Cards();
-                setPlayer2Cards();
-                setPlayer3Cards();
-                setPlayer4Cards();
-            }
-
             // SETTING THE ORIENTATION OF MY 3 CARDS
             orientationCard1 = true;
             orientationCard2 = true;
             orientationCard3 = true;
         }
+
+
+        // SETTING THE POINTS, THE NICKNAMES, THE CARDS IN HAND AND THE BUTTONS
+
+        //two players
+        if (((this.network == 1)&&(rmiClient.getPlayersInTheGame().size() == 2))||((this.network == 2)&&(clientSCK.getPlayersInTheGame().size() == 2)) ){
+            points1.setOpacity(1);
+            points2.setOpacity(1);
+            points3.setOpacity(0);
+            points4.setOpacity(0);
+            player1Nickname.setText(playersInOrder.get(0).getNickname());
+            player2Nickname.setText(playersInOrder.get(1).getNickname());
+            player1Nickname.setOpacity(1);
+            player2Nickname.setOpacity(1);
+            player3Nickname.setOpacity(0);
+            player4Nickname.setOpacity(0);
+            setPlayer1Cards();
+            setPlayer2Cards();
+            buttonP1Board.setOpacity(1);
+            buttonP1Board.setText(playersInOrder.get(0).getNickname());
+            buttonP2Board.setOpacity(1);
+            buttonP2Board.setText(playersInOrder.get(1).getNickname());
+            buttonP3Board.setOpacity(0);
+            buttonP4Board.setOpacity(0);
+        }
+
+        //three players
+        else if (((this.network == 1)&&(rmiClient.getPlayersInTheGame().size() == 3))||((this.network == 2)&&(clientSCK.getPlayersInTheGame().size() == 3))) {
+            points1.setOpacity(1);
+            points2.setOpacity(1);
+            points3.setOpacity(1);
+            points4.setOpacity(0);
+            player1Nickname.setText(playersInOrder.get(0).getNickname());
+            player2Nickname.setText(playersInOrder.get(1).getNickname());
+            player3Nickname.setText(playersInOrder.get(2).getNickname());
+            player1Nickname.setOpacity(1);
+            player2Nickname.setOpacity(1);
+            player3Nickname.setOpacity(1);
+            player4Nickname.setOpacity(0);
+            setPlayer1Cards();
+            setPlayer2Cards();
+            setPlayer3Cards();
+            buttonP1Board.setOpacity(1);
+            buttonP1Board.setText(playersInOrder.get(0).getNickname());
+            buttonP2Board.setOpacity(1);
+            buttonP2Board.setText(playersInOrder.get(1).getNickname());
+            buttonP3Board.setOpacity(1);
+            buttonP3Board.setText(playersInOrder.get(2).getNickname());
+            buttonP4Board.setOpacity(0);
+        }
+
+        //four players
+        else if (((this.network == 1)&&(rmiClient.getPlayersInTheGame().size() == 4))||((this.network == 2)&&(clientSCK.getPlayersInTheGame().size() == 4))) {
+            points1.setOpacity(1);
+            points2.setOpacity(1);
+            points3.setOpacity(1);
+            points4.setOpacity(1);
+            player1Nickname.setText(playersInOrder.get(0).getNickname());
+            player2Nickname.setText(playersInOrder.get(1).getNickname());
+            player3Nickname.setText(playersInOrder.get(2).getNickname());
+            player4Nickname.setText(playersInOrder.get(3).getNickname());
+            player1Nickname.setOpacity(1);
+            player2Nickname.setOpacity(1);
+            player3Nickname.setOpacity(1);
+            player4Nickname.setOpacity(1);
+            setPlayer1Cards();
+            setPlayer2Cards();
+            setPlayer3Cards();
+            setPlayer4Cards();
+            buttonP1Board.setOpacity(1);
+            buttonP1Board.setText(playersInOrder.get(0).getNickname());
+            buttonP2Board.setOpacity(1);
+            buttonP2Board.setText(playersInOrder.get(1).getNickname());
+            buttonP3Board.setOpacity(1);
+            buttonP3Board.setText(playersInOrder.get(2).getNickname());
+            buttonP4Board.setOpacity(1);
+            buttonP4Board.setText(playersInOrder.get(3).getNickname());
+        }
+
 
         // SETTING THE CORRECT NUMBER OF POINTS (UPDATE)
         setPoints();
