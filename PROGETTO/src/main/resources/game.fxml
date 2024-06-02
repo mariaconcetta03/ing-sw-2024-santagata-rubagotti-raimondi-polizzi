@@ -2,340 +2,454 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CODEX.view.GUI.GUIGameController">
-   <children>
-      <VBox fx:id="myBlackPane" alignment="TOP_CENTER" layoutY="80.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="764.0" prefWidth="1350.0" styleClass="game_pane" stylesheets="@Styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <Pane minHeight="68.0" prefHeight="68.0" prefWidth="1350.0" style="-fx-background-color: black;">
-               <children>
-                  <HBox alignment="CENTER_LEFT" prefHeight="68.0" prefWidth="1350.0">
-                     <children>
-                        <VBox alignment="CENTER_LEFT" prefHeight="68.0" prefWidth="457.0">
-                           <children>
-                              <Label fx:id="turnLabel" prefHeight="29.0" prefWidth="411.0" text="It's &lt;nickname&gt;'s turn" textFill="WHITE">
-                                 <font>
-                                    <Font name="Georgia" size="24.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets left="10.0" />
-                                 </VBox.margin>
-                              </Label>
-                           </children>
-                        </VBox>
-                        <VBox alignment="CENTER_LEFT" prefHeight="68.0" prefWidth="340.0">
-                           <children>
-                              <Label fx:id="points1" prefHeight="21.0" prefWidth="344.0" text="Player 1: 1 pt" textFill="WHITE">
-                                 <font>
-                                    <Font name="Georgia" size="18.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="points2" prefHeight="27.0" prefWidth="346.0" text="Player 2: 2 pt" textFill="WHITE">
-                                 <VBox.margin>
-                                    <Insets top="5.0" />
-                                 </VBox.margin>
-                                 <font>
-                                    <Font name="Georgia" size="18.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </VBox>
-                        <VBox alignment="CENTER_LEFT" layoutX="467.0" layoutY="10.0" prefHeight="68.0" prefWidth="340.0">
-                           <children>
-                              <Label fx:id="points3" prefHeight="21.0" prefWidth="344.0" text="Player 3: 1 pt" textFill="WHITE">
-                                 <font>
-                                    <Font name="Georgia" size="18.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="points4" prefHeight="27.0" prefWidth="346.0" text="Player 4: 2 pt" textFill="WHITE">
-                                 <VBox.margin>
-                                    <Insets top="5.0" />
-                                 </VBox.margin>
-                                 <font>
-                                    <Font name="Georgia" size="18.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </VBox>
-                     </children>
-                  </HBox>
-               </children>
-            </Pane>
-            <HBox alignment="TOP_CENTER" prefHeight="68.25" prefWidth="1350.0">
-               <children>
-                  <ImageView fx:id="player2Card1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                  <Separator opacity="0.0" prefWidth="10.0" />
-                  <ImageView fx:id="player2Card2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                  <Separator opacity="0.0" prefWidth="10.0" />
-                  <ImageView fx:id="player2Card3" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-               </children>
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin></HBox>
-            <HBox fx:id="secondo" alignment="TOP_CENTER" prefHeight="24.0" prefWidth="1350.0">
-               <children>
-                  <Label fx:id="player2Nickname" alignment="TOP_CENTER" prefHeight="19.0" prefWidth="344.0" text="Player 2">
-                     <font>
-                        <Font name="Georgia Bold" size="15.0" />
-                     </font>
-                  </Label>
-               </children>
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
-            </HBox>
-            <VBox prefHeight="392.0" prefWidth="1350.0" VBox.vgrow="ALWAYS">
-               <children>
-                  <HBox prefHeight="466.0" prefWidth="1350.0" VBox.vgrow="ALWAYS">
-                     <children>
-                        <Pane prefHeight="418.0" prefWidth="263.0" HBox.hgrow="NEVER">
-                           <children>
-                              <HBox layoutY="3.0" prefHeight="418.0" prefWidth="251.0">
-                                 <children>
-                                    <VBox alignment="CENTER_LEFT" prefHeight="230.0" prefWidth="101.0">
-                                       <children>
-                                          <ImageView fx:id="player3Card1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                                          <Separator opacity="0.0" orientation="VERTICAL" prefHeight="10.0" />
-                                          <ImageView fx:id="player3Card2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                                          <Separator opacity="0.0" orientation="VERTICAL" prefHeight="10.0" />
-                                          <ImageView fx:id="player3Card3" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                                       </children>
-                                       <HBox.margin>
-                                          <Insets left="15.0" />
-                                       </HBox.margin>
-                                    </VBox>
-                                    <VBox alignment="CENTER_LEFT" prefHeight="418.0" prefWidth="131.0">
-                                       <children>
-                                          <Label fx:id="player3Nickname" alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="126.0" rotate="90.0" text="Player 3" textAlignment="CENTER">
-                                             <font>
-                                                <Font name="Georgia Bold" size="15.0" />
-                                             </font>
-                                             <VBox.margin>
-                                                <Insets left="-45.0" />
-                                             </VBox.margin>
-                                          </Label>
-                                       </children>
-                                       <HBox.margin>
-                                          <Insets left="10.0" />
-                                       </HBox.margin>
-                                    </VBox>
-                                 </children>
-                              </HBox>
-                           </children>
-                        </Pane>
-                        <Pane prefHeight="445.0" prefWidth="803.0" HBox.hgrow="ALWAYS" />
-                        <Pane prefHeight="445.0" prefWidth="304.0" HBox.hgrow="NEVER">
-                        <children>
-                           <HBox alignment="TOP_RIGHT" layoutY="3.0" prefHeight="418.0" prefWidth="290.0">
-                              <children>
-                                 <VBox alignment="CENTER_LEFT" prefHeight="418.0" prefWidth="139.0">
-                                    <children>
-                                       <Label fx:id="player4Nickname" alignment="CENTER" prefHeight="28.0" prefWidth="146.0" rotate="-90.0" text="Player 4" translateX="50.0">
-                                          <font>
-                                             <Font name="Georgia Bold" size="15.0" />
-                                          </font>
-                                             <VBox.margin>
-                                                <Insets right="10.0" />
-                                             </VBox.margin>
-                                       </Label>
-                                    </children>
-                                    <HBox.margin>
-                                       <Insets left="10.0" />
-                                    </HBox.margin>
-                                 </VBox>
-                                 <VBox alignment="CENTER_RIGHT" prefHeight="230.0" prefWidth="101.0">
-                                    <children>
-                                       <ImageView fx:id="player4Card1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                                       <Separator opacity="0.0" orientation="VERTICAL" prefHeight="10.0" />
-                                       <ImageView fx:id="player4Card2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                                       <Separator opacity="0.0" orientation="VERTICAL" prefHeight="10.0" />
-                                       <ImageView fx:id="player4Card3" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                                    </children>
-                                       <opaqueInsets>
-                                          <Insets />
-                                       </opaqueInsets>
-                                 </VBox>
-                              </children>
-                           </HBox>
-                        </children>
-                        </Pane>
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-            <HBox alignment="TOP_CENTER" prefHeight="24.0" prefWidth="1350.0">
-               <children>
-                  <Label fx:id="player1Nickname" alignment="TOP_CENTER" prefHeight="19.0" prefWidth="344.0" text="Player 1">
-                     <font>
-                        <Font name="Georgia Bold" size="15.0" />
-                     </font>
-                  </Label>
-               </children>
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
-            </HBox>
-            <HBox alignment="TOP_CENTER" prefHeight="68.25" prefWidth="1350.0">
-               <children>
-                  <ImageView fx:id="player1Card1" fitHeight="68.25" fitWidth="100.0" onMouseClicked="#turnCard1" pickOnBounds="true" preserveRatio="true" />
-                  <Separator opacity="0.0" prefWidth="10.0" />
-                  <ImageView fx:id="player1Card2" fitHeight="68.25" fitWidth="100.0" onMouseClicked="#turnCard2" pickOnBounds="true" preserveRatio="true" />
-                  <Separator opacity="0.0" prefWidth="10.0" />
-                  <ImageView fx:id="player1Card3" fitHeight="68.25" fitWidth="100.0" onMouseClicked="#turnCard3" pickOnBounds="true" preserveRatio="true" />
-               </children>
-               <VBox.margin>
-                  <Insets bottom="15.0" top="15.0" />
-               </VBox.margin></HBox>
-         </children>
-      </VBox>
-      <StackPane AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="14.0">
-         <children>
-            <Button alignment="CENTER" mnemonicParsing="false" onAction="#leaveGame" prefHeight="38.0" prefWidth="139.0" text="LEAVE GAME" textFill="#c90101">
-               <font>
-                  <Font name="Georgia Bold" size="15.0" />
-               </font>
-            </Button>
-         </children>
-      </StackPane>
-      <StackPane prefHeight="200.0" prefWidth="139.0" AnchorPane.bottomAnchor="-20.0" AnchorPane.rightAnchor="0.0">
-         <children>
-            <VBox prefHeight="200.0" prefWidth="126.0">
-               <children>
-                  <Label prefHeight="17.0" prefWidth="130.0" text="Common Objectives">
-                     <font>
-                        <Font name="Georgia Bold" size="12.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets bottom="5.0" />
-                     </VBox.margin>
-                  </Label>
-                  <ImageView fx:id="commonObj1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                  <Separator opacity="0.0" orientation="VERTICAL" prefHeight="10.0" />
-                  <ImageView fx:id="commonObj2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-               </children>
-            </VBox>
-         </children>
-      </StackPane>
-      <StackPane prefHeight="200.0" prefWidth="130.0" AnchorPane.bottomAnchor="-20.0" AnchorPane.rightAnchor="145.0">
-      <children>
-         <VBox prefHeight="200.0" prefWidth="155.0">
+    <children>
+        <VBox fx:id="myBlackPane" alignment="TOP_CENTER" layoutY="80.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="764.0" prefWidth="1350.0" styleClass="game_pane" stylesheets="@Styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-               <Label prefHeight="17.0" prefWidth="130.0" text="Personal Objective">
-                  <font>
-                     <Font name="Georgia Bold" size="12.0" />
-                  </font>
-                  <VBox.margin>
-                     <Insets bottom="5.0" />
-                  </VBox.margin>
-               </Label>
-                  <ImageView fx:id="personalObj" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-            </children>
-         </VBox>
-      </children>
-   </StackPane>
-      <StackPane prefHeight="179.0" prefWidth="344.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="15.0">
-         <children>
-            <VBox prefHeight="200.0" prefWidth="100.0">
-               <children>
-                  <HBox prefHeight="20.0" prefWidth="299.0">
-                     <children>
-                        <Label prefHeight="20.0" prefWidth="421.0" text="Decks                           Market's cards">
-                           <font>
-                              <Font name="Georgia Bold" size="12.0" />
-                           </font>
+                <Pane minHeight="68.0" prefHeight="68.0" prefWidth="1350.0" style="-fx-background-color: black;">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="68.0" prefWidth="1350.0">
+                            <children>
+                                <VBox alignment="CENTER_LEFT" prefHeight="68.0" prefWidth="457.0">
+                                    <children>
+                                        <Label fx:id="turnLabel" prefHeight="29.0" prefWidth="411.0" text="It's &lt;nickname&gt;'s turn" textFill="WHITE">
+                                            <font>
+                                                <Font name="Georgia" size="24.0" />
+                                            </font>
+                                            <VBox.margin>
+                                                <Insets left="10.0" />
+                                            </VBox.margin>
+                                        </Label>
+                                    </children>
+                                </VBox>
+                                <VBox alignment="CENTER_LEFT" prefHeight="68.0" prefWidth="340.0">
+                                    <children>
+                                        <Label fx:id="points1" prefHeight="21.0" prefWidth="344.0" text="Player 1: 1 pt" textFill="WHITE">
+                                            <font>
+                                                <Font name="Georgia" size="18.0" />
+                                            </font>
+                                        </Label>
+                                        <Label fx:id="points2" prefHeight="27.0" prefWidth="346.0" text="Player 2: 2 pt" textFill="WHITE">
+                                            <VBox.margin>
+                                                <Insets top="5.0" />
+                                            </VBox.margin>
+                                            <font>
+                                                <Font name="Georgia" size="18.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </VBox>
+                                <VBox alignment="CENTER_LEFT" layoutX="467.0" layoutY="10.0" prefHeight="68.0" prefWidth="340.0">
+                                    <children>
+                                        <Label fx:id="points3" prefHeight="21.0" prefWidth="344.0" text="Player 3: 1 pt" textFill="WHITE">
+                                            <font>
+                                                <Font name="Georgia" size="18.0" />
+                                            </font>
+                                        </Label>
+                                        <Label fx:id="points4" prefHeight="27.0" prefWidth="346.0" text="Player 4: 2 pt" textFill="WHITE">
+                                            <VBox.margin>
+                                                <Insets top="5.0" />
+                                            </VBox.margin>
+                                            <font>
+                                                <Font name="Georgia" size="18.0" />
+                                            </font>
+                                        </Label>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                    </children>
+                </Pane>
+                <HBox alignment="TOP_CENTER" prefHeight="68.25" prefWidth="1350.0">
+                    <children>
+                        <ImageView fx:id="player2Card1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                        <Separator opacity="0.0" prefWidth="10.0" />
+                        <ImageView fx:id="player2Card2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                        <Separator opacity="0.0" prefWidth="10.0" />
+                        <ImageView fx:id="player2Card3" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                    </children>
+                    <VBox.margin>
+                        <Insets top="15.0" />
+                    </VBox.margin></HBox>
+                <HBox fx:id="secondo" alignment="TOP_CENTER" prefHeight="24.0" prefWidth="1350.0">
+                    <children>
+                        <Label fx:id="player2Nickname" alignment="TOP_CENTER" prefHeight="19.0" prefWidth="344.0" text="Player 2">
+                            <font>
+                                <Font name="Georgia Bold" size="15.0" />
+                            </font>
                         </Label>
-                     </children>
-                     <VBox.margin>
-                        <Insets bottom="5.0" />
-                     </VBox.margin></HBox>
-                  <HBox prefHeight="68.25" prefWidth="299.0">
-                     <VBox.margin>
-                        <Insets bottom="10.0" />
-                     </VBox.margin>
-                     <children>
-                     <ImageView fx:id="resourceDeck" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                        <Separator opacity="0.0" prefHeight="82.0" prefWidth="21.0" />
-                        <ImageView fx:id="resourceCard1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                        <Separator opacity="0.0" prefHeight="85.0" prefWidth="8.0" />
-                        <ImageView fx:id="resourceCard2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                     </children></HBox>
-                  <HBox prefHeight="88.72" prefWidth="299.0">
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                     <children>
-                        <ImageView fx:id="goldDeck" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                        <Separator opacity="0.0" prefHeight="82.0" prefWidth="21.0" />
-                        <ImageView fx:id="goldCard1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                        <Separator opacity="0.0" prefHeight="85.0" prefWidth="8.0" />
-                        <ImageView fx:id="goldCard2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                     </children></HBox>
-               </children>
-            </VBox>
-         </children>
-      </StackPane>
-      <StackPane prefHeight="99.0" prefWidth="344.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="80.0">
-         <children>
-            <VBox prefHeight="200.0" prefWidth="219.0">
-               <children>
-                  <Label text="Which player's board do you want to see?">
-                     <font>
-                        <Font name="Georgia Bold" size="16.0" />
-                     </font></Label>
-                  <Separator opacity="0.0" orientation="VERTICAL" prefHeight="6.0" prefWidth="369.0" />
-                  <HBox prefHeight="28.0" prefWidth="344.0">
-                     <children>
-                        <Button fx:id="buttonP1Board" mnemonicParsing="false" onAction="#showP1Board" prefHeight="25.0" prefWidth="160.0" text="Player 1">
-                           <font>
-                              <Font name="Georgia" size="14.0" />
-                           </font> 
-                               </Button>
-                        <Separator opacity="0.0" prefHeight="25.0" prefWidth="15.0" />
-                        <Button fx:id="buttonP2Board" mnemonicParsing="false" onAction="#showP2Board" prefHeight="25.0" prefWidth="160.0" text="Player 2">
-                           <font>
-                              <Font name="Georgia" size="14.0" />
-                           </font></Button>
-                     </children>
-                  </HBox>
-                  <Separator opacity="0.0" prefHeight="8.0" prefWidth="15.0" />
-                  <HBox prefHeight="28.0" prefWidth="344.0">
-                     <children>
-                        <Button fx:id="buttonP3Board" mnemonicParsing="false" onAction="#showP3Board" prefHeight="25.0" prefWidth="160.0" text="Player 3">
-                           <font>
-                              <Font name="Georgia" size="14.0" />
-                           </font>
-                        </Button>
-                        <Separator opacity="0.0" prefHeight="25.0" prefWidth="15.0" />
-                        <Button fx:id="buttonP4Board" mnemonicParsing="false" onAction="#showP4Board" prefHeight="25.0" prefWidth="160.0" text="Player 4">
-                           <font>
-                              <Font name="Georgia" size="14.0" />
-                           </font></Button>
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-         </children>
-      </StackPane>
-                  <ScrollPane prefHeight="377.0" prefWidth="1028.0" AnchorPane.bottomAnchor="197.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="154.0" AnchorPane.topAnchor="190.0">
-         <content>
-            <GridPane prefHeight="265.0" prefWidth="620.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="NEVER" minWidth="100.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="NEVER" minWidth="100.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="68.25" prefHeight="68.25" vgrow="NEVER" />
-                <RowConstraints minHeight="68.25" prefHeight="68.25" vgrow="NEVER" />
-                <RowConstraints minHeight="68.25" prefHeight="68.25" vgrow="NEVER" />
-              </rowConstraints>
-               <children>
-                  <ImageView fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                  <ImageView fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" translateX="-20.0" translateY="-20.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-               </children>
-            </GridPane>
-         </content></ScrollPane>
-</children>
+                    </children>
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </HBox>
+                <VBox prefHeight="392.0" prefWidth="1350.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <HBox prefHeight="466.0" prefWidth="1350.0" VBox.vgrow="ALWAYS">
+                            <children>
+                                <Pane prefHeight="418.0" prefWidth="263.0" HBox.hgrow="NEVER">
+                                    <children>
+                                        <HBox layoutY="3.0" prefHeight="418.0" prefWidth="251.0">
+                                            <children>
+                                                <VBox alignment="CENTER_LEFT" prefHeight="230.0" prefWidth="101.0">
+                                                    <children>
+                                                        <ImageView fx:id="player3Card1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                                                        <Separator opacity="0.0" orientation="VERTICAL" prefHeight="10.0" />
+                                                        <ImageView fx:id="player3Card2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                                                        <Separator opacity="0.0" orientation="VERTICAL" prefHeight="10.0" />
+                                                        <ImageView fx:id="player3Card3" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                                                    </children>
+                                                    <HBox.margin>
+                                                        <Insets left="15.0" />
+                                                    </HBox.margin>
+                                                </VBox>
+                                                <VBox alignment="CENTER_LEFT" prefHeight="418.0" prefWidth="131.0">
+                                                    <children>
+                                                        <Label fx:id="player3Nickname" alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="126.0" rotate="90.0" text="Player 3" textAlignment="CENTER">
+                                                            <font>
+                                                                <Font name="Georgia Bold" size="15.0" />
+                                                            </font>
+                                                            <VBox.margin>
+                                                                <Insets left="-45.0" />
+                                                            </VBox.margin>
+                                                        </Label>
+                                                    </children>
+                                                    <HBox.margin>
+                                                        <Insets left="10.0" />
+                                                    </HBox.margin>
+                                                </VBox>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </Pane>
+                                <Pane prefHeight="445.0" prefWidth="803.0" HBox.hgrow="ALWAYS" />
+                                <Pane prefHeight="445.0" prefWidth="304.0" HBox.hgrow="NEVER">
+                                    <children>
+                                        <HBox alignment="TOP_RIGHT" layoutY="3.0" prefHeight="418.0" prefWidth="290.0">
+                                            <children>
+                                                <VBox alignment="CENTER_LEFT" prefHeight="418.0" prefWidth="139.0">
+                                                    <children>
+                                                        <Label fx:id="player4Nickname" alignment="CENTER" prefHeight="28.0" prefWidth="146.0" rotate="-90.0" text="Player 4" translateX="50.0">
+                                                            <font>
+                                                                <Font name="Georgia Bold" size="15.0" />
+                                                            </font>
+                                                            <VBox.margin>
+                                                                <Insets right="10.0" />
+                                                            </VBox.margin>
+                                                        </Label>
+                                                    </children>
+                                                    <HBox.margin>
+                                                        <Insets left="10.0" />
+                                                    </HBox.margin>
+                                                </VBox>
+                                                <VBox alignment="CENTER_RIGHT" prefHeight="230.0" prefWidth="101.0">
+                                                    <children>
+                                                        <ImageView fx:id="player4Card1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                                                        <Separator opacity="0.0" orientation="VERTICAL" prefHeight="10.0" />
+                                                        <ImageView fx:id="player4Card2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                                                        <Separator opacity="0.0" orientation="VERTICAL" prefHeight="10.0" />
+                                                        <ImageView fx:id="player4Card3" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                                                    </children>
+                                                    <opaqueInsets>
+                                                        <Insets />
+                                                    </opaqueInsets>
+                                                </VBox>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </Pane>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                <HBox alignment="TOP_CENTER" prefHeight="24.0" prefWidth="1350.0">
+                    <children>
+                        <Label fx:id="player1Nickname" alignment="TOP_CENTER" prefHeight="19.0" prefWidth="344.0" text="Player 1">
+                            <font>
+                                <Font name="Georgia Bold" size="15.0" />
+                            </font>
+                        </Label>
+                    </children>
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </HBox>
+                <HBox alignment="TOP_CENTER" prefHeight="68.25" prefWidth="1350.0">
+                    <children>
+                        <ImageView fx:id="player1Card1" fitHeight="68.25" fitWidth="100.0" onMouseClicked="#turnCard1" pickOnBounds="true" preserveRatio="true" />
+                        <Separator opacity="0.0" prefWidth="10.0" />
+                        <ImageView fx:id="player1Card2" fitHeight="68.25" fitWidth="100.0" onMouseClicked="#turnCard2" pickOnBounds="true" preserveRatio="true" />
+                        <Separator opacity="0.0" prefWidth="10.0" />
+                        <ImageView fx:id="player1Card3" fitHeight="68.25" fitWidth="100.0" onMouseClicked="#turnCard3" pickOnBounds="true" preserveRatio="true" />
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="15.0" top="15.0" />
+                    </VBox.margin></HBox>
+            </children>
+        </VBox>
+        <StackPane AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="14.0">
+            <children>
+                <Button alignment="CENTER" mnemonicParsing="false" onAction="#leaveGame" prefHeight="38.0" prefWidth="139.0" text="LEAVE GAME" textFill="#c90101">
+                    <font>
+                        <Font name="Georgia Bold" size="15.0" />
+                    </font>
+                </Button>
+            </children>
+        </StackPane>
+        <StackPane prefHeight="200.0" prefWidth="139.0" AnchorPane.bottomAnchor="-20.0" AnchorPane.rightAnchor="0.0">
+            <children>
+                <VBox prefHeight="200.0" prefWidth="126.0">
+                    <children>
+                        <Label prefHeight="17.0" prefWidth="130.0" text="Common Objectives">
+                            <font>
+                                <Font name="Georgia Bold" size="12.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets bottom="5.0" />
+                            </VBox.margin>
+                        </Label>
+                        <ImageView fx:id="commonObj1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                        <Separator opacity="0.0" orientation="VERTICAL" prefHeight="10.0" />
+                        <ImageView fx:id="commonObj2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
+        <StackPane prefHeight="200.0" prefWidth="130.0" AnchorPane.bottomAnchor="-20.0" AnchorPane.rightAnchor="145.0">
+            <children>
+                <VBox prefHeight="200.0" prefWidth="155.0">
+                    <children>
+                        <Label prefHeight="17.0" prefWidth="130.0" text="Personal Objective">
+                            <font>
+                                <Font name="Georgia Bold" size="12.0" />
+                            </font>
+                            <VBox.margin>
+                                <Insets bottom="5.0" />
+                            </VBox.margin>
+                        </Label>
+                        <ImageView fx:id="personalObj" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
+        <StackPane prefHeight="179.0" prefWidth="344.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="15.0">
+            <children>
+                <VBox prefHeight="200.0" prefWidth="100.0">
+                    <children>
+                        <HBox prefHeight="20.0" prefWidth="299.0">
+                            <children>
+                                <Label prefHeight="20.0" prefWidth="421.0" text="Decks                           Market's cards">
+                                    <font>
+                                        <Font name="Georgia Bold" size="12.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                            <VBox.margin>
+                                <Insets bottom="5.0" />
+                            </VBox.margin></HBox>
+                        <HBox prefHeight="68.25" prefWidth="299.0">
+                            <VBox.margin>
+                                <Insets bottom="10.0" />
+                            </VBox.margin>
+                            <children>
+                                <ImageView fx:id="resourceDeck" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                                <Separator opacity="0.0" prefHeight="82.0" prefWidth="21.0" />
+                                <ImageView fx:id="resourceCard1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                                <Separator opacity="0.0" prefHeight="85.0" prefWidth="8.0" />
+                                <ImageView fx:id="resourceCard2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                            </children></HBox>
+                        <HBox prefHeight="88.72" prefWidth="299.0">
+                            <VBox.margin>
+                                <Insets />
+                            </VBox.margin>
+                            <children>
+                                <ImageView fx:id="goldDeck" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                                <Separator opacity="0.0" prefHeight="82.0" prefWidth="21.0" />
+                                <ImageView fx:id="goldCard1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                                <Separator opacity="0.0" prefHeight="85.0" prefWidth="8.0" />
+                                <ImageView fx:id="goldCard2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                            </children></HBox>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
+        <StackPane prefHeight="99.0" prefWidth="344.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="80.0">
+            <children>
+                <VBox prefHeight="200.0" prefWidth="219.0">
+                    <children>
+                        <Label text="Which player's board do you want to see?">
+                            <font>
+                                <Font name="Georgia Bold" size="16.0" />
+                            </font></Label>
+                        <Separator opacity="0.0" orientation="VERTICAL" prefHeight="6.0" prefWidth="369.0" />
+                        <HBox prefHeight="28.0" prefWidth="344.0">
+                            <children>
+                                <Button fx:id="buttonP1Board" mnemonicParsing="false" onAction="#showP1Board" prefHeight="25.0" prefWidth="160.0" text="Player 1">
+                                    <font>
+                                        <Font name="Georgia" size="14.0" />
+                                    </font>
+                                </Button>
+                                <Separator opacity="0.0" prefHeight="25.0" prefWidth="15.0" />
+                                <Button fx:id="buttonP2Board" mnemonicParsing="false" onAction="#showP2Board" prefHeight="25.0" prefWidth="160.0" text="Player 2">
+                                    <font>
+                                        <Font name="Georgia" size="14.0" />
+                                    </font></Button>
+                            </children>
+                        </HBox>
+                        <Separator opacity="0.0" prefHeight="8.0" prefWidth="15.0" />
+                        <HBox prefHeight="28.0" prefWidth="344.0">
+                            <children>
+                                <Button fx:id="buttonP3Board" mnemonicParsing="false" onAction="#showP3Board" prefHeight="25.0" prefWidth="160.0" text="Player 3">
+                                    <font>
+                                        <Font name="Georgia" size="14.0" />
+                                    </font>
+                                </Button>
+                                <Separator opacity="0.0" prefHeight="25.0" prefWidth="15.0" />
+                                <Button fx:id="buttonP4Board" mnemonicParsing="false" onAction="#showP4Board" prefHeight="25.0" prefWidth="160.0" text="Player 4">
+                                    <font>
+                                        <Font name="Georgia" size="14.0" />
+                                    </font></Button>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
+        <ScrollPane prefHeight="377.0" prefWidth="1028.0" AnchorPane.bottomAnchor="197.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="154.0" AnchorPane.topAnchor="190.0">
+            <content>
+                <GridPane fx:id="gridPaneTest" prefHeight="38.25" prefWidth="70.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                        <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
+                    </rowConstraints>
+                    <children>
+                        <ImageView accessibleRole="BUTTON" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                     <viewport>
+                        <Rectangle2D />
+                     </viewport>
+                     <rotationAxis>
+                        <Point3D />
+                     </rotationAxis>
+                     <effect>
+                        <Lighting>
+                           <bumpInput>
+                              <Shadow radius="12.5375" width="31.15">
+                                 <color>
+                                    <Color red="0.5" green="0.3811728358268738" blue="0.3811728358268738" />
+                                 </color>
+                              </Shadow>
+                           </bumpInput>
+                           <light>
+                              <Light.Distant azimuth="64.24" />
+                           </light>
+                        </Lighting>
+                     </effect></ImageView>
+                        <ImageView fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
+                  <ImageView fitHeight="68.25" fitWidth="100.0" layoutX="65.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
+                  <ImageView fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="29" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="25" GridPane.valignment="CENTER" GridPane.vgrow="NEVER" />
+                    </children>
+                </GridPane>
+            </content></ScrollPane>
+    </children>
 </AnchorPane>

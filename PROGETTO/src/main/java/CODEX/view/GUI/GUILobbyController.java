@@ -151,16 +151,16 @@ public class GUILobbyController {
                 try {
                     // Update text on the JavaFX Application Thread
                     Platform.runLater(() -> waitingPlayers.setText("Waiting for players"));
-                    Thread.sleep(1000);
+                    Thread.sleep(700);
 
                     Platform.runLater(() -> waitingPlayers.setText("Waiting for players."));
-                    Thread.sleep(1000);
+                    Thread.sleep(700);
 
                     Platform.runLater(() -> waitingPlayers.setText("Waiting for players.."));
-                    Thread.sleep(1000);
+                    Thread.sleep(700);
 
                     Platform.runLater(() -> waitingPlayers.setText("Waiting for players..."));
-                    Thread.sleep(1000);
+                    Thread.sleep(700);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }

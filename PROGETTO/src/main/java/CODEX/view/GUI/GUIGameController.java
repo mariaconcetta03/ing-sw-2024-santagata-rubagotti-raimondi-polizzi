@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
 import javafx.util.Duration;
@@ -122,6 +123,8 @@ public class GUIGameController {
     private Button buttonP3Board;
     @FXML
     private Button buttonP4Board;
+    @FXML
+    private GridPane gridPaneTest;
 
 
 
@@ -632,19 +635,76 @@ public class GUIGameController {
     }
 
 
-    public void showP1Board(){
+    public void showP1Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 1
+        String path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[2].getId() + ").png";
+        Image card1 = new Image(getClass().getResourceAsStream(path));
+        ImageView imageView = new ImageView(card1);
+
+
+         //5.8 è la scala...scelta in modo che gli angoli delle carte si sovrappongano
+        // Imposta le dimensioni fisse per l'ImageView
+        imageView.setFitWidth((card1.getWidth()/5.8));  // Imposta la larghezza desiderata
+        imageView.setFitHeight((card1.getHeight()/5.8)); // Imposta l'altezza desiderata
+
+        // Mantieni il rapporto di aspetto
+        imageView.setPreserveRatio(true);
+
+        // Migliora la qualità di rendering
+        imageView.setSmooth(true);
+
+        this.gridPaneTest.add(imageView, 1, 1);
         
     }
 
-    public void showP2Board(){
+    public void showP2Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 2
+        String path = "/images/cards/back/ (" + playersInOrder.get(0).getPlayerDeck()[1].getId() + ").png";
+        Image card1 = new Image(getClass().getResourceAsStream(path));
+
+
+        ImageView imageView = new ImageView(card1);
+
+        //5.8 è la scala...scelta in modo che gli angoli delle carte si sovrappongano
+        // Imposta le dimensioni fisse per l'ImageView
+        imageView.setFitWidth((card1.getWidth()/5.8));  // Imposta la larghezza desiderata
+        imageView.setFitHeight((card1.getHeight()/5.8)); // Imposta l'altezza desiderata
+
+        // Mantieni il rapporto di aspetto
+        imageView.setPreserveRatio(true);
+        /*
+        Usare setPreserveRatio(true) è particolarmente
+        utile quando vuoi ridimensionare l'immagine per adattarla
+        a un'area specifica della tua interfaccia utente, ma vuoi evitare
+         la distorsione. Mantenere le proporzioni rende l'immagine più
+         esteticamente piacevole e comprensibile.
+         */
+
+        // Migliora la qualità di rendering
+        imageView.setSmooth(true);
+
+        this.gridPaneTest.add(imageView, 2, 2);
 
     }
 
-    public void showP3Board(){
+    public void showP3Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 3
+        String path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[2].getId() + ").png";
+        Image card1 = new Image(getClass().getResourceAsStream(path));
+        ImageView imageView = new ImageView(card1);
 
+        //5.8 è la scala...scelta in modo che gli angoli delle carte si sovrappongano
+        // Imposta le dimensioni fisse per l'ImageView
+        imageView.setFitWidth((card1.getWidth()/5.8));  // Imposta la larghezza desiderata
+        imageView.setFitHeight((card1.getHeight()/5.8)); // Imposta l'altezza desiderata
+
+        // Mantieni il rapporto di aspetto
+        imageView.setPreserveRatio(true);
+
+        // Migliora la qualità di rendering
+        imageView.setSmooth(true);
+
+        this.gridPaneTest.add(imageView, 29, 25); //bisogna però nel scene builder avere un'immagine lì
     }
 
-    public void showP4Board(){
+    public void showP4Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 4
 
     }
 
