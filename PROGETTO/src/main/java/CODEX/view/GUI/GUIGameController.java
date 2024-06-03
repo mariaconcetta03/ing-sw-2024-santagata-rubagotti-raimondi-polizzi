@@ -11,7 +11,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
 import javafx.util.Duration;
@@ -741,111 +743,86 @@ public class GUIGameController {
     }
 
     public void showP2Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 2
+        // PRINTING THE CURRENT POSITIONS OF THE SCROLL PANE TO SET THEM!
+        System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
+        System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
+
+        // SETTING THE CORRECT POSITION: IT DEPENDS FROM THE NUMBER OF THE PLAYERS IN THE GAME
+        if (nPlayers == 2) {
+            boardPane.setHvalue(0.48780488);
+            boardPane.setVvalue(0.5);
+        } else if (nPlayers == 3) {
+            boardPane.setHvalue(0.28447504302925986);
+            boardPane.setVvalue(0.30693257359924053);
+        } else if (nPlayers == 4) {
+            boardPane.setHvalue(0.2099841521394612);
+            boardPane.setVvalue(0.23585350854073317);
+        }
 
 
-        /*
-        //NON SI PO COPIARE UN GRIDPANE COSì: BISOGNA SOVRASCRIVERLO OGNI VOLTA
-        String path = "/images/cards/front/ (" + tableP2[dimension/nPlayers][dimension/nPlayers] + ").png";
-        Image baseCard = new Image(getClass().getResourceAsStream(path));
-        ImageView imageView = new ImageView(baseCard);
-
-        imageView.setFitWidth((baseCard.getWidth()/5.8));  // Imposta la larghezza desiderata
-        imageView.setFitHeight((baseCard.getHeight()/5.8)); // Imposta l'altezza desiderata
-
-        imageView.setPreserveRatio(true);
-
-        imageView.setSmooth(true);
-
-        //this.gridPaneTestP2.add(imageView, dimension/nPlayers, dimension/nPlayers);
-        this.gridPaneTestP2.add(imageView, 2, 2);
-
-        this.gridPaneTest=this.gridPaneTestP2;
-
-         */
-
-
-
-        //test di prova
-        String path = "/images/cards/front/ (" + tableP2[dimension/nPlayers][dimension/nPlayers].getId() + ").png";
-        Image card1 = new Image(getClass().getResourceAsStream(path));
-
-
-        ImageView imageView = new ImageView(card1);
-
-        //5.8 è la scala...scelta in modo che gli angoli delle carte si sovrappongano
-        // Imposta le dimensioni fisse per l'ImageView
-        imageView.setFitWidth((card1.getWidth()/5.8));  // Imposta la larghezza desiderata
-        imageView.setFitHeight((card1.getHeight()/5.8)); // Imposta l'altezza desiderata
-
-        // Mantieni il rapporto di aspetto
-        imageView.setPreserveRatio(true);
-        /*
-        Usare setPreserveRatio(true) è particolarmente
-        utile quando vuoi ridimensionare l'immagine per adattarla
-        a un'area specifica della tua interfaccia utente, ma vuoi evitare
-         la distorsione. Mantenere le proporzioni rende l'immagine più
-         esteticamente piacevole e comprensibile.
-         */
-
-
-
-        // Migliora la qualità di rendering
-        imageView.setSmooth(true);
-        //this.gridPaneTest.add(imageView,1,1);
-        //this.gridPaneTest.add(imageView,  dimension/nPlayers, dimension/nPlayers);
-        this.gridPaneTest.add(imageView,  dimension/nPlayers, dimension/nPlayers);
-        System.out.println("FATTO TUTTO!");
+        // SETTING ALL THE CARDS IN THE TABLE
+        boolean placed = false;
+        for (int count = -1; count < dimension; count++) {
+            placed = false;
+            for (int i = 0; i < dimension && !placed; i++) {
+                for (int j = 0; j < dimension && !placed; j++) {
+                    if (tableP2[i][j] != null && count == tableP2[i][j].getPlayOrder()) {
+                        String path = "/images/cards/front/ (" + (tableP2[i][j]).getId() + ").png";
+                        Image card1 = new Image(getClass().getResourceAsStream(path));
+                        ImageView imageView = new ImageView(card1);
+                        imageView.setFitWidth((card1.getWidth() / 5.8));  // larghezza desiderata
+                        imageView.setFitHeight((card1.getHeight() / 5.8)); // altezza desiderata
+                        imageView.setPreserveRatio(true);
+                        imageView.setSmooth(true);
+                        imageView.toFront();
+                        this.gridPaneTest.add(imageView, i, j);
+                        placed = true;
+                    }
+                }
+            }
+        }
 
     }
 
     public void showP3Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 3
+        // PRINTING THE CURRENT POSITIONS OF THE SCROLL PANE TO SET THEM!
+        System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
+        System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
 
-        /*
-        //NON SI PO COPIARE UN GRIDPANE COSì: BISOGNA SOVRASCRIVERLO OGNI VOLTA
-        String path = "/images/cards/front/ (" + tableP3[dimension/nPlayers][dimension/nPlayers] + ").png";
-        Image baseCard = new Image(getClass().getResourceAsStream(path));
-        ImageView imageView = new ImageView(baseCard);
-
-        imageView.setFitWidth((baseCard.getWidth()/5.8));  // Imposta la larghezza desiderata
-        imageView.setFitHeight((baseCard.getHeight()/5.8)); // Imposta l'altezza desiderata
-
-        imageView.setPreserveRatio(true);
-
-        imageView.setSmooth(true);
-
-        //this.gridPaneTestP3.add(imageView, dimension/nPlayers, dimension/nPlayers);
-        this.gridPaneTestP3.add(imageView, 3, 3);
-
-        this.gridPaneTest=this.gridPaneTestP3;
-
-         */
+        // SETTING THE CORRECT POSITION: IT DEPENDS FROM THE NUMBER OF THE PLAYERS IN THE GAME
+        if (nPlayers == 2) {
+            boardPane.setHvalue(0.48780488);
+            boardPane.setVvalue(0.5);
+        } else if (nPlayers == 3) {
+            boardPane.setHvalue(0.28447504302925986);
+            boardPane.setVvalue(0.30693257359924053);
+        } else if (nPlayers == 4) {
+            boardPane.setHvalue(0.2099841521394612);
+            boardPane.setVvalue(0.23585350854073317);
+        }
 
 
-
-
-        //test di prova
-        String path = "/images/cards/front/ (" + tableP3[dimension/nPlayers][dimension/nPlayers].getId() + ").png";
-        Image card1 = new Image(getClass().getResourceAsStream(path));
-        ImageView imageView = new ImageView(card1);
-
-        //5.8 è la scala...scelta in modo che gli angoli delle carte si sovrappongano
-        // Imposta le dimensioni fisse per l'ImageView
-        imageView.setFitWidth((card1.getWidth()/5.8));  // Imposta la larghezza desiderata
-        imageView.setFitHeight((card1.getHeight()/5.8)); // Imposta l'altezza desiderata
-
-        // Mantieni il rapporto di aspetto
-        imageView.setPreserveRatio(true);
-
-        // Migliora la qualità di rendering
-        imageView.setSmooth(true);
-
-        //this.gridPaneTest.add(imageView,1,1);
-        //this.gridPaneTest.add(imageView,  dimension/nPlayers, dimension/nPlayers);
-
-        this.gridPaneTest.add(imageView,  dimension/nPlayers, dimension/nPlayers);
-        System.out.println("FATTO TUTTO!");
-
-
+        // SETTING ALL THE CARDS IN THE TABLE
+        boolean placed = false;
+        for (int count = -1; count < dimension; count++) {
+            placed = false;
+            for (int i = 0; i < dimension && !placed; i++) {
+                for (int j = 0; j < dimension && !placed; j++) {
+                    if (tableP3[i][j] != null && count == tableP3[i][j].getPlayOrder()) {
+                        String path = "/images/cards/front/ (" + (tableP3[i][j]).getId() + ").png";
+                        Image card1 = new Image(getClass().getResourceAsStream(path));
+                        ImageView imageView = new ImageView(card1);
+                        imageView.setFitWidth((card1.getWidth() / 5.8));  // larghezza desiderata
+                        imageView.setFitHeight((card1.getHeight() / 5.8)); // altezza desiderata
+                        imageView.setPreserveRatio(true);
+                        imageView.setSmooth(true);
+                        imageView.toFront();
+                        this.gridPaneTest.add(imageView, i, j);
+                        placed = true;
+                    }
+                }
+            }
+        }
     }
 
     public void showP4Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 4
