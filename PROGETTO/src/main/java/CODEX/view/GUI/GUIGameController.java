@@ -41,6 +41,7 @@ public class GUIGameController {
 
 
 
+
     @FXML
     private Label turnLabel;
     @FXML
@@ -125,10 +126,21 @@ public class GUIGameController {
     private Button buttonP4Board;
     @FXML
     private GridPane gridPaneTest;
+    @FXML
+    private ScrollPane boardPane;
 
+    private Integer dimension;
+    private GridPane gridPaneTestP1;
+    private GridPane gridPaneTestP2;
+    private GridPane gridPaneTestP3;
+    private GridPane gridPaneTestP4;
+    private PlayableCard[][] table;
 
-
-
+    private PlayableCard[][] tableP1;
+    private PlayableCard[][] tableP2;
+    private PlayableCard[][] tableP3;
+    private PlayableCard[][] tableP4;
+    private int nPlayers;
 
 
     public void setTurnLabel() { //ok
@@ -354,6 +366,7 @@ public class GUIGameController {
 
 
         if (this.network == 1) {
+            this.dimension=rmiClient.getPersonalPlayer().getBoard().getBoardDimensions();
 
             // PRINTING THE PLAYERS IN THE GAME
             for (Player p : rmiClient.getPlayersInTheGame()) {
@@ -371,8 +384,24 @@ public class GUIGameController {
             }
             playersInOrder = newList; // aggiungo in prima posizione il PERSONAL PLAYER
             System.out.println("ECCO I NUOVI PLAYERS IN ORDER CON ME COME PRIMA POSIZIONE!");
+
+            // SETTING THE TABLE AND ITS DIMENSIONS
+            int i=1;
             for (Player p: playersInOrder) {
                 System.out.println("nickname: " + p.getNickname());
+                if(i==1){
+                   tableP1=p.getBoard().getTable();
+                }
+                if(i==2){
+                    tableP2=p.getBoard().getTable();
+                }
+                if(i==3){
+                    tableP3=p.getBoard().getTable();
+                }
+                if(i==4){
+                    tableP4=p.getBoard().getTable();
+                }
+                i++;
             }
 
 
@@ -426,6 +455,7 @@ public class GUIGameController {
 
 
         } else if (this.network == 2) {
+            this.dimension=clientSCK.getPersonalPlayer().getBoard().getBoardDimensions(); //le dimensioni sono uguali per tutti i giocatori
 
             // PRINTING THE PLAYERS IN THE GAME
             for (Player p: clientSCK.getPlayersInTheGame()) {
@@ -443,8 +473,24 @@ public class GUIGameController {
             }
             playersInOrder = newList; // aggiungo in prima posizione il PERSONAL PLAYER
             System.out.println("ECCO I NUOVI PLAYERS IN ORDER CON ME COME PRIMA POSIZIONE!");
+
+            // SETTING THE BOARD AND ITS DIMENSIONS
+            int i=1;
             for (Player p: playersInOrder) {
                 System.out.println("nickname: " + p.getNickname());
+                if(i==1){
+                    tableP1=p.getBoard().getTable();
+                }
+                if(i==2){
+                    tableP2=p.getBoard().getTable();
+                }
+                if(i==3){
+                    tableP3=p.getBoard().getTable();
+                }
+                if(i==4){
+                    tableP4=p.getBoard().getTable();
+                }
+                i++;
             }
 
 
@@ -502,6 +548,7 @@ public class GUIGameController {
 
         //two players
         if (((this.network == 1)&&(rmiClient.getPlayersInTheGame().size() == 2))||((this.network == 2)&&(clientSCK.getPlayersInTheGame().size() == 2)) ){
+            this.nPlayers=2;
             points1.setOpacity(1);
             points2.setOpacity(1);
             points3.setOpacity(0);
@@ -524,6 +571,7 @@ public class GUIGameController {
 
         //three players
         else if (((this.network == 1)&&(rmiClient.getPlayersInTheGame().size() == 3))||((this.network == 2)&&(clientSCK.getPlayersInTheGame().size() == 3))) {
+            this.nPlayers=3;
             points1.setOpacity(1);
             points2.setOpacity(1);
             points3.setOpacity(1);
@@ -549,6 +597,7 @@ public class GUIGameController {
 
         //four players
         else if (((this.network == 1)&&(rmiClient.getPlayersInTheGame().size() == 4))||((this.network == 2)&&(clientSCK.getPlayersInTheGame().size() == 4))) {
+            this.nPlayers=4;
             points1.setOpacity(1);
             points2.setOpacity(1);
             points3.setOpacity(1);
@@ -579,8 +628,11 @@ public class GUIGameController {
         // SETTING THE CORRECT NUMBER OF POINTS (UPDATE)
         setPoints();
 
-
-        // TODO:
+        // SETTING THE FIRST POSITION OF THE SCROLL IN THE SCROLLPANE
+        // THANKS TO THIS THE PLAYER CAN IMMEDIATELY SEE HIS BASE CARD IN THE CENTER OF HIS PANE
+        boardPane.setHvalue(0.5);
+        boardPane.setVvalue(0.5);
+        // dimensioni scrollpane: prefHeight="377.0" prefWidth="1028.0
         // SETTING THE CURRENT PLAYER (is the first in the list)
         // SETTING THE PAWNS
     }
@@ -636,11 +688,39 @@ public class GUIGameController {
 
 
     public void showP1Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 1
-        String path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[2].getId() + ").png";
+
+        /*
+        //NON SI PO COPIARE UN GRIDPANE COSì: BISOGNA SOVRASCRIVERLO OGNI VOLTA
+
+        String path = "/images/cards/front/ (" + tableP1[dimension/nPlayers][dimension/nPlayers] + ").png";
+        Image baseCard = new Image(getClass().getResourceAsStream(path));
+        ImageView imageView = new ImageView(baseCard);
+
+        imageView.setFitWidth((baseCard.getWidth()/5.8));  // Imposta la larghezza desiderata
+        imageView.setFitHeight((baseCard.getHeight()/5.8)); // Imposta l'altezza desiderata
+
+        imageView.setPreserveRatio(true);
+
+        imageView.setSmooth(true);
+
+        //this.gridPaneTestP1.add(imageView, dimension/nPlayers, dimension/nPlayers);
+        //per una prova
+        this.gridPaneTestP1.add(imageView, 1, 1);
+        this.gridPaneTest=this.gridPaneTestP1;
+
+
+         */
+
+
+        System.out.println("sto caricando la carta");
+        //test di prova: con commenti
+        String path = "/images/cards/front/ (" + (tableP1[dimension/nPlayers][dimension/nPlayers]).getId()+ ").png";
         Image card1 = new Image(getClass().getResourceAsStream(path));
         ImageView imageView = new ImageView(card1);
+        System.out.println("ho correttamente caricato la carta");
 
 
+        System.out.println("sto settando la scala");
          //5.8 è la scala...scelta in modo che gli angoli delle carte si sovrappongano
         // Imposta le dimensioni fisse per l'ImageView
         imageView.setFitWidth((card1.getWidth()/5.8));  // Imposta la larghezza desiderata
@@ -649,15 +729,44 @@ public class GUIGameController {
         // Mantieni il rapporto di aspetto
         imageView.setPreserveRatio(true);
 
+        System.out.println("sto per mettere la carta in 1 1");
         // Migliora la qualità di rendering
         imageView.setSmooth(true);
+        //this.gridPaneTest.add(imageView,1,1)
 
-        this.gridPaneTest.add(imageView, 1, 1);
+        this.gridPaneTest.add(imageView,  (int)dimension/nPlayers, (int)dimension/nPlayers);
+        System.out.println("FATTO TUTTO!");
+
         
     }
 
     public void showP2Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 2
-        String path = "/images/cards/back/ (" + playersInOrder.get(0).getPlayerDeck()[1].getId() + ").png";
+
+
+        /*
+        //NON SI PO COPIARE UN GRIDPANE COSì: BISOGNA SOVRASCRIVERLO OGNI VOLTA
+        String path = "/images/cards/front/ (" + tableP2[dimension/nPlayers][dimension/nPlayers] + ").png";
+        Image baseCard = new Image(getClass().getResourceAsStream(path));
+        ImageView imageView = new ImageView(baseCard);
+
+        imageView.setFitWidth((baseCard.getWidth()/5.8));  // Imposta la larghezza desiderata
+        imageView.setFitHeight((baseCard.getHeight()/5.8)); // Imposta l'altezza desiderata
+
+        imageView.setPreserveRatio(true);
+
+        imageView.setSmooth(true);
+
+        //this.gridPaneTestP2.add(imageView, dimension/nPlayers, dimension/nPlayers);
+        this.gridPaneTestP2.add(imageView, 2, 2);
+
+        this.gridPaneTest=this.gridPaneTestP2;
+
+         */
+
+
+
+        //test di prova
+        String path = "/images/cards/front/ (" + tableP2[dimension/nPlayers][dimension/nPlayers].getId() + ").png";
         Image card1 = new Image(getClass().getResourceAsStream(path));
 
 
@@ -678,15 +787,44 @@ public class GUIGameController {
          esteticamente piacevole e comprensibile.
          */
 
+
+
         // Migliora la qualità di rendering
         imageView.setSmooth(true);
-
-        this.gridPaneTest.add(imageView, 2, 2);
+        //this.gridPaneTest.add(imageView,1,1);
+        //this.gridPaneTest.add(imageView,  dimension/nPlayers, dimension/nPlayers);
+        this.gridPaneTest.add(imageView,  dimension/nPlayers, dimension/nPlayers);
+        System.out.println("FATTO TUTTO!");
 
     }
 
     public void showP3Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 3
-        String path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[2].getId() + ").png";
+
+        /*
+        //NON SI PO COPIARE UN GRIDPANE COSì: BISOGNA SOVRASCRIVERLO OGNI VOLTA
+        String path = "/images/cards/front/ (" + tableP3[dimension/nPlayers][dimension/nPlayers] + ").png";
+        Image baseCard = new Image(getClass().getResourceAsStream(path));
+        ImageView imageView = new ImageView(baseCard);
+
+        imageView.setFitWidth((baseCard.getWidth()/5.8));  // Imposta la larghezza desiderata
+        imageView.setFitHeight((baseCard.getHeight()/5.8)); // Imposta l'altezza desiderata
+
+        imageView.setPreserveRatio(true);
+
+        imageView.setSmooth(true);
+
+        //this.gridPaneTestP3.add(imageView, dimension/nPlayers, dimension/nPlayers);
+        this.gridPaneTestP3.add(imageView, 3, 3);
+
+        this.gridPaneTest=this.gridPaneTestP3;
+
+         */
+
+
+
+
+        //test di prova
+        String path = "/images/cards/front/ (" + tableP3[dimension/nPlayers][dimension/nPlayers].getId() + ").png";
         Image card1 = new Image(getClass().getResourceAsStream(path));
         ImageView imageView = new ImageView(card1);
 
@@ -701,10 +839,59 @@ public class GUIGameController {
         // Migliora la qualità di rendering
         imageView.setSmooth(true);
 
-        this.gridPaneTest.add(imageView, 29, 25); //bisogna però nel scene builder avere un'immagine lì
+        //this.gridPaneTest.add(imageView,1,1);
+        //this.gridPaneTest.add(imageView,  dimension/nPlayers, dimension/nPlayers);
+
+        this.gridPaneTest.add(imageView,  dimension/nPlayers, dimension/nPlayers);
+        System.out.println("FATTO TUTTO!");
+
+
     }
 
     public void showP4Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 4
+
+        /*
+        String path = "/images/cards/front/ (" + tableP4[dimension/nPlayers][dimension/nPlayers] + ").png";
+
+        Image baseCard = new Image(getClass().getResourceAsStream(path));
+        ImageView imageView = new ImageView(baseCard);
+
+        imageView.setFitWidth((baseCard.getWidth()/5.8));  // Imposta la larghezza desiderata
+        imageView.setFitHeight((baseCard.getHeight()/5.8)); // Imposta l'altezza desiderata
+
+        imageView.setPreserveRatio(true);
+
+        imageView.setSmooth(true);
+
+        //this.gridPaneTestP4.add(imageView, dimension/nPlayers, dimension/nPlayers);
+        this.gridPaneTestP4.add(imageView, 4, 4);
+
+        this.gridPaneTest=this.gridPaneTestP4;
+
+         */
+
+        //test di prova
+        String path = "/images/cards/front/ (" + tableP4[dimension/nPlayers][dimension/nPlayers].getId() + ").png";
+        Image card1 = new Image(getClass().getResourceAsStream(path));
+        ImageView imageView = new ImageView(card1);
+
+        //5.8 è la scala...scelta in modo che gli angoli delle carte si sovrappongano
+        // Imposta le dimensioni fisse per l'ImageView
+        imageView.setFitWidth((card1.getWidth()/5.8));  // Imposta la larghezza desiderata
+        imageView.setFitHeight((card1.getHeight()/5.8)); // Imposta l'altezza desiderata
+
+        // Mantieni il rapporto di aspetto
+        imageView.setPreserveRatio(true);
+
+        // Migliora la qualità di rendering
+        imageView.setSmooth(true);
+
+        //this.gridPaneTest.add(imageView,1,1);
+        //this.gridPaneTest.add(imageView,  dimension/nPlayers, dimension/nPlayers);
+
+        this.gridPaneTest.add(imageView,  (int)dimension/nPlayers, (int)dimension/nPlayers);
+        System.out.println("FATTO TUTTO!");
+
 
     }
 
