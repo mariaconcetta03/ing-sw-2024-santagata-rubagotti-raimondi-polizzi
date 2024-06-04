@@ -151,7 +151,7 @@ public class Player extends Observable implements Serializable {
 
         // I'll add a method for giving coordinates to the board
         if (!board.placeCard(card, position)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(); // if I can't play the card here [position + resources]
         }
 
         for (int i = 0; i < 3; i++) {

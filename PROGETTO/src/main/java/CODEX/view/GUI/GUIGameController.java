@@ -921,8 +921,8 @@ public class GUIGameController {
             System.out.println("COORDINATE MODIFICATE -->  x : " + cellX + " y: " + cellY);
             this.coordinatesToPlay = new Coordinates(cellX, cellY);
             playCard();
-        });
     }
+
 
     public void playCard() {
         System.out.println("SONO IN PLAYCARD");
@@ -939,7 +939,7 @@ public class GUIGameController {
                             try {
                                 rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], coordinatesToPlay, orientationCard1);
                             } catch (RemoteException | NotBoundException e) {
-                                throw new RuntimeException(e);
+                                System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                             }
                         } else if (selectedCard == 2) {
                             System.out.println("PLAYED CARD 2");
@@ -947,7 +947,7 @@ public class GUIGameController {
                             try {
                                 rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[1], coordinatesToPlay, orientationCard2);
                             } catch (RemoteException | NotBoundException e) {
-                                throw new RuntimeException(e);
+                                System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                             }
                         } else if (selectedCard == 3) {
                             System.out.println("PLAYED CARD 3");
@@ -955,7 +955,7 @@ public class GUIGameController {
                             try {
                                 rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[2], coordinatesToPlay, orientationCard3);
                             } catch (RemoteException | NotBoundException e) {
-                                throw new RuntimeException(e);
+                                System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                             }
                         } else if (selectedCard == 0) {
                             selectedCardLabel.setText("Please, select a card to play first!");
@@ -979,7 +979,7 @@ public class GUIGameController {
                         try {
                             clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], coordinatesToPlay, orientationCard1);
                         } catch (RemoteException | NotBoundException e) {
-                            throw new RuntimeException(e);
+                            System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                         }
                     } else if (selectedCard == 2) {
                         cardPlaced = true;
@@ -987,7 +987,7 @@ public class GUIGameController {
                         try {
                             clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[1], coordinatesToPlay, orientationCard2);
                         } catch (RemoteException | NotBoundException e) {
-                            throw new RuntimeException(e);
+                            System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                         }
                     } else if (selectedCard == 3) {
                         cardPlaced = true;
@@ -995,7 +995,7 @@ public class GUIGameController {
                         try {
                             clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[2], coordinatesToPlay, orientationCard3);
                         } catch (RemoteException | NotBoundException e) {
-                            throw new RuntimeException(e);
+                            System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                         }
                     } else if (selectedCard == 0) {
                         selectedCardLabel.setText("Please, select a card to play first!");
@@ -1005,6 +1005,15 @@ public class GUIGameController {
             }
             if (!cardPlaced && selectedCard != 0) {
                 System.out.println("This isn't a playable position");
+                System.out.println("cardplaced = " + cardPlaced);
+                System.out.println("selected card = " + selectedCard);
+                System.out.println("selectedboard = " + selectedBoard);
+                System.out.println("network = " + network);
+                System.out.println("coordinates to play are (x, y) = " + coordinatesToPlay.getX() + " " + coordinatesToPlay.getY());
+                System.out.println("selectedboard = " + selectedBoard);
+                for(Coordinates c : playablePositions) {
+                    System.out.println("playable positions (x, y) = " + c.getX() + " " + c.getY());
+                }
             }
         } else if(selectedBoard != 1){
             System.out.println("Select your board!");
@@ -1024,13 +1033,14 @@ public class GUIGameController {
             for (int col = 0; col < 83; col++) { //82
                 count++;
                 Pane cell = new Pane();
-                cell.setPrefSize(68, 36);
+                cell.setPrefSize(70, 38.25);
                 cell.setId("cell" + count); // cell1, cell2, cell3, ...
                 cell.setOnMouseClicked(this::mousePressed);
                 cell.setStyle("-fx-border-color: grey; -fx-border-width: 0.2px;");
                 grid.add(cell, col, row);
             }
         }
+        grid.addEventFilter(MouseEvent.MOUSE_PRESSED, this::mousePressed);
     }
 
 
