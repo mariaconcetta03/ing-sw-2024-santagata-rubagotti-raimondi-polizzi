@@ -907,17 +907,17 @@ public class GUIGameController {
     }
 
 
+
     public void mousePressed (MouseEvent mouseEvent) {
         System.out.println("SONO IN MOUSE PRESSED");
-
-        grid.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
             int cellX;
             int cellY;
-
-            double x = event.getX();
-            double y = event.getY();
-            cellX = (int) (x / 70);
+            double x = mouseEvent.getX();
+            double y = mouseEvent.getY();
+            System.out.println("DOUBLE X e Y: " + x + " " + y);
+            cellX = (int) (x / 70.0);
             cellY = (int) (y / 38.25);
+
             System.out.println("COORDINATE MODIFICATE -->  x : " + cellX + " y: " + cellY);
             this.coordinatesToPlay = new Coordinates(cellX, cellY);
             playCard();
@@ -1027,7 +1027,7 @@ public class GUIGameController {
                 cell.setPrefSize(68, 36);
                 cell.setId("cell" + count); // cell1, cell2, cell3, ...
                 cell.setOnMouseClicked(this::mousePressed);
-                cell.setStyle("-fx-border-color: gray; -fx-border-width: 0.2px;");
+                cell.setStyle("-fx-border-color: grey; -fx-border-width: 0.2px;");
                 grid.add(cell, col, row);
             }
         }
