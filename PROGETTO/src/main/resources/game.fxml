@@ -332,7 +332,7 @@
         </StackPane>
         <ScrollPane fx:id="boardPane" prefHeight="377.0" prefWidth="1028.0" AnchorPane.bottomAnchor="197.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="154.0" AnchorPane.topAnchor="190.0">
             <content>
-                <GridPane fx:id="gridPaneTest" alignment="CENTER" prefHeight="38.25" prefWidth="70.0">
+                <GridPane fx:id="grid" alignment="CENTER" gridLinesVisible="false" prefHeight="38.25" prefWidth="70.0">
                     <columnConstraints>
                         <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
                         <ColumnConstraints hgrow="NEVER" minWidth="70.0" prefWidth="70.0" />
@@ -502,11 +502,6 @@
                         <RowConstraints minHeight="38.25" prefHeight="38.25" vgrow="NEVER" />
                     </rowConstraints>
                <children>
-                   <Pane fx:id="cell1" prefHeight="36.0" prefWidth="68.0" GridPane.columnIndex="0" GridPane.rowIndex="0" onMouseClicked="#playCard"/>
-                   <Pane fx:id="cell2" prefHeight="36.0" prefWidth="68.0" GridPane.columnIndex="0" GridPane.rowIndex="1" onMouseClicked="#playCard" />
-                   <Pane fx:id="cell3" prefHeight="36.0" prefWidth="68.0" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                   <Pane fx:id="cell4" prefHeight="36.0" prefWidth="68.0" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-
                </children>
                 </GridPane>
             </content></ScrollPane>

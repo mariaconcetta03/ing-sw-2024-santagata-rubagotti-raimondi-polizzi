@@ -2,10 +2,7 @@ package CODEX.view.GUI;
 
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
-import CODEX.org.model.ObjectiveCard;
-import CODEX.org.model.PlayableCard;
-import CODEX.org.model.PlayableDeck;
-import CODEX.org.model.Player;
+import CODEX.org.model.*;
 import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,8 +20,10 @@ import javafx.scene.image.ImageView;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class GUIGameController {
@@ -40,7 +39,8 @@ public class GUIGameController {
     private boolean orientationCard1;
     private boolean orientationCard2;
     private boolean orientationCard3;
-    private int selectedCard = 0; // 1 = card1  2 = card 2  3 = card3
+    private int selectedCard = 0; // 1 = card1  2 = card 2  3 = card
+    private int selectedBoard = 0; // n = player n
     private Integer dimension;
     private PlayableCard[][] tableP1;
     private PlayableCard[][] tableP2;
@@ -48,6 +48,8 @@ public class GUIGameController {
     private PlayableCard[][] tableP4;
     private int nPlayers;
     private boolean cardDrawn = false;
+    private boolean cardPlaced = false;
+    private Coordinates coordinatesToPlay;
 
 
 
@@ -121,15 +123,11 @@ public class GUIGameController {
     @FXML
     private Button buttonP4Board;
     @FXML
-    private GridPane gridPaneTest;
-    @FXML
     private ScrollPane boardPane;
     @FXML
     private GridPane grid;
     @FXML
     private Label selectedCardLabel;
-
-
 
 
     public void setTurnLabel() {
@@ -629,7 +627,6 @@ public class GUIGameController {
         initializeGridPaneCells();
 
 
-
         // dimensioni scrollpane: prefHeight="377.0" prefWidth="1028.0
         // SETTING THE CURRENT PLAYER (is the first in the list)
         // SETTING THE PAWNS
@@ -699,6 +696,7 @@ public class GUIGameController {
 
 
     public void showP1Board() { //togliamo la board precedente e stampiamo in ordine le carte della board del player 1
+        selectedBoard = 1;
         // PRINTING THE CURRENT POSITIONS OF THE SCROLL PANE TO SET THEM!
         System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
         System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
@@ -731,7 +729,7 @@ public class GUIGameController {
                          imageView.setPreserveRatio(true);
                          imageView.setSmooth(true);
                          imageView.toFront();
-                         this.gridPaneTest.add(imageView, i, j);
+                         this.grid.add(imageView, i, j);
                          placed = true;
                      }
                  }
@@ -743,6 +741,7 @@ public class GUIGameController {
 
 
     public void showP2Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 2
+        selectedBoard = 2;
         // PRINTING THE CURRENT POSITIONS OF THE SCROLL PANE TO SET THEM!
         System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
         System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
@@ -775,7 +774,7 @@ public class GUIGameController {
                         imageView.setPreserveRatio(true);
                         imageView.setSmooth(true);
                         imageView.toFront();
-                        this.gridPaneTest.add(imageView, i, j);
+                        this.grid.add(imageView, i, j);
                         placed = true;
                     }
                 }
@@ -787,6 +786,7 @@ public class GUIGameController {
 
 
     public void showP3Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 3
+        selectedBoard = 3;
         // PRINTING THE CURRENT POSITIONS OF THE SCROLL PANE TO SET THEM!
         System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
         System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
@@ -819,7 +819,7 @@ public class GUIGameController {
                         imageView.setPreserveRatio(true);
                         imageView.setSmooth(true);
                         imageView.toFront();
-                        this.gridPaneTest.add(imageView, i, j);
+                        this.grid.add(imageView, i, j);
                         placed = true;
                     }
                 }
@@ -831,6 +831,7 @@ public class GUIGameController {
 
 
     public void showP4Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 4
+        selectedBoard = 4;
         // PRINTING THE CURRENT POSITIONS OF THE SCROLL PANE TO SET THEM!
         System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
         System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
@@ -863,7 +864,7 @@ public class GUIGameController {
                         imageView.setPreserveRatio(true);
                         imageView.setSmooth(true);
                         imageView.toFront();
-                        this.gridPaneTest.add(imageView, i, j);
+                        this.grid.add(imageView, i, j);
                         placed = true;
                     }
                 }
@@ -906,20 +907,127 @@ public class GUIGameController {
     }
 
 
-    public void playCard(MouseEvent mouseEvent) {
+    public void mousePressed (MouseEvent mouseEvent) {
+        System.out.println("SONO IN MOUSE PRESSED");
 
+        grid.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+            int cellX;
+            int cellY;
+
+            double x = event.getX();
+            double y = event.getY();
+            cellX = (int) (x / 70);
+            cellY = (int) (y / 38.25);
+            System.out.println("COORDINATE MODIFICATE -->  x : " + cellX + " y: " + cellY);
+            this.coordinatesToPlay = new Coordinates(cellX, cellY);
+            playCard();
+        });
     }
+
+    public void playCard() {
+        System.out.println("SONO IN PLAYCARD");
+
+        if (network == 1 && rmiClient.getPersonalPlayer().getNickname().equals(rmiClient.getPlayersInTheGame().get(0).getNickname()) && !cardPlaced && selectedBoard == 1) { // RMI && player is in turn
+            // CHECKING IF IT'S A PLAYABLE POSITION OR NOT
+            Set<Coordinates> playablePositions = rmiClient.getPersonalPlayer().getBoard().getPlayablePositions();
+            for(Coordinates c : playablePositions) {
+                if (c.getX() == coordinatesToPlay.getX() && c.getY() == coordinatesToPlay.getY() && !cardPlaced) {
+                    if (playablePositions.contains(coordinatesToPlay)) {
+                        if (selectedCard == 1) {
+                            System.out.println("PLAYED CARD 1");
+                            cardPlaced = true;
+                            try {
+                                rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], coordinatesToPlay, orientationCard1);
+                            } catch (RemoteException | NotBoundException e) {
+                                throw new RuntimeException(e);
+                            }
+                        } else if (selectedCard == 2) {
+                            System.out.println("PLAYED CARD 2");
+                            cardPlaced = true;
+                            try {
+                                rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[1], coordinatesToPlay, orientationCard2);
+                            } catch (RemoteException | NotBoundException e) {
+                                throw new RuntimeException(e);
+                            }
+                        } else if (selectedCard == 3) {
+                            System.out.println("PLAYED CARD 3");
+                            cardPlaced = true;
+                            try {
+                                rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[2], coordinatesToPlay, orientationCard3);
+                            } catch (RemoteException | NotBoundException e) {
+                                throw new RuntimeException(e);
+                            }
+                        } else if (selectedCard == 0) {
+                            selectedCardLabel.setText("Please, select a card to play first!");
+                            System.out.println("select a card!");
+                        }
+                    }
+                }
+            }
+            if (!cardPlaced && selectedCard != 0) {
+                System.out.println("This isn't a playable position");
+            }
+
+        } else if (network == 2 && clientSCK.getPersonalPlayer().getNickname().equals(clientSCK.getPlayersInTheGame().get(0).getNickname()) && !cardPlaced && selectedBoard == 1) { // SCK && player is in turn
+            // CHECKING IF IT'S A PLAYABLE POSITION OR NOT
+            Set<Coordinates> playablePositions = clientSCK.getPersonalPlayer().getBoard().getPlayablePositions();
+            for(Coordinates c : playablePositions) {
+                if (c.getX() == coordinatesToPlay.getX() && c.getY() == coordinatesToPlay.getY() && !cardPlaced) {
+                    if (selectedCard == 1) {
+                        cardPlaced = true;
+                        System.out.println("PLAYED CARD 1");
+                        try {
+                            clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], coordinatesToPlay, orientationCard1);
+                        } catch (RemoteException | NotBoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else if (selectedCard == 2) {
+                        cardPlaced = true;
+                        System.out.println("PLAYED CARD 2");
+                        try {
+                            clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[1], coordinatesToPlay, orientationCard2);
+                        } catch (RemoteException | NotBoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else if (selectedCard == 3) {
+                        cardPlaced = true;
+                        System.out.println("PLAYED CARD 3");
+                        try {
+                            clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[2], coordinatesToPlay, orientationCard3);
+                        } catch (RemoteException | NotBoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else if (selectedCard == 0) {
+                        selectedCardLabel.setText("Please, select a card to play first!");
+                        System.out.println("select a card!");
+                    }
+                }
+            }
+            if (!cardPlaced && selectedCard != 0) {
+                System.out.println("This isn't a playable position");
+            }
+        } else if(selectedBoard != 1){
+            System.out.println("Select your board!");
+        } else if (network == 2 && !clientSCK.getPersonalPlayer().getNickname().equals(clientSCK.getPlayersInTheGame().get(0).getNickname())) {
+            System.out.println("It's not your turn");
+        } else if (network == 1 && !rmiClient.getPersonalPlayer().getNickname().equals(rmiClient.getPlayersInTheGame().get(0).getNickname())) {
+        System.out.println("It's not your turn");
+    }
+    }
+
+
 
 
     public void initializeGridPaneCells() {
         int count = 0;
-        for (int row = 0; row < 82; row++) { //81
-            for (int col = 0; col < 84; col++) { //83
+        for (int row = 0; row < 81; row++) { //80
+            for (int col = 0; col < 83; col++) { //82
                 count++;
                 Pane cell = new Pane();
                 cell.setPrefSize(68, 36);
-                cell.setId("cell" + count);
-                cell.setOnMouseClicked(this::playCard);
+                cell.setId("cell" + count); // cell1, cell2, cell3, ...
+                cell.setOnMouseClicked(this::mousePressed);
+                cell.setStyle("-fx-border-color: gray; -fx-border-width: 0.2px;");
                 grid.add(cell, col, row);
             }
         }
