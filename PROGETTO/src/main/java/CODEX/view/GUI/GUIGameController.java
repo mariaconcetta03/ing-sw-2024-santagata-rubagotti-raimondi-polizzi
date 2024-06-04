@@ -4,8 +4,11 @@ import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
 import CODEX.org.model.*;
 import javafx.animation.PauseTransition;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
@@ -910,10 +913,23 @@ public class GUIGameController {
 
     public void mousePressed (MouseEvent mouseEvent) {
         System.out.println("SONO IN MOUSE PRESSED");
+
+        String path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
+        Image card1 = new Image(getClass().getResourceAsStream(path));
+        ImageView imageView = new ImageView(card1);
+        imageView.setFitWidth((card1.getWidth() / 5.8));  // larghezza desiderata
+        imageView.setFitHeight((card1.getHeight() / 5.8)); // altezza desiderata
+        imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
+        System.out.println("mouseEvent.getX() " +mouseEvent.getX()+" mouseEvent.getX()" + mouseEvent.getX());
+        System.out.println("colonna " +mouseEvent.getX()/70.0+" riga" + mouseEvent.getX()/38.25);
+        this.grid.add(imageView, (int) ((int) mouseEvent.getX()/70.0), (int) ((int) mouseEvent.getX()/38.25));
+
+        /*
             int cellX;
             int cellY;
             double x = mouseEvent.getX();
-            double y = mouseEvent.getY();
+            double y = mouseEvent.getX();
             System.out.println("DOUBLE X e Y: " + x + " " + y);
             cellX = (int) (x / 70.0);
             cellY = (int) (y / 38.25);
@@ -921,6 +937,8 @@ public class GUIGameController {
             System.out.println("COORDINATE MODIFICATE -->  x : " + cellX + " y: " + cellY);
             this.coordinatesToPlay = new Coordinates(cellX, cellY);
             playCard();
+
+         */
     }
 
 
@@ -1025,22 +1043,107 @@ public class GUIGameController {
     }
 
 
-
+/*
 
     public void initializeGridPaneCells() {
-        int count = 0;
+       // int count = 0;
         for (int row = 0; row < 81; row++) { //80
             for (int col = 0; col < 83; col++) { //82
+                /*
                 count++;
                 Pane cell = new Pane();
                 cell.setPrefSize(70, 38.25);
+                cell.setAccessibleText(col+","+row);
                 cell.setId("cell" + count); // cell1, cell2, cell3, ...
                 cell.setOnMouseClicked(this::mousePressed);
-                cell.setStyle("-fx-border-color: grey; -fx-border-width: 0.2px;");
-                grid.add(cell, col, row);
+                cell.setStyle("-fx-border-color: grey; -fx-border-width: 0.05px;");
+                grid.add((Node)cell, col, row);
+
+                 */
+    /*
+                Button button=new Button();
+                button.setPrefSize(70, 38.25);
+                button.setText(col+","+row);
+                button.setOnAction( buttonClicked(button));
+                grid.add(button,col, row);
+
             }
         }
-        grid.addEventFilter(MouseEvent.MOUSE_PRESSED, this::mousePressed);
+        //grid.addEventFilter(MouseEvent.MOUSE_PRESSED, this::mousePressed);
+    }
+
+    private EventHandler<ActionEvent> buttonClicked(Button button) {
+       String buttomText=button.getText();
+       char[] x = new char[2];
+        char[] y =new char[2];
+        int i=0;
+        while(buttomText.charAt(i)!=','){
+            x[i]=buttomText.charAt(i);
+            i++;
+        }
+        i++;//sorpasso la virgola
+        int j=0;
+        while(i<buttomText.length()){
+            y[j]=buttomText.charAt(i);
+            j++;
+        }
+
+        //di prova
+        String path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
+        Image card1 = new Image(getClass().getResourceAsStream(path));
+        ImageView imageView = new ImageView(card1);
+        imageView.setFitWidth((card1.getWidth() / 5.8));  // larghezza desiderata
+        imageView.setFitHeight((card1.getHeight() / 5.8)); // altezza desiderata
+        imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
+        int row=0;
+        for(int k=x.length;k<0;k--){
+            row=row+(10^(k))*x[k];
+        }
+        int colomn=0;
+        for(int k=y.length;k<0;k--){
+            colomn=colomn+(10^(k))*y[k];
+        }
+        grid.add(imageView,row,colomn);
+
+
+        return null;
+    }
+
+     */
+public void initializeGridPaneCells() {
+    for (int row = 0; row < 81; row++) {
+        for (int col = 0; col < 83; col++) {
+            Button button = new Button();
+            button.setPrefSize(70, 38.25);
+            button.setText(col + "," + row);
+            button.setOnAction(event -> buttonClicked((Button) event.getSource()));
+            grid.add(button, col, row);
+        }
+    }
+}
+
+    private void buttonClicked(Button button) {
+        String buttonText = button.getText();
+        String[] coordinates = buttonText.split(",");
+        try {
+            int col = Integer.parseInt(coordinates[0]);
+            int row = Integer.parseInt(coordinates[1]);
+
+            // Esegui le operazioni desiderate con 'row' e 'col'
+            // Esempio: aggiungi un'immagine
+            String path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
+            Image card1 = new Image(getClass().getResourceAsStream(path));
+            ImageView imageView = new ImageView(card1);
+            imageView.setFitWidth((card1.getWidth() / 5.8));
+            imageView.setFitHeight((card1.getHeight() / 5.8));
+            imageView.setPreserveRatio(true);
+            imageView.setSmooth(true);
+            grid.add(imageView, col, row);
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+            // Gestisci eventuali eccezioni durante la conversione delle coordinate
+            e.printStackTrace();
+        }
     }
 
 
