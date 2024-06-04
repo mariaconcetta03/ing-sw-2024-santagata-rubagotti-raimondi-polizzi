@@ -720,6 +720,7 @@ public class GUIGameController {
         }
 
         for(Integer integer:cardsOnP1Board.keySet()){
+            System.out.println(integer);
             String path=null;
             if(cardsOnP1Board.get(integer).getOrientation()) {
                 path = "/images/cards/front/ (" + cardsOnP1Board.get(integer).getId() + ").png";
@@ -1266,7 +1267,10 @@ public void initializeGridPaneCells(boolean myBoard) {
                         try {
                             rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[0], new Coordinates(col,row), orientationCard1);
                             p1Counter++;
-                            cardsOnP1Board.put(p1Counter,playerDeck[0]);
+                            PlayableCard playableCard=playerDeck[0];
+                            playableCard.setPosition(new Coordinates(col,row));
+                            playableCard.setOrientation(orientationCard1);
+                            cardsOnP1Board.put(p1Counter,playableCard);
                             if(orientationCard1) {
                                 path = "/images/cards/front/ (" + playerDeck[0].getId() + ").png";
                             }else {
@@ -1282,7 +1286,10 @@ public void initializeGridPaneCells(boolean myBoard) {
                         try {
                             rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[1], new Coordinates(col,row), orientationCard2);
                             p1Counter++;
-                            cardsOnP1Board.put(p1Counter,playerDeck[1]);
+                            PlayableCard playableCard=playerDeck[1];
+                            playableCard.setPosition(new Coordinates(col,row));
+                            playableCard.setOrientation(orientationCard2);
+                            cardsOnP1Board.put(p1Counter,playableCard);
                             if(orientationCard1) {
                                 path = "/images/cards/front/ (" + playerDeck[1].getId() + ").png";
                             }else {
@@ -1298,7 +1305,10 @@ public void initializeGridPaneCells(boolean myBoard) {
                         try {
                             rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[2], new Coordinates(col,row), orientationCard3);
                             p1Counter++;
-                            cardsOnP1Board.put(p1Counter,playerDeck[2]);
+                            PlayableCard playableCard=playerDeck[2];
+                            playableCard.setPosition(new Coordinates(col,row));
+                            playableCard.setOrientation(orientationCard3);
+                            cardsOnP1Board.put(p1Counter,playableCard);
                             if(orientationCard1) {
                                 path = "/images/cards/front/ (" + playerDeck[2].getId() + ").png";
                             }else {
@@ -1326,7 +1336,13 @@ public void initializeGridPaneCells(boolean myBoard) {
                             clientSCK.setErrorState(false);
                         }else{
                             p1Counter++;
-                            cardsOnP1Board.put(p1Counter,playerDeck[0]);
+                            PlayableCard playableCard=playerDeck[0];
+                            playableCard.setPosition(new Coordinates(col,row));
+                            playableCard.setOrientation(orientationCard1);
+                            cardsOnP1Board.put(p1Counter,playableCard);
+                            for(Integer i:cardsOnP1Board.keySet()){
+                                System.out.println(i);
+                            }
                             if(orientationCard1) {
                                 path = "/images/cards/front/ (" + playerDeck[0].getId() + ").png";
                             }else {
@@ -1348,7 +1364,10 @@ public void initializeGridPaneCells(boolean myBoard) {
                         }
                         else{
                             p1Counter++;
-                            cardsOnP1Board.put(p1Counter,playerDeck[1]);
+                            PlayableCard playableCard=playerDeck[1];
+                            playableCard.setPosition(new Coordinates(col,row));
+                            playableCard.setOrientation(orientationCard2);
+                            cardsOnP1Board.put(p1Counter,playableCard);
                             if(orientationCard1) {
                                 path = "/images/cards/front/ (" + playerDeck[1].getId() + ").png";
                             }else {
@@ -1370,7 +1389,10 @@ public void initializeGridPaneCells(boolean myBoard) {
                         }
                         else{
                             p1Counter++;
-                            cardsOnP1Board.put(p1Counter,clientSCK.getPersonalPlayer().getPlayerDeck()[2]);
+                            PlayableCard playableCard=playerDeck[2];
+                            playableCard.setPosition(new Coordinates(col,row));
+                            playableCard.setOrientation(orientationCard3);
+                            cardsOnP1Board.put(p1Counter,playableCard);
                             if(orientationCard1) {
                                 path = "/images/cards/front/ (" + playerDeck[2].getId() + ").png";
                             }else {
