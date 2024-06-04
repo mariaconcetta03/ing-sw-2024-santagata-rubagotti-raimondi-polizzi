@@ -8,9 +8,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -19,7 +23,6 @@ import javafx.scene.control.*;
 import javafx.util.Duration;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -53,6 +56,7 @@ public class GUIGameController {
     private boolean cardDrawn = false;
     private boolean cardPlaced = false;
     private Coordinates coordinatesToPlay;
+    Set<Coordinates> playablePositions;
 
 
 
@@ -359,6 +363,7 @@ public class GUIGameController {
 
 
         if (this.network == 1) {
+            this.playablePositions = rmiClient.getPersonalPlayer().getBoard().getPlayablePositions();
             this.dimension=rmiClient.getPersonalPlayer().getBoard().getBoardDimensions();
 
             // PRINTING THE PLAYERS IN THE GAME
@@ -449,6 +454,7 @@ public class GUIGameController {
 
         } else if (this.network == 2) {
             this.dimension=clientSCK.getPersonalPlayer().getBoard().getBoardDimensions(); //le dimensioni sono uguali per tutti i giocatori
+            this.playablePositions = clientSCK.getPersonalPlayer().getBoard().getPlayablePositions();
 
             // PRINTING THE PLAYERS IN THE GAME
             for (Player p: clientSCK.getPlayersInTheGame()) {
@@ -727,11 +733,13 @@ public class GUIGameController {
                          String path = "/images/cards/front/ (" + (tableP1[i][j]).getId() + ").png";
                          Image card1 = new Image(getClass().getResourceAsStream(path));
                          ImageView imageView = new ImageView(card1);
-                         imageView.setFitWidth((card1.getWidth() / 5.8));  // larghezza desiderata
-                         imageView.setFitHeight((card1.getHeight() / 5.8)); // altezza desiderata
+                         imageView.setFitWidth(100.0);  // larghezza desiderata
+                         imageView.setFitHeight(68.25); // altezza desiderata
                          imageView.setPreserveRatio(true);
                          imageView.setSmooth(true);
                          imageView.toFront();
+                         Insets insets = new Insets(-15,-15,-15,-15); // Regola i margini come desiderato
+                         GridPane.setMargin(imageView, insets);
                          this.grid.add(imageView, i, j);
                          placed = true;
                      }
@@ -772,11 +780,12 @@ public class GUIGameController {
                         String path = "/images/cards/front/ (" + (tableP2[i][j]).getId() + ").png";
                         Image card1 = new Image(getClass().getResourceAsStream(path));
                         ImageView imageView = new ImageView(card1);
-                        imageView.setFitWidth((card1.getWidth() / 5.8));  // larghezza desiderata
-                        imageView.setFitHeight((card1.getHeight() / 5.8)); // altezza desiderata
-                        imageView.setPreserveRatio(true);
+                        imageView.setFitWidth(100.0);  // larghezza desiderata
+                        imageView.setFitHeight(68.25); // altezza desiderataimageView.setPreserveRatio(true);
                         imageView.setSmooth(true);
                         imageView.toFront();
+                        Insets insets = new Insets(-15,-15,-15,-15); // Regola i margini come desiderato
+                        GridPane.setMargin(imageView, insets);
                         this.grid.add(imageView, i, j);
                         placed = true;
                     }
@@ -817,11 +826,12 @@ public class GUIGameController {
                         String path = "/images/cards/front/ (" + (tableP3[i][j]).getId() + ").png";
                         Image card1 = new Image(getClass().getResourceAsStream(path));
                         ImageView imageView = new ImageView(card1);
-                        imageView.setFitWidth((card1.getWidth() / 5.8));  // larghezza desiderata
-                        imageView.setFitHeight((card1.getHeight() / 5.8)); // altezza desiderata
-                        imageView.setPreserveRatio(true);
+                        imageView.setFitWidth(100.0);  // larghezza desiderata
+                        imageView.setFitHeight(68.25); // altezza desiderataimageView.setPreserveRatio(true);
                         imageView.setSmooth(true);
                         imageView.toFront();
+                        Insets insets = new Insets(-15,-15,-15,-15); // Regola i margini come desiderato
+                        GridPane.setMargin(imageView, insets);
                         this.grid.add(imageView, i, j);
                         placed = true;
                     }
@@ -862,11 +872,12 @@ public class GUIGameController {
                         String path = "/images/cards/front/ (" + (tableP4[i][j]).getId() + ").png";
                         Image card1 = new Image(getClass().getResourceAsStream(path));
                         ImageView imageView = new ImageView(card1);
-                        imageView.setFitWidth((card1.getWidth() / 5.8));  // larghezza desiderata
-                        imageView.setFitHeight((card1.getHeight() / 5.8)); // altezza desiderata
-                        imageView.setPreserveRatio(true);
+                        imageView.setFitWidth(100.0);  // larghezza desiderata
+                        imageView.setFitHeight(68.25); // altezza desiderataimageView.setPreserveRatio(true);
                         imageView.setSmooth(true);
                         imageView.toFront();
+                        Insets insets = new Insets(-15,-15,-15,-15); // Regola i margini come desiderato
+                        GridPane.setMargin(imageView, insets);
                         this.grid.add(imageView, i, j);
                         placed = true;
                     }
@@ -1112,6 +1123,16 @@ public class GUIGameController {
 
      */
 public void initializeGridPaneCells() {
+
+    for(Coordinates coordinates:this.playablePositions){
+        Button button = new Button();
+        button.setPrefSize(70, 38.25);
+        button.setText(coordinates.getX() + "," + coordinates.getY());
+        button.setOnAction(event -> buttonClicked((Button) event.getSource()));
+        grid.add(button, coordinates.getX(), coordinates.getY());
+    }
+
+    /*
     for (int row = 0; row < 81; row++) {
         for (int col = 0; col < 83; col++) {
             Button button = new Button();
@@ -1121,6 +1142,8 @@ public void initializeGridPaneCells() {
             grid.add(button, col, row);
         }
     }
+
+     */
 }
 
     private void buttonClicked(Button button) {
@@ -1135,10 +1158,12 @@ public void initializeGridPaneCells() {
             String path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
             Image card1 = new Image(getClass().getResourceAsStream(path));
             ImageView imageView = new ImageView(card1);
-            imageView.setFitWidth((card1.getWidth() / 5.8));
-            imageView.setFitHeight((card1.getHeight() / 5.8));
+            imageView.setFitWidth(100.0);  // larghezza desiderata
+            imageView.setFitHeight(68.25); // altezza desiderata
             imageView.setPreserveRatio(true);
             imageView.setSmooth(true);
+            Insets insets = new Insets(-15,-15,-15,-15); // Regola i margini come desiderato
+            GridPane.setMargin(imageView, insets);
             grid.add(imageView, col, row);
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
             // Gestisci eventuali eccezioni durante la conversione delle coordinate
