@@ -1257,7 +1257,7 @@ public class ClientSCK implements ClientGeneralInterface {
         return aDisconnectionHappened;
     }
 
-    public void handleDisconnectionFunction(){
+    public void handleDisconnectionFunction() throws RemoteException{
         // TUI + GUI
         running=false;
         inGame=false;

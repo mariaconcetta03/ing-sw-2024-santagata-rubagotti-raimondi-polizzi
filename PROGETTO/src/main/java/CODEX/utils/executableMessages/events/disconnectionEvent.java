@@ -8,7 +8,11 @@ import java.rmi.RemoteException;
 public class disconnectionEvent implements Event {  //sostituisce quello che prima era l'evento di GAME_LEFT
     @Override
     public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
-        client.handleDisconnection();
+        System.out.println("sono dentro execute di disconnectionEvent");
+        client.handleDisconnection(); //interrompo lo scheduler che RICEVE gli heartBeat
+        System.out.println("fatto client.handleDisconnection() , ora faccio  wrappedObserver.getScheduler().shutdownNow();");
+        wrappedObserver.getScheduler().shutdown(); //interrompo lo scheduler che MANDA gli heartBeat
+        client.handleDisconnectionFunction(); //faccio la exit (client-side)
     }
 
     @Override

@@ -348,7 +348,12 @@ public class GUIBaseCardController {
 
     private void stageClose(){
         stage.close();
-        clientSCK.handleDisconnectionFunction();
+        try {
+            clientSCK.handleDisconnectionFunction();
+        } catch (RemoteException ignored) {
+
+        }
+
     }
 
 

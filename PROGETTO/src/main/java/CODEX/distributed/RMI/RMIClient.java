@@ -35,7 +35,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private final Object printLock;
     private boolean finishedSetup=false;
     private static final int HEARTBEAT_INTERVAL = 5; // seconds
-    private static final int TIMEOUT = 10; // seconds
+    private static final int TIMEOUT = 7; // seconds
     private ScheduledExecutorService schedulerToSendHeartbeat;
     ScheduledExecutorService schedulerToCheckReceivedHeartBeat;
     private long lastHeartbeatTime;
@@ -947,28 +947,32 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     @Override
     public void handleDisconnection() throws RemoteException {
+        System.out.println("sono dentro handleDisconnection() di RMIClient");
         if(selectedView==1) {
             System.out.println("Oh no! Someone disconnected!");
-            try {
-                this.executor.shutdown();
-                this.schedulerToCheckReceivedHeartBeat.shutdown();
-                this.schedulerToSendHeartbeat.shutdown(); //va prima chiuso l'heartbeat receiver lato server?
-
-            } catch (SecurityException e) {}
-
-            System.out.println("A disconnection happened. Closing the game.");
-            new Thread(()->{System.exit(-1);}); //uso un thread se no questa chiamata non ritorna
-
-            /*
-            Timer timer = new Timer();
-            try {
-                timer.wait(5000);
-            } catch (InterruptedException e) {
-            }
-
-             */
-        }else if(selectedView==2) {
         }
+
+        this.executor.shutdown();
+        this.schedulerToCheckReceivedHeartBeat.shutdown();
+        this.schedulerToSendHeartbeat.shutdown(); //va prima chiuso l'heartbeat receiver lato server -> lo facciamo la prima volta che il controller chiama disconnect()
+
+
+        if(selectedView==2) {
+        }
+    }
+
+    public void handleDisconnectionFunction() throws RemoteException{
+        System.out.println("A disconnection happened. Closing the game.");
+        Timer timer=new Timer();
+        timer.schedule(
+                new TimerTask() {
+                    @Override
+                    public void run() {
+                        //uso un thread se no questa chiamata non ritorna
+                        System.exit(0); //status 0 -> no errors
+                    }
+
+                },2000);
     }
 
 
@@ -1018,23 +1022,17 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 System.out.println("Server connection lost");
                 //caso in cui il server risulta irragiungibile
                 if (lambdaContext.heartbeatTask != null && !lambdaContext.heartbeatTask.isCancelled()) {
-                    lambdaContext.heartbeatTask.cancel(true);
+                    lambdaContext.heartbeatTask.cancel(true); //chiude schedulerToCheckReceivedHeartBeat
                 }
-                // taken from handleDisconnection()
+                // chiudiamo tutto quello che c'è da chiudere
                 try {
                     this.executor.shutdown();
                     this.schedulerToSendHeartbeat.shutdown(); //va prima chiuso l'heartbeat receiver lato server?
 
                 } catch (Exception e) {
                 }
-                //System.out.println("A disconnection happened.");
-                Timer timer = new Timer();
-                try {
-                    timer.wait(5000);
-                } catch (InterruptedException e) {
-                }
-
                 this.schedulerToCheckReceivedHeartBeat.shutdown();
+                System.exit(0); // status 0 -> no errors (the server has disconnected and the client has closed all his threads)
             }
         }, 0, TIMEOUT, TimeUnit.SECONDS);
     }

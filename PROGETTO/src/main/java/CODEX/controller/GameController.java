@@ -21,7 +21,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class GameController extends UnicastRemoteObject implements GameControllerInterface {
-    private static final int TIMEOUT = 10; // seconds
+    private static final int TIMEOUT = 7; // seconds
     private boolean disconnection=false; //per controllare quando fermare gli heartbeat agli altri player che non si sono disconnessi ma che giocavano con uno che si è disconnesso
     private boolean firstDisconnection=true; //per chiamre disconnection() solo per il primo player che si disconnette
     Map <String, Long> lastHeartbeatTimesOfEachPlayer;
@@ -543,16 +543,16 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                 disconnection=true;
                 System.out.println("Client connection lost");
                 if (lambdaContext.heartbeatTask != null && !lambdaContext.heartbeatTask.isCancelled()) {
-                    lambdaContext.heartbeatTask.cancel(true);
+                    lambdaContext.heartbeatTask.cancel(true); //chiude lo scheduler
                 }
-                scheduler.shutdown();
                 //caso in cui il client risulta irragiungibile->handleDisconnection: vanno avvisati i player e chiuso tutto
                 if(firstDisconnection){
+                    System.out.println("il server ha rilevato la prima disconnessione");
                     firstDisconnection=false; //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
                     disconnection(); //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
                 }
             }
-        }, 0, TIMEOUT, TimeUnit.SECONDS);
+        }, 0, TIMEOUT, TimeUnit.SECONDS); //usciti da qua se il il server ha rilevato la prima disconnessione sono già stati mandati gli updates disconnectionEvent a tutti i players
     }
     public void disconnection(){ //notify con disconnectionEvent
         //ATTENZIONE: togliere dagli observers il client che ha effettuato la disconnessione prima di mandare notify all
@@ -575,7 +575,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     //   firstDisconnection=false; //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
     //   disconnection(); //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
     // }
-    //devo usre questi getter per farlo:
+    //devo usare questi getter per farlo:
     public boolean getDisconnection(){
         return this.disconnection;
     }
