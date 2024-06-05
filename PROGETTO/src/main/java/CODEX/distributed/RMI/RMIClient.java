@@ -918,6 +918,12 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
         }
     }
+
+    /**
+     *
+     * @param winners
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
     @Override
     public void showWinner(List<Player> winners) throws RemoteException{
         if(selectedView==1) {
@@ -934,6 +940,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     }
 
+    /**
+     * This is an update method
+     * @param lastMoves is the number of turns remaining before the game ends.
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
     @Override
     public void updateLastMoves(int lastMoves) throws RemoteException {
         this.lastMoves=lastMoves;
@@ -974,15 +985,26 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     //GETTER & SETTER
 
+    /**
+     * Getter method
+     * @return the index related to the selected view
+     */
     public int getSelectedView() {
         return selectedView;
     }
 
+    /**
+     * Setter method
+     * @param selectedView the index related to the selected view
+     */
     public void setSelectedView(int selectedView) {
         this.selectedView = selectedView;
     }
 
-
+    /**
+     * Getter method
+     * @return the state the Game is in
+     */
     public Game.GameState getGameState (){
         try {
             return gameController.getGame().getState();
@@ -991,22 +1013,36 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
     }
 
-
+    /**
+     * Getter method
+     * @return true if the player is effectively in a Game, false otherwise
+     */
     public boolean getInGame() {
         return inGame;
     }
 
+    /**
+     * This method is used to check the disconnections through RMI protocol
+     */
     @Override
     public void heartbeat(){
         lastHeartbeatTime = System.currentTimeMillis();
         //System.out.println("Received heartbeat at " + lastHeartbeatTime);
     }
 
+    /**
+     * This method lets the heartbeat mechanism start
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
     @Override
     public void startHeartbeat() throws RemoteException {
         lastHeartbeatTime = System.currentTimeMillis();
         startHeartbeatMonitor();
     }
+
+    /**
+     * This method use a scheduler to administrate the heartbeat mechanism.
+     */
     private void startHeartbeatMonitor() { //scheduler.shutdownNow(); in caso di connection lost o Game ENDED
         this.schedulerToCheckReceivedHeartBeat = Executors.newScheduledThreadPool(1);
         var lambdaContext = new Object() {
@@ -1039,41 +1075,74 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }, 0, TIMEOUT, TimeUnit.SECONDS);
     }
 
-
+    /**
+     * Getter method
+     * @return the lock related to GUI
+     */
     public Object getGuiLock(){
         return this.guiLock;
     }
 
+    /**
+     * Getter method
+     * @return true if the setup phase is finished, false otherwise
+     */
     public boolean getFinishedSetup(){
         return this.finishedSetup;
     }
 
-
-
+    /**
+     * Getter method
+     * @return a List containing all the Players playing the specific Game
+     */
     public List<Player> getPlayersInTheGame() {
         return playersInTheGame;
     }
 
+    /**
+     * Getter method
+     * @return the resource Card 1
+     */
     public PlayableCard getResourceCard1() {
         return resourceCard1;
     }
 
+    /**
+     * Getter method
+     * @return the resource Card 2
+     */
     public PlayableCard getResourceCard2() {
         return resourceCard2;
     }
 
+    /**
+     * Getter method
+     * @return the gold Card 1
+     */
     public PlayableCard getGoldCard1() {
         return goldCard1;
     }
 
+    /**
+     * Getter method
+     * @return the gold Card 2
+     */
     public PlayableCard getGoldCard2() {
         return goldCard2;
     }
 
+    /**
+     * Getter method
+     * @return the gold Deck
+     */
     public PlayableDeck getGoldDeck() {
         return goldDeck;
     }
 
+    /**
+     * Getter method
+     * @return the resource Deck
+     */
     public PlayableDeck getResourceDeck() {
         return resourceDeck;
     }

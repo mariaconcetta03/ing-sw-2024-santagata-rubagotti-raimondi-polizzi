@@ -148,7 +148,7 @@ public class GameTest extends TestCase {
 
 
 
-    public void testWinner() {
+    public void testWinner() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
         Player p = new Player(game);
@@ -184,7 +184,7 @@ public class GameTest extends TestCase {
 
 
 
-    public void testWinner2() {
+    public void testWinner2() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
         Player p = new Player(game);
@@ -222,7 +222,7 @@ public class GameTest extends TestCase {
 
 
 
-    public void testWinner3() {
+    public void testWinner3() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
         Player p = new Player(game);

@@ -425,6 +425,20 @@ public class GameController extends UnicastRemoteObject implements GameControlle
 
          */
         game.setLastEvent (ErrorsAssociatedWithExceptions.OK);
+        //removing all the observers since the game will not continue
+        for(Player p: game.getPlayers()){
+            p.removeObservers();
+        }
+        for(Chat c: game.getChats()){
+            c.removeObservers();
+        }
+        game.removeObservers();
+        //removing the ID
+        serverController.getAllGameControllers().remove(id);
+        //
+        for(Player p: gamePlayers) {
+            serverController.getAllNicknames().remove(p.getNickname());
+        }
     }
 
 
