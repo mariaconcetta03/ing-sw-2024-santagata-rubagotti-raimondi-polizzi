@@ -31,6 +31,7 @@ public class ClientLauncher {
                 try {
                     System.setProperty("java.rmi.server.hostname", Inet4Address.getLocalHost().getHostAddress()); //don't if it works also for @mcs
                     RMIClient rmiClient = new RMIClient();
+                    rmiClient.getNetworkSettings().setSERVER_NAME(serverAddress); //setting the Server Address
                     rmiClient.setSelectedView(1); //TUI
                     rmiClient.SRMIInterfaceFromRegistry();
                     InterfaceTUI.clearScreen(); //@TODO NON SERVE A NIENTE?

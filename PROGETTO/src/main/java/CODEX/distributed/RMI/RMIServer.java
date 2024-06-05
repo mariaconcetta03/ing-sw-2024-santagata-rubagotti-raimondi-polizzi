@@ -27,7 +27,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
     /**
      * Class constructor
      * @param serverController
-     * @throws RemoteException
+     * @throws RemoteException if an exception happens while communicating with the remote
      */
     public RMIServer(ServerController serverController) throws RemoteException {
         this.serverController = serverController;
@@ -41,7 +41,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * This method calls the method "startServer". After the calling of this method the server
      * is able to receive the requests of the clients
      * @param args from CLI
-     * @throws RemoteException
+     * @throws RemoteException if an exception happens while communicating with the remote
      */
     public static void main (String[] args) throws RemoteException {
         try {
@@ -57,7 +57,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
     /**
      * This method starts the server, so it can listen to the clients and receive
      * their requests (the clients will invoke functions on the server)
-     * @throws RemoteException
+     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void startServer() throws RemoteException {
@@ -78,7 +78,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * This method calls the function into the ServerController
      * @param creatorNickname is the nickname of the player who wants to create a new lobby
      * @param numOfPlayers is the number of player the creator decided can play in the lobby
-     * @throws RemoteException
+     * @throws RemoteException if an exception happens while communicating with the remote
      * @return serverController.addPlayerToLobby(player, gameId) is the game controller of the match
      */
     public GameControllerInterface createLobby (String creatorNickname, int numOfPlayers) throws RemoteException {
@@ -92,7 +92,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * This method calls the function into the ServerController
      * @param playerNickname is the nickname of the player who wants to join the lobby
      * @param gameId is the lobby the player wants to join
-     * @throws RemoteException
+     * @throws RemoteException if an exception happens while communicating with the remote
      * @throws GameAlreadyStartedException
      * @throws FullLobbyException
      * @throws GameNotExistsException
@@ -108,7 +108,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
     /**
      * This method calls the function into the ServerController
      * @param nickname is the String he wants to put as his nickname
-     * @throws RemoteException
+     * @throws RemoteException if an exception happens while communicating with the remote
      * @throws NicknameAlreadyTakenException
      */
     public void chooseNickname (String nickname) throws RemoteException, NicknameAlreadyTakenException {

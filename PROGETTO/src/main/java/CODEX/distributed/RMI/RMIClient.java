@@ -83,7 +83,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private boolean baseCard= false;
     private boolean nicknameSet = false;
     private List<ChatMessage> messages;
-
+    private Settings networkSettings;
 
     public GameControllerInterface getGameController() {
         return gameController;
@@ -123,7 +123,14 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public static class Settings { //this is an attribute
         static int PORT = 1099; // free ports: from 49152 to 65535, 1099 standard port for RMI registry
-        static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
+        String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
+
+        public void setSERVER_NAME(String SERVER_NAME) {
+            this.SERVER_NAME = SERVER_NAME;
+        }
+        public String getSERVER_NAME(){
+            return this.SERVER_NAME;
+        }
     }
 
 
@@ -138,7 +145,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public void SRMIInterfaceFromRegistry() throws RemoteException, NotBoundException {
         Registry registryServer = null;
-        registryServer = LocateRegistry.getRegistry(Settings.SERVER_NAME,
+        registryServer = LocateRegistry.getRegistry(networkSettings.getSERVER_NAME(),
                 Settings.PORT); // getting the registry
         // Looking up the registry for the remote object
         this.SRMIInterface = (ServerRMIInterface) registryServer.lookup("Server");
@@ -1143,6 +1150,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public PlayableDeck getResourceDeck() {
         return resourceDeck;
+    }
+
+    public Settings getNetworkSettings() {
+        return networkSettings;
     }
 
 }
