@@ -4,6 +4,7 @@ import CODEX.Exceptions.*;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.org.model.*;
 
+import CODEX.view.GUI.GUIGameController;
 import CODEX.view.TUI.ANSIFormatter;
 import CODEX.view.TUI.InterfaceTUI;
 
@@ -58,6 +59,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private PlayableCard goldCard2;
     private PlayableCard resourceCard1;
     private PlayableCard resourceCard2;
+    private GUIGameController guiGameController=null;
 
     public Player getPersonalPlayer() {
         return personalPlayer;
@@ -115,6 +117,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         personalPlayer= new Player();
         messages=new ArrayList<>();
         networkSettings=new Settings();
+    }
+
+    public void setGuiGameController(GUIGameController guiGameController) {
+        this.guiGameController=guiGameController;
     }
 
 
@@ -707,6 +713,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             //System.out.println("I received the resource Card 1.");
         } else if (selectedView == 2) {
             //guiView.updateResourceCard1(card)
+            if(guiGameController!=null){
+                guiGameController.updateResourceCard1(card);
+            }
         }
     }
 
@@ -724,6 +733,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             //System.out.println("I received the resource Card2.");
         } else if (selectedView == 2) {
             //guiView.updateResourceCard2(card)
+            if(guiGameController!=null){
+                guiGameController.updateResourceCard2(card);
+            }
         }
     }
 
@@ -741,6 +753,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 //System.out.println("I received the goldCard 1");
         } else if (selectedView == 2) {
             //guiView.updateGoldCard1(card)
+            if(guiGameController!=null){
+                guiGameController.updateGoldCard1(card);
+            }
         }
     }
 
@@ -758,6 +773,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             //System.out.println("I received the goldCard2.");
         } else if (selectedView == 2) {
             //guiView.updateGoldCard2(card)
+            if(guiGameController!=null){
+                guiGameController.updateGoldCard2(card);
+            }
         }
     }
 
@@ -862,6 +880,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 //chiamo playBaseCard : se uso un thread per farlo posso continuare a ricevere e a rispondere a ping
             }
             if (this.turnCounter >= 1){
+                if(guiGameController!=null){
+                    guiGameController.updateRound();
+                }
                 // MAI FATTO
                 //dico ai giocatori chi sta giocando e chi no
                 if (this.turnCounter == 1){ //questo è il terzo turno

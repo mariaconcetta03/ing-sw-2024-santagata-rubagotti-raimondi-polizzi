@@ -47,6 +47,7 @@ public class ClientSCK implements ClientGeneralInterface {
     private boolean finishedSetup=false;
     private HashSet<Integer> lobbyId;
     private final Socket socket;
+    private GUIGameController guiGameController=null;
 
     public Player getPersonalPlayer() {
         return personalPlayer;
@@ -816,6 +817,9 @@ public class ClientSCK implements ClientGeneralInterface {
             System.out.println("I received the updateResourceCard1.");
         } else if (selectedView == 2) {
             //guiView.updateResourceCard1(card)
+            if(guiGameController!=null){
+                guiGameController.updateResourceCard1(card);
+            }
         }
     }
 
@@ -827,6 +831,9 @@ public class ClientSCK implements ClientGeneralInterface {
             System.out.println("I received the updateResourceCard2.");
         } else if (selectedView == 2) {
             //guiView.updateResourceCard2(card)
+            if(guiGameController!=null){
+                guiGameController.updateResourceCard2(card);
+            }
         }
     }
 
@@ -837,7 +844,10 @@ public class ClientSCK implements ClientGeneralInterface {
         if (selectedView == 1) {
             System.out.println("I received the updateGoldCard1.");
         } else if (selectedView == 2) {
-            //guiView.updateGoldCard2(card)
+            //guiView.updateGoldCard1(card)
+            if(guiGameController!=null){
+                guiGameController.updateGoldCard1(card);
+            }
         }
     }
 
@@ -849,6 +859,9 @@ public class ClientSCK implements ClientGeneralInterface {
             System.out.println("I received the updateGoldCard2.");
         } else if (selectedView == 2) {
             //guiView.updateGoldCard2(card)
+            if(guiGameController!=null){
+                guiGameController.updateGoldCard2(card);
+            }
         }
     }
 
@@ -925,6 +938,9 @@ public class ClientSCK implements ClientGeneralInterface {
             }
             if (this.turnCounter >= 1){
                 //dico ai giocatori chi sta giocando e chi no
+                if(guiGameController!=null){
+                    guiGameController.updateRound();
+                }
 
                 if (this.turnCounter == 1){ //questo è il terzo turno
                     //dal terzo turno è possibile vedere il menù e selezionarne i punti del menù, la TUI qui lancia un thread che va per tutta la partita
@@ -1279,6 +1295,10 @@ public class ClientSCK implements ClientGeneralInterface {
 
     public void setGuiClosed(boolean guiClosed) {
         this.guiClosed = guiClosed;
+    }
+
+    public void setGuiGameController(GUIGameController guiGameController) {
+        this.guiGameController=guiGameController;
     }
 
 

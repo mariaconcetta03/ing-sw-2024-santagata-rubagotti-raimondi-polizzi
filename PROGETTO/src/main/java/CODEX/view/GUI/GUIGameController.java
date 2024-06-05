@@ -4,6 +4,7 @@ import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
 import CODEX.org.model.*;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -67,9 +68,12 @@ public class GUIGameController {
     private Integer p3Counter=1;
     private Integer p4Counter=1;
     private Integer emptySpace=0;
-    private Integer goldDeckID;
-    private Integer resorceDeckID;
 
+    //IDEA: confrontiamo le playable position precedenti con quelle nuove: controlliamo le posizioni della matrice dove è stata tolta una playable position per vedere se è stata aggiunta una carta
+    //OPPURE: MOLTO MEGLIO -> ci facciamo arrivare assieme alla board la carta che è stata aggiunta (che ha già dentro di sè le coordinate giuste)
+    private Set<Coordinates> p2PlayablePositions; //quelle di py le prendiamo direttamente dal personale player (perche non abbiamo bisogno di capire quale carta è stata aggiunta)
+    private Set<Coordinates> p3PlayablePositions;
+    private Set<Coordinates> p4PlayablePositions;
 
 
 
@@ -150,15 +154,51 @@ public class GUIGameController {
 
 
     public void setTurnLabel() {
+        cardPlaced=false;
         if (network == 1) {
+            rmiClient.setGuiGameController(this);
             if (rmiClient.getPlayersInTheGame().get(0).getNickname().equals(rmiClient.getPersonalPlayer().getNickname())) {
                 this.turnLabel.setText("It's your turn!");
+
+                int i=1;
+                for (Player p: playersInOrder) { //tolgo l'illuminazione da tutti i bottoni
+                    System.out.println("nickname: " + p.getNickname());
+                    if(i==1){
+                        buttonP1Board.setStyle("");}
+                    if(i==2){
+                        buttonP2Board.setStyle("");}
+                    if(i==3){
+                        buttonP3Board.setStyle("");}
+                    if(i==4){
+                        buttonP4Board.setStyle("");}
+                    i++;
+                }
+                //mostriamo subito la board del giocatore in turno
+                showP1Board();
             } else {
                 this.turnLabel.setText("It's " + rmiClient.getPlayersInTheGame().get(0).getNickname() + "'s turn!");
             }
         } else if (network == 2) {
+            clientSCK.setGuiGameController(this);
             if (clientSCK.getPlayersInTheGame().get(0).getNickname().equals(clientSCK.getPersonalPlayer().getNickname())) {
                 this.turnLabel.setText("It's your turn!");
+
+                int i=1;
+                for (Player p: playersInOrder) { //tolgo l'illuminazione da tutti i bottoni
+                    System.out.println("nickname: " + p.getNickname());
+                    if(i==1){
+                        buttonP1Board.setStyle("");}
+                    if(i==2){
+                        buttonP2Board.setStyle("");}
+                    if(i==3){
+                        buttonP3Board.setStyle("");}
+                    if(i==4){
+                        buttonP4Board.setStyle("");}
+                    i++;
+                }
+                //mostriamo subito la board del giocatore in turno
+                showP1Board();
+
             } else {
                 this.turnLabel.setText("It's " + clientSCK.getPlayersInTheGame().get(0).getNickname() + "'s turn!");
             }
@@ -415,13 +455,12 @@ public class GUIGameController {
 
 
             // SETTING THE 2 DECKS AND THE 4 MARKET'S CARDS
-            this.goldDeckID=rmiClient.getGoldDeck().checkFirstCard().getId();
-            path = "/images/cards/back/  (" + goldDeckID + ").png";
+            path = "/images/cards/back/  (" + rmiClient.getGoldDeck().checkFirstCard().getId() + ").png";
             Image gd = new Image(getClass().getResourceAsStream(path));
             goldDeck.setImage(gd);
 
-            this.resorceDeckID=rmiClient.getResourceDeck().checkFirstCard().getId();
-            path = "/images/cards/back/  (" + resorceDeckID + ").png";
+
+            path = "/images/cards/back/  (" + rmiClient.getResourceDeck().checkFirstCard().getId() + ").png";
             Image rd = new Image(getClass().getResourceAsStream(path));
             resourceDeck.setImage(rd);
 
@@ -488,13 +527,12 @@ public class GUIGameController {
 
 
             // SETTING THE 2 DECKS AND THE 4 MARKET'S CARDS
-            this.goldDeckID=clientSCK.getGoldDeck().checkFirstCard().getId();
+
             path = "/images/cards/back/  (" + clientSCK.getGoldDeck().checkFirstCard().getId() + ").png";
             Image gd = new Image(getClass().getResourceAsStream(path));
             goldDeck.setImage(gd);
 
-            this.resorceDeckID=clientSCK.getResourceDeck().checkFirstCard().getId();
-            path = "/images/cards/back/  (" + resorceDeckID + ").png";
+            path = "/images/cards/back/  (" + clientSCK.getResourceDeck().checkFirstCard().getId() + ").png";
             Image rd = new Image(getClass().getResourceAsStream(path));
             resourceDeck.setImage(rd);
 
@@ -1019,7 +1057,12 @@ public class GUIGameController {
         if(emptySpace!=0){
             Integer temp=emptySpace;
             emptySpace=0;
-            String path = "/images/cards/front/  (" + resorceDeckID + ").png";
+            String path=null;
+            if(network==1){
+                path = "/images/cards/front/  (" + rmiClient.getResourceDeck().checkFirstCard().getId() + ").png";
+            }else if(network==2){
+                path = "/images/cards/front/  (" + clientSCK.getResourceDeck().checkFirstCard().getId() + ").png";
+            }
             Image newCard = new Image(getClass().getResourceAsStream(path));
             if(temp==1){
                 player1Card1.setImage(newCard);
@@ -1028,6 +1071,27 @@ public class GUIGameController {
                 player1Card2.setImage(newCard);
             }else if(temp==3){
                 player1Card3.setImage(newCard);
+            }
+            if(network==2){
+                try {
+                    clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(),clientSCK.getResourceDeck().checkFirstCard());
+                } catch (RemoteException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                } catch (NotBoundException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                }
+            }else if(network==1){
+                try {
+                    rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(),rmiClient.getResourceDeck().checkFirstCard());
+                } catch (RemoteException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                } catch (NotBoundException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                }
             }
 
 
@@ -1039,7 +1103,12 @@ public class GUIGameController {
         if(emptySpace!=0){
             Integer temp=emptySpace;
             emptySpace=0;
-            String path = "/images/cards/front/  (" + goldDeckID + ").png";
+            String path=null;
+            if(network==1){
+                path = "/images/cards/front/  (" + rmiClient.getGoldDeck().checkFirstCard().getId() + ").png";
+            }else if(network==2){
+                path = "/images/cards/front/  (" + clientSCK.getGoldDeck().checkFirstCard().getId() + ").png";
+            }
             Image newCard = new Image(getClass().getResourceAsStream(path));
             if(temp==1){
                 player1Card1.setImage(newCard);
@@ -1049,7 +1118,27 @@ public class GUIGameController {
             }else if(temp==3){
                 player1Card3.setImage(newCard);
             }
-
+            if(network==2) {
+                try {
+                    clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getGoldDeck().checkFirstCard());
+                } catch (RemoteException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                } catch (NotBoundException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                }
+            }else if(network==1){
+                try {
+                    rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getGoldDeck().checkFirstCard());
+                } catch (RemoteException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                } catch (NotBoundException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
     }
@@ -1065,6 +1154,28 @@ public class GUIGameController {
                 player1Card2.setImage(resourceCard1.getImage());
             }else if(temp==3){
                 player1Card3.setImage(resourceCard1.getImage());
+            }
+            if(network==2) {
+                try {
+                    clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getResourceCard1());
+                } catch (RemoteException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                } catch (NotBoundException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                }
+            }
+            else if(network==1) {
+                try {
+                    rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getResourceCard1());
+                } catch (RemoteException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                } catch (NotBoundException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                }
             }
 
         }
@@ -1083,7 +1194,28 @@ public class GUIGameController {
             }else if(temp==3){
                 player1Card3.setImage(resourceCard2.getImage());
             }
-
+            if(network==2) {
+                try {
+                    clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getResourceCard2());
+                } catch (RemoteException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                } catch (NotBoundException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                }
+            }
+            else if(network==1) {
+                try {
+                    rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getResourceCard2());
+                } catch (RemoteException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                } catch (NotBoundException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
     }
@@ -1099,7 +1231,27 @@ public class GUIGameController {
             }else if(temp==3){
                 player1Card3.setImage(goldCard1.getImage());
             }
-
+            if(network==2) {
+                try {
+                    clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getGoldCard1());
+                } catch (RemoteException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                } catch (NotBoundException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                }
+            }else if(network==1) {
+                try {
+                    rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getGoldCard1());
+                } catch (RemoteException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                } catch (NotBoundException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
     }
@@ -1114,6 +1266,27 @@ public class GUIGameController {
                 player1Card2.setImage(goldCard2.getImage());
             }else if(temp==3){
                 player1Card3.setImage(goldCard2.getImage());
+            }
+            if(network==2) {
+                try {
+                    clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getGoldCard2());
+                } catch (RemoteException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                } catch (NotBoundException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                }
+            }else if(network==1) {
+                try {
+                    rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getGoldCard2());
+                } catch (RemoteException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                } catch (NotBoundException e) {
+                    System.out.println("errore nel pescaggio");
+                    throw new RuntimeException(e);
+                }
             }
 
         }
@@ -1557,4 +1730,38 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
     }
 
 
+    public void updateResourceCard1(PlayableCard card) {
+        Platform.runLater(() -> {
+            String path = "/images/cards/front/  (" + card.getId() + ").png";
+            Image newCard = new Image(getClass().getResourceAsStream(path));
+            resourceCard1.setImage(newCard);
+        });
+    }
+
+    public void updateResourceCard2(PlayableCard card) {
+        Platform.runLater(() -> {
+        String path = "/images/cards/front/  (" + card.getId() + ").png";
+        Image newCard = new Image(getClass().getResourceAsStream(path));
+        resourceCard2.setImage(newCard);
+        });
+    }
+
+    public void updateGoldCard1(PlayableCard card) {
+        Platform.runLater(() -> {
+            String path = "/images/cards/front/  (" + card.getId() + ").png";
+            Image newCard = new Image(getClass().getResourceAsStream(path));
+            goldCard1.setImage(newCard);
+        });
+    }
+    public void updateGoldCard2(PlayableCard card) {
+        Platform.runLater(() -> {
+        String path = "/images/cards/front/  (" + card.getId() + ").png";
+        Image newCard = new Image(getClass().getResourceAsStream(path));
+        goldCard2.setImage(newCard);
+        });
+    }
+
+    public void updateRound() {
+        Platform.runLater(this::setTurnLabel);
+    }
 }
