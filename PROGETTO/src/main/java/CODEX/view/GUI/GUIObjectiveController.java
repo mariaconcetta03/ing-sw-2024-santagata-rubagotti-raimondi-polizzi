@@ -253,13 +253,13 @@ public class GUIObjectiveController {
     public void changeOrientationCard1(){
         if(orientationCard1) {
             String path;
-            path = "/images/cards/back/ (" + card1ID + ").png";
+            path = "/images/cards/back/  (" + card1ID + ").png";
             Image image = new Image(getClass().getResourceAsStream(path));
             card1.setImage(image);
             orientationCard1 = false;
         }else{
             String path;
-            path = "/images/cards/front/ (" + card1ID + ").png";
+            path = "/images/cards/front/  (" + card1ID + ").png";
             Image image = new Image(getClass().getResourceAsStream(path));
             card1.setImage(image);
             orientationCard1 = true;
@@ -270,13 +270,13 @@ public class GUIObjectiveController {
     public void changeOrientationCard2(){
         if(orientationCard2) {
             String path;
-            path = "/images/cards/back/ (" + card2ID + ").png";
+            path = "/images/cards/back/  (" + card2ID + ").png";
             Image image = new Image(getClass().getResourceAsStream(path));
             card2.setImage(image);
             orientationCard2 = false;
         }else{
             String path;
-            path = "/images/cards/front/ (" + card2ID + ").png";
+            path = "/images/cards/front/  (" + card2ID + ").png";
             Image image = new Image(getClass().getResourceAsStream(path));
             card2.setImage(image);
             orientationCard2 = true;
@@ -287,13 +287,13 @@ public class GUIObjectiveController {
     public void changeOrientationCard3(){
         if(orientationCard3) {
             String path;
-            path = "/images/cards/back/ (" + card3ID + ").png";
+            path = "/images/cards/back/  (" + card3ID + ").png";
             Image image = new Image(getClass().getResourceAsStream(path));
             card3.setImage(image);
             orientationCard3 = false;
         }else{
             String path;
-            path = "/images/cards/front/ (" + card3ID + ").png";
+            path = "/images/cards/front/  (" + card3ID + ").png";
             Image image = new Image(getClass().getResourceAsStream(path));
             card3.setImage(image);
             orientationCard3 = true;
@@ -303,7 +303,7 @@ public class GUIObjectiveController {
 
     public void setObjCard1(int cardID) {
         String path;
-        path = "/images/cards/front/ (" + cardID + ").png";
+        path = "/images/cards/front/  (" + cardID + ").png";
         Image image = new Image(getClass().getResourceAsStream(path));
         objCard1.setImage(image);
     }
@@ -311,7 +311,7 @@ public class GUIObjectiveController {
 
     public void setObjCard2(int cardID) {
         String path;
-        path = "/images/cards/front/ (" + cardID + ").png";
+        path = "/images/cards/front/  (" + cardID + ").png";
         Image image = new Image(getClass().getResourceAsStream(path));
         objCard2.setImage(image);
     }
@@ -319,7 +319,7 @@ public class GUIObjectiveController {
 
     public void setCard1(int cardID) {
         String path;
-        path = "/images/cards/front/ (" + cardID + ").png";
+        path = "/images/cards/front/  (" + cardID + ").png";
         Image image = new Image(getClass().getResourceAsStream(path));
         card1.setImage(image);
         card1ID = cardID;
@@ -328,7 +328,7 @@ public class GUIObjectiveController {
 
     public void setCard2(int cardID) {
         String path;
-        path = "/images/cards/front/ (" + cardID + ").png";
+        path = "/images/cards/front/  (" + cardID + ").png";
         Image image = new Image(getClass().getResourceAsStream(path));
         card2.setImage(image);
         card2ID = cardID;
@@ -337,7 +337,7 @@ public class GUIObjectiveController {
 
     public void setCard3(int cardID) {
         String path;
-        path = "/images/cards/front/ (" + cardID + ").png";
+        path = "/images/cards/front/  (" + cardID + ").png";
         Image image = new Image(getClass().getResourceAsStream(path));
         card3.setImage(image);
         card3ID = cardID;
@@ -347,9 +347,9 @@ public class GUIObjectiveController {
     public void setBaseCard(int cardID, boolean orientation) {
         String path;
         if (orientation) {
-            path = "/images/cards/front/ (" + cardID + ").png";
+            path = "/images/cards/front/  (" + cardID + ").png";
         } else {
-            path = "/images/cards/back/ (" + cardID + ").png";
+            path = "/images/cards/back/  (" + cardID + ").png";
         }
         Image image = new Image(getClass().getResourceAsStream(path));
         baseCard.setImage(image);

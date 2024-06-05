@@ -52,14 +52,14 @@ public class GUIBaseCardController {
 
     public void setBaseCard1(int cardID) {
         String path;
-        path = "/images/cards/front/ (" + cardID + ").png";
+        path = "/images/cards/front/  (" + cardID + ").png";
         Image image = new Image(getClass().getResourceAsStream(path));
         baseCard1.setImage(image);
     }
 
     public void setBaseCard2(int cardID) {
         String path;
-        path = "/images/cards/back/ (" + cardID + ").png";
+        path = "/images/cards/back/  (" + cardID + ").png";
         Image image = new Image(getClass().getResourceAsStream(path));
         baseCard2.setImage(image);
     }

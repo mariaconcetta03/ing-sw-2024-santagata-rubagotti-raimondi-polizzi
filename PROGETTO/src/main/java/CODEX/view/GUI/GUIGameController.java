@@ -292,15 +292,15 @@ public class GUIGameController {
 
     private void setPlayer1Cards() {
         String path;
-        path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
+        path = "/images/cards/front/  (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
         Image card1 = new Image(getClass().getResourceAsStream(path));
         player1Card1.setImage(card1);
 
-        path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[1].getId() + ").png";
+        path = "/images/cards/front/  (" + playersInOrder.get(0).getPlayerDeck()[1].getId() + ").png";
         Image card2 = new Image(getClass().getResourceAsStream(path));
         player1Card2.setImage(card2);
 
-        path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[2].getId() + ").png";
+        path = "/images/cards/front/  (" + playersInOrder.get(0).getPlayerDeck()[2].getId() + ").png";
         Image card3 = new Image(getClass().getResourceAsStream(path));
         player1Card3.setImage(card3);
     }
@@ -310,15 +310,15 @@ public class GUIGameController {
     private void setPlayer2Cards() {
             String path;
 
-            path = "/images/cards/back/ (" + playersInOrder.get(1).getPlayerDeck()[0].getId() + ").png";
+            path = "/images/cards/back/  (" + playersInOrder.get(1).getPlayerDeck()[0].getId() + ").png";
             Image card1 = new Image(getClass().getResourceAsStream(path));
             player2Card1.setImage(card1);
 
-            path = "/images/cards/back/ (" + playersInOrder.get(1).getPlayerDeck()[1].getId() + ").png";
+            path = "/images/cards/back/  (" + playersInOrder.get(1).getPlayerDeck()[1].getId() + ").png";
             Image card2 = new Image(getClass().getResourceAsStream(path));
             player2Card2.setImage(card2);
 
-            path = "/images/cards/back/ (" + playersInOrder.get(1).getPlayerDeck()[2].getId() + ").png";
+            path = "/images/cards/back/  (" + playersInOrder.get(1).getPlayerDeck()[2].getId() + ").png";
             Image card3 = new Image(getClass().getResourceAsStream(path));
             player2Card3.setImage(card3);
     }
@@ -327,15 +327,15 @@ public class GUIGameController {
 
     private void setPlayer3Cards() {
         String path;
-        path = "/images/cards/back/ (" + playersInOrder.get(2).getPlayerDeck()[0].getId() + ").png";
+        path = "/images/cards/back/  (" + playersInOrder.get(2).getPlayerDeck()[0].getId() + ").png";
         Image card1 = new Image(getClass().getResourceAsStream(path));
         player3Card1.setImage(card1);
 
-        path = "/images/cards/back/ (" + playersInOrder.get(2).getPlayerDeck()[1].getId() + ").png";
+        path = "/images/cards/back/  (" + playersInOrder.get(2).getPlayerDeck()[1].getId() + ").png";
         Image card2 = new Image(getClass().getResourceAsStream(path));
         player3Card2.setImage(card2);
 
-        path = "/images/cards/back/ (" + playersInOrder.get(2).getPlayerDeck()[2].getId() + ").png";
+        path = "/images/cards/back/  (" + playersInOrder.get(2).getPlayerDeck()[2].getId() + ").png";
         Image card3 = new Image(getClass().getResourceAsStream(path));
         player3Card3.setImage(card3);
     }
@@ -344,15 +344,15 @@ public class GUIGameController {
 
     private void setPlayer4Cards() {
         String path;
-        path = "/images/cards/back/ (" + playersInOrder.get(3).getPlayerDeck()[0].getId() + ").png";
+        path = "/images/cards/back/  (" + playersInOrder.get(3).getPlayerDeck()[0].getId() + ").png";
         Image card1 = new Image(getClass().getResourceAsStream(path));
         player4Card1.setImage(card1);
 
-        path = "/images/cards/back/ (" + playersInOrder.get(3).getPlayerDeck()[1].getId() + ").png";
+        path = "/images/cards/back/  (" + playersInOrder.get(3).getPlayerDeck()[1].getId() + ").png";
         Image card2 = new Image(getClass().getResourceAsStream(path));
         player4Card2.setImage(card2);
 
-        path = "/images/cards/back/ (" + playersInOrder.get(3).getPlayerDeck()[2].getId() + ").png";
+        path = "/images/cards/back/  (" + playersInOrder.get(3).getPlayerDeck()[2].getId() + ").png";
         Image card3 = new Image(getClass().getResourceAsStream(path));
         player4Card3.setImage(card3);
     }
@@ -394,43 +394,43 @@ public class GUIGameController {
 
             // SETTING THE PERSONAL OBJECTIVE
             String path;
-            path = "/images/cards/front/ (" + rmiClient.getPersonalPlayer().getPersonalObjective().getId() + ").png";
+            path = "/images/cards/front/  (" + rmiClient.getPersonalPlayer().getPersonalObjective().getId() + ").png";
             Image persObj = new Image(getClass().getResourceAsStream(path));
             personalObj.setImage(persObj);
 
 
             // SETTING THE 2 COMMON OBJECTIVES
-            path = "/images/cards/front/ (" + rmiClient.getCommonObjective1().getId() + ").png";
+            path = "/images/cards/front/  (" + rmiClient.getCommonObjective1().getId() + ").png";
             Image obj1 = new Image(getClass().getResourceAsStream(path));
             commonObj1.setImage(obj1);
 
-            path = "/images/cards/front/ (" + rmiClient.getCommonObjective2().getId() + ").png";
+            path = "/images/cards/front/  (" + rmiClient.getCommonObjective2().getId() + ").png";
             Image obj2 = new Image(getClass().getResourceAsStream(path));
             commonObj2.setImage(obj2);
 
 
             // SETTING THE 2 DECKS AND THE 4 MARKET'S CARDS
-            path = "/images/cards/back/ (" + rmiClient.getGoldDeck().checkFirstCard().getId() + ").png";
+            path = "/images/cards/back/  (" + rmiClient.getGoldDeck().checkFirstCard().getId() + ").png";
             Image gd = new Image(getClass().getResourceAsStream(path));
             goldDeck.setImage(gd);
 
-            path = "/images/cards/back/ (" + rmiClient.getResourceDeck().checkFirstCard().getId() + ").png";
+            path = "/images/cards/back/  (" + rmiClient.getResourceDeck().checkFirstCard().getId() + ").png";
             Image rd = new Image(getClass().getResourceAsStream(path));
             resourceDeck.setImage(rd);
 
-            path = "/images/cards/front/ (" + rmiClient.getResourceCard1().getId() + ").png";
+            path = "/images/cards/front/  (" + rmiClient.getResourceCard1().getId() + ").png";
             Image rc1 = new Image(getClass().getResourceAsStream(path));
             resourceCard1.setImage(rc1);
 
-            path = "/images/cards/front/ (" + rmiClient.getResourceCard2().getId() + ").png";
+            path = "/images/cards/front/  (" + rmiClient.getResourceCard2().getId() + ").png";
             Image rc2 = new Image(getClass().getResourceAsStream(path));
             resourceCard2.setImage(rc2);
 
-            path = "/images/cards/front/ (" + rmiClient.getGoldCard1().getId() + ").png";
+            path = "/images/cards/front/  (" + rmiClient.getGoldCard1().getId() + ").png";
             Image gc1 = new Image(getClass().getResourceAsStream(path));
             goldCard1.setImage(gc1);
 
-            path = "/images/cards/front/ (" + rmiClient.getGoldCard2().getId() + ").png";
+            path = "/images/cards/front/  (" + rmiClient.getGoldCard2().getId() + ").png";
             Image gc2 = new Image(getClass().getResourceAsStream(path));
             goldCard2.setImage(gc2);
 
@@ -464,43 +464,43 @@ public class GUIGameController {
 
             // SETTING THE PERSONAL OBJECTIVE
             String path;
-            path = "/images/cards/front/ (" + clientSCK.getPersonalPlayer().getPersonalObjective().getId() + ").png";
+            path = "/images/cards/front/  (" + clientSCK.getPersonalPlayer().getPersonalObjective().getId() + ").png";
             Image persObj = new Image(getClass().getResourceAsStream(path));
             personalObj.setImage(persObj);
 
 
             // SETTING THE 2 COMMON OBJECTIVES
-            path = "/images/cards/front/ (" + clientSCK.getCommonObjective1().getId() + ").png";
+            path = "/images/cards/front/  (" + clientSCK.getCommonObjective1().getId() + ").png";
             Image obj1 = new Image(getClass().getResourceAsStream(path));
             commonObj1.setImage(obj1);
 
-            path = "/images/cards/front/ (" + clientSCK.getCommonObjective2().getId() + ").png";
+            path = "/images/cards/front/  (" + clientSCK.getCommonObjective2().getId() + ").png";
             Image obj2 = new Image(getClass().getResourceAsStream(path));
             commonObj2.setImage(obj2);
 
 
             // SETTING THE 2 DECKS AND THE 4 MARKET'S CARDS
-            path = "/images/cards/back/ (" + clientSCK.getGoldDeck().checkFirstCard().getId() + ").png";
+            path = "/images/cards/back/  (" + clientSCK.getGoldDeck().checkFirstCard().getId() + ").png";
             Image gd = new Image(getClass().getResourceAsStream(path));
             goldDeck.setImage(gd);
 
-            path = "/images/cards/back/ (" + clientSCK.getResourceDeck().checkFirstCard().getId() + ").png";
+            path = "/images/cards/back/  (" + clientSCK.getResourceDeck().checkFirstCard().getId() + ").png";
             Image rd = new Image(getClass().getResourceAsStream(path));
             resourceDeck.setImage(rd);
 
-            path = "/images/cards/front/ (" + clientSCK.getResourceCard1().getId() + ").png";
+            path = "/images/cards/front/  (" + clientSCK.getResourceCard1().getId() + ").png";
             Image rc1 = new Image(getClass().getResourceAsStream(path));
             resourceCard1.setImage(rc1);
 
-            path = "/images/cards/front/ (" + clientSCK.getResourceCard2().getId() + ").png";
+            path = "/images/cards/front/  (" + clientSCK.getResourceCard2().getId() + ").png";
             Image rc2 = new Image(getClass().getResourceAsStream(path));
             resourceCard2.setImage(rc2);
 
-            path = "/images/cards/front/ (" + clientSCK.getGoldCard1().getId() + ").png";
+            path = "/images/cards/front/  (" + clientSCK.getGoldCard1().getId() + ").png";
             Image gc1 = new Image(getClass().getResourceAsStream(path));
             goldCard1.setImage(gc1);
 
-            path = "/images/cards/front/ (" + clientSCK.getGoldCard2().getId() + ").png";
+            path = "/images/cards/front/  (" + clientSCK.getGoldCard2().getId() + ").png";
             Image gc2 = new Image(getClass().getResourceAsStream(path));
             goldCard2.setImage(gc2);
 
@@ -645,13 +645,13 @@ public class GUIGameController {
         if (orientationCard1) {
             orientationCard1 = false;
             String path;
-            path = "/images/cards/back/ (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
+            path = "/images/cards/back/  (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
             Image card1 = new Image(getClass().getResourceAsStream(path));
             player1Card1.setImage(card1);
         } else {
             orientationCard1 = true;
             String path;
-            path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
+            path = "/images/cards/front/  (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
             Image card1 = new Image(getClass().getResourceAsStream(path));
             player1Card1.setImage(card1);
         }
@@ -665,13 +665,13 @@ public class GUIGameController {
         if (orientationCard2) {
             orientationCard2 = false;
             String path;
-            path = "/images/cards/back/ (" + playersInOrder.get(0).getPlayerDeck()[1].getId() + ").png";
+            path = "/images/cards/back/  (" + playersInOrder.get(0).getPlayerDeck()[1].getId() + ").png";
             Image card1 = new Image(getClass().getResourceAsStream(path));
             player1Card2.setImage(card1);
         } else {
             orientationCard2 = true;
             String path;
-            path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[1].getId() + ").png";
+            path = "/images/cards/front/  (" + playersInOrder.get(0).getPlayerDeck()[1].getId() + ").png";
             Image card1 = new Image(getClass().getResourceAsStream(path));
             player1Card2.setImage(card1);
         }
@@ -685,13 +685,13 @@ public class GUIGameController {
         if (orientationCard3) {
             orientationCard3 = false;
             String path;
-            path = "/images/cards/back/ (" + playersInOrder.get(0).getPlayerDeck()[2].getId() + ").png";
+            path = "/images/cards/back/  (" + playersInOrder.get(0).getPlayerDeck()[2].getId() + ").png";
             Image card1 = new Image(getClass().getResourceAsStream(path));
             player1Card3.setImage(card1);
         } else {
             orientationCard3 = true;
             String path;
-            path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[2].getId() + ").png";
+            path = "/images/cards/front/  (" + playersInOrder.get(0).getPlayerDeck()[2].getId() + ").png";
             Image card1 = new Image(getClass().getResourceAsStream(path));
             player1Card3.setImage(card1);
         }
@@ -724,9 +724,9 @@ public class GUIGameController {
             System.out.println(integer);
             String path=null;
             if(cardsOnP1Board.get(integer).getOrientation()) {
-                path = "/images/cards/front/ (" + cardsOnP1Board.get(integer).getId() + ").png";
+                path = "/images/cards/front/  (" + cardsOnP1Board.get(integer).getId() + ").png";
             }else {
-                path = "/images/cards/back/ (" + cardsOnP1Board.get(integer).getId() + ").png";
+                path = "/images/cards/back/  (" + cardsOnP1Board.get(integer).getId() + ").png";
             }
             Image card1 = new Image(getClass().getResourceAsStream(path));
             ImageView imageView = new ImageView(card1);
@@ -795,9 +795,9 @@ public class GUIGameController {
         for(Integer integer:cardsOnP2Board.keySet()){
             String path=null;
             if(cardsOnP2Board.get(integer).getOrientation()) {
-                path = "/images/cards/front/ (" + cardsOnP2Board.get(integer).getId() + ").png";
+                path = "/images/cards/front/  (" + cardsOnP2Board.get(integer).getId() + ").png";
             }else {
-                path = "/images/cards/back/ (" + cardsOnP2Board.get(integer).getId() + ").png";
+                path = "/images/cards/back/  (" + cardsOnP2Board.get(integer).getId() + ").png";
             }Image card1 = new Image(getClass().getResourceAsStream(path));
             ImageView imageView = new ImageView(card1);
             imageView.setFitWidth(100.0);  // larghezza desiderata
@@ -863,9 +863,9 @@ public class GUIGameController {
         for(Integer integer:cardsOnP3Board.keySet()){
             String path=null;
             if(cardsOnP3Board.get(integer).getOrientation()) {
-                path = "/images/cards/front/ (" + cardsOnP3Board.get(integer).getId() + ").png";
+                path = "/images/cards/front/  (" + cardsOnP3Board.get(integer).getId() + ").png";
             }else {
-                path = "/images/cards/back/ (" + cardsOnP3Board.get(integer).getId() + ").png";
+                path = "/images/cards/back/  (" + cardsOnP3Board.get(integer).getId() + ").png";
             }
             Image card1 = new Image(getClass().getResourceAsStream(path));
             ImageView imageView = new ImageView(card1);
@@ -933,9 +933,9 @@ public class GUIGameController {
         for(Integer integer:cardsOnP4Board.keySet()){
             String path=null;
             if(cardsOnP4Board.get(integer).getOrientation()) {
-                path = "/images/cards/front/ (" + cardsOnP4Board.get(integer).getId() + ").png";
+                path = "/images/cards/front/  (" + cardsOnP4Board.get(integer).getId() + ").png";
             }else {
-                path = "/images/cards/back/ (" + cardsOnP4Board.get(integer).getId() + ").png";
+                path = "/images/cards/back/  (" + cardsOnP4Board.get(integer).getId() + ").png";
             }
             Image card1 = new Image(getClass().getResourceAsStream(path));
             ImageView imageView = new ImageView(card1);
@@ -1015,7 +1015,7 @@ public class GUIGameController {
     public void mousePressed (MouseEvent mouseEvent) {
         System.out.println("SONO IN MOUSE PRESSED");
 
-        String path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
+        String path = "/images/cards/front/  (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
         Image card1 = new Image(getClass().getResourceAsStream(path));
         ImageView imageView = new ImageView(card1);
         imageView.setFitWidth((card1.getWidth() / 5.8));  // larghezza desiderata
@@ -1274,9 +1274,9 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                             playableCard.setOrientation(orientationCard1);
                             cardsOnP1Board.put(p1Counter,playableCard);
                             if(orientationCard1) {
-                                path = "/images/cards/front/ (" + playerDeck[0].getId() + ").png";
+                                path = "/images/cards/front/  (" + playerDeck[0].getId() + ").png";
                             }else {
-                                path = "/images/cards/back/ (" + playerDeck[0].getId() + ").png";
+                                path = "/images/cards/back/  (" + playerDeck[0].getId() + ").png";
                             }
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
@@ -1293,9 +1293,9 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                             playableCard.setOrientation(orientationCard2);
                             cardsOnP1Board.put(p1Counter,playableCard);
                             if(orientationCard1) {
-                                path = "/images/cards/front/ (" + playerDeck[1].getId() + ").png";
+                                path = "/images/cards/front/  (" + playerDeck[1].getId() + ").png";
                             }else {
-                                path = "/images/cards/back/ (" + playerDeck[1].getId() + ").png";
+                                path = "/images/cards/back/  (" + playerDeck[1].getId() + ").png";
                             }
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
@@ -1312,9 +1312,9 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                             playableCard.setOrientation(orientationCard3);
                             cardsOnP1Board.put(p1Counter,playableCard);
                             if(orientationCard1) {
-                                path = "/images/cards/front/ (" + playerDeck[2].getId() + ").png";
+                                path = "/images/cards/front/  (" + playerDeck[2].getId() + ").png";
                             }else {
-                                path = "/images/cards/back/ (" + playerDeck[2].getId() + ").png";
+                                path = "/images/cards/back/  (" + playerDeck[2].getId() + ").png";
                             }
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
@@ -1346,9 +1346,9 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                                 System.out.println(i);
                             }
                             if(orientationCard1) {
-                                path = "/images/cards/front/ (" + playerDeck[0].getId() + ").png";
+                                path = "/images/cards/front/  (" + playerDeck[0].getId() + ").png";
                             }else {
-                                path = "/images/cards/back/ (" + playerDeck[0].getId() + ").png";
+                                path = "/images/cards/back/  (" + playerDeck[0].getId() + ").png";
                             }
                         }
                     }else if (selectedCard == 2) {
@@ -1371,9 +1371,9 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                             playableCard.setOrientation(orientationCard2);
                             cardsOnP1Board.put(p1Counter,playableCard);
                             if(orientationCard1) {
-                                path = "/images/cards/front/ (" + playerDeck[1].getId() + ").png";
+                                path = "/images/cards/front/  (" + playerDeck[1].getId() + ").png";
                             }else {
-                                path = "/images/cards/back/ (" + playerDeck[1].getId() + ").png";
+                                path = "/images/cards/back/  (" + playerDeck[1].getId() + ").png";
                             }
                         }
                     }else if (selectedCard == 3) {
@@ -1396,9 +1396,9 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                             playableCard.setOrientation(orientationCard3);
                             cardsOnP1Board.put(p1Counter,playableCard);
                             if(orientationCard1) {
-                                path = "/images/cards/front/ (" + playerDeck[2].getId() + ").png";
+                                path = "/images/cards/front/  (" + playerDeck[2].getId() + ").png";
                             }else {
-                                path = "/images/cards/back/ (" + playerDeck[2].getId() + ").png";
+                                path = "/images/cards/back/  (" + playerDeck[2].getId() + ").png";
                             }
                         }
                     }
