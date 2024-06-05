@@ -38,4 +38,6 @@ public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
     void heartbeat() throws RemoteException;
 
     void startHeartbeat()throws RemoteException;
+
+    void handleDisconnectionFunction()throws RemoteException;
 }

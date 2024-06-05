@@ -22,11 +22,11 @@ public class updateGameStateEvent implements Event{
 
         @Override
         public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
-            client.updateGameState(gameState);
+            client.updateGameState(gameState); //this method starts the schedulerToSendHeartbeat (client-side)
             if(gameState.equals(Game.GameState.STARTED)){
-                client.startHeartbeat();
+                client.startHeartbeat(); // the client starts to check the server heartbeat
                 ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1); //bisogna fare lo shutdown quando il gioco termina (con ENDED o con una disconnessione)
-                scheduler.scheduleAtFixedRate(() -> {
+                scheduler.scheduleAtFixedRate(() -> { //equivalent to the schedulerToSendHeartbeat (but in the server-side)
                     try {
                         client.heartbeat(); //in gameController però la prima volta che viene scritta la variabile lastHeartbeatTime è in startHeartbeat
                     } catch (RemoteException e) {
