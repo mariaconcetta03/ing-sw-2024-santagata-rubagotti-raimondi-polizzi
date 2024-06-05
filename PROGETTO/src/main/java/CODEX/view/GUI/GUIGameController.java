@@ -66,6 +66,10 @@ public class GUIGameController {
     private Integer p2Counter=1;
     private Integer p3Counter=1;
     private Integer p4Counter=1;
+    private Integer emptySpace=0;
+    private Integer goldDeckID;
+    private Integer resorceDeckID;
+
 
 
 
@@ -372,6 +376,7 @@ public class GUIGameController {
 
         if (this.network == 1) {
             this.dimension=rmiClient.getPersonalPlayer().getBoard().getBoardDimensions();
+            System.out.println("dimension/2 " + dimension/2);
 
             // PRINTING THE PLAYERS IN THE GAME
             for (Player p : rmiClient.getPlayersInTheGame()) {
@@ -410,11 +415,13 @@ public class GUIGameController {
 
 
             // SETTING THE 2 DECKS AND THE 4 MARKET'S CARDS
-            path = "/images/cards/back/  (" + rmiClient.getGoldDeck().checkFirstCard().getId() + ").png";
+            this.goldDeckID=rmiClient.getGoldDeck().checkFirstCard().getId();
+            path = "/images/cards/back/  (" + goldDeckID + ").png";
             Image gd = new Image(getClass().getResourceAsStream(path));
             goldDeck.setImage(gd);
 
-            path = "/images/cards/back/  (" + rmiClient.getResourceDeck().checkFirstCard().getId() + ").png";
+            this.resorceDeckID=rmiClient.getResourceDeck().checkFirstCard().getId();
+            path = "/images/cards/back/  (" + resorceDeckID + ").png";
             Image rd = new Image(getClass().getResourceAsStream(path));
             resourceDeck.setImage(rd);
 
@@ -443,6 +450,7 @@ public class GUIGameController {
 
         } else if (this.network == 2) {
             this.dimension=clientSCK.getPersonalPlayer().getBoard().getBoardDimensions(); //le dimensioni sono uguali per tutti i giocatori
+            System.out.println("dimension/2 " + dimension/2);
 
             // PRINTING THE PLAYERS IN THE GAME
             for (Player p: clientSCK.getPlayersInTheGame()) {
@@ -480,11 +488,13 @@ public class GUIGameController {
 
 
             // SETTING THE 2 DECKS AND THE 4 MARKET'S CARDS
+            this.goldDeckID=clientSCK.getGoldDeck().checkFirstCard().getId();
             path = "/images/cards/back/  (" + clientSCK.getGoldDeck().checkFirstCard().getId() + ").png";
             Image gd = new Image(getClass().getResourceAsStream(path));
             goldDeck.setImage(gd);
 
-            path = "/images/cards/back/  (" + clientSCK.getResourceDeck().checkFirstCard().getId() + ").png";
+            this.resorceDeckID=clientSCK.getResourceDeck().checkFirstCard().getId();
+            path = "/images/cards/back/  (" + resorceDeckID + ").png";
             Image rd = new Image(getClass().getResourceAsStream(path));
             resourceDeck.setImage(rd);
 
@@ -709,16 +719,24 @@ public class GUIGameController {
         System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
 
         // SETTING THE CORRECT POSITION: IT DEPENDS ON THE NUMBER OF THE PLAYERS IN THE GAME
+
+        /*
         if (nPlayers == 2) {
-            boardPane.setHvalue(0.48780488);
-            boardPane.setVvalue(0.5);
+            boardPane.setHvalue(0.485);
+            boardPane.setVvalue(0.535);
         } else if (nPlayers == 3) {
-            boardPane.setHvalue(0.28447504302925986);
-            boardPane.setVvalue(0.30693257359924053);
+            boardPane.setHvalue(0.3132); 
+           boardPane.setVvalue(0.32); 
         } else if (nPlayers == 4) {
             boardPane.setHvalue(0.2099841521394612);
             boardPane.setVvalue(0.23585350854073317);
         }
+
+         */
+
+        boardPane.setHvalue((75.0*(dimension /2))/(75.0*83));
+        boardPane.setVvalue((44.775*(81-dimension /2))/(44.775*81));
+
 
         for(Integer integer:cardsOnP1Board.keySet()){
             System.out.println(integer);
@@ -737,7 +755,7 @@ public class GUIGameController {
             imageView.toFront();
             Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
             GridPane.setMargin(imageView, insets); // in qualunque griglia lo vado a piazzare, questo avrà i suddetti margini all'incirca
-            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), 83-cardsOnP1Board.get(integer).getPosition().getY());
+            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), 81-cardsOnP1Board.get(integer).getPosition().getY());
         }
 
 /*
@@ -780,10 +798,12 @@ public class GUIGameController {
         System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
         System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
 
+
+        /*
         // SETTING THE CORRECT POSITION: IT DEPENDS FROM THE NUMBER OF THE PLAYERS IN THE GAME
         if (nPlayers == 2) {
-            boardPane.setHvalue(0.48780488);
-            boardPane.setVvalue(0.5);
+            boardPane.setHvalue(0.485);
+            boardPane.setVvalue(0.535);
         } else if (nPlayers == 3) {
             boardPane.setHvalue(0.28447504302925986);
             boardPane.setVvalue(0.30693257359924053);
@@ -791,6 +811,11 @@ public class GUIGameController {
             boardPane.setHvalue(0.2099841521394612);
             boardPane.setVvalue(0.23585350854073317);
         }
+
+         */
+
+        boardPane.setHvalue((75.0*(dimension /2))/(75.0*83));
+        boardPane.setVvalue((44.775*(81-dimension /2))/(44.775*81));
 
         for(Integer integer:cardsOnP2Board.keySet()){
             String path=null;
@@ -807,7 +832,7 @@ public class GUIGameController {
             imageView.toFront();
            Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
             GridPane.setMargin(imageView, insets);
-            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), 83-cardsOnP1Board.get(integer).getPosition().getY());
+            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), 81-cardsOnP1Board.get(integer).getPosition().getY());
         }
 /*
 
@@ -849,10 +874,11 @@ public class GUIGameController {
         System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
         System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
 
+        /*
         // SETTING THE CORRECT POSITION: IT DEPENDS FROM THE NUMBER OF THE PLAYERS IN THE GAME
         if (nPlayers == 2) {
-            boardPane.setHvalue(0.48780488);
-            boardPane.setVvalue(0.5);
+            boardPane.setHvalue(0.485);
+            boardPane.setVvalue(0.535);
         } else if (nPlayers == 3) {
             boardPane.setHvalue(0.28447504302925986);
             boardPane.setVvalue(0.30693257359924053);
@@ -860,6 +886,13 @@ public class GUIGameController {
             boardPane.setHvalue(0.2099841521394612);
             boardPane.setVvalue(0.23585350854073317);
         }
+
+
+         */
+
+        boardPane.setHvalue((75.0*(dimension /2))/(75.0*83));
+        boardPane.setVvalue((44.775*(81-dimension /2))/(44.775*81));
+
         for(Integer integer:cardsOnP3Board.keySet()){
             String path=null;
             if(cardsOnP3Board.get(integer).getOrientation()) {
@@ -876,7 +909,7 @@ public class GUIGameController {
             imageView.toFront();
            Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
             GridPane.setMargin(imageView, insets);
-            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), 83-cardsOnP1Board.get(integer).getPosition().getY());
+            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), 81-cardsOnP1Board.get(integer).getPosition().getY());
         }
 
 /*
@@ -918,10 +951,11 @@ public class GUIGameController {
         System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
         System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
 
+        /*
         // SETTING THE CORRECT POSITION: IT DEPENDS FROM THE NUMBER OF THE PLAYERS IN THE GAME
         if (nPlayers == 2) {
-            boardPane.setHvalue(0.48780488);
-            boardPane.setVvalue(0.5);
+            boardPane.setHvalue(0.485);
+            boardPane.setVvalue(0.535);
         } else if (nPlayers == 3) {
             boardPane.setHvalue(0.28447504302925986);
             boardPane.setVvalue(0.30693257359924053);
@@ -929,6 +963,10 @@ public class GUIGameController {
             boardPane.setHvalue(0.2099841521394612);
             boardPane.setVvalue(0.23585350854073317);
         }
+
+         */
+        boardPane.setHvalue((75.0*(dimension /2))/(75.0*83));
+        boardPane.setVvalue((44.775*(81-dimension /2))/(44.775*81));
 
         for(Integer integer:cardsOnP4Board.keySet()){
             String path=null;
@@ -946,7 +984,7 @@ public class GUIGameController {
             imageView.toFront();
            Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
             GridPane.setMargin(imageView, insets);
-            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), 83-cardsOnP1Board.get(integer).getPosition().getY());
+            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), 81-cardsOnP1Board.get(integer).getPosition().getY());
         }
 
 /*
@@ -978,26 +1016,107 @@ public class GUIGameController {
 
 
     public void drawCardFromRD() {
+        if(emptySpace!=0){
+            Integer temp=emptySpace;
+            emptySpace=0;
+            String path = "/images/cards/front/  (" + resorceDeckID + ").png";
+            Image newCard = new Image(getClass().getResourceAsStream(path));
+            if(temp==1){
+                player1Card1.setImage(newCard);
+
+            }else if(temp==2){
+                player1Card2.setImage(newCard);
+            }else if(temp==3){
+                player1Card3.setImage(newCard);
+            }
+
+
+        }
 
     }
 
     public void drawCardFromGD() {
+        if(emptySpace!=0){
+            Integer temp=emptySpace;
+            emptySpace=0;
+            String path = "/images/cards/front/  (" + goldDeckID + ").png";
+            Image newCard = new Image(getClass().getResourceAsStream(path));
+            if(temp==1){
+                player1Card1.setImage(newCard);
+            }else if(temp==2){
+                player1Card2.setImage(newCard);
+
+            }else if(temp==3){
+                player1Card3.setImage(newCard);
+            }
+
+        }
 
     }
 
     public void drawCardFromRC1(){
+        if(emptySpace!=0){
+            Integer temp=emptySpace;
+            emptySpace=0;
+            if(temp==1){
+                player1Card1.setImage(resourceCard1.getImage());
+
+            }else if(temp==2){
+                player1Card2.setImage(resourceCard1.getImage());
+            }else if(temp==3){
+                player1Card3.setImage(resourceCard1.getImage());
+            }
+
+        }
 
     }
 
     public void drawCardFromRC2(){
+        if(emptySpace!=0){
+            Integer temp=emptySpace;
+            emptySpace=0;
+            if(temp==1){
+                player1Card1.setImage(resourceCard2.getImage());
+
+            }else if(temp==2){
+                player1Card2.setImage(resourceCard2.getImage());
+            }else if(temp==3){
+                player1Card3.setImage(resourceCard2.getImage());
+            }
+
+        }
 
     }
 
     public void drawCardFromGC1(){
+        if(emptySpace!=0){
+            Integer temp=emptySpace;
+            emptySpace=0;
+            if(temp==1){
+                player1Card1.setImage(goldCard1.getImage());
+            }else if(temp==2){
+                player1Card2.setImage(goldCard1.getImage());
+            }else if(temp==3){
+                player1Card3.setImage(goldCard1.getImage());
+            }
+
+        }
 
     }
 
     public void drawCardFromGC2(){
+        if(emptySpace!=0){
+            Integer temp=emptySpace;
+            emptySpace=0;
+            if(temp==1){
+                player1Card1.setImage(goldCard2.getImage());
+            }else if(temp==2){
+                player1Card2.setImage(goldCard2.getImage());
+            }else if(temp==3){
+                player1Card3.setImage(goldCard2.getImage());
+            }
+
+        }
 
     }
 
@@ -1232,7 +1351,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
             button.setPrefSize(70, 38.25);
             button.setText(coordinates.getX() + "," + coordinates.getY());
             button.setOnAction(event -> buttonClicked((Button) event.getSource()));
-            grid.add(button, coordinates.getX(), 83-coordinates.getY());
+            grid.add(button, coordinates.getX(), 81-coordinates.getY());
         }
     }
 
@@ -1278,6 +1397,9 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                             }else {
                                 path = "/images/cards/back/  (" + playerDeck[0].getId() + ").png";
                             }
+                            player1Card1.setImage(null);
+                            emptySpace=1;
+
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                             cardPlaced = false;
@@ -1297,6 +1419,8 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                             }else {
                                 path = "/images/cards/back/  (" + playerDeck[1].getId() + ").png";
                             }
+                            player1Card2.setImage(null);
+                            emptySpace=2;
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                             cardPlaced = false;
@@ -1316,6 +1440,8 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                             }else {
                                 path = "/images/cards/back/  (" + playerDeck[2].getId() + ").png";
                             }
+                            player1Card3.setImage(null);
+                            emptySpace=3;
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                             cardPlaced = false;
@@ -1350,6 +1476,8 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                             }else {
                                 path = "/images/cards/back/  (" + playerDeck[0].getId() + ").png";
                             }
+                            player1Card1.setImage(null);
+                            emptySpace=1;
                         }
                     }else if (selectedCard == 2) {
                         cardPlaced = true;
@@ -1375,6 +1503,8 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                             }else {
                                 path = "/images/cards/back/  (" + playerDeck[1].getId() + ").png";
                             }
+                            player1Card2.setImage(null);
+                            emptySpace=2;
                         }
                     }else if (selectedCard == 3) {
                         cardPlaced = true;
@@ -1400,6 +1530,8 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                             }else {
                                 path = "/images/cards/back/  (" + playerDeck[2].getId() + ").png";
                             }
+                            player1Card3.setImage(null);
+                            emptySpace=3;
                         }
                     }
                 }
@@ -1412,7 +1544,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                     imageView.setSmooth(true);
                    Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
                     GridPane.setMargin(imageView, insets);
-                    grid.add(imageView, col, 83-row);
+                    grid.add(imageView, col, 81-row);
                     showP1Board(); // RICARICO LA BOARD
                 }
 

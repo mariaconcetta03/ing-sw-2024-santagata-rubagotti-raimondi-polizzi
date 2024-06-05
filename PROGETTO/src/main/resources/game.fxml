@@ -267,22 +267,22 @@
                                 <Insets bottom="10.0" />
                             </VBox.margin>
                             <children>
-                                <ImageView fx:id="resourceDeck" fitHeight="68.25" fitWidth="100.0" onDragDropped="#drawCardFromRD" pickOnBounds="true" preserveRatio="true" />
+                                <ImageView fx:id="resourceDeck" fitHeight="68.25" fitWidth="100.0" onMouseClicked="#drawCardFromRD" pickOnBounds="true" preserveRatio="true" />
                                 <Separator opacity="0.0" prefHeight="82.0" prefWidth="21.0" />
-                                <ImageView fx:id="resourceCard1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                                <ImageView fx:id="resourceCard1" fitHeight="68.25" fitWidth="100.0" onMouseClicked="#drawCardFromRC1" pickOnBounds="true" preserveRatio="true" />
                                 <Separator opacity="0.0" prefHeight="85.0" prefWidth="8.0" />
-                                <ImageView fx:id="resourceCard2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                                <ImageView fx:id="resourceCard2" fitHeight="68.25" fitWidth="100.0" onMouseClicked="#drawCardFromRC2" pickOnBounds="true" preserveRatio="true" />
                             </children></HBox>
                         <HBox prefHeight="88.72" prefWidth="299.0">
                             <VBox.margin>
                                 <Insets />
                             </VBox.margin>
                             <children>
-                                <ImageView fx:id="goldDeck" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                                <ImageView fx:id="goldDeck" fitHeight="68.25" fitWidth="100.0" onMouseClicked="#drawCardFromGD" pickOnBounds="true" preserveRatio="true" />
                                 <Separator opacity="0.0" prefHeight="82.0" prefWidth="21.0" />
-                                <ImageView fx:id="goldCard1" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                                <ImageView fx:id="goldCard1" fitHeight="68.25" fitWidth="100.0" onMouseClicked="#drawCardFromGC1" pickOnBounds="true" preserveRatio="true" />
                                 <Separator opacity="0.0" prefHeight="85.0" prefWidth="8.0" />
-                                <ImageView fx:id="goldCard2" fitHeight="68.25" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                                <ImageView fx:id="goldCard2" fitHeight="68.25" fitWidth="100.0" onMouseClicked="#drawCardFromGC2" pickOnBounds="true" preserveRatio="true" />
                             </children></HBox>
                     </children>
                 </VBox>
