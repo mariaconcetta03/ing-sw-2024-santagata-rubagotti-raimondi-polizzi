@@ -688,25 +688,21 @@ public class ClientSCK implements ClientGeneralInterface {
         if (boardOwner.equals(personalPlayer.getNickname())) {
             System.out.println("I received the board.");
             personalPlayer.setBoard(board);
-        } else {
+        }
             if(playersInTheGame!=null) {
                 for (Player p : playersInTheGame) {
                     if (boardOwner.equals(p.getNickname())) {
                         p.setBoard(board);
                     }
                 }
-            }else{
-                System.out.println("null in updateBoard");
             }
+
             if (selectedView == 1) {
                 System.out.println("I received the board di un altro.");
             } else if (selectedView == 2) {
                 //guiView.showBoard(board)
             }
         }
-
-
-    }
 
     @Override
     public void updateResourceDeck(PlayableDeck resourceDeck) throws RemoteException {
@@ -1286,7 +1282,16 @@ public class ClientSCK implements ClientGeneralInterface {
     public static class Settings { //this is an attribute. (qui ci sono indirizzo e porta del server locale
         static int PORT = 9090; // free ports: from 49152 to 65535, 1099 default port for RMI registry
         static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
+
+        public static String getServerName() {
+            return SERVER_NAME;
+        }
+
+        public static void setServerName(String serverName) {
+            SERVER_NAME = serverName;
+        }
     }
+
     public void setIsPlaying(boolean isPlaying){
         this.isPlaying=isPlaying;
     }
