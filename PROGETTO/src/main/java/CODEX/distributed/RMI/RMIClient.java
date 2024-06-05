@@ -114,6 +114,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         this.guiLock=new Object();
         personalPlayer= new Player();
         messages=new ArrayList<>();
+        networkSettings=new Settings();
     }
 
 

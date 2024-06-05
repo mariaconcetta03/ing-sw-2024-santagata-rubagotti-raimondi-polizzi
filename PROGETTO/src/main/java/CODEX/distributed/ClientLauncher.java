@@ -20,7 +20,7 @@ public class ClientLauncher {
         String serverAddress="";
         Scanner sc=new Scanner(System.in);
 
-        System.out.println("Insert the Server's Ip address: ");
+        System.out.println("Insert the Server's Ip address (leave blank for LocalHost): ");
         serverAddress=sc.nextLine(); //@TODO se blank è localHost, non fa ancora nulla
         System.out.println(ANSIFormatter.ANSI_BLUE+"Choose a connection protocol and an interface:"+ANSIFormatter.ANSI_RESET+": \n-Type 1 for RMI+TUI\n-Type 2 for RMI+GUI\n-Type 3 for TCP+TUI\n-Type 4 for TCP+GUI");
         do{
