@@ -45,8 +45,8 @@
     {
       "id": 83,
       "points": 0,
-      "front_up_right": "INSECT",
-      "front_up_left": "FUNGI",
+      "front_up_right": "FUNGI",
+      "front_up_left": "INSECT",
       "front_down_right": "ANIMAL",
       "front_down_left": "NATURE",
       "back_up_right": "NO_RESOURCE",
