@@ -65,9 +65,6 @@ public class GUIBaseCardController {
     }
 
     public void selectedFront() {
-
-
-
         // second general thread (executed after the first one)
         new Thread(() -> {
         if (network == 1 && !baseCardPlayed) {

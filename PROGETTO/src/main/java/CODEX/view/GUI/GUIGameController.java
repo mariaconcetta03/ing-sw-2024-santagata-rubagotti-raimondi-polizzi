@@ -55,12 +55,13 @@ public class GUIGameController {
     private boolean cardPlaced = false;
     private Coordinates coordinatesToPlay;
     private Set<Coordinates> playablePositions=null; //null quando non è il proprio turno (devono tornare a null quando la carta viene buttata)
-    private Map<Integer,PlayableCard> cardsOnP1Board; // Map<turn number, card id>
+    private Map<Integer,PlayableCard> cardsOnP1Board; // Map <turn number, card id>
     private Map<Integer,PlayableCard> cardsOnP2Board;
     private Map<Integer,PlayableCard> cardsOnP3Board;
     private Map<Integer,PlayableCard> cardsOnP4Board;
-    private Map<Integer,PlayableCard> cardsOnCurrentPlayerBoard;
     private Integer currentPlayerCounter=1;
+
+    // Counters for cards for each player
     private Integer p1Counter=1;
     private Integer p2Counter=1;
     private Integer p3Counter=1;
@@ -602,22 +603,22 @@ public class GUIGameController {
             if(i==1){
                 tableP1=p.getBoard().getTable();
                 cardsOnP1Board=new HashMap<>();
-                cardsOnP1Board.put(p1Counter,(tableP1[dimension/nPlayers][dimension/nPlayers])); //baseCard
+                cardsOnP1Board.put(p1Counter,(tableP1[dimension/2][dimension/2])); //baseCard
             }
             if(i==2){
                 tableP2=p.getBoard().getTable();
                 cardsOnP2Board=new HashMap<>();
-                cardsOnP2Board.put(p2Counter,(tableP2[dimension/nPlayers][dimension/nPlayers])); //baseCard
+                cardsOnP2Board.put(p2Counter,(tableP2[dimension/2][dimension/2])); //baseCard
             }
             if(i==3){
                 tableP3=p.getBoard().getTable();
                 cardsOnP3Board=new HashMap<>();
-                cardsOnP3Board.put(p3Counter,(tableP3[dimension/nPlayers][dimension/nPlayers])); //baseCard
+                cardsOnP3Board.put(p3Counter,(tableP3[dimension/2][dimension/2])); //baseCard
             }
             if(i==4){
                 tableP4=p.getBoard().getTable();
                 cardsOnP4Board=new HashMap<>();
-                cardsOnP4Board.put(p4Counter,(tableP4[dimension/nPlayers][dimension/nPlayers])); //baseCard
+                cardsOnP4Board.put(p4Counter,(tableP4[dimension/2][dimension/2])); //baseCard
             }
             i++;
         }
@@ -698,8 +699,8 @@ public class GUIGameController {
 
 
 
-    public void showP1Board() { //togliamo la board precedente e stampiamo in ordine le carte della board del player 1
-        grid.getChildren().clear();//toglie pure i bottoni che vanno rimessi solo se è il turno di quel giocatore
+    public void showP1Board() { // togliamo la board precedente e stampiamo in ordine le carte della board del player 1
+        grid.getChildren().clear();// toglie pure i bottoni che vanno rimessi solo se è il turno di quel giocatore
         initializeGridPaneCells(true); //mette i bottoni solo se è il proprio turno e solo nelle nuove plyable positions
 
         selectedBoard = 1;
@@ -707,7 +708,7 @@ public class GUIGameController {
         System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
         System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
 
-        // SETTING THE CORRECT POSITION: IT DEPENDS FROM THE NUMBER OF THE PLAYERS IN THE GAME
+        // SETTING THE CORRECT POSITION: IT DEPENDS ON THE NUMBER OF THE PLAYERS IN THE GAME
         if (nPlayers == 2) {
             boardPane.setHvalue(0.48780488);
             boardPane.setVvalue(0.5);
@@ -734,9 +735,9 @@ public class GUIGameController {
             imageView.setPreserveRatio(true);
             imageView.setSmooth(true);
             imageView.toFront();
-            Insets insets = new Insets(-15,-15,-15,-15); // Regola i margini come desiderato
-            GridPane.setMargin(imageView, insets);
-            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), cardsOnP1Board.get(integer).getPosition().getY());
+            Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
+            GridPane.setMargin(imageView, insets); // in qualunque griglia lo vado a piazzare, questo avrà i suddetti margini all'incirca
+            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), 83-cardsOnP1Board.get(integer).getPosition().getY());
         }
 
 /*
@@ -755,7 +756,7 @@ public class GUIGameController {
                          imageView.setPreserveRatio(true);
                          imageView.setSmooth(true);
                          imageView.toFront();
-                         Insets insets = new Insets(-15,-15,-15,-15); // Regola i margini come desiderato
+                         Insets insets = new Insets(-8.7375, -15, -8.7375, -15); // Regola i margini come desiderato
                          GridPane.setMargin(imageView, insets);
                          this.grid.add(imageView, i, j);
                          placed = true;
@@ -804,9 +805,9 @@ public class GUIGameController {
             imageView.setPreserveRatio(true);
             imageView.setSmooth(true);
             imageView.toFront();
-            Insets insets = new Insets(-15,-15,-15,-15); // Regola i margini come desiderato
+           Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
             GridPane.setMargin(imageView, insets);
-            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), cardsOnP1Board.get(integer).getPosition().getY());
+            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), 83-cardsOnP1Board.get(integer).getPosition().getY());
         }
 /*
 
@@ -824,7 +825,7 @@ public class GUIGameController {
                         imageView.setFitHeight(68.25); // altezza desiderataimageView.setPreserveRatio(true);
                         imageView.setSmooth(true);
                         imageView.toFront();
-                        Insets insets = new Insets(-15,-15,-15,-15); // Regola i margini come desiderato
+                        Insets insets = new Insets(-8.7375, -15, -8.7375, -15); // Regola i margini come desiderato
                         GridPane.setMargin(imageView, insets);
                         this.grid.add(imageView, i, j);
                         placed = true;
@@ -873,9 +874,9 @@ public class GUIGameController {
             imageView.setPreserveRatio(true);
             imageView.setSmooth(true);
             imageView.toFront();
-            Insets insets = new Insets(-15,-15,-15,-15); // Regola i margini come desiderato
+           Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
             GridPane.setMargin(imageView, insets);
-            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), cardsOnP1Board.get(integer).getPosition().getY());
+            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), 83-cardsOnP1Board.get(integer).getPosition().getY());
         }
 
 /*
@@ -893,7 +894,7 @@ public class GUIGameController {
                         imageView.setFitHeight(68.25); // altezza desiderataimageView.setPreserveRatio(true);
                         imageView.setSmooth(true);
                         imageView.toFront();
-                        Insets insets = new Insets(-15,-15,-15,-15); // Regola i margini come desiderato
+                        Insets insets = new Insets(-8.7375, -15, -8.7375, -15); // Regola i margini come desiderato
                         GridPane.setMargin(imageView, insets);
                         this.grid.add(imageView, i, j);
                         placed = true;
@@ -943,9 +944,9 @@ public class GUIGameController {
             imageView.setPreserveRatio(true);
             imageView.setSmooth(true);
             imageView.toFront();
-            Insets insets = new Insets(-15,-15,-15,-15); // Regola i margini come desiderato
+           Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
             GridPane.setMargin(imageView, insets);
-            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), cardsOnP1Board.get(integer).getPosition().getY());
+            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), 83-cardsOnP1Board.get(integer).getPosition().getY());
         }
 
 /*
@@ -963,7 +964,7 @@ public class GUIGameController {
                         imageView.setFitHeight(68.25); // altezza desiderataimageView.setPreserveRatio(true);
                         imageView.setSmooth(true);
                         imageView.toFront();
-                        Insets insets = new Insets(-15,-15,-15,-15); // Regola i margini come desiderato
+                        Insets insets = new Insets(-8.7375, -15, -8.7375, -15); // Regola i margini come desiderato
                         GridPane.setMargin(imageView, insets);
                         this.grid.add(imageView, i, j);
                         placed = true;
@@ -1211,9 +1212,8 @@ public class GUIGameController {
     }
 
      */
-public void initializeGridPaneCells(boolean myBoard) {
+public void initializeGridPaneCells(boolean myBoard) { // true = your board [you may play]     false = other player's board [you can't play]
     if (myBoard&&network == 1 && rmiClient.getPersonalPlayer().getNickname().equals(rmiClient.getPlayersInTheGame().get(0).getNickname()) && !cardPlaced) { // RMI && player is in turn
-
         playablePositions = rmiClient.getPersonalPlayer().getBoard().getPlayablePositions();
     }
     else if(myBoard&&network == 2 && clientSCK.getPersonalPlayer().getNickname().equals(clientSCK.getPlayersInTheGame().get(0).getNickname())&& !cardPlaced){
@@ -1226,11 +1226,13 @@ public void initializeGridPaneCells(boolean myBoard) {
 
     if(playablePositions != null){ //se è il mio turno metto i bottoni
         for(Coordinates coordinates:this.playablePositions) {
+            System.out.println("Playable position (x, y): " + coordinates.getX() + " " + coordinates.getY());
             Button button = new Button();
+            button.setOpacity(0.5);
             button.setPrefSize(70, 38.25);
             button.setText(coordinates.getX() + "," + coordinates.getY());
             button.setOnAction(event -> buttonClicked((Button) event.getSource()));
-            grid.add(button, coordinates.getX(), coordinates.getY());
+            grid.add(button, coordinates.getX(), 83-coordinates.getY());
         }
     }
 
@@ -1408,9 +1410,10 @@ public void initializeGridPaneCells(boolean myBoard) {
                     imageView.setFitHeight(68.25); // altezza desiderata
                     imageView.setPreserveRatio(true);
                     imageView.setSmooth(true);
-                    Insets insets = new Insets(-15, -15, -15, -15); // Regola i margini come desiderato
+                   Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
                     GridPane.setMargin(imageView, insets);
-                    grid.add(imageView, col, row);
+                    grid.add(imageView, col, 83-row);
+                    showP1Board(); // RICARICO LA BOARD
                 }
 
             }

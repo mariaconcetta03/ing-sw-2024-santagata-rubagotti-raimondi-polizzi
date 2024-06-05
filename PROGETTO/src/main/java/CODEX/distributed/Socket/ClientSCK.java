@@ -688,7 +688,10 @@ public class ClientSCK implements ClientGeneralInterface {
         if (boardOwner.equals(personalPlayer.getNickname())) {
             System.out.println("I received the board.");
             personalPlayer.setBoard(board);
+            InterfaceTUI t = new InterfaceTUI();
+            t.printTable(board);
         }
+
             if(playersInTheGame!=null) {
                 for (Player p : playersInTheGame) {
                     if (boardOwner.equals(p.getNickname())) {
