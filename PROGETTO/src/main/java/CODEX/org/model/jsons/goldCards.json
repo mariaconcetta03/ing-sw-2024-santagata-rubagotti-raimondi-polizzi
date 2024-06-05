@@ -211,8 +211,8 @@
   {
   "id": 49,
   "points": 3,
-  "front_up_right": "ABSENT",
-  "front_up_left": "SCROLL",
+  "front_up_right": "SCROLL",
+  "front_up_left": "ABSENT",
   "front_down_right": "NO_RESOURCE",
   "front_down_left": "ABSENT",
   "back_up_right": "NO_RESOURCE",
@@ -492,7 +492,7 @@
 
   {
     "id": 60,
-    "points": 3,
+    "points": 5,
     "front_up_right": "NO_RESOURCE",
     "front_up_left": "NO_RESOURCE",
     "front_down_right": "ABSENT",
@@ -545,8 +545,8 @@
   {
     "id": 62,
     "points": 1,
-    "front_up_right": "ABSENT",
-    "front_up_left": "NO_RESOURCE",
+    "front_up_right": "NO_RESOURCE",
+    "front_up_left": "ABSENT",
     "front_down_right": "SCROLL",
     "front_down_left": "NO_RESOURCE",
     "back_up_right": "NO_RESOURCE",
@@ -704,8 +704,8 @@
   {
     "id": 68,
     "points": 3,
-    "front_up_right": "NO_RESOURCE",
-    "front_up_left": "JAR",
+    "front_up_right":"JAR",
+    "front_up_left": "NO_RESOURCE",
     "front_down_right": "ABSENT",
     "front_down_left": "ABSENT",
     "back_up_right": "NO_RESOURCE",
@@ -754,8 +754,8 @@
     "points": 5,
     "front_up_right": "NO_RESOURCE",
     "front_up_left": "ABSENT",
-    "front_down_right": "ABSENT",
-    "front_down_left": "NO_RESOURCE",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "ABSENT",
     "back_up_right": "NO_RESOURCE",
     "back_up_left": "NO_RESOURCE",
     "back_down_right": "NO_RESOURCE",
@@ -776,8 +776,8 @@
   {
     "id": 71,
     "points": 1,
-    "front_up_right": "NO_RESOURCE",
-    "front_up_left": "FEATHER",
+    "front_up_right": "FEATHER",
+    "front_up_left": "NO_RESOURCE",
     "front_down_right": "NO_RESOURCE",
     "front_down_left": "ABSENT",
     "back_up_right": "NO_RESOURCE",
@@ -805,8 +805,8 @@
     "points": 1,
     "front_up_right": "ABSENT",
     "front_up_left": "NO_RESOURCE",
-    "front_down_right": "SCROLL",
-    "front_down_left": "NO_RESOURCE",
+    "front_down_right": "NO_RESOURCE",
+    "front_down_left": "SCROLL",
     "back_up_right": "NO_RESOURCE",
     "back_up_left": "NO_RESOURCE",
     "back_down_right": "NO_RESOURCE",
@@ -831,9 +831,9 @@
     "id": 73,
     "points": 1,
     "front_up_right": "NO_RESOURCE",
-    "front_up_left": "NO_RESOURCE",
+    "front_up_left": "ABSENT",
     "front_down_right": "JAR",
-    "front_down_left": "ABSENT",
+    "front_down_left": "NO_RESOURCE",
     "back_up_right": "NO_RESOURCE",
     "back_up_left": "NO_RESOURCE",
     "back_down_right": "NO_RESOURCE",
@@ -924,7 +924,7 @@
     "haveFeatherToReceivePoints": false,
     "haveScrollToReceivePoints": false,
     "neededResources": {
-      "ANIMAL":
+      "INSECT":
       3
     ,
       "FUNGI":
@@ -962,8 +962,8 @@
   {
     "id": 78,
     "points": 3,
-    "front_up_right": "NO_RESOURCE",
-    "front_up_left": "SCROLL",
+    "front_up_right": "SCROLL",
+    "front_up_left": "NO_RESOURCE",
     "front_down_right": "ABSENT",
     "front_down_left": "ABSENT",
     "back_up_right": "NO_RESOURCE",

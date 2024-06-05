@@ -187,8 +187,8 @@
     {
       "id": 9,
       "points": 1,
-      "front_up_right": "FUNGI",
-      "front_up_left": "ABSENT",
+      "front_up_right": "ABSENT",
+      "front_up_left": "FUNGI",
       "front_down_right": "NO_RESOURCE",
       "front_down_left": "NO_RESOURCE",
       "back_up_right": "NO_RESOURCE",
