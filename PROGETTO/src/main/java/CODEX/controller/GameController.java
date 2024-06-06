@@ -35,6 +35,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     private int numberOfPlayers;
     private int id;
     private Map<String, Observer> clientsConnected;
+    private final Object disconnectionLock=new Object();
 
     /**
      * Class constructor, initialises lastRounds and lastDrawingRounds to 10
@@ -357,6 +358,9 @@ public class GameController extends UnicastRemoteObject implements GameControlle
             game.setLastMoves(lastRounds);
         }
 
+
+
+        //metodo da togliere (gestiamo l'uscita dal gioco con le disconnessioni)
     /**
      * This method let the player leave the game anytime during the match and also closes the Game itself
      * @param nickname of the player who is going leave the game
@@ -553,18 +557,13 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         };
         lambdaContext.heartbeatTask =scheduler.scheduleAtFixedRate(() -> {
             long currentTime = System.currentTimeMillis();
-            if ((currentTime - lastHeartbeatTimesOfEachPlayer.get(nickname)) / 1000 > TIMEOUT||disconnection) { //se un solo player si disconnette si finisce di mandare heartbeat a tutti gli altri player
+            if (((currentTime - lastHeartbeatTimesOfEachPlayer.get(nickname)) / 1000 > TIMEOUT)||disconnection) { //se un solo player si disconnette si finisce di mandare heartbeat a tutti gli altri player
                 disconnection=true;
-                System.out.println("Client connection lost");
                 if (lambdaContext.heartbeatTask != null && !lambdaContext.heartbeatTask.isCancelled()) {
                     lambdaContext.heartbeatTask.cancel(true); //chiude lo scheduler
                 }
                 //caso in cui il client risulta irragiungibile->handleDisconnection: vanno avvisati i player e chiuso tutto
-                if(firstDisconnection){
-                    System.out.println("il server ha rilevato la prima disconnessione");
-                    firstDisconnection=false; //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
-                    disconnection(); //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
-                }
+                disconnection();
             }
         }, 0, TIMEOUT, TimeUnit.SECONDS); //usciti da qua se il il server ha rilevato la prima disconnessione sono già stati mandati gli updates disconnectionEvent a tutti i players
     }
@@ -577,9 +576,27 @@ public class GameController extends UnicastRemoteObject implements GameControlle
 
         //scopiazzo quello che era leaveGame senza mandare gli update che mostrano i vincitori con i relativi punti
 
-        game.setLastEvent(new disconnectionEvent());
-        for(Player p: gamePlayers) {
-            serverController.getAllNicknames().remove(p.getNickname());
+        synchronized (disconnectionLock) {
+            if(firstDisconnection) {
+                System.out.println("the server has detected a disconnection");
+                game.setLastEvent(new disconnectionEvent());
+                game.notifYDisconnectionEvent();
+                for (Player p : gamePlayers) {
+                    serverController.getAllNicknames().remove(p.getNickname());
+                }
+
+                for (Player p : game.getPlayers()) {
+                    p.removeObservers();
+                }
+                game.removeObservers();
+
+                try {
+                    serverController.getAllGameControllers().remove(id);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+                firstDisconnection=false;
+            }
         }
     }
 

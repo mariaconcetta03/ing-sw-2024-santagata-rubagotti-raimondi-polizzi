@@ -24,4 +24,5 @@ public interface Observer {
     void update(Observable obs, Event e) throws RemoteException;
     void setNickname(String nick) throws RemoteException;
     String getNickname() throws RemoteException;
+    void setADisconnectionHappened(boolean aDisconnectionHappened);
 }

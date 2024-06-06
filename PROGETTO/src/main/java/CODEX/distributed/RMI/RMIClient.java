@@ -313,7 +313,16 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     @Override
     public void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException{
+        /*
         this.gameController.leaveGame(nickname);
+
+         */
+        this.executor.shutdown();
+        this.schedulerToCheckReceivedHeartBeat.shutdown();
+        this.schedulerToSendHeartbeat.shutdown(); //l'heartbeat receiver lato server rileverà la disconnessione
+        System.out.println("You left the game.");
+        System.exit(0); //status 0 -> no errors
+
     }
 
     /**
@@ -447,8 +456,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                                 if (sc.nextInt() == 1) {
                                     inGame = false;
                                     leaveGame(personalPlayer.getNickname());
-                                    System.out.println("You left the game.");
-                                    System.exit(-1);
                                 }
                             } catch (InputMismatchException ignored) {
                             }
@@ -1098,8 +1105,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         lambdaContext.heartbeatTask= this.schedulerToCheckReceivedHeartBeat.scheduleAtFixedRate(() -> {
             long currentTime = System.currentTimeMillis();
             if ((currentTime - lastHeartbeatTime) / 1000 > TIMEOUT) {
-                System.out.println("Server connection lost");
-                //caso in cui il server risulta irragiungibile
+                //System.out.println("Server connection lost");
+                System.out.println("A disconnection happened");
+                //caso in cui il server risulta irragiungibile/è avvenuta una disconnessione
                 if (lambdaContext.heartbeatTask != null && !lambdaContext.heartbeatTask.isCancelled()) {
                     lambdaContext.heartbeatTask.cancel(true); //chiude schedulerToCheckReceivedHeartBeat
                 }

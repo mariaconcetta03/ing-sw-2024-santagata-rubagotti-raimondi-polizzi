@@ -124,11 +124,17 @@ public class Observable {
     //non ci serve se abbiamo un attributo Observable per ogni Game
     /**
      * Getter method
-     * @param game the game which contains the listeners
+     * @param //game the game which contains the listeners
      * @return the list of the listeners of that game
      */
     //public List<Observer> getListeners(Game game) {
     //    return listeners.get(game);
     //}
+
+    public void notifYDisconnectionEvent(){
+        for(int i=0; i< observers.size();i++){
+           observers.get(i).setADisconnectionHappened(true);
+        }
+    }
 
 }

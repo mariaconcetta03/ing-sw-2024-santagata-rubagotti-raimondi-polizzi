@@ -18,6 +18,7 @@ public class WrappedObserver implements Observer {
     private static final int HEARTBEAT_INTERVAL = 5; // seconds
     private ClientGeneralInterface remoteClient;
     private String nickname;
+    private boolean aDisconnectionHappened=false;
 
 
     // ----------------- C O M E   A V V I E N E   L' U P D A T E ? --------------------
@@ -78,4 +79,11 @@ public class WrappedObserver implements Observer {
         return this.HEARTBEAT_INTERVAL;
     }
 
+    public boolean getADisconnectionHappened() {
+        return aDisconnectionHappened;
+    }
+
+    public void setADisconnectionHappened(boolean aDisconnectionHappened) {
+        this.aDisconnectionHappened = aDisconnectionHappened;
+    }
 }

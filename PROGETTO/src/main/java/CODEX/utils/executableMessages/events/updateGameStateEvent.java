@@ -27,12 +27,16 @@ public class updateGameStateEvent implements Event{
                 client.startHeartbeat(); // the client starts to check the server heartbeat
                 ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1); //bisogna fare lo shutdown quando il gioco termina (con ENDED o con una disconnessione)
                 scheduler.scheduleAtFixedRate(() -> { //equivalent to the schedulerToSendHeartbeat (but in the server-side)
-                    try {
-                        client.heartbeat(); //in gameController però la prima volta che viene scritta la variabile lastHeartbeatTime è in startHeartbeat
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
+                    if (!wrappedObserver.getADisconnectionHappened()){
+                        try {
+                            client.heartbeat(); //in gameController però la prima volta che viene scritta la variabile lastHeartbeatTime è in startHeartbeat
+                        } catch (RemoteException e) {
+                            throw new RuntimeException(e);
+                        }
+                        System.out.println("Sent heartbeat");
+                    }else{
+                        scheduler.shutdown();
                     }
-                    System.out.println("Sent heartbeat");
                 }, 0, wrappedObserver.getHeartbeatInterval(), TimeUnit.SECONDS);
                 wrappedObserver.setScheduler(scheduler);
             }

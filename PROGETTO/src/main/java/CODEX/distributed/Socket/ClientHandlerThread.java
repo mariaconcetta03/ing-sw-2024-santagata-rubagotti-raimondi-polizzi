@@ -48,6 +48,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     private Boolean running; //it is initialized true, when becomes false the while in run and threadCheckConnection terminate.
     private boolean pongReceived;
     private Timer timer;
+    private boolean aDisconnectionHappened=false;
 
 
     /**
@@ -182,6 +183,11 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     @Override
     public String getNickname() {
         return this.nickname;
+    }
+
+    @Override
+    public void setADisconnectionHappened(boolean aDisconnectionHappened) {
+        this.aDisconnectionHappened=aDisconnectionHappened;
     }
 
 //end of methods to be implemented taken from Observer interface

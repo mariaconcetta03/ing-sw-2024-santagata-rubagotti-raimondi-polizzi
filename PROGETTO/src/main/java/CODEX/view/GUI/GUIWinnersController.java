@@ -34,9 +34,9 @@ public class GUIWinnersController {
                 throw new RuntimeException(e);
             }
         } else if (network == 2) {
-            winners = clientSCK.
+            //winners = clientSCK.
         }
-        if(winner){
+        if(true){
             winnerLabel.setText("Y O U  W O N");
         }else{
 
