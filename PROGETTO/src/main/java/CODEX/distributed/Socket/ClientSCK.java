@@ -170,6 +170,12 @@ public class ClientSCK implements ClientGeneralInterface {
                             }
                         } catch (Exception e) { //se il server si disconnette
                             if(running) {
+                                try {
+                                    handleDisconnection();
+                                } catch (RemoteException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                                /*
                                 System.out.println("lost connection...Bye, bye");
                                 try { //devo fermare i thread lanciati all'interno di questo thread
                                     inputStream.close();
@@ -184,6 +190,8 @@ public class ClientSCK implements ClientGeneralInterface {
                                     this.timer.cancel(); //we don't need to check the connection anymore
                                 }
                                 break; //se per esempio il flusso viene interrotto (dovrebbe venire lanciata un eccezione di Input/Output)
+
+                                 */
                             }
                         }
                     }
@@ -245,6 +253,8 @@ public class ClientSCK implements ClientGeneralInterface {
                     outputStream.flush();
                     outputStream.reset();
                 } catch (IOException e) {
+                    handleDisconnection();
+                    /*
                     System.out.println("lost connection....Bye, bye");
                     try { //devo fermare i thread lanciati all'interno di questo thread
                         inputStream.close();
@@ -254,6 +264,8 @@ public class ClientSCK implements ClientGeneralInterface {
                     } catch (IOException ex) { //this catch is needed for the close statements
                         //throw new RuntimeException(ex);
                     }
+
+                     */
                 }
             }
         }
@@ -1001,6 +1013,12 @@ public class ClientSCK implements ClientGeneralInterface {
                                 ClientMessage clientMessage=new ClientPing();
                                 sendMessage(new SCKMessage(clientMessage));
                             } catch (IOException e) { //the connection doesn't is open (and it doesn't seem to be open)
+                                try {
+                                    handleDisconnection();
+                                } catch (RemoteException ignored) {
+
+                                }
+                                /*
                                 System.out.println("the connection has been interrupted....Bye bye");
                                 try { //we close all we have to close
                                     running=false;
@@ -1012,8 +1030,17 @@ public class ClientSCK implements ClientGeneralInterface {
                                     throw new RuntimeException(ex);
                                 }
                                 timer.cancel(); // Ferma il timer
+
+                                 */
                             }
                         }else{ //there are no pongs received
+
+                            try {
+                                handleDisconnection();
+                            } catch (RemoteException ignored) {
+
+                            }
+                            /*
                             System.out.println("the connection has been interrupted...Bye bye");
                             try {
                                 running=false;
@@ -1025,6 +1052,8 @@ public class ClientSCK implements ClientGeneralInterface {
                                 throw new RuntimeException(e);
                             }
                             timer.cancel(); // Ferma il timer
+
+                             */
                         }
                     }
                 }, 0, 10000); // Esegui ogni 10 secondi
@@ -1034,6 +1063,7 @@ public class ClientSCK implements ClientGeneralInterface {
             } else if (gameState.equals(Game.GameState.ENDING)) {
 
             }else if(gameState.equals(Game.GameState.ENDED)){ //we do not return to the lobby -> we have to close the connection and stop the threads
+                System.out.println("game state: ENDED");
                 running=false;
                 inGame=false;
                 try {
@@ -1152,21 +1182,6 @@ public class ClientSCK implements ClientGeneralInterface {
                         case 0:  // if (!aDisconnectionHappened)
                             inGame = false;
                             leaveGame(personalPlayer.getNickname());
-                            System.out.println("You left the game.");
-                            //qui bisogna chiudere gli stream e la socket
-                            running = false;
-                            try { //devo fermare i thread lanciati all'interno di questo thread
-                                inputStream.close();
-                                outputStream.close();
-                                socket.close();
-                            } catch (IOException ex) { //this catch is needed for the close statements
-                                throw new RuntimeException(ex);
-                            }
-                            if(this.timer!=null){ //this is null if the game is not already started
-                                this.timer.cancel(); //we don't need to check the connection anymore
-                            }
-                            System.exit(-1);
-                            break;
                         case 1:
                             tuiView.printHand(personalPlayer.getPlayerDeck());
                             break;

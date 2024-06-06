@@ -93,11 +93,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                             //throw new RuntimeException(ex);
                         }
                         timer.cancel(); // Ferma il timer
-                        System.out.println(gameController.getFirstDisconnection());
-                        if(gameController.getFirstDisconnection()){
-                            gameController.setFirstDisconnection(false); //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
-                            gameController.disconnection();; //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
-                        }
+                         //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
+                        gameController.disconnection();; //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
+
                         //interrompo questo ClientHandlerThread
                         Thread.currentThread().interrupt();
                         System.out.println("appena chiamato interrupt");
@@ -143,7 +141,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    if(pongReceived) {
+                    if(pongReceived&& !aDisconnectionHappened) {
                         pongReceived=false;
                         CODEX.utils.executableMessages.serverMessages.ServerMessage serverMessage= new ServerPing();
                         writeTheStream(new SCKMessage(serverMessage));
@@ -159,11 +157,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                             //throw new RuntimeException(e);
                         }
                         timer.cancel(); // Ferma il timer
-                        System.out.println(gameController.getFirstDisconnection());
-                        if(gameController.getFirstDisconnection()){
-                            gameController.setFirstDisconnection(false); //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
-                            gameController.disconnection();; //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
-                        }
+
+                         //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
+                        gameController.disconnection();; //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
                     }
                 }
             }, 0, 10000); // Esegui ogni 10 secondi
@@ -196,6 +192,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     //writeTheStream will also be called in the method update (we have it because ClientHandlerThread is a listener) to tell the client what is changed in the model
     synchronized public void writeTheStream(SCKMessage sckMessage){ //this is the stream the real client can read
         if(running) {
+
             try {
                 output.writeObject(sckMessage);
                 output.flush();
@@ -212,11 +209,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                     //throw new RuntimeException(ex);
                 }
                 timer.cancel(); // Ferma il timer
-                System.out.println(gameController.getFirstDisconnection());
-                if (gameController.getFirstDisconnection()) {
-                    gameController.setFirstDisconnection(false); //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
-                    gameController.disconnection(); //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
-                }
+                //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
+                gameController.disconnection(); //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
+
                 Thread.currentThread().interrupt();
             }
         }else {

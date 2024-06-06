@@ -8,7 +8,6 @@ import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.*;
 import CODEX.utils.Observer;
 import CODEX.utils.ErrorsAssociatedWithExceptions;
-import CODEX.utils.executableMessages.events.disconnectionEvent;
 import CODEX.utils.executableMessages.events.updatePlayersOrderEvent;
 
 import java.rmi.RemoteException;
@@ -579,7 +578,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         synchronized (disconnectionLock) {
             if(firstDisconnection) {
                 System.out.println("the server has detected a disconnection");
-                game.setLastEvent(new disconnectionEvent());
                 game.notifYDisconnectionEvent();
                 for (Player p : gamePlayers) {
                     serverController.getAllNicknames().remove(p.getNickname());
