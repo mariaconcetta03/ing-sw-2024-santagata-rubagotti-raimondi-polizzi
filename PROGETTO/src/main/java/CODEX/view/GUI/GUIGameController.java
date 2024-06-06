@@ -2065,7 +2065,50 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                 i++;
             }
         });
+    }
 
+
+
+    public void changeScene() throws RemoteException {
+        // let's show the new window: winners and losers
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/winners.fxml"));
+        Parent root = null;
+        try {
+            root = fxmlLoader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        GUIWinnersController ctr = null;
+        while (ctr == null) {
+            ctr = fxmlLoader.getController();
+        }
+
+        // setting the parameters in the new controller
+        ctr.setStage(stage);
+        ctr.setNetwork(network);
+        ctr.setClientSCK(clientSCK);
+        ctr.setRmiClient(rmiClient);
+
+        // old dimensions and position
+        double width = stage.getWidth();
+        double height = stage.getHeight();
+        double x = stage.getX();
+        double y = stage.getY();
+
+        // new scene
+        Scene scene;
+        scene = new Scene(root);
+
+        stage.setScene(scene);
+
+        // setting the od values of position and dimension
+        stage.setWidth(width);
+        stage.setHeight(height);
+        stage.setX(x);
+        stage.setY(y);
+
+        stage.show();
     }
 
 
