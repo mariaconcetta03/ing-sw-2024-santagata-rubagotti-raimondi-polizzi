@@ -180,6 +180,8 @@ public class GUIGameController {
                 showP1Board();
             } else {
                 this.turnLabel.setText("It's " + rmiClient.getPlayersInTheGame().get(0).getNickname() + "'s turn!");
+
+                /*
                 if(currentBoard != null && currentBoard.equals(rmiClient.getPlayersInTheGame().get(0).getNickname())){
                     int i=1;
                     for(Player player:playersInOrder){
@@ -209,8 +211,11 @@ public class GUIGameController {
                         }
                         i++;
                     }
+                    }
 
-                }
+                 */
+
+
             }
         } else if (network == 2) {
             clientSCK.setGuiGameController(this);
@@ -235,7 +240,7 @@ public class GUIGameController {
 
             } else {
                 this.turnLabel.setText("It's " + clientSCK.getPlayersInTheGame().get(0).getNickname() + "'s turn!");
-                //mostriamo subito la board del giocatore in turno
+                /*
                 if(currentBoard != null && currentBoard.equals(clientSCK.getPlayersInTheGame().get(0).getNickname())){
                     int i=1;
                     for(Player player:playersInOrder){
@@ -266,6 +271,8 @@ public class GUIGameController {
                         i++;
                     }
                 }
+
+                 */
             }
         }
     }
@@ -1061,7 +1068,7 @@ public void updateLabel(Label label, String text){
 
 
     public void showP3Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 3
-        currentBoard=new String(playersInOrder.get(1).getNickname());
+        currentBoard=new String(playersInOrder.get(2).getNickname());
         updateLabel(boardLabel, playersInOrder.get(2).getNickname() + "'s board");
         grid.getChildren().clear();//toglie pure i bottoni che vanno rimessi solo se è il turno di quel giocatore
         initializeGridPaneCells(false);
@@ -1140,7 +1147,7 @@ public void updateLabel(Label label, String text){
 
 
     public void showP4Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 4
-        currentBoard=new String(playersInOrder.get(1).getNickname());
+        currentBoard=new String(playersInOrder.get(3).getNickname());
         updateLabel(boardLabel, playersInOrder.get(3).getNickname() + "'s board");
         grid.getChildren().clear();//toglie pure i bottoni che vanno rimessi solo se è il turno di quel giocatore
         initializeGridPaneCells(false);
@@ -1943,14 +1950,29 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
             System.out.println("sto aggiornando la board del player p2");
             p2Counter++;
             cardsOnP2Board.put(p2Counter, newCard);
+            if((currentBoard!=null)&&currentBoard.equals(playersInOrder.get(1).getNickname())){
+                Platform.runLater(() -> {
+                    showP2Board();
+                });
+            }
         } else if (playersInOrder.size() >= 3 && boardOwner.equals(playersInOrder.get(2).getNickname())) {
             System.out.println("sto aggiornando la board del player p3");
             p3Counter++;
             cardsOnP3Board.put(p3Counter, newCard);
+            if((currentBoard!=null)&&currentBoard.equals(playersInOrder.get(2).getNickname())){
+                Platform.runLater(() -> {
+                showP3Board();
+                });
+            }
         } else if (playersInOrder.size() >= 4 && boardOwner.equals(playersInOrder.get(3).getNickname())) {
             System.out.println("sto aggiornando la board del player p4");
             p4Counter++;
             cardsOnP4Board.put(p4Counter, newCard);
+            if((currentBoard!=null)&&currentBoard.equals(playersInOrder.get(3).getNickname())){
+                Platform.runLater(() -> {
+                showP4Board();
+                });
+            }
         }
     }
 
