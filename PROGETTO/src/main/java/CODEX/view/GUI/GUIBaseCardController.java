@@ -304,7 +304,7 @@ public class GUIBaseCardController {
     public void startPeriodicDisconnectionCheck() {
         scheduler.scheduleAtFixedRate(() -> {
             synchronized (disconnectionLock) {
-                if (clientSCK.getADisconnectionHappened()) {
+                if ( ((network==1)&&(rmiClient.getADisconnectionHappened())) || ((network==2)&&(clientSCK.getADisconnectionHappened())) ){
                     Platform.runLater(() -> {
                         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/handleDisconnection.fxml"));
                         Parent root = null;
@@ -345,12 +345,20 @@ public class GUIBaseCardController {
 
     private void stageClose(){
         stage.close();
-        try {
-            clientSCK.handleDisconnectionFunction();
-        } catch (RemoteException ignored) {
-
+        if(network==1){
+            try {
+                rmiClient.handleDisconnectionFunction();
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
         }
+        if(network==2) {
+            try {
+                clientSCK.handleDisconnectionFunction();
+            } catch (RemoteException ignored) {
 
+            }
+        }
     }
 
 

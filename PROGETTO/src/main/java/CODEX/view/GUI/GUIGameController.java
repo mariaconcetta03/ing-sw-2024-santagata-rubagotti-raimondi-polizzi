@@ -281,7 +281,7 @@ public class GUIGameController {
 
     public void leaveGame() {
         synchronized (disconnectionLock) { //o sono in leaveGame() o in startPeriodicDisconnectionCheck()
-            if (!clientSCK.getADisconnectionHappened()) { //se è avvenuta una disconnessione leaveGame non esegue niente
+            if ( ((network==1)&&(!rmiClient.getADisconnectionHappened())) || ((network==2)&&(!clientSCK.getADisconnectionHappened())) ){ //se è avvenuta una disconnessione leaveGame non esegue niente
                 scheduler.shutdown(); //così nel caso avvenga una disconnessione mentre siamo in questa syn poi lo scheduler non va a toccare il client che ha già fatto la exit
                 //changeScene():
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gameLeft.fxml"));

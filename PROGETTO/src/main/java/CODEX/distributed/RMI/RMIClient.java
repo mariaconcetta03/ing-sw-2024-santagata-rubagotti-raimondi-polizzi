@@ -60,6 +60,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private PlayableCard resourceCard1;
     private PlayableCard resourceCard2;
     private GUIGameController guiGameController=null;
+    private boolean aDisconnectionHappened=false;
 
     public Player getPersonalPlayer() {
         return personalPlayer;
@@ -222,7 +223,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     @Override
     public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, NotBoundException, IllegalArgumentException {
-        this.gameController.playCard(nickname, selectedCard, position, orientation);
+        if(!aDisconnectionHappened) {
+            this.gameController.playCard(nickname, selectedCard, position, orientation);
+        }
     }
 
 
@@ -239,7 +242,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     @Override
     public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException, NotBoundException {
-        this.gameController.playBaseCard(nickname, baseCard, orientation);
+        if(!aDisconnectionHappened) {
+            this.gameController.playBaseCard(nickname, baseCard, orientation);
+        }
     }
 
 
@@ -254,7 +259,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     @Override
     public void drawCard(String nickname, PlayableCard selectedCard) throws RemoteException, NotBoundException {
-        this.gameController.drawCard(nickname, selectedCard);
+        if(!aDisconnectionHappened) {
+            this.gameController.drawCard(nickname, selectedCard);
+        }
     }
 
 
@@ -269,7 +276,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     @Override
     public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) throws RemoteException, NotBoundException {
-        this.gameController.chooseObjectiveCard(chooserNickname, selectedCard);
+        if(!aDisconnectionHappened) {
+            this.gameController.chooseObjectiveCard(chooserNickname, selectedCard);
+        }
     }
 
 
@@ -284,7 +293,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     @Override
     public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, NotBoundException {
-        this.gameController.choosePawnColor(chooserNickname, selectedColor);
+        if(!aDisconnectionHappened) {
+            this.gameController.choosePawnColor(chooserNickname, selectedColor);
+        }
     }
 
 
@@ -299,7 +310,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     @Override
     public void sendMessage(String senderNickname, List<String> receiversNicknames, String message) throws RemoteException, NotBoundException {
-        this.gameController.sendMessage(senderNickname, receiversNicknames, message);
+        if(!aDisconnectionHappened) {
+            this.gameController.sendMessage(senderNickname, receiversNicknames, message);
+        }
     }
 
 
@@ -317,7 +330,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         this.gameController.leaveGame(nickname);
 
          */
-        this.executor.shutdown();
+        //if (!aDisconnectionHappened) non lo controllo perchè se viene rilevata sulla gui la disconnessione non viene premuto il tasto che porta a questa funzione
+
+        if(this.executor!=null) {
+            this.executor.shutdown();
+        }
         this.schedulerToCheckReceivedHeartBeat.shutdown();
         this.schedulerToSendHeartbeat.shutdown(); //l'heartbeat receiver lato server rileverà la disconnessione
         System.out.println("You left the game.");
@@ -1008,22 +1025,27 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     @Override
     public void handleDisconnection() throws RemoteException {
-        System.out.println("sono dentro handleDisconnection() di RMIClient");
+        System.out.println("A disconnection happened. Closing the game.");
         if(selectedView==1) {
-            System.out.println("Oh no! Someone disconnected!");
+            handleDisconnectionFunction();
         }
-
-        this.executor.shutdown();
-        this.schedulerToCheckReceivedHeartBeat.shutdown();
-        this.schedulerToSendHeartbeat.shutdown(); //va prima chiuso l'heartbeat receiver lato server -> lo facciamo la prima volta che il controller chiama disconnect()
-
-
         if(selectedView==2) {
+            synchronized (guiLock){
+                aDisconnectionHappened = true; //serve per bloccare altre cose appena arriva una disconnessione
+                guiLock.notify(); //nel caso in cui la gui sta facendo la wait di un evento (che dopo questa discconnessione non si verificherà mai)
+            }
         }
     }
 
-    public void handleDisconnectionFunction() throws RemoteException{
-        System.out.println("A disconnection happened. Closing the game.");
+    public void handleDisconnectionFunction() throws RemoteException{ //viene chiamata direttamente dalla gui
+
+        inGame=false;
+        if(this.executor!=null) {
+            this.executor.shutdown();
+        }
+        this.schedulerToCheckReceivedHeartBeat.shutdown();
+        this.schedulerToSendHeartbeat.shutdown(); //va prima chiuso l'heartbeat receiver lato server -> lo facciamo la prima volta che il controller chiama disconnect()
+
         Timer timer=new Timer();
         timer.schedule(
                 new TimerTask() {
@@ -1105,21 +1127,16 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         lambdaContext.heartbeatTask= this.schedulerToCheckReceivedHeartBeat.scheduleAtFixedRate(() -> {
             long currentTime = System.currentTimeMillis();
             if ((currentTime - lastHeartbeatTime) / 1000 > TIMEOUT) {
-                //System.out.println("Server connection lost");
-                System.out.println("A disconnection happened");
                 //caso in cui il server risulta irragiungibile/è avvenuta una disconnessione
                 if (lambdaContext.heartbeatTask != null && !lambdaContext.heartbeatTask.isCancelled()) {
                     lambdaContext.heartbeatTask.cancel(true); //chiude schedulerToCheckReceivedHeartBeat
                 }
                 // chiudiamo tutto quello che c'è da chiudere
                 try {
-                    this.executor.shutdown();
-                    this.schedulerToSendHeartbeat.shutdown(); //va prima chiuso l'heartbeat receiver lato server?
-
-                } catch (Exception e) {
+                    handleDisconnection();
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
                 }
-                this.schedulerToCheckReceivedHeartBeat.shutdown();
-                System.exit(0); // status 0 -> no errors (the server has disconnected and the client has closed all his threads)
             }
         }, 0, TIMEOUT, TimeUnit.SECONDS);
     }
@@ -1198,6 +1215,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     public Settings getNetworkSettings() {
         return networkSettings;
+    }
+    public boolean getADisconnectionHappened() {
+        return aDisconnectionHappened;
     }
 
 }
