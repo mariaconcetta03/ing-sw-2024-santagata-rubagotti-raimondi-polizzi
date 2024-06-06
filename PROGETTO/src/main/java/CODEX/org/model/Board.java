@@ -267,28 +267,36 @@ public class Board implements Serializable  {
         if (card.getOrientation()) {
             if (card.get_front_up_right() == AngleType.ABSENT) {
                 unPlayablePositions.add(card.getPosition().findUpRight());
+                playablePositions.remove(card.getPosition().findUpRight());
             }
             if (card.get_front_up_left() == AngleType.ABSENT) {
                 unPlayablePositions.add(card.getPosition().findUpLeft());
+                playablePositions.remove(card.getPosition().findUpLeft());
             }
             if (card.get_front_down_right() == AngleType.ABSENT) {
                 unPlayablePositions.add(card.getPosition().findDownRight());
+                playablePositions.remove(card.getPosition().findDownRight());
             }
             if (card.get_front_down_left() == AngleType.ABSENT) {
                 unPlayablePositions.add(card.getPosition().findDownLeft());
+                playablePositions.remove(card.getPosition().findDownLeft());
             }
         } else {
             if (card.get_back_up_right() == AngleType.ABSENT) {
                 unPlayablePositions.add(card.getPosition().findUpRight());
+                playablePositions.remove(card.getPosition().findUpRight());
             }
             if (card.get_back_up_left() == AngleType.ABSENT) {
                 unPlayablePositions.add(card.getPosition().findUpLeft());
+                playablePositions.remove(card.getPosition().findUpLeft());
             }
             if (card.get_back_down_right() == AngleType.ABSENT) {
                 unPlayablePositions.add(card.getPosition().findDownRight());
+                playablePositions.remove(card.getPosition().findDownRight());
             }
             if (card.get_back_down_left() == AngleType.ABSENT) {
                 unPlayablePositions.add(card.getPosition().findDownLeft());
+                playablePositions.remove(card.getPosition().findDownLeft());
             }
         }
     }
