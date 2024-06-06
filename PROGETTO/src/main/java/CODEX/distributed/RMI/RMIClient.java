@@ -583,7 +583,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updateBoard (String boardOwner, Board board) throws RemoteException {
+    public void updateBoard (String boardOwner, Board board, PlayableCard newCard) throws RemoteException {
         if (boardOwner.equals(personalPlayer.getNickname())) {
             personalPlayer.setBoard(board);
         }
@@ -593,9 +593,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 }
             }
             if (selectedView == 1) {
-                //System.out.println("I received the board update.");
+                System.out.println("I received the board update.");
             } else if (selectedView == 2) {
-                //guiView.showBoard(board)
+                if (guiGameController != null) {
+                    guiGameController.updateBoard(boardOwner, newCard);
+                }
             }
         }
 

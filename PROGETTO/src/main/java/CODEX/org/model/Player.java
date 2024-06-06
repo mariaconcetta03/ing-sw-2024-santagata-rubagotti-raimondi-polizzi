@@ -168,7 +168,7 @@ public class Player extends Observable implements Serializable {
         tmp2.add(this.board);
         try {
             notifyObservers(new updatePlayerDeckEvent(this.nickname, this.playerDeck));
-            notifyObservers(new updateBoardEvent(this.nickname, this.board));
+            notifyObservers(new updateBoardEvent(this.nickname, this.board, card)); // add the last added card
         }catch (RemoteException e){}
     }
 
@@ -192,7 +192,7 @@ public class Player extends Observable implements Serializable {
         tmp2.add(this.board);
         try {
             notifyObservers(new updatePlayerDeckEvent(this.nickname, this.playerDeck));
-            notifyObservers(new updateBoardEvent(this.nickname, this.board));
+            notifyObservers(new updateBoardEvent(this.nickname, this.board, card));
         }catch (RemoteException e){}
     }
     //non serve notify, non puo essere posizionata male.

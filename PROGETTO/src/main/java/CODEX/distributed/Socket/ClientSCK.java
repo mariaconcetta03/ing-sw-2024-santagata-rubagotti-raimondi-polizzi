@@ -684,7 +684,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
 
     @Override
-    public void updateBoard(String boardOwner, Board board) throws RemoteException {
+    public void updateBoard(String boardOwner, Board board, PlayableCard newCard) throws RemoteException {
         //we have to change the view and the local model
         if (boardOwner.equals(personalPlayer.getNickname())) {
             System.out.println("I received the board.");
@@ -693,20 +693,23 @@ public class ClientSCK implements ClientGeneralInterface {
             t.printTable(board);
         }
 
-            if(playersInTheGame!=null) {
-                for (Player p : playersInTheGame) {
-                    if (boardOwner.equals(p.getNickname())) {
-                        p.setBoard(board);
-                    }
+        if (playersInTheGame != null) {
+            for (Player p : playersInTheGame) {
+                if (boardOwner.equals(p.getNickname())) {
+                    p.setBoard(board);
                 }
             }
-
-            if (selectedView == 1) {
-                System.out.println("I received the board di un altro.");
-            } else if (selectedView == 2) {
-                //guiView.showBoard(board)
-            }
         }
+
+        if (selectedView == 1) {
+            System.out.println("I received the board di un altro.");
+        } else if (selectedView == 2) {
+        if (guiGameController != null) {
+            System.out.println("AAAAAAAAAAAAA!!! I received the board di un altro!!! AAAAAAAAAAAAAAA");
+            guiGameController.updateBoard(boardOwner, newCard);
+        }
+        }
+    }
 
     @Override
     public void updateResourceDeck(PlayableDeck resourceDeck) throws RemoteException {

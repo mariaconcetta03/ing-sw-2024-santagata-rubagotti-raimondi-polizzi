@@ -160,19 +160,19 @@ public class GUIGameController {
             if (rmiClient.getPlayersInTheGame().get(0).getNickname().equals(rmiClient.getPersonalPlayer().getNickname())) {
                 this.turnLabel.setText("It's your turn!");
 
-                int i=1;
-                for (Player p: playersInOrder) { //tolgo l'illuminazione da tutti i bottoni
-                    System.out.println("nickname: " + p.getNickname());
-                    if(i==1){
-                        buttonP1Board.setStyle("");}
-                    if(i==2){
-                        buttonP2Board.setStyle("");}
-                    if(i==3){
-                        buttonP3Board.setStyle("");}
-                    if(i==4){
-                        buttonP4Board.setStyle("");}
-                    i++;
-                }
+//                int i=1;
+//                for (Player p: playersInOrder) { //tolgo l'illuminazione da tutti i bottoni
+//                    System.out.println("nickname: " + p.getNickname());
+//                    if(i==1){
+//                        buttonP1Board.setStyle("");}
+//                    if(i==2){
+//                        buttonP2Board.setStyle("");}
+//                    if(i==3){
+//                        buttonP3Board.setStyle("");}
+//                    if(i==4){
+//                        buttonP4Board.setStyle("");}
+//                    i++;
+//                }
                 //mostriamo subito la board del giocatore in turno
                 showP1Board();
             } else {
@@ -183,24 +183,26 @@ public class GUIGameController {
             if (clientSCK.getPlayersInTheGame().get(0).getNickname().equals(clientSCK.getPersonalPlayer().getNickname())) {
                 this.turnLabel.setText("It's your turn!");
 
-                int i=1;
-                for (Player p: playersInOrder) { //tolgo l'illuminazione da tutti i bottoni
-                    System.out.println("nickname: " + p.getNickname());
-                    if(i==1){
-                        buttonP1Board.setStyle("");}
-                    if(i==2){
-                        buttonP2Board.setStyle("");}
-                    if(i==3){
-                        buttonP3Board.setStyle("");}
-                    if(i==4){
-                        buttonP4Board.setStyle("");}
-                    i++;
-                }
+//                int i=1;
+//                for (Player p: playersInOrder) { //tolgo l'illuminazione da tutti i bottoni
+//                    System.out.println("nickname: " + p.getNickname());
+//                    if(i==1){
+//                        buttonP1Board.setStyle("");}
+//                    if(i==2){
+//                        buttonP2Board.setStyle("");}
+//                    if(i==3){
+//                        buttonP3Board.setStyle("");}
+//                    if(i==4){
+//                        buttonP4Board.setStyle("");}
+//                    i++;
+//                }
                 //mostriamo subito la board del giocatore in turno
                 showP1Board();
 
             } else {
                 this.turnLabel.setText("It's " + clientSCK.getPlayersInTheGame().get(0).getNickname() + "'s turn!");
+                //mostriamo subito la board del giocatore in turno
+                showP1Board();
             }
         }
     }
@@ -261,55 +263,58 @@ public class GUIGameController {
 
 
 
-    public void setPoints(){
-        int rmiPlayer = 0;
-        int order = 0;
-        int sckPlayer = 0;
+    public void setPoints() {
+        Platform.runLater(() -> {
+            System.out.println("A T T E N Z I O N ESTO SETTANDO I PUNTI DI TUTTI I PLAYER");
+            System.out.println("STO SETTANDO I PUNTI DI TUTTI I PLAYER");
+            int rmiPlayer = 0;
+            int order = 0;
+            int sckPlayer = 0;
 
-        if(network == 1){
-            for (Player p: playersInOrder) {
-                rmiPlayer = 0;
-                for (Player p2 : rmiClient.getPlayersInTheGame()) {
-                    if (p.getNickname().equals(p2.getNickname())) {
-                        // devo aggiornare i punti di quel player
-                        if (order == 0 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) {
-                            this.points1.setText(p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
-                        } else if (order == 1 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) {
-                            this.points2.setText(p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
-                        } else if (order == 2 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) {
-                            this.points3.setText(p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
-                        } else if (order == 3 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) {
-                            this.points4.setText(p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
+            if (network == 1) {
+                for (Player p : playersInOrder) {
+                    rmiPlayer = 0;
+                    for (Player p2 : rmiClient.getPlayersInTheGame()) {
+                        if (p.getNickname().equals(p2.getNickname())) {
+                            // devo aggiornare i punti di quel player
+                            if (order == 0 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) {
+                                this.points1.setText(p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
+                            } else if (order == 1 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) {
+                                this.points2.setText(p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
+                            } else if (order == 2 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) {
+                                this.points3.setText(p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
+                            } else if (order == 3 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) {
+                                this.points4.setText(p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
+                            }
                         }
+                        rmiPlayer++;
                     }
-                    rmiPlayer++;
+                    order++;
                 }
-                order++;
-            }
 
-        }else if (network == 2){
-            for (Player p: playersInOrder) {
-                sckPlayer = 0;
-                for (Player p2 : clientSCK.getPlayersInTheGame()) {
-                    if (p.getNickname().equals(p2.getNickname())) {
-                        // devo aggiornare i punti di quel player
-                        if (order == 0 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
-                            this.points1.setText(p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
-                        } else if (order == 1 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
-                            this.points2.setText(p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
-                        } else if (order == 2 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
-                            this.points3.setText(p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
-                        }else if (order == 3 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
-                            this.points4.setText(p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
+            } else if (network == 2) {
+                for (Player p : playersInOrder) {
+                    sckPlayer = 0;
+                    for (Player p2 : clientSCK.getPlayersInTheGame()) {
+                        if (p.getNickname().equals(p2.getNickname())) {
+                            // devo aggiornare i punti di quel player
+                            if (order == 0 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
+                                this.points1.setText(p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
+                            } else if (order == 1 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
+                                this.points2.setText(p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
+                            } else if (order == 2 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
+                                this.points3.setText(p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
+                            } else if (order == 3 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
+                                this.points4.setText(p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
+                            }
                         }
+                        sckPlayer++;
                     }
-                    sckPlayer++;
+                    order++;
                 }
-                order++;
             }
-        }
+        });
     }
-
 
 
     public void setPlayersInOrder(List<Player> playersInOrder) {
@@ -409,10 +414,6 @@ public class GUIGameController {
      */
     public void setAllFeatures() throws RemoteException {
         System.out.println("STO SETTANDO TUTTE LE FEATURES");
-
-        // SETTING THE LABEL WITH THE CORRECT NAME OF THE PLAYER IN TURN
-        setTurnLabel();
-
 
         if (this.network == 1) {
             this.dimension=rmiClient.getPersonalPlayer().getBoard().getBoardDimensions();
@@ -644,6 +645,7 @@ public class GUIGameController {
             // SETTING THE FIRST POSITION OF THE SCROLL IN THE SCROLLPANE
             // THANKS TO THIS THE PLAYER CAN IMMEDIATELY SEE HIS BASE CARD IN THE CENTER OF HI
         }
+
         // SETTING THE TABLE AND ITS DIMENSIONS
         int i=1;
         for (Player p: playersInOrder) {
@@ -674,6 +676,10 @@ public class GUIGameController {
 
         // SETTING THE CORRECT NUMBER OF POINTS (UPDATE)
         setPoints();
+
+
+        // SETTING THE LABEL WITH THE CORRECT NAME OF THE PLAYER IN TURN
+        setTurnLabel();
 
         // INITIALIZING THE CELLS IN THE SCROLLPANE
         //initializeGridPaneCells();
@@ -828,6 +834,54 @@ public class GUIGameController {
 
 
     public void showP2Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 2
+        // UPDATING THE CARDS ON THE BOARD
+//        boolean present = false;
+//        if (network == 1) {
+//            for(int playerIndex = 0; playerIndex < rmiClient.getPlayersInTheGame().size(); playerIndex++){
+//                if(playersInOrder.get(1).getNickname().equals(rmiClient.getPlayersInTheGame().get(playerIndex).getNickname())){
+//                    PlayableCard [][] table = rmiClient.getPlayersInTheGame().get(playerIndex).getBoard().getTable();
+//                    for (int i=0; i<dimension; i++) {
+//                        for (int j=0; j<dimension; j++) {
+//                            present = false;
+//                            if (table[i][j] != null) {
+//                                // vedo se c'è nella map
+//                                for (int k = 0; k < cardsOnP2Board.size() && !present; k++) {
+//                                    if (cardsOnP2Board.get(k).equals(table[i][j])){
+//                                        present = true;
+//                                    } else {
+//                                        // add the card to the MAP <Integer, PlayableCard>
+//                                        cardsOnP2Board.put(cardsOnP2Board.size(),table[i][j]);
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        } else if (network == 2) {
+//            for(int playerIndex = 0; playerIndex < clientSCK.getPlayersInTheGame().size(); playerIndex++){
+//                if(playersInOrder.get(1).getNickname().equals(clientSCK.getPlayersInTheGame().get(playerIndex).getNickname())){
+//                    PlayableCard [][] table = clientSCK.getPlayersInTheGame().get(playerIndex).getBoard().getTable();
+//                    for (int i=0; i<dimension; i++) {
+//                        for (int j=0; j<dimension; j++) {
+//                            present = false;
+//                            if (table[i][j] != null) {
+//                                // vedo se c'è nella map
+//                                for (int k = 0; k < cardsOnP2Board.size() && !present; k++) {
+//                                    if (cardsOnP2Board.get(k).equals(table[i][j])){
+//                                        present = true;
+//                                    } else {
+//                                        // add the card to the MAP <Integer, PlayableCard>
+//                                        cardsOnP2Board.put(cardsOnP2Board.size(),table[i][j]);
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+
         grid.getChildren().clear();//toglie pure i bottoni che vanno rimessi solo se è il turno di quel giocatore
         initializeGridPaneCells(false);
 
@@ -855,6 +909,7 @@ public class GUIGameController {
         boardPane.setHvalue((75.0*(dimension /2))/(75.0*83));
         boardPane.setVvalue((44.775*(81-dimension /2))/(44.775*81));
 
+        // SHOWING THE CARDS
         for(Integer integer:cardsOnP2Board.keySet()){
             String path=null;
             if(cardsOnP2Board.get(integer).getOrientation()) {
@@ -868,9 +923,9 @@ public class GUIGameController {
             imageView.setPreserveRatio(true);
             imageView.setSmooth(true);
             imageView.toFront();
-           Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
+            Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
             GridPane.setMargin(imageView, insets);
-            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), 81-cardsOnP1Board.get(integer).getPosition().getY());
+            this.grid.add(imageView, cardsOnP2Board.get(integer).getPosition().getX(), 81-cardsOnP2Board.get(integer).getPosition().getY());
         }
 /*
 
@@ -947,7 +1002,7 @@ public class GUIGameController {
             imageView.toFront();
            Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
             GridPane.setMargin(imageView, insets);
-            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), 81-cardsOnP1Board.get(integer).getPosition().getY());
+            this.grid.add(imageView, cardsOnP3Board.get(integer).getPosition().getX(), 81-cardsOnP3Board.get(integer).getPosition().getY());
         }
 
 /*
@@ -1022,7 +1077,7 @@ public class GUIGameController {
             imageView.toFront();
            Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
             GridPane.setMargin(imageView, insets);
-            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), 81-cardsOnP1Board.get(integer).getPosition().getY());
+            this.grid.add(imageView, cardsOnP4Board.get(integer).getPosition().getX(), 81-cardsOnP4Board.get(integer).getPosition().getY());
         }
 
 /*
@@ -1719,6 +1774,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                     GridPane.setMargin(imageView, insets);
                     grid.add(imageView, col, 81-row);
                     showP1Board(); // RICARICO LA BOARD
+                    setPoints();
                 }
 
             }
@@ -1764,4 +1820,24 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
     public void updateRound() {
         Platform.runLater(this::setTurnLabel);
     }
+
+    public void updateBoard(String boardOwner, PlayableCard newCard) {
+        if(boardOwner.equals(playersInOrder.get(1).getNickname())){
+            System.out.println("sto aggiornando la board del player p2");
+            p2Counter++;
+            cardsOnP2Board.put(p2Counter, newCard);
+        } else if (playersInOrder.size() >= 3 && boardOwner.equals(playersInOrder.get(2).getNickname())) {
+            System.out.println("sto aggiornando la board del player p3");
+            p3Counter++;
+            cardsOnP3Board.put(p3Counter, newCard);
+        } else if (playersInOrder.size() >= 4 && boardOwner.equals(playersInOrder.get(3).getNickname())) {
+            System.out.println("sto aggiornando la board del player p4");
+            p4Counter++;
+            cardsOnP4Board.put(p4Counter, newCard);
+        }
+        setPoints();
+    }
+
+
+
 }
