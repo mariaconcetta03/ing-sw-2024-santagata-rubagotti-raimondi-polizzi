@@ -47,6 +47,7 @@ public class GUIGameController {
     private int selectedCard = 0; // 1 = card1  2 = card 2  3 = card
     private int selectedBoard = 0; // n = player n
     private Integer dimension;
+    private Integer currentBoard;
     private PlayableCard[][] tableP1;
     private PlayableCard[][] tableP2;
     private PlayableCard[][] tableP3;
@@ -1861,5 +1862,116 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
     }
 
 
+    public void updateResourceDeck() {
+        Platform.runLater(() -> {
+            String path=null;
+            if(network==1){
+                path = "/images/cards/back/  (" + rmiClient.getResourceDeck().checkFirstCard().getId() + ").png";
+            }else if(network==2){
+                path = "/images/cards/back/  (" + clientSCK.getResourceDeck().checkFirstCard().getId() + ").png";
+            }
+            Image newCard = new Image(getClass().getResourceAsStream(path));
+            resourceDeck.setImage(newCard);
+        });
+    }
 
+    public void updateGoldDeck() {
+        Platform.runLater(() -> {
+            String path=null;
+            if(network==1){
+                path = "/images/cards/back/  (" + rmiClient.getGoldDeck().checkFirstCard().getId() + ").png";
+            }else if(network==2){
+                path = "/images/cards/back/  (" + clientSCK.getGoldDeck().checkFirstCard().getId() + ").png";
+            }
+            Image newCard = new Image(getClass().getResourceAsStream(path));
+            goldDeck.setImage(newCard);
+        });
+    }
+
+    public void updatePlayerDeck(String nickname,PlayableCard[] playerDeck) {
+        Platform.runLater(() -> {
+            String path=null;
+            Image newCard=null;
+            int i=1;
+            for (Player p : playersInOrder) {
+                if(i==2){ //non serve l'update del giocatore a cui appartiene la view
+                    if(p.getNickname().equals(nickname)){
+                        if(playerDeck[0]!=null) {
+                            path = "/images/cards/back/  (" + playerDeck[0].getId() + ").png";
+                            newCard = new Image(getClass().getResourceAsStream(path));
+                            player2Card1.setImage(newCard);
+                        }else {
+                            player2Card1.setImage(null);
+                        }
+                        if(playerDeck[1]!=null) {
+                            path = "/images/cards/back/  (" + playerDeck[1].getId() + ").png";
+                            newCard = new Image(getClass().getResourceAsStream(path));
+                            player2Card2.setImage(newCard);
+                        }else {
+                            player2Card2.setImage(null);
+                        }
+                        if(playerDeck[2]!=null) {
+                            path = "/images/cards/back/  (" + playerDeck[2].getId() + ").png";
+                            newCard = new Image(getClass().getResourceAsStream(path));
+                            player2Card3.setImage(newCard);
+                        }else {
+                            player2Card3.setImage(null);
+                        }
+                    }
+                }
+                if(i==3){
+                    if(p.getNickname().equals(nickname)){
+                        if(playerDeck[0]!=null) {
+                        path = "/images/cards/back/  (" + playerDeck[0].getId() + ").png";
+                        newCard = new Image(getClass().getResourceAsStream(path));
+                        player3Card1.setImage(newCard);
+                        }else {
+                            player3Card1.setImage(null);
+                        }
+                        if(playerDeck[1]!=null) {
+                        path = "/images/cards/back/  (" + playerDeck[1].getId() + ").png";
+                        newCard = new Image(getClass().getResourceAsStream(path));
+                        player3Card2.setImage(newCard);
+                        }else {
+                            player3Card2.setImage(null);
+                        }
+                        if(playerDeck[2]!=null) {
+                            path = "/images/cards/back/  (" + playerDeck[2].getId() + ").png";
+                            newCard = new Image(getClass().getResourceAsStream(path));
+                            player3Card3.setImage(newCard);
+                        }else {
+                            player3Card3.setImage(null);
+                        }
+
+                    }
+                }if(i==4){
+                    if(p.getNickname().equals(nickname)){
+                        if(playerDeck[0]!=null) {
+                            path = "/images/cards/back/  (" + playerDeck[0].getId() + ").png";
+                            newCard = new Image(getClass().getResourceAsStream(path));
+                            player4Card1.setImage(newCard);
+                        }else {
+                            player4Card1.setImage(null);
+                        }
+                        if(playerDeck[1]!=null) {
+                            path = "/images/cards/back/  (" + playerDeck[1].getId() + ").png";
+                            newCard = new Image(getClass().getResourceAsStream(path));
+                            player4Card2.setImage(newCard);
+                        }else {
+                            player4Card2.setImage(null);
+                        }
+                        if(playerDeck[2]!=null) {
+                            path = "/images/cards/back/  (" + playerDeck[2].getId() + ").png";
+                            newCard = new Image(getClass().getResourceAsStream(path));
+                            player4Card3.setImage(newCard);
+                        }else {
+                            player4Card3.setImage(null);
+                        }
+                    }
+                }
+                i++;
+            }
+        });
+
+    }
 }

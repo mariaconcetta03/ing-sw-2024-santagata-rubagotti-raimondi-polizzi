@@ -613,6 +613,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             //System.out.println("I received the resourceDeck.");
         } else if (selectedView == 2) {
             //guiView.showUpdatedResourceDeck(this.resourceDeck)
+            if(guiGameController!=null){
+                guiGameController.updateResourceDeck();
+            }
         }
     }
 
@@ -630,6 +633,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             //System.out.println("I received the goldDeck.");
         } else if (selectedView == 2) {
             //guiView.updateGoldDeck(goldDeck)
+            if(guiGameController!=null){
+                guiGameController.updateGoldDeck();
+            }
         }
     }
 
@@ -657,6 +663,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             //System.out.println("I received the updated "+playerNickname+"'s deck.");
         } else if (selectedView == 2) {
             //guiView.updatePlayerDeck(player, playerDeck)
+            if(!(playerNickname.equals(personalPlayer.getNickname()))){
+                if(guiGameController!=null){
+                    guiGameController.updatePlayerDeck(playerNickname, playerDeck);
+                }
+            }
         }
     }
 

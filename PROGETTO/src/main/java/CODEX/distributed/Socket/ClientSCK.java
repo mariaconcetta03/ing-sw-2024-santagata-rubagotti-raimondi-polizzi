@@ -719,6 +719,9 @@ public class ClientSCK implements ClientGeneralInterface {
             System.out.println("I received the updateResourceDeck.");
         } else if (selectedView == 2) {
             //guiView.showUpdatedResourceDeck(this.resourceDeck)
+            if(guiGameController!=null){
+                guiGameController.updateResourceDeck();
+            }
         }
     }
 
@@ -730,6 +733,9 @@ public class ClientSCK implements ClientGeneralInterface {
             System.out.println("I received the updateGoldDeck.");
         } else if (selectedView == 2) {
             //guiView.updateGoldDeck(goldDeck)
+            if(guiGameController!=null){
+                guiGameController.updateGoldDeck();
+            }
         }
     }
 
@@ -753,6 +759,11 @@ public class ClientSCK implements ClientGeneralInterface {
 
         } else if (selectedView == 2) {
             //guiView.updatePlayerDeck(player, playerDeck)
+            if(!(playerNickname.equals(personalPlayer.getNickname()))){
+                if(guiGameController!=null){
+                    guiGameController.updatePlayerDeck(playerNickname,playerDeck);
+                }
+            }
         }
     }
 
