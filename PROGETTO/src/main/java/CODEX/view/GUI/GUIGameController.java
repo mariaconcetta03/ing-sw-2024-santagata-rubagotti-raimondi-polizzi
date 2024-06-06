@@ -47,7 +47,7 @@ public class GUIGameController {
     private int selectedCard = 0; // 1 = card1  2 = card 2  3 = card
     private int selectedBoard = 0; // n = player n
     private Integer dimension;
-    private Integer currentBoard;
+    private String currentBoard=null;
     private PlayableCard[][] tableP1;
     private PlayableCard[][] tableP2;
     private PlayableCard[][] tableP3;
@@ -152,6 +152,8 @@ public class GUIGameController {
     private GridPane grid;
     @FXML
     private Label selectedCardLabel;
+    @FXML
+    private Label boardLabel;
 
 
     public void setTurnLabel() {
@@ -174,10 +176,41 @@ public class GUIGameController {
 //                        buttonP4Board.setStyle("");}
 //                    i++;
 //                }
-                //mostriamo subito la board del giocatore in turno
+                //mostriamo subito la board del giocatore in turno, se il giocatore in turno è p1 (quello a cui appartiene la view)
                 showP1Board();
             } else {
                 this.turnLabel.setText("It's " + rmiClient.getPlayersInTheGame().get(0).getNickname() + "'s turn!");
+                if(currentBoard != null && currentBoard.equals(rmiClient.getPlayersInTheGame().get(0).getNickname())){
+                    int i=1;
+                    for(Player player:playersInOrder){
+                        if(i==1){
+                            if(player.getNickname().equals(currentBoard)){
+                                showP1Board();
+                                break;
+                            }
+
+                        }if(i==2){
+                            if(player.getNickname().equals(currentBoard)){
+                                showP2Board();
+                                break;
+                            }
+
+                        }if(i==3){
+                            if(player.getNickname().equals(currentBoard)){
+                                showP3Board();
+                                break;
+                            }
+
+                        }if(i==4){
+                            if(player.getNickname().equals(currentBoard)){
+                                showP4Board();
+                                break;
+                            }
+                        }
+                        i++;
+                    }
+
+                }
             }
         } else if (network == 2) {
             clientSCK.setGuiGameController(this);
@@ -197,13 +230,42 @@ public class GUIGameController {
 //                        buttonP4Board.setStyle("");}
 //                    i++;
 //                }
-                //mostriamo subito la board del giocatore in turno
+                //mostriamo subito la board del giocatore in turno, se il giocatore in turno è p1 (quello a cui appartiene la view)
                 showP1Board();
 
             } else {
                 this.turnLabel.setText("It's " + clientSCK.getPlayersInTheGame().get(0).getNickname() + "'s turn!");
                 //mostriamo subito la board del giocatore in turno
-                showP1Board();
+                if(currentBoard != null && currentBoard.equals(clientSCK.getPlayersInTheGame().get(0).getNickname())){
+                    int i=1;
+                    for(Player player:playersInOrder){
+                        if(i==1){
+                            if(player.getNickname().equals(currentBoard)){
+                                showP1Board();
+                                break;
+                            }
+
+                        }if(i==2){
+                            if(player.getNickname().equals(currentBoard)){
+                                showP2Board();
+                                break;
+                            }
+
+                        }if(i==3){
+                            if(player.getNickname().equals(currentBoard)){
+                                showP3Board();
+                                break;
+                            }
+
+                        }if(i==4){
+                            if(player.getNickname().equals(currentBoard)){
+                                showP4Board();
+                                break;
+                            }
+                        }
+                        i++;
+                    }
+                }
             }
         }
     }
@@ -261,7 +323,7 @@ public class GUIGameController {
 
     }
 
-public void updatePointsLabel(Label label, String text){
+public void updateLabel(Label label, String text){
     Platform.runLater(() -> {
         label.setText(text);
     });
@@ -281,16 +343,16 @@ public void updatePointsLabel(Label label, String text){
         int i=1;
         for (Player p : playersInOrder){ //va in ordine: p1, p2, p3, p4
             if(i==1) { //primo giocatore di playersInOrder
-                updatePointsLabel(points1, p.getNickname() + ": " + playersWithPoints.get(p.getNickname()) + " pt");
+                updateLabel(points1, p.getNickname() + ": " + playersWithPoints.get(p.getNickname()) + " pt");
             }
             if(i==2) { //secondo giocatore di playersInOrder
-                updatePointsLabel(points2, p.getNickname() + ": " + playersWithPoints.get(p.getNickname()) + " pt");
+                updateLabel(points2, p.getNickname() + ": " + playersWithPoints.get(p.getNickname()) + " pt");
             }
             if(i==3) {
-                updatePointsLabel(points3, p.getNickname() + ": " + playersWithPoints.get(p.getNickname()) + " pt");
+                updateLabel(points3, p.getNickname() + ": " + playersWithPoints.get(p.getNickname()) + " pt");
             }
             if(i==4) {
-                updatePointsLabel(points4, p.getNickname() + ": " + playersWithPoints.get(p.getNickname()) + " pt");
+                updateLabel(points4, p.getNickname() + ": " + playersWithPoints.get(p.getNickname()) + " pt");
             }
             i++;
         }
@@ -309,16 +371,16 @@ public void updatePointsLabel(Label label, String text){
 //                            // devo aggiornare i punti di quel player
 //                            if (order == 0 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) { // p1
 //                                System.out.println("I PUNTI DEL PLAYER 1 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
-//                                updatePointsLabel(this.points1, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
+//                                updateLabel(this.points1, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
 //                            } else if (order == 1 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) { // p2
 //                                System.out.println("I PUNTI DEL PLAYER 2 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
-//                                updatePointsLabel(this.points2, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
+//                                updateLabel(this.points2, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
 //                            } else if (order == 2 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) { // p3
 //                                System.out.println("I PUNTI DEL PLAYER 3 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
-//                                updatePointsLabel(this.points3, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
+//                                updateLabel(this.points3, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
 //                            } else if (order == 3 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) { // p4
 //                                System.out.println("I PUNTI DEL PLAYER 4 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
-//                                updatePointsLabel(this.points4, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
+//                                updateLabel(this.points4, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
 //                            }
 //                        }
 //                        rmiPlayer++;
@@ -334,16 +396,16 @@ public void updatePointsLabel(Label label, String text){
 //                            // devo aggiornare i punti di quel player
 //                            if (order == 0 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
 //                                System.out.println("I PUNTI DEL PLAYER 1 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
-//                                updatePointsLabel(this.points1, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
+//                                updateLabel(this.points1, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
 //                            } else if (order == 1 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
 //                                System.out.println("I PUNTI DEL PLAYER 2 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
-//                                updatePointsLabel(this.points2, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
+//                                updateLabel(this.points2, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
 //                            } else if (order == 2 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
 //                                System.out.println("I PUNTI DEL PLAYER 3 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
-//                                updatePointsLabel(this.points3, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
+//                                updateLabel(this.points3, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
 //                            } else if (order == 3 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
 //                                System.out.println("I PUNTI DEL PLAYER 4 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
-//                                updatePointsLabel(this.points4, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
+//                                updateLabel(this.points4, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
 //                            }
 //                        }
 //                        sckPlayer++;
@@ -791,6 +853,8 @@ public void updatePointsLabel(Label label, String text){
 
 
     public void showP1Board() { // togliamo la board precedente e stampiamo in ordine le carte della board del player 1
+        currentBoard=new String(playersInOrder.get(0).getNickname());
+        updateLabel(boardLabel, playersInOrder.get(0).getNickname() + "'s board");
         grid.getChildren().clear();// toglie pure i bottoni che vanno rimessi solo se è il turno di quel giocatore
         initializeGridPaneCells(true); //mette i bottoni solo se è il proprio turno e solo nelle nuove plyable positions
 
@@ -918,7 +982,8 @@ public void updatePointsLabel(Label label, String text){
 //                }
 //            }
 //        }
-
+        currentBoard=new String(playersInOrder.get(1).getNickname());
+        updateLabel(boardLabel, playersInOrder.get(1).getNickname() + "'s board");
         grid.getChildren().clear();//toglie pure i bottoni che vanno rimessi solo se è il turno di quel giocatore
         initializeGridPaneCells(false);
 
@@ -996,6 +1061,8 @@ public void updatePointsLabel(Label label, String text){
 
 
     public void showP3Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 3
+        currentBoard=new String(playersInOrder.get(1).getNickname());
+        updateLabel(boardLabel, playersInOrder.get(2).getNickname() + "'s board");
         grid.getChildren().clear();//toglie pure i bottoni che vanno rimessi solo se è il turno di quel giocatore
         initializeGridPaneCells(false);
 
@@ -1073,6 +1140,8 @@ public void updatePointsLabel(Label label, String text){
 
 
     public void showP4Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 4
+        currentBoard=new String(playersInOrder.get(1).getNickname());
+        updateLabel(boardLabel, playersInOrder.get(3).getNickname() + "'s board");
         grid.getChildren().clear();//toglie pure i bottoni che vanno rimessi solo se è il turno di quel giocatore
         initializeGridPaneCells(false);
 
@@ -1443,7 +1512,7 @@ public void updatePointsLabel(Label label, String text){
                                 rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], coordinatesToPlay, orientationCard1);
                             } catch (RemoteException | NotBoundException e) {
                                 System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                                updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
+                                updateLabel(selectedCardLabel, "You don't have enough resources!");
                             }
                         } else if (selectedCard == 2) {
                             System.out.println("PLAYED CARD 2");
@@ -1452,7 +1521,7 @@ public void updatePointsLabel(Label label, String text){
                                 rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[1], coordinatesToPlay, orientationCard2);
                             } catch (RemoteException | NotBoundException e) {
                                 System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                                updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
+                                updateLabel(selectedCardLabel, "You don't have enough resources!");
                             }
                         } else if (selectedCard == 3) {
                             System.out.println("PLAYED CARD 3");
@@ -1461,7 +1530,7 @@ public void updatePointsLabel(Label label, String text){
                                 rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[2], coordinatesToPlay, orientationCard3);
                             } catch (RemoteException | NotBoundException e) {
                                 System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                                updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
+                                updateLabel(selectedCardLabel, "You don't have enough resources!");
                             }
                         } else if (selectedCard == 0) {
                             selectedCardLabel.setText("Please, select a card to play first!");
@@ -1486,7 +1555,7 @@ public void updatePointsLabel(Label label, String text){
                             clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], coordinatesToPlay, orientationCard1);
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
+                            updateLabel(selectedCardLabel, "You don't have enough resources!");
                         }
                     } else if (selectedCard == 2) {
                         cardPlaced = true;
@@ -1495,7 +1564,7 @@ public void updatePointsLabel(Label label, String text){
                             clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[1], coordinatesToPlay, orientationCard2);
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
+                            updateLabel(selectedCardLabel, "You don't have enough resources!");
                         }
                     } else if (selectedCard == 3) {
                         cardPlaced = true;
@@ -1504,7 +1573,7 @@ public void updatePointsLabel(Label label, String text){
                             clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[2], coordinatesToPlay, orientationCard3);
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
+                            updateLabel(selectedCardLabel, "You don't have enough resources!");
                         }
                     } else if (selectedCard == 0) {
                         selectedCardLabel.setText("Please, select a card to play first!");
@@ -1673,7 +1742,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
 
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
+                            updateLabel(selectedCardLabel, "You don't have enough resources!");
                             cardPlaced = false;
                         }
                     } else if (selectedCard == 2) {
@@ -1695,7 +1764,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                             emptySpace=2;
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
+                            updateLabel(selectedCardLabel, "You don't have enough resources!");
                             cardPlaced = false;
                         }
                     } else if (selectedCard == 3) {
@@ -1717,7 +1786,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                             emptySpace=3;
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
+                            updateLabel(selectedCardLabel, "You don't have enough resources!");
                             cardPlaced = false;
                         }
                     }
@@ -1734,7 +1803,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                         }
                         if (clientSCK.getErrorState()) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
+                            updateLabel(selectedCardLabel, "You don't have enough resources!");
                             cardPlaced = false;
                             clientSCK.setErrorState(false);
                         }else{
@@ -1764,7 +1833,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                         }
                         if (clientSCK.getErrorState()) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
+                            updateLabel(selectedCardLabel, "You don't have enough resources!");
                             cardPlaced = false;
                             clientSCK.setErrorState(false);
                         }
@@ -1792,7 +1861,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                         }
                         if(clientSCK.getErrorState()){
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
+                            updateLabel(selectedCardLabel, "You don't have enough resources!");
                             cardPlaced = false;
                             clientSCK.setErrorState(false);
                         }

@@ -507,5 +507,10 @@
                </children>
                 </GridPane>
             </content></ScrollPane>
+      <Label fx:id="boardLabel" alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="290.0" text="PlayerX's board" textAlignment="RIGHT" AnchorPane.rightAnchor="154.0" AnchorPane.topAnchor="162.0">
+         <font>
+            <Font name="Georgia bold" size="15.0" />
+         </font>
+      </Label>
     </children>
 </AnchorPane>

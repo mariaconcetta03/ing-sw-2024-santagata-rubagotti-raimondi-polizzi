@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CODEX.view.GUI.GUIGameController">
+
+    <VBox fx:id="myBlackPane" alignment="TOP_CENTER" layoutY="80.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="764.0" prefWidth="1350.0" styleClass="game_pane" stylesheets="@Styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <children>
+         <HBox alignment="TOP_CENTER" prefHeight="57.0" prefWidth="1350.0">
+            <children>
+               <Label fx:id="titleLabel" text="The winner is...">
+                  <font>
+                     <Font name="System Bold Italic" size="44.0" />
+                  </font>
+               </Label>
+            </children>
+            <VBox.margin>
+               <Insets top="150.0" />
+            </VBox.margin>
+         </HBox>
+         <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+            <children>
+               <Label fx:id="winnerLabel" alignment="TOP_CENTER" text="Player X">
+                  <font>
+                     <Font name="System Bold Italic" size="37.0" />
+                  </font>
+                  <textFill>
+                     <LinearGradient endX="1.0" endY="1.0" startX="0.9573459715639809" startY="0.5118483412322274">
+                        <stops>
+                           <Stop>
+                              <color>
+                                 <Color red="0.5131579041481018" green="0.496052622795105" />
+                              </color>
+                           </Stop>
+                           <Stop offset="1.0">
+                              <color>
+                                 <Color red="1.0" green="1.0" blue="1.0" />
+                              </color>
+                           </Stop>
+                        </stops>
+                     </LinearGradient>
+                  </textFill>
+               </Label>
+            </children>
+         </HBox>
+      </children></VBox>
+
+</AnchorPane>
