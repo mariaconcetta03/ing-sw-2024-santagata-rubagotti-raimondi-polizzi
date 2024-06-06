@@ -267,64 +267,90 @@ public void updatePointsLabel(Label label, String text){
     });
 }
 
-    public void setPoints() {
+    public void updatePoints() {
+        Map<String,Integer> playersWithPoints=new HashMap<>();
+        if(network==1){
+            for(Player player:(rmiClient.getPlayersInTheGame())){
+                playersWithPoints.put(player.getNickname(),player.getPoints());
+            }
+        }else if(network==2){
+            for(Player player:(clientSCK.getPlayersInTheGame())){
+                playersWithPoints.put(player.getNickname(),player.getPoints());
+            }
+        }
+        int i=1;
+        for (Player p : playersInOrder){ //va in ordine: p1, p2, p3, p4
+            if(i==1) { //primo giocatore di playersInOrder
+                updatePointsLabel(points1, p.getNickname() + ": " + playersWithPoints.get(p.getNickname()) + " pt");
+            }
+            if(i==2) { //secondo giocatore di playersInOrder
+                updatePointsLabel(points2, p.getNickname() + ": " + playersWithPoints.get(p.getNickname()) + " pt");
+            }
+            if(i==3) {
+                updatePointsLabel(points3, p.getNickname() + ": " + playersWithPoints.get(p.getNickname()) + " pt");
+            }
+            if(i==4) {
+                updatePointsLabel(points4, p.getNickname() + ": " + playersWithPoints.get(p.getNickname()) + " pt");
+            }
+            i++;
+        }
 
         System.out.println("A T T E N Z I O N E");
             System.out.println("STO SETTANDO I PUNTI DI TUTTI I PLAYER");
-            int rmiPlayer = 0;
-            int order = 0;
-            int sckPlayer = 0;
-
-            if (network == 1) {
-                for (Player p : playersInOrder) {
-                    rmiPlayer = 0;
-                    for (Player p2 : rmiClient.getPlayersInTheGame()) {
-                        if (p.getNickname().equals(p2.getNickname())) {
-                            // devo aggiornare i punti di quel player
-                            if (order == 0 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) {
-                                System.out.println("I PUNTI DEL PLAYER 1 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
-                                updatePointsLabel(this.points1, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
-                            } else if (order == 1 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) {
-                                System.out.println("I PUNTI DEL PLAYER 2 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
-                                updatePointsLabel(this.points2, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
-                            } else if (order == 2 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) {
-                                System.out.println("I PUNTI DEL PLAYER 3 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
-                                updatePointsLabel(this.points3, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
-                            } else if (order == 3 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) {
-                                System.out.println("I PUNTI DEL PLAYER 4 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
-                                updatePointsLabel(this.points4, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
-                            }
-                        }
-                        rmiPlayer++;
-                    }
-                    order++;
-                }
-
-            } else if (network == 2) {
-                for (Player p : playersInOrder) {
-                    sckPlayer = 0;
-                    for (Player p2 : clientSCK.getPlayersInTheGame()) {
-                        if (p.getNickname().equals(p2.getNickname())) {
-                            // devo aggiornare i punti di quel player
-                            if (order == 0 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
-                                System.out.println("I PUNTI DEL PLAYER 1 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
-                                updatePointsLabel(this.points1, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
-                            } else if (order == 1 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
-                                System.out.println("I PUNTI DEL PLAYER 2 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
-                                updatePointsLabel(this.points2, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
-                            } else if (order == 2 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
-                                System.out.println("I PUNTI DEL PLAYER 3 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
-                                updatePointsLabel(this.points3, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
-                            } else if (order == 3 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
-                                System.out.println("I PUNTI DEL PLAYER 4 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
-                                updatePointsLabel(this.points4, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
-                            }
-                        }
-                        sckPlayer++;
-                    }
-                    order++;
-                }
-            }
+//            int rmiPlayer = 0;
+//            int order = 0;
+//            int sckPlayer = 0;
+//
+//            if (network == 1) {
+//                for (Player p : playersInOrder) { //nella mia lista
+//                    rmiPlayer = 0;
+//                    for (Player p2 : rmiClient.getPlayersInTheGame()) { //lista dinamica
+//                        if (p.getNickname().equals(p2.getNickname())) {
+//                            // devo aggiornare i punti di quel player
+//                            if (order == 0 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) { // p1
+//                                System.out.println("I PUNTI DEL PLAYER 1 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
+//                                updatePointsLabel(this.points1, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
+//                            } else if (order == 1 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) { // p2
+//                                System.out.println("I PUNTI DEL PLAYER 2 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
+//                                updatePointsLabel(this.points2, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
+//                            } else if (order == 2 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) { // p3
+//                                System.out.println("I PUNTI DEL PLAYER 3 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
+//                                updatePointsLabel(this.points3, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
+//                            } else if (order == 3 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) { // p4
+//                                System.out.println("I PUNTI DEL PLAYER 4 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
+//                                updatePointsLabel(this.points4, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
+//                            }
+//                        }
+//                        rmiPlayer++;
+//                    }
+//                    order++;
+//                }
+//
+//            } else if (network == 2) {
+//                for (Player p : playersInOrder) {
+//                    sckPlayer = 0;
+//                    for (Player p2 : clientSCK.getPlayersInTheGame()) {
+//                        if (p.getNickname().equals(p2.getNickname())) {
+//                            // devo aggiornare i punti di quel player
+//                            if (order == 0 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
+//                                System.out.println("I PUNTI DEL PLAYER 1 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
+//                                updatePointsLabel(this.points1, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
+//                            } else if (order == 1 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
+//                                System.out.println("I PUNTI DEL PLAYER 2 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
+//                                updatePointsLabel(this.points2, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
+//                            } else if (order == 2 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
+//                                System.out.println("I PUNTI DEL PLAYER 3 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
+//                                updatePointsLabel(this.points3, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
+//                            } else if (order == 3 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
+//                                System.out.println("I PUNTI DEL PLAYER 4 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
+//                                updatePointsLabel(this.points4, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
+//                            }
+//                        }
+//                        sckPlayer++;
+//                    }
+//                    order++;
+//                }
+//            }
     }
 
 
@@ -686,7 +712,7 @@ public void updatePointsLabel(Label label, String text){
 
 
         // SETTING THE CORRECT NUMBER OF POINTS (UPDATE)
-        setPoints();
+        updatePoints();
 
 
         // SETTING THE LABEL WITH THE CORRECT NAME OF THE PLAYER IN TURN
@@ -780,8 +806,8 @@ public void updatePointsLabel(Label label, String text){
             boardPane.setHvalue(0.485);
             boardPane.setVvalue(0.535);
         } else if (nPlayers == 3) {
-            boardPane.setHvalue(0.3132); 
-           boardPane.setVvalue(0.32); 
+            boardPane.setHvalue(0.3132);
+           boardPane.setVvalue(0.32);
         } else if (nPlayers == 4) {
             boardPane.setHvalue(0.2099841521394612);
             boardPane.setVvalue(0.23585350854073317);
@@ -1797,7 +1823,6 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                     GridPane.setMargin(imageView, insets);
                     grid.add(imageView, col, 81-row);
                     showP1Board(); // RICARICO LA BOARD
-                    setPoints();
                 }
 
             }
@@ -1858,7 +1883,6 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
             p4Counter++;
             cardsOnP4Board.put(p4Counter, newCard);
         }
-        setPoints();
     }
 
 
@@ -1974,4 +1998,6 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
         });
 
     }
+
+
 }

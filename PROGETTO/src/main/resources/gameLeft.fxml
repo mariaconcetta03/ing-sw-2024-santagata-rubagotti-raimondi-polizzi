@@ -13,10 +13,13 @@
                       <font>
                           <Font name="System Bold Italic" size="45.0" />
                       </font>
+                  <HBox.margin>
+                     <Insets top="150.0" />
+                  </HBox.margin>
                   </Text>
             </children>
             <VBox.margin>
-               <Insets top="200.0" />
+               <Insets />
             </VBox.margin>
          </HBox>
         </VBox>

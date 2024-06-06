@@ -894,6 +894,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             }
             if (this.turnCounter >= 1){
                 if(guiGameController!=null){
+                    guiGameController.updatePoints();
                     guiGameController.updateRound();
                 }
                 // MAI FATTO

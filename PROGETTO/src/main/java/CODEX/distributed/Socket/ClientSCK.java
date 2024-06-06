@@ -746,7 +746,7 @@ public class ClientSCK implements ClientGeneralInterface {
         if(playerNickname.equals(personalPlayer.getNickname())){
             personalPlayer.setPlayerDeck(playerDeck);
         }
-        if(playersInTheGame!=null) {
+        if (playersInTheGame!=null) {
             for (Player p : playersInTheGame) {
                 if (playerNickname.equals(p.getNickname())) {
                     p.setPlayerDeck(playerDeck);
@@ -953,6 +953,7 @@ public class ClientSCK implements ClientGeneralInterface {
             if (this.turnCounter >= 1){
                 //dico ai giocatori chi sta giocando e chi no
                 if(guiGameController!=null){
+                    guiGameController.updatePoints();
                     guiGameController.updateRound();
                 }
 
