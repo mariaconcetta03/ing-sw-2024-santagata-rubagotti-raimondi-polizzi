@@ -260,12 +260,15 @@ public class GUIGameController {
 
     }
 
-
-
+public void updatePointsLabel(Label label, String text){
+    Platform.runLater(() -> {
+        label.setText(text);
+    });
+}
 
     public void setPoints() {
-        Platform.runLater(() -> {
-            System.out.println("A T T E N Z I O N ESTO SETTANDO I PUNTI DI TUTTI I PLAYER");
+
+        System.out.println("A T T E N Z I O N E");
             System.out.println("STO SETTANDO I PUNTI DI TUTTI I PLAYER");
             int rmiPlayer = 0;
             int order = 0;
@@ -278,13 +281,17 @@ public class GUIGameController {
                         if (p.getNickname().equals(p2.getNickname())) {
                             // devo aggiornare i punti di quel player
                             if (order == 0 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) {
-                                this.points1.setText(p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
+                                System.out.println("I PUNTI DEL PLAYER 1 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
+                                updatePointsLabel(this.points1, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
                             } else if (order == 1 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) {
-                                this.points2.setText(p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
+                                System.out.println("I PUNTI DEL PLAYER 2 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
+                                updatePointsLabel(this.points2, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
                             } else if (order == 2 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) {
-                                this.points3.setText(p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
+                                System.out.println("I PUNTI DEL PLAYER 3 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
+                                updatePointsLabel(this.points3, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
                             } else if (order == 3 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) {
-                                this.points4.setText(p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
+                                System.out.println("I PUNTI DEL PLAYER 4 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
+                                updatePointsLabel(this.points4, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
                             }
                         }
                         rmiPlayer++;
@@ -299,13 +306,17 @@ public class GUIGameController {
                         if (p.getNickname().equals(p2.getNickname())) {
                             // devo aggiornare i punti di quel player
                             if (order == 0 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
-                                this.points1.setText(p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
+                                System.out.println("I PUNTI DEL PLAYER 1 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
+                                updatePointsLabel(this.points1, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
                             } else if (order == 1 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
-                                this.points2.setText(p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
+                                System.out.println("I PUNTI DEL PLAYER 2 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
+                                updatePointsLabel(this.points2, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
                             } else if (order == 2 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
-                                this.points3.setText(p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
+                                System.out.println("I PUNTI DEL PLAYER 3 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
+                                updatePointsLabel(this.points3, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
                             } else if (order == 3 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
-                                this.points4.setText(p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
+                                System.out.println("I PUNTI DEL PLAYER 4 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
+                                updatePointsLabel(this.points4, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
                             }
                         }
                         sckPlayer++;
@@ -313,7 +324,6 @@ public class GUIGameController {
                     order++;
                 }
             }
-        });
     }
 
 
@@ -1406,6 +1416,7 @@ public class GUIGameController {
                                 rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], coordinatesToPlay, orientationCard1);
                             } catch (RemoteException | NotBoundException e) {
                                 System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                                updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
                             }
                         } else if (selectedCard == 2) {
                             System.out.println("PLAYED CARD 2");
@@ -1414,6 +1425,7 @@ public class GUIGameController {
                                 rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[1], coordinatesToPlay, orientationCard2);
                             } catch (RemoteException | NotBoundException e) {
                                 System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                                updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
                             }
                         } else if (selectedCard == 3) {
                             System.out.println("PLAYED CARD 3");
@@ -1422,6 +1434,7 @@ public class GUIGameController {
                                 rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[2], coordinatesToPlay, orientationCard3);
                             } catch (RemoteException | NotBoundException e) {
                                 System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                                updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
                             }
                         } else if (selectedCard == 0) {
                             selectedCardLabel.setText("Please, select a card to play first!");
@@ -1446,6 +1459,7 @@ public class GUIGameController {
                             clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], coordinatesToPlay, orientationCard1);
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
                         }
                     } else if (selectedCard == 2) {
                         cardPlaced = true;
@@ -1454,6 +1468,7 @@ public class GUIGameController {
                             clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[1], coordinatesToPlay, orientationCard2);
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
                         }
                     } else if (selectedCard == 3) {
                         cardPlaced = true;
@@ -1462,6 +1477,7 @@ public class GUIGameController {
                             clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[2], coordinatesToPlay, orientationCard3);
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
                         }
                     } else if (selectedCard == 0) {
                         selectedCardLabel.setText("Please, select a card to play first!");
@@ -1630,6 +1646,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
 
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
                             cardPlaced = false;
                         }
                     } else if (selectedCard == 2) {
@@ -1651,6 +1668,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                             emptySpace=2;
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
                             cardPlaced = false;
                         }
                     } else if (selectedCard == 3) {
@@ -1672,6 +1690,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                             emptySpace=3;
                         } catch (RemoteException | NotBoundException e) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
                             cardPlaced = false;
                         }
                     }
@@ -1688,6 +1707,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                         }
                         if (clientSCK.getErrorState()) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
                             cardPlaced = false;
                             clientSCK.setErrorState(false);
                         }else{
@@ -1717,6 +1737,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                         }
                         if (clientSCK.getErrorState()) {
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
                             cardPlaced = false;
                             clientSCK.setErrorState(false);
                         }
@@ -1744,6 +1765,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                         }
                         if(clientSCK.getErrorState()){
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                            updatePointsLabel(selectedCardLabel, "You don't have enough resources!");
                             cardPlaced = false;
                             clientSCK.setErrorState(false);
                         }
