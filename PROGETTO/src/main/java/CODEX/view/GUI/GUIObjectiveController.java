@@ -15,6 +15,8 @@ import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import javafx.util.Duration;
 
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -240,6 +242,11 @@ public class GUIObjectiveController {
 
 
             stage.show();
+            String musicPath = getClass().getResource("/music.mp3").toString();
+            Media sound = new Media(musicPath);
+            MediaPlayer mediaPlayer = new MediaPlayer(sound);
+            mediaPlayer.play();
+
         }
     }
 

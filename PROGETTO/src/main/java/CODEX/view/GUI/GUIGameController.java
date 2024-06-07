@@ -1705,7 +1705,11 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                             emptySpace=1;
 
                         } catch (RemoteException | NotBoundException e) {
-                            System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                            System.out.println("UNABLE TO COMMUNICATE W SERVER");
+                            updateLabel(selectedCardLabel, "You don't have enough resources!");
+                            cardPlaced = false;
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("Qui non ho abbastanza risorse");
                             updateLabel(selectedCardLabel, "You don't have enough resources!");
                             cardPlaced = false;
                         }
@@ -1873,39 +1877,55 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
 
     public void updateResourceCard1(PlayableCard card) {
         Platform.runLater(() -> {
-            String path = "/images/cards/front/  (" + card.getId() + ").png";
-            Image newCard = new Image(getClass().getResourceAsStream(path));
-            resourceCard1.setImage(newCard);
+            if (card != null) {
+                String path = "/images/cards/front/  (" + card.getId() + ").png";
+                Image newCard = new Image(getClass().getResourceAsStream(path));
+                resourceCard1.setImage(newCard);
+            } else {
+                resourceCard1.setImage(null);
+            }
         });
     }
 
     public void updateResourceCard2(PlayableCard card) {
         Platform.runLater(() -> {
-        String path = "/images/cards/front/  (" + card.getId() + ").png";
-        Image newCard = new Image(getClass().getResourceAsStream(path));
-        resourceCard2.setImage(newCard);
+            if (card != null) {
+                String path = "/images/cards/front/  (" + card.getId() + ").png";
+                Image newCard = new Image(getClass().getResourceAsStream(path));
+                resourceCard2.setImage(newCard);
+            } else {
+                resourceCard2.setImage(null);
+            }
         });
     }
 
     public void updateGoldCard1(PlayableCard card) {
         Platform.runLater(() -> {
-            String path = "/images/cards/front/  (" + card.getId() + ").png";
-            Image newCard = new Image(getClass().getResourceAsStream(path));
-            goldCard1.setImage(newCard);
+            if (card != null) {
+                String path = "/images/cards/front/  (" + card.getId() + ").png";
+                Image newCard = new Image(getClass().getResourceAsStream(path));
+                goldCard1.setImage(newCard);
+            } else { // when both deck are finished -> it returns a null card to the market
+                goldCard1.setImage(null);
+            }
         });
     }
+
     public void updateGoldCard2(PlayableCard card) {
         Platform.runLater(() -> {
-        String path = "/images/cards/front/  (" + card.getId() + ").png";
-        Image newCard = new Image(getClass().getResourceAsStream(path));
-        goldCard2.setImage(newCard);
+            if (card != null) {
+                String path = "/images/cards/front/  (" + card.getId() + ").png";
+                Image newCard = new Image(getClass().getResourceAsStream(path));
+                goldCard2.setImage(newCard);
+            } else {
+                goldCard2.setImage(null);
+            }
         });
     }
 
     public void updateRound(boolean lastRound) {
         Platform.runLater(()->{
                 setTurnLabel(lastRound);
-
         });
     }
 
@@ -1945,12 +1965,22 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
         Platform.runLater(() -> {
             String path=null;
             if(network==1){
-                path = "/images/cards/back/  (" + rmiClient.getResourceDeck().checkFirstCard().getId() + ").png";
+                try {
+                    path = "/images/cards/back/  (" + rmiClient.getResourceDeck().checkFirstCard().getId() + ").png";
+                    Image newCard = new Image(getClass().getResourceAsStream(path));
+                    resourceDeck.setImage(newCard);
+                } catch (EmptyStackException e) {
+                    resourceDeck.setImage(null);
+                }
             }else if(network==2){
-                path = "/images/cards/back/  (" + clientSCK.getResourceDeck().checkFirstCard().getId() + ").png";
+                try {
+                    path = "/images/cards/back/  (" + clientSCK.getResourceDeck().checkFirstCard().getId() + ").png";
+                    Image newCard = new Image(getClass().getResourceAsStream(path));
+                    resourceDeck.setImage(newCard);
+                } catch (EmptyStackException e) {
+                resourceDeck.setImage(null);
             }
-            Image newCard = new Image(getClass().getResourceAsStream(path));
-            resourceDeck.setImage(newCard);
+            }
         });
     }
 
@@ -1958,12 +1988,22 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
         Platform.runLater(() -> {
             String path=null;
             if(network==1){
-                path = "/images/cards/back/  (" + rmiClient.getGoldDeck().checkFirstCard().getId() + ").png";
+                try {
+                    path = "/images/cards/back/  (" + rmiClient.getGoldDeck().checkFirstCard().getId() + ").png";
+                    Image newCard = new Image(getClass().getResourceAsStream(path));
+                    goldDeck.setImage(newCard);
+                } catch (EmptyStackException e) {
+                    goldDeck.setImage(null);
+                }
             }else if(network==2){
-                path = "/images/cards/back/  (" + clientSCK.getGoldDeck().checkFirstCard().getId() + ").png";
+                try {
+                    path = "/images/cards/back/  (" + clientSCK.getGoldDeck().checkFirstCard().getId() + ").png";
+                    Image newCard = new Image(getClass().getResourceAsStream(path));
+                    goldDeck.setImage(newCard);
+                } catch (EmptyStackException e) {
+                    goldDeck.setImage(null);
+                }
             }
-            Image newCard = new Image(getClass().getResourceAsStream(path));
-            goldDeck.setImage(newCard);
         });
     }
 

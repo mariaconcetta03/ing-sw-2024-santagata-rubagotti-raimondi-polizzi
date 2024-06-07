@@ -8,6 +8,7 @@ module CODEX {
     requires com.fasterxml.jackson.databind;
     requires json.simple;
     requires com.ctc.wstx;
+    requires javafx.media;
 
 
     opens CODEX.view.GUI to javafx.fxml, javafx.graphics;
