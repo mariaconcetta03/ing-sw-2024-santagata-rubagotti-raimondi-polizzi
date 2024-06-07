@@ -6,6 +6,7 @@ import CODEX.org.model.*;
 
 import CODEX.view.GUI.GUIGameController;
 import CODEX.view.GUI.GUILobbyController;
+import CODEX.view.GUI.GUIPawnsController;
 import CODEX.view.TUI.ANSIFormatter;
 import CODEX.view.TUI.InterfaceTUI;
 
@@ -63,6 +64,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private GUIGameController guiGameController=null;
     private boolean aDisconnectionHappened=false;
     private final Object guiGamestateLock=new Object();
+    private final Object guiPawnsControllerLock=new Object();
+    private GUIPawnsController GUIPawnsController=null;
+    private boolean secondUpdateRoundArrived=false;
 
     public Player getPersonalPlayer() {
         return personalPlayer;
@@ -133,6 +137,22 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     public void setGuiLobbyController(GUILobbyController guiLobbyController) {
         this.guiLobbyController = guiLobbyController;
+    }
+
+    public void setGuiPawnsController(GUIPawnsController ctr) {
+        this.GUIPawnsController = ctr;
+    }
+
+    public Object getGuiPawnsControllerLock() {
+        return this.guiPawnsControllerLock;
+    }
+
+    public boolean getSecondUpdateRoundArrived() {
+        return secondUpdateRoundArrived;
+    }
+
+    public void setSecondUpdateRoundArrived(boolean secondUpdateRoundArrived) {
+        this.secondUpdateRoundArrived = secondUpdateRoundArrived;
     }
 
 

@@ -1,5 +1,6 @@
 package CODEX.view.GUI;
 
+import CODEX.Exceptions.ColorAlreadyTakenException;
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
 import CODEX.org.model.Pawn;
@@ -25,6 +26,9 @@ public class GUIPawnsController {
     private int network;
     private RMIClient rmiClient;
     private ClientSCK clientSCK;
+    private boolean choosen = false;
+    private ExecutorService executor = Executors.newCachedThreadPool();
+    private boolean pawnSelected=false;
 
     @FXML
     private Pane yellowPane;
@@ -102,101 +106,230 @@ public class GUIPawnsController {
     }
 
 
-    public void selectedYellow(){
-        if(network == 1){
-            try {
-                rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.YELLOW);
-                changeScene();
-            } catch (ColorAlreadyTakenException) {
-                retryLabel.setOpacity(1);
-                // RICEVERE GLI UPDATE QUI !!!!
-            } catch (RemoteException | NotBoundException e) {
-                throw new RuntimeException(e);
-            }
-        } else if (network == 2) {
+    synchronized public void selectedYellow(){
+        if(yellowPane.getOpacity() != 0&&!pawnSelected) {
+            pawnSelected=true;
+            if (network == 1) {
+
+                  executor.execute(()->{
+
+                        try {
+                            rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.YELLOW);
+                            choosen = true;
+                            rmiClient.getGameController().checkChosenPawnColor();
+                            Platform.runLater(()->{
+                                //dobbiamo evidenziare il colore scelto, dire che è stato scelto, togliere tugli altri colori
+                                greenPane.setOpacity(0);
+                                bluePane.setOpacity(0);
+                                redPane.setOpacity(0);
+                                retryLabel.setText("Choosen pawn color");
+                                retryLabel.setOpacity(1);
+                                synchronized (rmiClient.getGuiPawnsControllerLock()){
+                                    while (!rmiClient.getSecondUpdateRoundArrived()){
+                                        try {
+                                            rmiClient.getGuiPawnsControllerLock().wait();
+                                        } catch (InterruptedException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    }
+                                }
+                                System.out.println("usciti dal syn");
+                                changeScene();
+                            });
+                        } catch (RemoteException e) {
+                            throw new RuntimeException(e);
+                        } catch (NotBoundException e) {
+                            throw new RuntimeException(e);
+                        } catch (ColorAlreadyTakenException e) {
+                            Platform.runLater(()->{
+                                retryLabel.setOpacity(1);
+                            });
+                        }
+
+                    });
+            } else if (network == 2) {
+            /*
             try {
                 clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.YELLOW);
                 changeScene();
             } catch (RemoteException | NotBoundException e) {
                 throw new RuntimeException(e);
-            } catch (ColorAlreadyTakenException e) {
+            } /* catch (ColorAlreadyTakenException e) {
                 retryLabel.setOpacity(1);
                 //RICEVERE UPDATE QUI !!!!!
+            } */
+
             }
         }
     }
 
 
-    public void selectedBlue(){
-        if(network == 1){
-            try {
-                rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.BLUE);
-                changeScene();
-            } catch (ColorAlreadyTakenException) {
-                retryLabel.setOpacity(1);
-                // RICEVERE GLI UPDATE QUI !!!!
-            } catch (RemoteException | NotBoundException e) {
-                throw new RuntimeException(e);
-            }
-        } else if (network == 2) {
-            try {
-                clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.BLUE);
-                changeScene();
-            } catch (RemoteException | NotBoundException e) {
-                throw new RuntimeException(e);
-            } catch (ColorAlreadyTakenException e) {
+    synchronized public void selectedBlue(){
+        if(bluePane.getOpacity() != 0&&!pawnSelected) {
+            pawnSelected=true;
+            if (network == 1) {
+
+                executor.execute(()->{
+
+                    try {
+                        rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.BLUE);
+                        choosen = true;
+                        rmiClient.getGameController().checkChosenPawnColor();
+                        Platform.runLater(()->{
+                            //dobbiamo evidenziare il colore scelto, dire che è stato scelto, togliere tugli altri colori
+                            greenPane.setOpacity(0);
+                            yellowPane.setOpacity(0);
+                            redPane.setOpacity(0);
+                            retryLabel.setText("Choosen pawn color");
+                            retryLabel.setOpacity(1);
+                            synchronized (rmiClient.getGuiPawnsControllerLock()){
+                                while (!rmiClient.getSecondUpdateRoundArrived()){
+                                    try {
+                                        rmiClient.getGuiPawnsControllerLock().wait();
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                            }
+                            System.out.println("usciti dal syn");
+                            changeScene();
+                        });
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    } catch (NotBoundException e) {
+                        throw new RuntimeException(e);
+                    } catch (ColorAlreadyTakenException e) {
+                        Platform.runLater(()->{
+                            retryLabel.setOpacity(1);
+                        });
+                    }
+
+                });
+            } else if (network == 2) {
+                /*
+                try {
+                    clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.BLUE);
+                    changeScene();
+                } catch (RemoteException | NotBoundException e) {
+                    throw new RuntimeException(e);
+                } /* catch (ColorAlreadyTakenException e) {
                 retryLabel.setOpacity(1);
                 //RICEVERE UPDATE QUI !!!!!
+            } */
             }
         }
     }
 
 
-    public void selectedGreen(){
-        if(network == 1){
-            try {
-                rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.GREEN);
-                changeScene();
-            } catch (ColorAlreadyTakenException) {
-                retryLabel.setOpacity(1);
-                // RICEVERE GLI UPDATE QUI !!!!
-            } catch (RemoteException | NotBoundException e) {
-                throw new RuntimeException(e);
-            }
-        } else if (network == 2) {
-            try {
-                clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.GREEN);
-                changeScene();
-            } catch (RemoteException | NotBoundException e) {
-                throw new RuntimeException(e);
-            } catch (ColorAlreadyTakenException e) {
+    synchronized public void selectedGreen(){
+        if(greenPane.getOpacity() != 0&&!pawnSelected) {
+            pawnSelected=true;
+            if (network == 1) {
+
+                executor.execute(()->{
+
+                    try {
+                        rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.GREEN);
+                        choosen = true;
+                        rmiClient.getGameController().checkChosenPawnColor();
+                        Platform.runLater(()->{
+                            //dobbiamo evidenziare il colore scelto, dire che è stato scelto, togliere tugli altri colori
+                            yellowPane.setOpacity(0);
+                            bluePane.setOpacity(0);
+                            redPane.setOpacity(0);
+                            retryLabel.setText("Choosen pawn color");
+                            retryLabel.setOpacity(1);
+                            synchronized (rmiClient.getGuiPawnsControllerLock()){
+                                while (!rmiClient.getSecondUpdateRoundArrived()){
+                                    try {
+                                        rmiClient.getGuiPawnsControllerLock().wait();
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                            }
+                            System.out.println("usciti dal syn");
+                            changeScene();
+                        });
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    } catch (NotBoundException e) {
+                        throw new RuntimeException(e);
+                    } catch (ColorAlreadyTakenException e) {
+                        Platform.runLater(()->{
+                            retryLabel.setOpacity(1);
+                        });
+                    }
+
+                });
+            } else if (network == 2) {
+                /*
+                try {
+                    clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.GREEN);
+                    changeScene();
+                } catch (RemoteException | NotBoundException e) {
+                    throw new RuntimeException(e);
+                }  /*catch (ColorAlreadyTakenException e) {
                 retryLabel.setOpacity(1);
                 //RICEVERE UPDATE QUI !!!!!
+            } */
             }
         }
     }
 
 
-    public void selectedRed(){
-        if(network == 1){
-            try {
-                rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.RED);
-                changeScene();
-            } catch (ColorAlreadyTakenException) {
-                retryLabel.setOpacity(1);
-                // RICEVERE GLI UPDATE QUI !!!!
-            } catch (RemoteException | NotBoundException e) {
-                throw new RuntimeException(e);
-            }
-        } else if (network == 2) {
-            try {
-                clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.RED);
-                changeScene();
-            } catch (RemoteException | NotBoundException e) {
-                throw new RuntimeException(e);
-            } catch (ColorAlreadyTakenException e) {
+    synchronized public void selectedRed(){
+        if(redPane.getOpacity() != 0&&!pawnSelected) {
+            pawnSelected=true;
+            if (network == 1) {
+
+                executor.execute(()->{
+
+                    try {
+                        rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.RED);
+                        choosen = true;
+                        rmiClient.getGameController().checkChosenPawnColor();
+                        Platform.runLater(()->{
+                            //dobbiamo evidenziare il colore scelto, dire che è stato scelto, togliere tugli altri colori
+                            greenPane.setOpacity(0);
+                            bluePane.setOpacity(0);
+                            yellowPane.setOpacity(0);
+                            retryLabel.setText("Choosen pawn color");
+                            retryLabel.setOpacity(1);
+                            synchronized (rmiClient.getGuiPawnsControllerLock()){
+                                while (!rmiClient.getSecondUpdateRoundArrived()){
+                                    try {
+                                        rmiClient.getGuiPawnsControllerLock().wait();
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                            }
+                            System.out.println("usciti dal syn");
+                            changeScene();
+                        });
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    } catch (NotBoundException e) {
+                        throw new RuntimeException(e);
+                    } catch (ColorAlreadyTakenException e) {
+                        Platform.runLater(()->{
+                            retryLabel.setOpacity(1);
+                        });
+                    }
+
+                });
+            } else if (network == 2) {
+                /*
+                try {
+                    clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.RED);
+                    changeScene();
+                } catch (RemoteException | NotBoundException e) {
+                    throw new RuntimeException(e);
+                } /*  catch (ColorAlreadyTakenException e) {
                 retryLabel.setOpacity(1);
                 //RICEVERE UPDATE QUI !!!!!
+            } */
             }
         }
     }
@@ -228,5 +361,23 @@ public class GUIPawnsController {
 
     public void setNetwork(int network) {
         this.network = network;
+    }
+
+    synchronized public void updatePawns(Pawn pawn) {//se il giocatore ha già scelto non vede gli update degli altri
+        if(!choosen) {//non mostro più il pawn arrivato
+            Platform.runLater(()-> {
+                if (pawn == Pawn.BLUE) {
+
+                    bluePane.setOpacity(0);
+
+                } else if (pawn == Pawn.YELLOW) {
+                    yellowPane.setOpacity(0);
+                } else if (pawn == Pawn.GREEN) {
+                    greenPane.setOpacity(0);
+                } else if (pawn == Pawn.RED) {
+                    redPane.setOpacity(0);
+                }
+            });
+        }
     }
 }
