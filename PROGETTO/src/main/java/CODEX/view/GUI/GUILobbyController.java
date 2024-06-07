@@ -234,6 +234,21 @@ public class GUILobbyController {
         Scene scene;
         scene = new Scene(root);
 
+        if(network==1){
+            synchronized (rmiClient.getGuiPawnsControllerLock()) {
+                rmiClient.setGuiPawnsController(ctr);
+                rmiClient.getGuiPawnsControllerLock().notify();
+            }
+        }if(network==2){ //ancora da implementare
+            /*
+            synchronized (clientSCK.getGuiGamestateLock()) {
+                clientSCK.setGuiPawnsController(ctr);
+                clientSCK.getGuiPawnsControllerLock().notify();
+            }
+
+             */
+        }
+
         stage.setScene(scene); //questo è il momento in cui la nuova scena viene mostrata
 
         // setting the od values of position and dimension

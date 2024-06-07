@@ -4,6 +4,7 @@ import CODEX.Exceptions.ColorAlreadyTakenException;
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
 import CODEX.org.model.Pawn;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
@@ -19,6 +20,9 @@ import javafx.scene.Scene;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class GUIPawnsController {  
     private GUIBaseCardController ctr;
@@ -45,59 +49,63 @@ public class GUIPawnsController {
 
 
     public void changeScene(){
-        // let's show the new window!
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/baseCard.fxml"));
-        Parent root = null;
-        try {
-            root = fxmlLoader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
-        while (ctr == null) {
-            ctr = fxmlLoader.getController();
-        }
+            // let's show the new window!
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/baseCard.fxml"));
+            Parent root = null;
+            try {
+                root = fxmlLoader.load();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
-        // setting the parameters in the new controller, also the BASE CARD (front and back)
-        ctr.setStage(stage);
-        ctr.setNetwork(network);
-        ctr.setClientSCK(clientSCK);
-        ctr.setRmiClient(rmiClient);
-        if (network == 1) {
-            while(rmiClient.getPersonalPlayer().getPlayerDeck()[0] == null) {}
-            ctr.setBaseCard1(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId()); // OK
-            ctr.setBaseCard2(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId());
-            ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", which side do you");
-        } else if (network == 2) {
-            while(clientSCK.getPersonalPlayer().getPlayerDeck()[0] == null) {}
-            ctr.setBaseCard1(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId()); // OK
-            ctr.setBaseCard2(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId());
-            ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", which side do you");
-        }
+            while (ctr == null) {
+                ctr = fxmlLoader.getController();
+            }
 
-        // old dimensions and position
-        double width = stage.getWidth();
-        double height = stage.getHeight();
-        double x = stage.getX();
-        double y = stage.getY();
+            // setting the parameters in the new controller, also the BASE CARD (front and back)
+            ctr.setStage(stage);
+            ctr.setNetwork(network);
+            ctr.setClientSCK(clientSCK);
+            ctr.setRmiClient(rmiClient);
+            if (network == 1) {
+                while (rmiClient.getPersonalPlayer().getPlayerDeck()[0] == null) {
+                }
+                ctr.setBaseCard1(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId()); // OK
+                ctr.setBaseCard2(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId());
+                ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", which side do you");
+            } else if (network == 2) {
+                while (clientSCK.getPersonalPlayer().getPlayerDeck()[0] == null) {
+                }
+                ctr.setBaseCard1(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId()); // OK
+                ctr.setBaseCard2(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId());
+                ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", which side do you");
+            }
 
-        // new scene
-        Scene scene;
-        scene = new Scene(root);
+            // old dimensions and position
+            double width = stage.getWidth();
+            double height = stage.getHeight();
+            double x = stage.getX();
+            double y = stage.getY();
 
-        stage.setScene(scene); //questo è il momento in cui la nuova scena viene mostrata
+            // new scene
+            Scene scene;
+            scene = new Scene(root);
 
-        // setting the od values of position and dimension
-        stage.setWidth(width);
-        stage.setHeight(height);
-        stage.setX(x);
-        stage.setY(y);
+            stage.setScene(scene); //questo è il momento in cui la nuova scena viene mostrata
+
+            // setting the od values of position and dimension
+            stage.setWidth(width);
+            stage.setHeight(height);
+            stage.setX(x);
+            stage.setY(y);
 
 
-        ctr.startPeriodicDisconnectionCheck();
+            ctr.startPeriodicDisconnectionCheck();
 
 
-        //stage.show(); //si fa solo se cambia lo stage
+            //stage.show(); //si fa solo se cambia lo stage
+
     }
 
 

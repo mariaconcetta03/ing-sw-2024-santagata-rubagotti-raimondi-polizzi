@@ -903,8 +903,18 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
         if (selectedView == 1) {
 
-        } else if (selectedView == 2) {
+        } else if (selectedView == 2) { //arriva la scelta degli altri, ma se io ho già scelto ignoro questo update
             //guiView.updatePawns(player, pawn)
+            synchronized (guiPawnsControllerLock) {
+                while (GUIPawnsController == null) {
+                    try {
+                        guiPawnsControllerLock.wait();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            GUIPawnsController.updatePawns(pawn);
         }
     }
 
@@ -989,8 +999,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             System.out.println("I received the updateRound.");
             //playersInTheGame = newPlayingOrder;
             if (this.turnCounter == 0){
-                // MAI FATTO
                 //chiamo playBaseCard : se uso un thread per farlo posso continuare a ricevere e a rispondere a ping
+
+                synchronized (guiPawnsControllerLock){
+                    secondUpdateRoundArrived=true;
+                    guiPawnsControllerLock.notify();
+                }
+
             }
             if (this.turnCounter >= 1){
 
