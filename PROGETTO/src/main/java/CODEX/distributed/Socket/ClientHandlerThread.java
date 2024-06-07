@@ -1,9 +1,6 @@
 package CODEX.distributed.Socket;
 
-import CODEX.Exceptions.FullLobbyException;
-import CODEX.Exceptions.GameAlreadyStartedException;
-import CODEX.Exceptions.GameNotExistsException;
-import CODEX.Exceptions.NicknameAlreadyTakenException;
+import CODEX.Exceptions.*;
 import CODEX.controller.GameController;
 import CODEX.controller.ServerController;
 import CODEX.distributed.ClientActionsInterface;
@@ -326,13 +323,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     @Override
     public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) {
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        try {
-            this.gameController.playBaseCard(nickname, baseCard, orientation);
-            ServerMessage serverMessage=new ServerOk();
-            writeTheStream(new SCKMessage(serverMessage));
-        }catch (RemoteException ignored){
-
-        }
+        this.gameController.playBaseCard(nickname, baseCard, orientation);
+        ServerMessage serverMessage=new ServerOk();
+        writeTheStream(new SCKMessage(serverMessage));
     }
 
     @Override
@@ -366,7 +359,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             writeTheStream(new SCKMessage(serverMessage));
         }catch (RemoteException ignored){
 
-        }
+        }catch (ColorAlreadyTakenException e){}
     }
 
 

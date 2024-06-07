@@ -18,9 +18,9 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
     /*System.out.println("Welcome to "+ANSIFormatter.ANSI_GREEN+"C"+ANSIFormatter.ANSI_CYAN+"O"+ANSIFormatter.ANSI_RED+
          "D"+ANSIFormatter.ANSI_YELLOW+"E"+ANSIFormatter.ANSI_PURPLE+"X"+ANSIFormatter.ANSI_RESET+" NATURALIS");
 */
-    private Map<AngleType, String> emojis;
     private Map<AngleType, String> abbreviations;
     private Map<AngleType, String> cardColors;
+    private Map<Pawn, String> pawnColors;
     String rst = ANSIFormatter.ANSI_RESET;
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -40,15 +40,11 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
      * 🌿 plant
      */
     public InterfaceTUI() {
-        emojis = new HashMap<>();
-        emojis.put(AngleType.FEATHER, "🪶");
-        emojis.put(AngleType.JAR, "🫙");
-        emojis.put(AngleType.SCROLL, "📃");
-        emojis.put(AngleType.FUNGI, "🍄");
-        emojis.put(AngleType.INSECT, "🦋");
-        emojis.put(AngleType.ANIMAL, "🐺");
-        emojis.put(AngleType.NATURE, "🌿");
-        emojis.put(AngleType.NO_RESOURCE, " ");
+        pawnColors = new HashMap<>();
+        pawnColors.put(Pawn.RED, ANSIFormatter.ANSI_RED);
+        pawnColors.put(Pawn.BLUE, ANSIFormatter.ANSI_BLUE);
+        pawnColors.put(Pawn.GREEN, ANSIFormatter.ANSI_GREEN);
+        pawnColors.put(Pawn.YELLOW, ANSIFormatter.ANSI_YELLOW);
 
         abbreviations = new HashMap<>();
         abbreviations.put(AngleType.FEATHER, "Q"); //QUILL (da manuale) al posto di feather
@@ -135,14 +131,42 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
         System.out.println("| " + ANSIFormatter.ANSI_RED + "1" + ANSIFormatter.ANSI_RESET + " - Check the cards in your hand           |");
         System.out.println("| " + ANSIFormatter.ANSI_RED + "2" + ANSIFormatter.ANSI_RESET + " - Check the objective cards              |");// si possono unire
         System.out.println("| " + ANSIFormatter.ANSI_RED + "3" + ANSIFormatter.ANSI_RESET + " - Check the drawable cards               |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "4" + ANSIFormatter.ANSI_RESET + " - Check yours or someone else's board    |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "4" + ANSIFormatter.ANSI_RESET + " - Look at yours or someone else's board  |");
         System.out.println("| " + ANSIFormatter.ANSI_RED + "5" + ANSIFormatter.ANSI_RESET + " - Check the points scored                |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "6" + ANSIFormatter.ANSI_RESET + " - Send a message in the chat             |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "6" + ANSIFormatter.ANSI_RESET + " - Check the textual interface's legend   |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "7" + ANSIFormatter.ANSI_RESET + " - Ask who is playing                     |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "8" + ANSIFormatter.ANSI_RESET + " - Send a message in the chat             |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "9" + ANSIFormatter.ANSI_RESET + " - Read the last messages of a chat       |");
         if (isPlaying) {
-            System.out.println("| " + ANSIFormatter.ANSI_RED + "7" + ANSIFormatter.ANSI_RESET + " - Play a card                            |"); //the draw will be called after the play action
+            System.out.println("| " + ANSIFormatter.ANSI_RED + "10" + ANSIFormatter.ANSI_RESET + " - Play a card                           |"); //the draw will be called after the play action
         }
     }
+    public Pawn askPawnSelection(List<Pawn> availableColors, Scanner sc){
+        String selection;
+        System.out.print("These are the available pawn colors: ");
+        int k=0;
+        for(Pawn p: availableColors){
+            k++;
+            if(k<availableColors.size()) {
+                System.out.print(pawnColors.get(p) + p + rst + ", ");
+            }else{
+                System.out.print(pawnColors.get(p) + p + rst);
+            }
+        }
+        System.out.println("\nWhich color do you want to select? Be fast!");
+        selection=sc.next();
 
+        if(selection.equalsIgnoreCase("BLUE")){
+            return Pawn.BLUE;
+        } else if (selection.equalsIgnoreCase("RED")) {
+            return Pawn.RED;
+        }else if(selection.equalsIgnoreCase("YELLOW")){
+            return Pawn.YELLOW;
+        }else if(selection.equalsIgnoreCase("GREEN")){
+            return Pawn.GREEN;
+        }
+        return null;
+    }
 
     /**
      * This method let the player select how to play his baseCard
@@ -1757,7 +1781,7 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
      * @param user is the person we are chatting with
      */
     public void printChat(List<ChatMessage> messages, String user, String personalNickname){//@TODO DA RIFARE
-        System.out.println("These are the last 20 messages of the chat with "+user+":");
+        /*System.out.println("These are the last 20 messages of the chat with "+user+":");
        // int index=messages.size();
         int counter=0;
         List<String> tmpMessageUsersNicknames;
@@ -1777,7 +1801,18 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                     counter++;
                 }
         }
-
+         */
+    }
+    public void printLegend(){
+        System.out.println(ANSIFormatter.ANSI_BLACK+ANSIFormatter.ANSI_WHITE_BACKGROUND+"------ THIS IS CODEX NATURALIS' LEGEND ------"+rst);
+        System.out.println("          'A' stands for "+ANSIFormatter.ANSI_BLUE+"ANIMAL"+rst);
+        System.out.println("          'F' stands for "+ANSIFormatter.ANSI_RED+"FUNGI"+rst);
+        System.out.println("          'N' stands for "+ANSIFormatter.ANSI_GREEN+"NATURE"+rst);
+        System.out.println("          'I' stands for "+ANSIFormatter.ANSI_PURPLE+"INSECT"+rst);
+        System.out.println("          'Q' stands for "+ANSIFormatter.ANSI_YELLOW+"QUILL"+rst);
+        System.out.println("          'S' stands for "+ANSIFormatter.ANSI_YELLOW+"SCROLL"+rst);
+        System.out.println("          'J' stands for "+ANSIFormatter.ANSI_YELLOW+"JAR"+rst);
+        System.out.println(ANSIFormatter.ANSI_BLACK+ANSIFormatter.ANSI_WHITE_BACKGROUND+"---------------------------------------------"+rst);
     }
     public static void clearScreen() {
         System.out.print("\033[H\033[2J");
@@ -1802,7 +1837,7 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                     printMenu(isPlaying);
                 } else {
                     intValue = Integer.parseInt(value);
-                    if((intValue>=0)&&(intValue<=6)||(isPlaying&&intValue==7)) {
+                    if((intValue>=0)&&(intValue<=9)||(isPlaying&&intValue==10)) {
                         return intValue;
                     }else {
                         System.out.println("Please, insert one of the possible values.");

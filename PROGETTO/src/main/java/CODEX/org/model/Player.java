@@ -129,9 +129,6 @@ public class Player extends Observable implements Serializable {
             }
         }
 
-        List<Object> tmp=new ArrayList<>();
-        tmp.add(this.nickname);
-        tmp.add(playerDeck);
         notifyObservers(new updatePlayerDeckEvent(this.nickname, this.playerDeck));
     }
 
@@ -223,10 +220,6 @@ public class Player extends Observable implements Serializable {
      */
     public void addPersonalObjective(ObjectiveCard card) throws RemoteException{
         this.personalObjective.add(card);
-
-        List<Object> tmp=new ArrayList<>();
-        tmp.add(card);
-        tmp.add(this.nickname);
         notifyObservers(new UpdatePersonalObjectiveEvent(card, this.nickname));
     }
 
@@ -236,8 +229,9 @@ public class Player extends Observable implements Serializable {
      * Setter method
      * @param color is the one chosen by player
      */
-    public void setColor(Pawn color) {
+    public void setColor(Pawn color) throws RemoteException {
         this.color = color;
+        notifyObservers(new updatePlayerPawnEvent(this.nickname, this.color));
     }
 
 

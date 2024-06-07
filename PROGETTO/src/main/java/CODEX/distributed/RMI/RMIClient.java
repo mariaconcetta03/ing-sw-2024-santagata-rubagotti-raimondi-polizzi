@@ -70,7 +70,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     private Player personalPlayer;
 
-    int lastMoves=10;
+    private int lastMoves=10;
 
     private List<Player> playersInTheGame;
 
@@ -87,7 +87,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private boolean isPlaying= false;
     private boolean baseCard= false;
     private boolean nicknameSet = false;
-    private List<ChatMessage> messages;
+    private Map<Integer, Chat> chats;
     private Settings networkSettings;
     private GUILobbyController guiLobbyController=null;
 
@@ -119,7 +119,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         this.printLock = new Object();
         this.guiLock=new Object();
         personalPlayer= new Player();
-        messages=new ArrayList<>();
+        chats=new HashMap<>();
         networkSettings=new Settings();
     }
 
@@ -303,7 +303,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
-    public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, NotBoundException {
+    public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, NotBoundException, ColorAlreadyTakenException{
         if(!aDisconnectionHappened) {
             this.gameController.choosePawnColor(chooserNickname, selectedColor);
         }
@@ -521,9 +521,14 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                             }
                             break;
                         case 5:
-                            tuiView.printScoreBoard(playersInTheGame);
+                            List<Player> tmpList= new ArrayList<>(playersInTheGame);
+                            tuiView.printScoreBoard(tmpList);
                             break;
-                        case 6:
+                        case 6: tuiView.printLegend();
+                            break;
+                        case 7: System.out.println(ANSIFormatter.ANSI_BLUE+"It's "+playersInTheGame.get(0).getNickname()+"'s turn!"+ANSIFormatter.ANSI_RESET);
+                            break;
+                        case 8:
                             System.out.println("Do you want to send a message to everybody (type 1) or a private message (type the single nickname)?");
                             String answer = sc.next();
                             sc.nextLine();
@@ -556,36 +561,38 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                                 }
                             }
                             break;
-                        case 7:
+                        case 9:
+                            break;
+                        case 10:
                             boolean orientation = true;
                             PlayableCard card = null;
                             Coordinates coordinates;
                             card = tuiView.askPlayCard(sc, personalPlayer);
                             if (card != null) {
                                 orientation = tuiView.askCardOrientation(sc);
-                            coordinates = tuiView.askCoordinates(sc, card, personalPlayer.getBoard());
-                            if (coordinates != null) {
-                                try {
-                                    this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
-                                    if(lastMoves>playersInTheGame.size()) {
-                                        tmp = new ArrayList<>();
-                                        tmp.add(resourceCard1);
-                                        tmp.add(resourceCard2);
-                                        tmp.add(goldCard1);
-                                        tmp.add(goldCard2);
-                                        card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
-                                        this.drawCard(personalPlayer.getNickname(), card);
+                                coordinates = tuiView.askCoordinates(sc, card, personalPlayer.getBoard());
+                                if (coordinates != null) {
+                                    try {
+                                        this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
+                                        if(lastMoves>playersInTheGame.size()) {
+                                            tmp = new ArrayList<>();
+                                            tmp.add(resourceCard1);
+                                            tmp.add(resourceCard2);
+                                            tmp.add(goldCard1);
+                                            tmp.add(goldCard2);
+                                            card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
+                                            this.drawCard(personalPlayer.getNickname(), card);
+                                        }
+                                    }catch (IllegalArgumentException e ){
+                                        System.out.println("You can't play this card! Returning to menu..."); //@TODO differenziare eccezioni per non giocabilità e non abbastanza risorse?
                                     }
-                                }catch (IllegalArgumentException e ){
+                                } else {
                                     System.out.println("You can't play this card! Returning to menu..."); //@TODO differenziare eccezioni per non giocabilità e non abbastanza risorse?
                                 }
-                            } else {
-                                System.out.println("you can't play this card...returning to menu");
-                            }
                             }
                             break;
                         default:
-                            System.out.println("not yet implemented");
+                            System.out.println("Functionality not yet implemented");
                     }
                 } catch (RemoteException | NotBoundException e) {
                     System.out.println("Unable to communicate with the server! Shutting down.");
@@ -728,6 +735,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                                     ok = true;
                                     personalPlayer.setPersonalObjective(tmp);
                                     System.out.println("You've correctly chosen your objective card!");
+                                    gameController.checkObjectiveCardChosen(); //just added
                                 }catch (RemoteException |NotBoundException e){
                                     System.out.println("Unable to communicate with the server! Shutting down.");
                                     System.exit(-1);
@@ -828,8 +836,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     }
 
     @Override
-    public void updateChat(Chat chat) throws RemoteException {
-
+    public void updateChat(Integer chatIdentifier,Chat chat) throws RemoteException {
+        //chats.put()
     }
 
 
@@ -839,13 +847,16 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updateChat(ChatMessage message) throws RemoteException {//ha senso creare un chatHandler nel model
-        messages.add(message);
+    public void updateChatMessage(ChatMessage message) throws RemoteException {
+        //messages.add(message);
         if (selectedView == 1) {
-            if(!message.getSender().getNickname().equals(personalPlayer.getNickname())) {
-                System.out.println(ANSIFormatter.ANSI_YELLOW+"You received a message from "+message.getSender().getNickname()+"!"+ANSIFormatter.ANSI_RESET);
+            if(!message.getSender().equals(personalPlayer.getNickname())) {
+                System.out.println(ANSIFormatter.ANSI_YELLOW+"You received a message from "+message.getSender()+"!"+ANSIFormatter.ANSI_RESET);
             }
-            tuiView.printChat(messages, message.getSender().getNickname(), personalPlayer.getNickname());
+            //tuiView.printChat(messages, message.getSender(), personalPlayer.getNickname());
+
+
+
         } else if (selectedView == 2) {
             //guiView.updateChat(chat)
         }
@@ -855,15 +866,23 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     /**
      * This is an update method
-     * @param player who selected a new pawn color
+     * @param nickname is the nickname of the player who selected a new pawn color
      * @param pawn is the selected color
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updatePawns(Player player, Pawn pawn) throws RemoteException {
-
+    public void updatePawns(String nickname, Pawn pawn) throws RemoteException {
+        //System.out.println("I received "+nickname+"'s pawn color");
+        if(nickname.equals(personalPlayer.getNickname())){
+            personalPlayer.setColor(pawn);
+        }
+        for(Player p: playersInTheGame){
+            if(p.getNickname().equals(nickname)){
+                p.setColor(pawn);
+            }
+        }
         if (selectedView == 1) {
-            //System.out.println("I received the pawns.");
+
         } else if (selectedView == 2) {
             //guiView.updatePawns(player, pawn)
         }
@@ -877,7 +896,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     @Override
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException {
         playersInTheGame = newPlayingOrder;
-
+        System.out.println("update ricevuto, tocca a "+playersInTheGame.get(0).getNickname());
         if (selectedView == 1) {
             if (turnCounter != -1) {
                 if (turnCounter != 0) {
@@ -914,9 +933,35 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     executor.execute(() -> {
                         try {
                             playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0], tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]));
+                            gameController.checkBaseCardPlayed();
                         } catch (NotBoundException | RemoteException ignored) {}
                     });
                 }
+            }else { //ask Pawn selection
+                executor.execute(() -> {
+                    boolean ok=false;
+                    try {
+                        while (!ok) {
+                            Pawn selection = tuiView.askPawnSelection(gameController.getGame().getAvailableColors(),sc);
+                            if (selection != null) {
+                                try {
+                                    this.choosePawnColor(personalPlayer.getNickname(), selection);
+                                    ok = true;
+                                    System.out.println("Pawn color correctly selected!");
+                                    gameController.checkChosenPawnColor();
+                                } catch (ColorAlreadyTakenException e) {
+                                    System.out.println("This color is already taken! Please try again.");
+                                }
+                            } else {
+                                System.out.println("Please insert one of the possible colors!");
+                            }
+                        }
+                    } catch (NotBoundException |RemoteException e) {
+                        System.out.println("Unable to communicate with the Server. Shutting down.");
+                        e.printStackTrace();
+                        System.exit(-1);
+                    }
+                });
             }
             turnCounter++;
         } else if (selectedView==2) {
@@ -1013,7 +1058,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             if(gameState.equals(Game.GameState.STARTED)) {
                 System.out.println(ANSIFormatter.ANSI_RED+"The game has started!"+ANSIFormatter.ANSI_RESET);
                 executor=Executors.newCachedThreadPool();
-
             } else if (gameState.equals(Game.GameState.ENDING)) {
                 System.out.println(ANSIFormatter.ANSI_RED+"Ending condition triggered: someone reached 20 points or both the deck are finished."+ANSIFormatter.ANSI_RESET);
             }else if(gameState.equals(Game.GameState.ENDED)){

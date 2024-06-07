@@ -2,21 +2,21 @@ package CODEX.utils.executableMessages.events;
 
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
-import CODEX.org.model.Chat;
 import CODEX.org.model.ChatMessage;
 
 import java.rmi.RemoteException;
 
-public class updateChatEvent implements Event{
-    Chat chatToBeAdded;
-    public updateChatEvent(Chat chatToBeAdded){
-        this.chatToBeAdded=chatToBeAdded;
-    }
+public class updateChatMessageEvent implements Event{
+    private ChatMessage messageToBeAdded;
+    private String chatIdentifier;
 
+    public updateChatMessageEvent(String chatIdentifier, ChatMessage messageToBeAdded){
+        this.chatIdentifier=chatIdentifier;
+        this.messageToBeAdded=messageToBeAdded;
+    }
     @Override
     public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
 
-        client.updateChat(chatToBeAdded.getId(),chatToBeAdded);
     }
 
     @Override

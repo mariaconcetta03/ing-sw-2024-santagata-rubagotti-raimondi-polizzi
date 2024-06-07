@@ -1,5 +1,6 @@
 package controller;
 
+import CODEX.Exceptions.ColorAlreadyTakenException;
 import CODEX.controller.GameController;
 import CODEX.controller.ServerController;
 import CODEX.Exceptions.FullLobbyException;
@@ -122,7 +123,7 @@ public class GameControllerTest extends TestCase {
 
     }
 
-    public void testPlayCard() throws RemoteException {
+    public void testPlayCard() throws RemoteException, ColorAlreadyTakenException {
         GameController g1 = new GameController();
         ServerController s1= new ServerController();
         Player p1 = new Player();
@@ -557,7 +558,7 @@ public class GameControllerTest extends TestCase {
         assertEquals(cardToBeSelected,p1.getPersonalObjective());
     }
 
-    public void testChoosePawnColor() throws RemoteException {
+    public void testChoosePawnColor() throws RemoteException, ColorAlreadyTakenException {
         GameController g1= new GameController();
         ServerController s1= new ServerController();
         Player p1=new Player();
@@ -659,35 +660,46 @@ public class GameControllerTest extends TestCase {
         receiver.add(p3.getNickname());
         receiver.add(p4.getNickname());
         g1.sendMessage(p1.getNickname(), receiver, "ciao");
+        List<String> tmp= new ArrayList<>(receiver);
+        tmp.add(p1.getNickname());
 
-        System.out.println(g1.getGame().getChats().get(0).messagesReceivedByPlayer(p3).get(0).getMessage());
+        System.out.println(g1.getGame().getChatByUsers(tmp).messagesReceivedByPlayer(p3.getNickname()).get(0).getMessage());
 
         List<String> receiver2=new ArrayList<>();
         receiver2.add(p1.getNickname());
         receiver2.add(p3.getNickname());
         receiver2.add(p4.getNickname());
         g1.sendMessage(p2.getNickname(), receiver2, "ciao2");
+        tmp= new ArrayList<>(receiver2);
+        tmp.add(p2.getNickname());
 
-        System.out.println(g1.getGame().getChats().get(0).messagesReceivedByPlayer(p1).get(0).getMessage());
+
+        System.out.println(g1.getGame().getChatByUsers(tmp).messagesReceivedByPlayer(p1.getNickname()).get(0).getMessage());
+        for(Integer i: g1.getGame().getChats().keySet()){
+          System.out.println("ID: "+i);
+        }
 
         List <String> couple=new ArrayList<>();
         couple.add(p1.getNickname());
         g1.sendMessage(p2.getNickname(), couple, "hello Pippo");
-        System.out.println(g1.getGame().getChats().get(1).messagesReceivedByPlayer(p1).get(0).getMessage());
+        couple.add(p2.getNickname());
+
+        System.out.println(g1.getGame().getChatByUsers(couple).messagesReceivedByPlayer(p1.getNickname()).get(0).getMessage());
 
         List <String> couple2=new ArrayList<>();
         //The problem is I can't modify the List of receivers as I'm passing it as a parameter
-        List<Player> users= new ArrayList<>();
+        List<String> users= new ArrayList<>();
         couple2.add(p2.getNickname());
-        users.add(p1);
-        users.add(p2);
+        users.add(p1.getNickname());
+        users.add(p2.getNickname());
         g1.sendMessage(p1.getNickname(), couple2, "hello Pluto");
-        System.out.println(g1.getGame().getChatByUsers(users).messagesReceivedByPlayer(p2).get(0).getMessage());
+        System.out.println(g1.getGame().getChatByUsers(users).messagesReceivedByPlayer(p2.getNickname()).get(0).getMessage());
 
         List <String> couple3=new ArrayList<>();
         couple3.add(p3.getNickname());
         g1.sendMessage(p1.getNickname(), couple3, "hello Paperino");
-        System.out.println(g1.getGame().getChats().get(2).messagesReceivedByPlayer(p3).get(0).getMessage());
+        couple3.add(p1.getNickname());
+        System.out.println(g1.getGame().getChatByUsers(couple3).messagesReceivedByPlayer(p3.getNickname()).get(0).getMessage());
 
         /**In effetti avere le chat separate è un po' strano, ma quando dovrò stampare avrò una List<Message> temp
          * che mi permetta di inserire dentro tutti i messaggi delle chat dove lo specifico player è registrato
@@ -912,7 +924,7 @@ public class GameControllerTest extends TestCase {
         g1.leaveGame("Topolino");
     }
 
-    public void testEndGame() throws RemoteException {
+    public void testEndGame() throws RemoteException, ColorAlreadyTakenException {
         GameController g1= new GameController();
         ServerController s1= new ServerController();
         Player p1=new Player();

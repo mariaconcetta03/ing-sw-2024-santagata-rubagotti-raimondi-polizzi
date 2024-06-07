@@ -45,7 +45,8 @@ public class Game extends Observable implements Serializable {
     private ObjectiveCard objectiveCard1;
     private ObjectiveCard objectiveCard2;
 
-    private List<Chat> chats; // contains all the chats started during the game
+    private Map<Integer, Chat> chats; // contains all the chats started during the game. String is the crasi of the nickname
+    private int chatId=0;
     private List<Pawn> alreadySelectedColors;
     private ErrorsAssociatedWithExceptions lastEvent; // this flag gives some essential information about the last event which occurred in this Game
     private int lastMoves;
@@ -64,7 +65,7 @@ public class Game extends Observable implements Serializable {
         for(Player player: players){
             player.setGame(this);
         }
-        this.chats = new ArrayList<>();
+        this.chats = new HashMap<>();
         this.state = GameState.WAITING_FOR_START;
         this.currentPlayer = null;
         this.resourceDeck = PlayableDeck.resourceDeck();
@@ -90,7 +91,7 @@ public class Game extends Observable implements Serializable {
         this.id = id;
         this.players = new ArrayList<>();
         players.add(player);
-        this.chats = new ArrayList<>();
+        this.chats = new HashMap<>();
         this.state = GameState.WAITING_FOR_START;
         this.currentPlayer = null;
         this.resourceDeck = PlayableDeck.resourceDeck();
@@ -199,9 +200,15 @@ public class Game extends Observable implements Serializable {
         notifyObservers(new updateGoldDeckEvent(goldDeck));
         notifyObservers(new updateResourceDeckEvent(resourceDeck));
 
+        //notifyObservers(new updatePlayersOrderEvent(players));//questa notify fa scattare la richiesta di come giocare la baseCard
+    }
 
-        notifyObservers(new updatePlayersOrderEvent(players));//ora inviamo ai player l'ordine di gioco
-        //notifyObservers(new Message(null, Event.SETUP_PHASE_1)); @TODO serve?
+    /**
+     * This method is called by the GameController when all the players have chosen their Pawn's color
+     * @throws RemoteException
+     */
+    public void chosenPawns() throws RemoteException {
+        notifyObservers(new updatePlayersOrderEvent(players)); //fa scattare la richiesta lato Client della base Card
     }
 
 
@@ -316,19 +323,18 @@ public class Game extends Observable implements Serializable {
     /**
      * This method adds a new chat to the List chat in this game.
      * P1 and P2 are the 2 players the chat is composed by
-     * @param p1 first player in the chat
-     * @param p2 second player in the chat
+     * @param p1Nickname first player in the chat
+     * @param p2Nickname second player in the chat
      */
-    public Chat startChat (Player p1, Player p2) {
-        int index = this.chats.size();
-        // choosing the id of my new chat: starting from 0, then 1,2,3,...
-        List<Player> playersInChat = new ArrayList<>();
-        playersInChat.add(p1);
-        playersInChat.add(p2);
+    public Chat startChat (String p1Nickname, String p2Nickname) {
+        List<String> playersInChat = new ArrayList<>();
+        playersInChat.add(p1Nickname);
+        playersInChat.add(p2Nickname);
         // creating a list of the players in the chat
 
-        Chat newChat = new Chat(playersInChat, index);
-        chats.add(newChat);
+        Chat newChat = new Chat(playersInChat, chatId);
+        chats.put(chatId,newChat);
+        chatId++;
         return newChat;
     }
 
@@ -341,35 +347,64 @@ public class Game extends Observable implements Serializable {
      * This method adds a new chat to the List chat in this game. The new chat is composed by all the players in this game
      */
     public Chat startGeneralChat() {
-        int index = this.chats.size();
-        // choosing the id of my new chat: starting from 0, then 1,2,3,...
-
         // the General Chat includes all the players in the game
-        Chat newChat = new Chat(this.players, index);
-        chats.add(newChat);
+        String generalChatString="";
+        List<String> playerNicknames=new ArrayList<>();
+        for(Player p: this.players){
+            playerNicknames.add(p.getNickname());
+        }
+        Chat newChat = new Chat(playerNicknames, chatId);
+        chats.put(chatId,newChat);
+        chatId++;
         return newChat;
     }
 
     /**
      * This method returns the chat given the users
-     * @param users are the users for which I'm looking for the Chat
+     * @param usersNicknames are the users for which I'm looking for the Chat
      * @return the Chat if found, null otherwise
      */
-    public Chat getChatByUsers(List<Player> users) {
+    public Chat getChatByUsers(List<String> usersNicknames) {
         Chat tmp=null;
-        for (Chat chat : chats) {
-            if (!(chat.getUsers().size() == users.size())) {
+        for (Chat chat : chats.values()) {
+            if (!(chat.getUsers().size() == usersNicknames.size())) {
                 continue;
             }
             tmp = chat;
-            for (Player player : users) {
-                if (!chat.getUsers().contains(player)) {
+            for (String playerNickname : usersNicknames) {
+                if (!chat.getUsers().contains(playerNickname)) {
                     tmp = null;
                     break;
                 }
             }
         }
         return tmp;
+
+        /*Chat tmp=null;
+        boolean found=false;
+        String userNicknamesString="";
+        for(String s: usersNicknames){
+            userNicknamesString=userNicknamesString.concat(s);
+        }
+
+        for(String s: chats.keySet()){
+            if(s.length()==userNicknamesString.length()){//se trovo una chat che abbia la lunghezza giusta
+                for(String t: usersNicknames){
+                    if(!s.contains(t)){
+                        tmp= null;
+                        break;
+                    }else {
+                        tmp = chats.get(s);
+                    }
+                }
+                if(tmp!=null){
+                    return tmp;
+                }
+            }
+        }
+       return null;
+
+         */
     }
 
 
@@ -382,13 +417,12 @@ public class Game extends Observable implements Serializable {
      *  @return the next player is who will play soon
      */
     public Player nextRound() throws RemoteException{
-        this.players.get(0).setState(Player.PlayerState.IS_WAITING);
+        this.players.get(0).setState(Player.PlayerState.IS_WAITING); //@TODO si potrebbe fare void credo
         this.players.add(this.players.get(0));
         this.players.remove(0);
         this.currentPlayer = this.players.get(0);
         this.players.get(0).setState(Player.PlayerState.IS_PLAYING);
-
-            notifyObservers(new updatePlayersOrderEvent(players));
+        notifyObservers(new updatePlayersOrderEvent(players));
         return this.currentPlayer;
     }
 
@@ -486,7 +520,7 @@ public class Game extends Observable implements Serializable {
      * Getter method
      * @return chats is the list of all opened chats
      */
-    public List<Chat> getChats() {
+    public Map<Integer, Chat> getChats() {
         return this.chats;
     }
 
@@ -688,6 +722,21 @@ public class Game extends Observable implements Serializable {
         return alreadySelectedColors;
     }
 
+    /**
+     * This method is used to check which are the possible colors left to choose between
+     * @return a List containing the currently available pawn colors
+     */
+    public List<Pawn> getAvailableColors(){
+        List<Pawn> tmp=new ArrayList<>();
+        tmp.add(Pawn.GREEN);
+        tmp.add(Pawn.RED);
+        tmp.add(Pawn.YELLOW);
+        tmp.add(Pawn.BLUE);
+        for(Pawn p: alreadySelectedColors){
+            tmp.remove(p);
+        }
+        return tmp;
+    }
 
 
     /**
@@ -696,11 +745,18 @@ public class Game extends Observable implements Serializable {
      */
     public void setLastEvent(ErrorsAssociatedWithExceptions lastEvent) { //per far funzionare tcp NON devono venire notificati i messaggi di essore qui
         this.lastEvent = lastEvent;
-        if(lastEvent.equals(ErrorsAssociatedWithExceptions.SETUP_PHASE_2)||lastEvent.equals(ErrorsAssociatedWithExceptions.GAME_LEFT)) {
+        if(lastEvent.equals(ErrorsAssociatedWithExceptions.SETUP_PHASE_2)) {
             try {
                 notifyObservers(new setUpPhaseFinishedEvent()); //GAME_LEFT non è incluso
             } catch (RemoteException e) {
             }
+        }else if(lastEvent.equals(ErrorsAssociatedWithExceptions.GAME_LEFT)){
+            /*
+            try {
+                notifyObservers(new disconnectionEvent());
+            }catch (RemoteException e ){}
+
+             */
         }
 
     }

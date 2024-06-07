@@ -10,6 +10,7 @@ import java.io.Serializable;
 public enum ErrorsAssociatedWithExceptions implements Serializable {
     // ERRORS
     OK,
+    COLOR_ALREADY_TAKEN,
     CARD_NOT_DRAWN,
     GAME_NOT_EXISTS,
     GAME_ALREADY_STARTED,

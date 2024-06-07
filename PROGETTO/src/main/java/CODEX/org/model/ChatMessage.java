@@ -10,8 +10,8 @@ import java.util.*;
 
 public class ChatMessage implements Serializable {
     private String message; // in the string it's represented the text of the message
-    private Player sender; // who sent the message
-    private List<Player> receiver; // it can be a single receiver, or the whole group of players
+    private String senderNickname; // who sent the message
+    private List<String> receiversNicknames; // it can be a single receiver, or the whole group of players
     private Timestamp timestamp; // it also works as an ID for the message, combined with his sender
                                  // a sender can't send 2 messages at the same time!
 
@@ -20,14 +20,14 @@ public class ChatMessage implements Serializable {
     /**
      * Class contructor
      * @param message
-     * @param sender
-     * @param receiver
+     * @param senderNickname
+     * @param receiversNicknames
      * @param timestamp
      */
-    public ChatMessage(String message, Player sender, List<Player> receiver, Timestamp timestamp) {
+    public ChatMessage(String message, String senderNickname, List<String> receiversNicknames, Timestamp timestamp) {
         this.message = message;
-        this.sender = sender;
-        this.receiver = receiver;
+        this.senderNickname = senderNickname;
+        this.receiversNicknames = receiversNicknames;
         this.timestamp = timestamp;
     }
 
@@ -48,8 +48,8 @@ public class ChatMessage implements Serializable {
      * Getter method
      * @return the player that sent this message
      */
-    public Player getSender() { // returns the player who sent the message
-        return this.sender;
+    public String getSender() { // returns the player who sent the message
+        return this.senderNickname;
     }
 
 
@@ -59,8 +59,8 @@ public class ChatMessage implements Serializable {
      * Getter method
      * @return a list containing the receivers of the message
      */
-    public List<Player> getReceiver() { // returns the list of the receivers: it can be a single player or the whole group
-        return this.receiver;
+    public List<String> getReceiver() { // returns the list of the receivers: it can be a single player or the whole group
+        return this.receiversNicknames;
     }
 
 

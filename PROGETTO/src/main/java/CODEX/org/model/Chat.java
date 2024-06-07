@@ -1,5 +1,7 @@
 package CODEX.org.model;
 import CODEX.utils.Observable;
+import CODEX.utils.executableMessages.events.updateChatEvent;
+import CODEX.utils.executableMessages.events.updateChatMessageEvent;
 //import CODEX.utils.executableMessages.events.updateChatEvent;
 
 import java.io.Serializable;
@@ -13,7 +15,7 @@ import java.util.List;
 
 
 public class Chat extends Observable implements Serializable {
-    private List<Player> users; //these are the players which can communicate in the chat
+    private List<String> usersNickname; //these are the players which can communicate in the chat
     private List<ChatMessage> messages; // all the messages which have been sent in this chat
     private final int id; // every chat has a different ID. That means that there is a way to select the players we're chatting with?
 
@@ -21,11 +23,11 @@ public class Chat extends Observable implements Serializable {
 
     /**
      * Class constructor
-     * @param users is the List containing all the players taking part to the chat instance
+     * @param usersNickname is the List containing all the players taking part to the chat instance
      * @param id is the chat id
      */
-    public Chat(List<Player> users, int id) {
-        this.users = users;
+    public Chat(List<String> usersNickname, int id) {
+        this.usersNickname = usersNickname;
         this.id = id;
         this.messages = new ArrayList<>();
     }
@@ -37,8 +39,11 @@ public class Chat extends Observable implements Serializable {
      * @param mess It's the message sent by the player
      */
     public void sendMessage (ChatMessage mess) throws RemoteException {
+        if(messages.isEmpty()){
+            notifyObservers(new updateChatEvent(this));
+        }
         this.messages.add(mess);
-        //notifyObservers(new updateChatEvent(mess)); //inviamo il solo nuovo messaggio, se la chat diventa enorme è uno
+        //notifyObservers(new updateChatMessageEvent(mess)); //inviamo il solo nuovo messaggio, se la chat diventa enorme è uno
         //spreco assurdo inviarla tutta tramite la rete ogni volta
     }
 
@@ -46,13 +51,13 @@ public class Chat extends Observable implements Serializable {
 
     /**
      * This method returns all the messages received by a player
-     * @param p is the player we're interested in
+     * @param playerNickname is the player we're interested in
      * @return an ArrayList containing all the messages received from p
      */
-    public List<ChatMessage> messagesReceivedByPlayer(Player p){
+    public List<ChatMessage> messagesReceivedByPlayer(String playerNickname){ //@TODO non mi serve
         List<ChatMessage> messageReceived= new ArrayList<>();
         for(ChatMessage m : this.messages){
-            if(m.getReceiver().contains(p)){
+            if(m.getReceiver().contains(playerNickname)){
                 messageReceived.add(m);
             }
         }
@@ -73,10 +78,10 @@ public class Chat extends Observable implements Serializable {
 
     /**
      * Getter method
-     * @return the list of players using the Chat
+     * @return the list of players' nicknames that are participating into  the Chat
      */
-    public List<Player> getUsers() {
-        return this.users;
+    public List<String> getUsers() {
+        return this.usersNickname;
     }
 
 

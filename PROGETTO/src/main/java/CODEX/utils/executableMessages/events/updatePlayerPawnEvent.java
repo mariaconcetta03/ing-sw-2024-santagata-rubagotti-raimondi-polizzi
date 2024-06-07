@@ -8,22 +8,22 @@ import CODEX.org.model.Player;
 import java.rmi.RemoteException;
 
 public class updatePlayerPawnEvent implements Event {
-    private Player player; //@TODO piu che il player, magari il nickname
+    private String nickname;
     private Pawn pawn;
 
-    public updatePlayerPawnEvent(Player player, Pawn pawn) {
-        this.player = player;
+    public updatePlayerPawnEvent(String nickname, Pawn pawn) {
+        this.nickname = nickname;
         this.pawn = pawn;
     }
 
     @Override
     public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
-        client.updatePawns(player, pawn);
+        client.updatePawns(nickname, pawn);
     }
     @Override
     public void executeSCK(ClientGeneralInterface client) {
         try {
-            client.updatePawns(player, pawn);
+            client.updatePawns(nickname, pawn);
         } catch (RemoteException ignored) { //è il modo migliore di gestire la cosa?
         }
     }

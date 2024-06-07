@@ -1,10 +1,12 @@
 package org.model;
 
+import CODEX.org.model.ChatMessage;
 import CODEX.org.model.Game;
 import CODEX.org.model.Player;
 import junit.framework.TestCase;
 
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -270,7 +272,7 @@ public class GameTest extends TestCase {
         p.setGame(game);
         System.out.println("Starting chat between P1 and P2");
 
-        game.startChat(p, p1);
+        game.startChat(p.getNickname(), p1.getNickname());
 
         for(int i = 0; i < game.getChats().size(); i++) {
             System.out.println("The number of the active chats is: " + game.getChats().size());
@@ -281,7 +283,7 @@ public class GameTest extends TestCase {
 
 
     public void testStartGeneralChat() {
-        Player p1 = new Player();
+        /*Player p1 = new Player();
         Game game = new Game(p1, 1);
         Player p = new Player(game);
         game.setnPlayers(2);
@@ -290,12 +292,60 @@ public class GameTest extends TestCase {
         int nPlayers = game.getnPlayers();
         p1.setGame(game);
         p.setGame(game);
+         */
+        Player p1=new Player();
+        Player p2= new Player();
+        p1.setNickname("pippo");
+        p2.setNickname("pluto");
+        List<Player> players=new ArrayList<>();
+        players.add(p1);
+        players.add(p2);
+        Game game= new Game(players, 0);
 
         System.out.println("Starting general chat");
 
         game.startGeneralChat();
         for(int i = 0; i < game.getChats().size(); i++) {
-            System.out.println("The number of the active chats is: " + game.getChats().size());
+            System.out.println("The number of the active chats is: " + game.getChats().values().size());
+        }
+    }
+
+    public void testGetChatByUsers() throws RemoteException {
+        String s1= "pippo";
+        String s2= "pluto";
+        String s3= "topolino";
+        String s4= "paperino";
+        Player p1=new Player();
+        Player p2= new Player();
+        Player p3= new Player();
+        Player p4= new Player();
+        p1.setNickname(s1);
+        p2.setNickname(s2);
+        p3.setNickname(s3);
+        p4.setNickname(s4);
+        List<Player> players=new ArrayList<>();
+        players.add(p1);
+        players.add(p2);
+        players.add(p3);
+        players.add(p4);
+
+        Game game=new Game(players, 1);
+
+        game.startChat(p1.getNickname(), p2.getNickname());
+        game.startChat(p2.getNickname(), p4.getNickname());
+        game.startGeneralChat();
+        game.startChat(p2.getNickname(), p1.getNickname());
+        for(Integer i:game.getChats().keySet()){
+            System.out.println("ID: "+i);
+        }
+        List<String> nicknames1=new ArrayList<>();
+        nicknames1.add(p1.getNickname());
+        nicknames1.add(p2.getNickname());
+        List<String> receivers1=new ArrayList<>();
+        receivers1.add(p2.getNickname());
+        game.getChatByUsers(nicknames1).sendMessage(new ChatMessage("ciao!", p1.getNickname(), receivers1, new Timestamp(System.currentTimeMillis())));
+        for(ChatMessage m: game.getChatByUsers(nicknames1).getMessages()){
+            System.out.println("Messaggio: "+m.getMessage());
         }
     }
 

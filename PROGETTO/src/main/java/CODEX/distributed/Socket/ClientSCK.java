@@ -45,6 +45,7 @@ public class ClientSCK implements ClientGeneralInterface {
     private HashSet<Integer> lobbyId;
     private final Socket socket;
     private GUIGameController guiGameController=null;
+    private int lastMoves=10;
     private final Object guiGamestateLock=new Object();
 
     public Player getPersonalPlayer() {
@@ -827,10 +828,15 @@ public class ClientSCK implements ClientGeneralInterface {
     public void showWinner(List<Player> winners) throws RemoteException {
 
     }
-
+    /**
+     * This is an update method
+     * @param lastMoves is the number of turns remaining before the game ends.
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
     @Override
     public void updateLastMoves(int lastMoves) throws RemoteException {
-
+        this.lastMoves=lastMoves;
+        System.out.println("LAST MOVES "+this.lastMoves);
     }
 
 
@@ -891,7 +897,7 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
     @Override
-    public void updateChat(Chat chat) throws RemoteException {
+    public void updateChat(Integer chatIdentifier, Chat chat) throws RemoteException {
         //we have to change the view and the local model
 
         if (selectedView == 1) {
@@ -902,26 +908,42 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
     @Override
-    public void updateChat(ChatMessage message) throws RemoteException {
+    public void updateChatMessage(ChatMessage message) throws RemoteException {
 
     }
-
+    /**
+     * This is an update method
+     * @param nickname is the nickname of the player who selected a new pawn color
+     * @param pawn is the selected color
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
     @Override
-    public void updatePawns(Player player, Pawn pawn) throws RemoteException {
-        //we have to change the view and the local model
+    public void updatePawns(String nickname, Pawn pawn) throws RemoteException {
+        if(nickname.equals(personalPlayer.getNickname())){
+            personalPlayer.setColor(pawn);
+        }
+        for(Player p: playersInTheGame){
+            if(p.getNickname().equals(nickname)){
+                p.setColor(pawn);
+            }
+        }
         if (selectedView == 1) {
             System.out.println("I received the updatePawns.");
         } else if (selectedView == 2) {
             //guiView.updatePawns(player, pawn)
         }
     }
-
+    /**
+     * This is an update method
+     * @param newPlayingOrder are the players of the game ordered
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
     @Override
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException { //taken from RMIClient
+        System.out.println("I received the updateRound.");
+        playersInTheGame = newPlayingOrder;
         if (selectedView == 1) { //TUI
-
-            System.out.println("I received the updateRound.");
-            playersInTheGame = newPlayingOrder; //when turnCounter==-1 we have to initialize this list
+            //when turnCounter==-1 we have to initialize this list
             if (this.turnCounter == 0) { //we enter here only one time: the second time that updateRound is called
                 //the second time that updateRound is called we have all that is need to call playBaseCard (see the model server side)
 
@@ -935,12 +957,19 @@ public class ClientSCK implements ClientGeneralInterface {
             }
             if (this.turnCounter >= 1) { //we enter here from the third time included that updateRound is called
                 //before starting the thread that prints the menu we communicate which is the player that is playing
-                if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
-                    setIsPlaying(true);
-                    System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
-                } else {
-                    setIsPlaying(false);
-                    System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
+                if(lastMoves>0){
+                    if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
+                        setIsPlaying(true);
+                        System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
+                        if(lastMoves<=playersInTheGame.size()){
+                            System.out.println("This is your last turn! You will not draw.");
+                        }
+                    } else {
+                        setIsPlaying(false);
+                        System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
+                    }
+                }else{
+                    inGame=false;
                 }
                 if (this.turnCounter == 1) { //we enter here the third time (finishedSetupPhase2())
                     //we have to start the thread that prints the menu
@@ -948,7 +977,6 @@ public class ClientSCK implements ClientGeneralInterface {
                         while (inGame) { //quando la connessione viene persa/il Game termina inGame deve venire settato a false
                             //il player può usare il menù completo solo se isPlaying==true se no usa quello di base
                             showMenuAndWaitForSelection();
-
                         }
                     }).start();
                 }
@@ -1185,8 +1213,7 @@ public class ClientSCK implements ClientGeneralInterface {
     private void showMenuAndWaitForSelection(){ //syn perchè così legge il valore corrente di isPlaying
         Integer choice;
         if(selectedView==1) {
-            choice=tuiView.showMenuAndWaitForSelection(this.getIsPlaying(),this.console);
-            int intChoice=choice;
+            int intChoice=tuiView.showMenuAndWaitForSelection(this.getIsPlaying(),this.console);
             boolean ok;
             if(intChoice!=-1) { //dopo ogni azione della tui si può ristampare il menù (possiamo farlo da qui o direttamente nella tui)
                 try {
@@ -1229,7 +1256,11 @@ public class ClientSCK implements ClientGeneralInterface {
                         case 5:
                             tuiView.printScoreBoard(playersInTheGame);
                             break;
-                        case 6:
+                        case 6: tuiView.printLegend();
+                            break;
+                        case 7: System.out.println(ANSIFormatter.ANSI_BLUE+"It's "+playersInTheGame.get(0).getNickname()+"'s turn!"+ANSIFormatter.ANSI_RESET);
+                            break;
+                        case 8:
                             System.out.println("Do you want to send a message to everybody (type 1) or a private message (type the single nickname)?");
                             String answer = sc.nextLine();
                             if (answer.equals("1")) {
@@ -1260,7 +1291,9 @@ public class ClientSCK implements ClientGeneralInterface {
                                 }
                             }
                             break;
-                        case 7:
+                        case 9:
+                            break;
+                        case 10:
                             boolean orientation = true;
                             PlayableCard card = null;
                             Coordinates coordinates;
@@ -1270,7 +1303,7 @@ public class ClientSCK implements ClientGeneralInterface {
                                 coordinates = tuiView.askCoordinates(sc, card, personalPlayer.getBoard());
                                 if (coordinates != null) {
                                     this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
-                                    if(!errorState) {
+                                    if((!errorState)&&(lastMoves>playersInTheGame.size())) {
                                         tmp = new ArrayList<>();
                                         tmp.add(resourceCard1);
                                         tmp.add(resourceCard2);
@@ -1279,7 +1312,7 @@ public class ClientSCK implements ClientGeneralInterface {
                                         card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
                                         this.drawCard(personalPlayer.getNickname(), card);
                                     }else{
-                                        System.out.println("you can't play this card...returning to menu");
+                                        System.out.println("You can't play this card! Returning to menu..."); //@TODO differenziare eccezioni per non giocabilità e non abbastanza risorse?
                                         errorState=false; //to be used the next time
                                     }
                                 } else {
@@ -1290,10 +1323,11 @@ public class ClientSCK implements ClientGeneralInterface {
                             }
                             break;
                         default:
-                            System.out.println("not yet implemented");
+                            System.out.println("Functionality not yet implemented");
                     }
                 } catch (RemoteException | NotBoundException e) {
                     System.out.println("Unable to communicate with the server! Shutting down.");
+                    e.printStackTrace();
                     System.exit(-1);
                 }
             }
