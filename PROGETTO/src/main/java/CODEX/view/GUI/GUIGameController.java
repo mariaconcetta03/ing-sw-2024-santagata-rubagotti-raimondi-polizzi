@@ -75,6 +75,7 @@ public class GUIGameController {
     private Set<Coordinates> p2PlayablePositions; //quelle di py le prendiamo direttamente dal personale player (perche non abbiamo bisogno di capire quale carta è stata aggiunta)
     private Set<Coordinates> p3PlayablePositions;
     private Set<Coordinates> p4PlayablePositions;
+    private boolean lastRound=false;
 
 
 
@@ -156,64 +157,20 @@ public class GUIGameController {
     private Label boardLabel;
 
 
-    public void setTurnLabel() {
+
+    public void setTurnLabel(boolean lastRound) {
         cardPlaced=false;
+        this.lastRound=lastRound;
         if (network == 1) {
             rmiClient.setGuiGameController(this);
             if (rmiClient.getPlayersInTheGame().get(0).getNickname().equals(rmiClient.getPersonalPlayer().getNickname())) {
                 this.turnLabel.setText("It's your turn!");
 
-//                int i=1;
-//                for (Player p: playersInOrder) { //tolgo l'illuminazione da tutti i bottoni
-//                    System.out.println("nickname: " + p.getNickname());
-//                    if(i==1){
-//                        buttonP1Board.setStyle("");}
-//                    if(i==2){
-//                        buttonP2Board.setStyle("");}
-//                    if(i==3){
-//                        buttonP3Board.setStyle("");}
-//                    if(i==4){
-//                        buttonP4Board.setStyle("");}
-//                    i++;
-//                }
                 //mostriamo subito la board del giocatore in turno, se il giocatore in turno è p1 (quello a cui appartiene la view)
                 showP1Board();
             } else {
                 this.turnLabel.setText("It's " + rmiClient.getPlayersInTheGame().get(0).getNickname() + "'s turn!");
 
-                /*
-                if(currentBoard != null && currentBoard.equals(rmiClient.getPlayersInTheGame().get(0).getNickname())){
-                    int i=1;
-                    for(Player player:playersInOrder){
-                        if(i==1){
-                            if(player.getNickname().equals(currentBoard)){
-                                showP1Board();
-                                break;
-                            }
-
-                        }if(i==2){
-                            if(player.getNickname().equals(currentBoard)){
-                                showP2Board();
-                                break;
-                            }
-
-                        }if(i==3){
-                            if(player.getNickname().equals(currentBoard)){
-                                showP3Board();
-                                break;
-                            }
-
-                        }if(i==4){
-                            if(player.getNickname().equals(currentBoard)){
-                                showP4Board();
-                                break;
-                            }
-                        }
-                        i++;
-                    }
-                    }
-
-                 */
 
 
             }
@@ -785,7 +742,7 @@ public void updateLabel(Label label, String text){
 
 
         // SETTING THE LABEL WITH THE CORRECT NAME OF THE PLAYER IN TURN
-        setTurnLabel();
+        setTurnLabel(false);
 
         // INITIALIZING THE CELLS IN THE SCROLLPANE
         //initializeGridPaneCells();
@@ -1222,7 +1179,7 @@ public void updateLabel(Label label, String text){
 
 
     public void drawCardFromRD() {
-        if(emptySpace!=0){
+        if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
             emptySpace=0;
             String path=null;
@@ -1268,7 +1225,7 @@ public void updateLabel(Label label, String text){
     }
 
     public void drawCardFromGD() {
-        if(emptySpace!=0){
+        if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
             emptySpace=0;
             String path=null;
@@ -1312,7 +1269,7 @@ public void updateLabel(Label label, String text){
     }
 
     public void drawCardFromRC1(){
-        if(emptySpace!=0){
+        if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
             emptySpace=0;
             if(temp==1){
@@ -1351,7 +1308,7 @@ public void updateLabel(Label label, String text){
     }
 
     public void drawCardFromRC2(){
-        if(emptySpace!=0){
+        if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
             emptySpace=0;
             if(temp==1){
@@ -1389,7 +1346,7 @@ public void updateLabel(Label label, String text){
     }
 
     public void drawCardFromGC1(){
-        if(emptySpace!=0){
+        if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
             emptySpace=0;
             if(temp==1){
@@ -1425,7 +1382,7 @@ public void updateLabel(Label label, String text){
     }
 
     public void drawCardFromGC2(){
-        if(emptySpace!=0){
+        if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
             emptySpace=0;
             if(temp==1){
@@ -1899,6 +1856,10 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                     GridPane.setMargin(imageView, insets);
                     grid.add(imageView, col, 81-row);
                     showP1Board(); // RICARICO LA BOARD
+                    //se è l'ultimo turno diciamo al giocatore che non può pescare una nuova carta
+                    if(lastRound){
+                        selectedCardLabel.setText("This is your last round: YOU CAN'T DRAW ANY CARDS");
+                    }
                 }
 
             }
@@ -1941,8 +1902,11 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
         });
     }
 
-    public void updateRound() {
-        Platform.runLater(this::setTurnLabel);
+    public void updateRound(boolean lastRound) {
+        Platform.runLater(()->{
+                setTurnLabel(lastRound);
+
+        });
     }
 
     public void updateBoard(String boardOwner, PlayableCard newCard) {
@@ -2091,7 +2055,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
 
 
 
-    public void changeScene() throws RemoteException {
+    public void changeScene(List<Player> winners) {
         // let's show the new window: winners and losers
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/winners.fxml"));
         Parent root = null;
@@ -2111,6 +2075,8 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
         ctr.setNetwork(network);
         ctr.setClientSCK(clientSCK);
         ctr.setRmiClient(rmiClient);
+        ctr.setWinners(winners);
+        ctr.setAllFeatures();
 
         // old dimensions and position
         double width = stage.getWidth();
@@ -2133,5 +2099,19 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
         stage.show();
     }
 
+
+
+    public void updateWinners(List<Player> winners) {
+        if (winners.size() == 1) { //un solo vincitore
+            System.out.println(winners.get(0).getNickname() + " WON!!!");
+            //platform.runLater
+        } else if (winners.size() > 1) { //pareggio
+            for (Player p : winners) {
+                System.out.print(p.getNickname() + ", ");
+            }
+            System.out.println("tied!");
+        }
+        Platform.runLater(() -> changeScene(winners));
+    }
 
 }

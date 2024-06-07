@@ -966,7 +966,7 @@ public class ClientSCK implements ClientGeneralInterface {
                 //dico ai giocatori chi sta giocando e chi no
                 if(guiGameController!=null){
                     guiGameController.updatePoints();
-                    guiGameController.updateRound();
+                    guiGameController.updateRound(false); //non è l'ultimo turno
                 }
 
                 if (this.turnCounter == 1){ //questo è il terzo turno

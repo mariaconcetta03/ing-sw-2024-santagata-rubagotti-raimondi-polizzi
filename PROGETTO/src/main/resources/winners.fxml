@@ -9,19 +9,98 @@
 
     <VBox fx:id="myBlackPane" alignment="TOP_CENTER" layoutY="80.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="764.0" prefWidth="1350.0" styleClass="game_pane" stylesheets="@Styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <children>
-         <HBox alignment="TOP_CENTER" prefHeight="57.0" prefWidth="1350.0">
+         <HBox alignment="TOP_CENTER" prefHeight="91.0" prefWidth="1350.0">
             <children>
-               <Label fx:id="titleLabel" alignment="CENTER" prefHeight="65.0" prefWidth="571.0" text="Y O U    W O N !" textAlignment="CENTER">
+               <Label fx:id="titleLabel" alignment="CENTER" prefHeight="94.0" prefWidth="734.0" text="Y O U    W O N !" textAlignment="CENTER">
                   <font>
-                     <Font name="System Bold Italic" size="50.0" />
+                     <Font name="System Bold Italic" size="70.0" />
                   </font>
                </Label>
             </children>
             <VBox.margin>
-               <Insets top="150.0" />
+               <Insets top="120.0" />
             </VBox.margin>
          </HBox>
-         <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" />
+         <HBox alignment="TOP_CENTER" prefHeight="200" prefWidth="200">
+            <children>
+               <GridPane gridLinesVisible="true" prefWidth="450.0">
+                 <columnConstraints>
+                   <ColumnConstraints hgrow="NEVER" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
+                   <ColumnConstraints hgrow="NEVER" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" />
+                     <ColumnConstraints hgrow="NEVER" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+                 </columnConstraints>
+                 <rowConstraints>
+                     <RowConstraints minHeight="50.0" prefHeight="50" vgrow="NEVER" />
+                   <RowConstraints minHeight="50.0" prefHeight="50" vgrow="NEVER" />
+                   <RowConstraints minHeight="50.0" prefHeight="50" vgrow="NEVER" />
+                   <RowConstraints minHeight="50.0" prefHeight="50" vgrow="NEVER" />
+                 </rowConstraints>
+                  <children>
+                     <Label fx:id="position1" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" text="#1">
+                        <font>
+                           <Font name="System Bold" size="20.0" />
+                        </font>
+                     </Label>
+                     <Label fx:id="player1" alignment="CENTER" prefHeight="50.0" prefWidth="300.0" text="Player1" textAlignment="CENTER" GridPane.columnIndex="1">
+                        <font>
+                           <Font name="System Bold" size="20.0" />
+                        </font></Label>
+                     <Label fx:id="points1" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" text="100 pt" GridPane.columnIndex="2">
+                        <font>
+                           <Font name="System Bold" size="20.0" />
+                        </font>
+                     </Label>
+
+                      <Label fx:id="position2" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" text="#2" GridPane.rowIndex="1">
+                          <font>
+                              <Font name="System Bold" size="20.0" />
+                          </font>
+                      </Label>
+                      <Label fx:id="player2" alignment="CENTER" prefHeight="50.0" prefWidth="300.0" text="Player2" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                          <font>
+                              <Font name="System Bold" size="20.0" />
+                          </font></Label>
+                      <Label fx:id="points2" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" text="50 pt" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                          <font>
+                              <Font name="System Bold" size="20.0" />
+                          </font>
+                      </Label>
+
+                      <Label fx:id="position3" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" text="#3" GridPane.rowIndex="2">
+                          <font>
+                              <Font name="System Bold" size="20.0" />
+                          </font>
+                      </Label>
+                      <Label fx:id="player3" alignment="CENTER" prefHeight="50.0" prefWidth="300.0" text="Player3" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                          <font>
+                              <Font name="System Bold" size="20.0" />
+                          </font></Label>
+                      <Label fx:id="points3" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" text="25 pt" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                          <font>
+                              <Font name="System Bold" size="20.0" />
+                          </font>
+                      </Label>
+
+                      <Label fx:id="position4" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" text="#4" GridPane.rowIndex="3">
+                          <font>
+                              <Font name="System Bold" size="20.0" />
+                          </font>
+                      </Label>
+                      <Label fx:id="player4" alignment="CENTER" prefHeight="50.0" prefWidth="300.0" text="Player4" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                          <font>
+                              <Font name="System Bold" size="20.0" />
+                          </font></Label>
+                      <Label fx:id="points4" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" text="5 pt" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                          <font>
+                              <Font name="System Bold" size="20.0" />
+                          </font>
+                      </Label>
+                  </children>
+               </GridPane>
+            </children>
+            <VBox.margin>
+               <Insets top="30.0" />
+            </VBox.margin></HBox>
       </children></VBox>
 
 </AnchorPane>

@@ -917,11 +917,41 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 //chiamo playBaseCard : se uso un thread per farlo posso continuare a ricevere e a rispondere a ping
             }
             if (this.turnCounter >= 1){
-                if(guiGameController!=null){
-                    guiGameController.updatePoints();
-                    guiGameController.updateRound();
+
+                if(lastMoves>0) { //viene inizializzato a 10 e viene cambiato con un altro valore solo quando arriva il primo updateLastMovesEvent (dai successivi updateLastMovesEvent viene decrementato)
+                    if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
+                        if (lastMoves <= playersInTheGame.size()) {
+                            System.out.println("This is your last turn! You will not draw.");
+                            //dobbiamo impedire al giocatore di pescare le carte settando un booleano
+                            if (guiGameController != null) {
+                                guiGameController.updatePoints();
+                                guiGameController.updateRound(true); //settiamo lastTurn a true
+                            }
+                        }
+                    }else {
+                        if(guiGameController!=null){
+                            guiGameController.updatePoints();
+                            guiGameController.updateRound(false);
+                        }
+
+                    }
+
+                    /*if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
+                        isPlaying = true;
+                        System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
+                        if (lastMoves <= playersInTheGame.size()) {
+                            System.out.println("This is your last turn! You will not draw.");
+                        }
+
+                    } else {
+                        isPlaying = false;
+                        System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
+                    }
+
+                     */
+                }else{
+                    inGame=false;
                 }
-                // MAI FATTO
                 //dico ai giocatori chi sta giocando e chi no
                 if (this.turnCounter == 1){ //questo è il terzo turno
                     // IN GUI NON VI è ALCUN MENU
@@ -993,8 +1023,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     @Override
     public void showWinner(List<Player> winners) throws RemoteException{
-        if(selectedView==1) {
-            if (winners.size() == 1) { //just for testing
+        if(selectedView==1) { //TUI
+            if (winners.size() == 1) {
                 System.out.println(winners.get(0).getNickname() + " WON!!!");
             } else if (winners.size() > 1) {
                 for (Player p : winners) {
@@ -1003,6 +1033,12 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 System.out.println("tied!");
             }
             //tuiView.printWinner(playersInTheGame, personalPlayer.getNickname());
+        }
+        if(selectedView==2){ //GUI
+            // ci sarà un update notificato al GUIGameController. Quando arriva questa notifica allora cambio la schermata
+            if(guiGameController!=null){
+                guiGameController.updateWinners(winners);
+                }
         }
 
     }
