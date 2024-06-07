@@ -5,6 +5,7 @@ import CODEX.distributed.ClientGeneralInterface;
 import CODEX.org.model.*;
 
 import CODEX.view.GUI.GUIGameController;
+import CODEX.view.GUI.GUILobbyController;
 import CODEX.view.TUI.ANSIFormatter;
 import CODEX.view.TUI.InterfaceTUI;
 
@@ -61,6 +62,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private PlayableCard resourceCard2;
     private GUIGameController guiGameController=null;
     private boolean aDisconnectionHappened=false;
+    private final Object guiGamestateLock=new Object();
 
     public Player getPersonalPlayer() {
         return personalPlayer;
@@ -87,6 +89,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private boolean nicknameSet = false;
     private List<ChatMessage> messages;
     private Settings networkSettings;
+    private GUILobbyController guiLobbyController=null;
 
     public GameControllerInterface getGameController() {
         return gameController;
@@ -122,6 +125,14 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     public void setGuiGameController(GUIGameController guiGameController) {
         this.guiGameController=guiGameController;
+    }
+
+    public GUILobbyController getGuiLobbyController() {
+        return guiLobbyController;
+    }
+
+    public void setGuiLobbyController(GUILobbyController guiLobbyController) {
+        this.guiLobbyController = guiLobbyController;
     }
 
 
@@ -1012,8 +1023,25 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 executor.execute(()->{System.exit(-1);});
             }
         } else if (selectedView == 2) {
+            //guiView.updateGameState(game)
+            if(gameState.equals(Game.GameState.STARTED)) {
+                synchronized (guiGamestateLock) {
+                    while (guiLobbyController == null) {
+                        try {
+                            guiGamestateLock.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+                guiLobbyController.updateGameState();
+            }
 
         }
+    }
+
+    public Object getGuiGamestateLock() {
+        return guiGamestateLock;
     }
 
     /**

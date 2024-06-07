@@ -7,10 +7,7 @@ import CODEX.distributed.messages.SCKMessage;
 import CODEX.org.model.*;
 
 import CODEX.utils.executableMessages.clientMessages.*;
-import CODEX.view.GUI.GUIBaseCardController;
-import CODEX.view.GUI.GUIGameController;
-import CODEX.view.GUI.GUIObjectiveController;
-import CODEX.view.GUI.InterfaceGUI;
+import CODEX.view.GUI.*;
 import CODEX.view.TUI.ANSIFormatter;
 import CODEX.view.TUI.InterfaceTUI;
 import javafx.animation.PauseTransition;
@@ -48,6 +45,7 @@ public class ClientSCK implements ClientGeneralInterface {
     private HashSet<Integer> lobbyId;
     private final Socket socket;
     private GUIGameController guiGameController=null;
+    private final Object guiGamestateLock=new Object();
 
     public Player getPersonalPlayer() {
         return personalPlayer;
@@ -119,6 +117,7 @@ public class ClientSCK implements ClientGeneralInterface {
     private final Object outputLock;
     private boolean nicknameSet = false;
     private final Object guiLock;
+    private GUILobbyController guiLobbyController;
 
     //ATTENZIONE: se si chiama un metodo della ClientActionsInterface all'interno di un metodo di update bisogna per forza
     //usare un thread perchè i metodi della ClientActionsInterface aspettano l'OK di ritorno che non può venire letto
@@ -1082,8 +1081,21 @@ public class ClientSCK implements ClientGeneralInterface {
             if(gameState.equals(Game.GameState.STARTED)) {
                 inGame = true;
                 System.out.println("The game has started!");
+                synchronized (guiGamestateLock) {
+                    while (guiLobbyController == null) {
+                        try {
+                            guiGamestateLock.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+                guiLobbyController.updateGameState();
             }
         }
+    }
+    public Object getGuiGamestateLock() {
+        return guiGamestateLock;
     }
 
     @Override
@@ -1329,6 +1341,14 @@ public class ClientSCK implements ClientGeneralInterface {
 
     public void setGuiGameController(GUIGameController guiGameController) {
         this.guiGameController=guiGameController;
+    }
+
+    public GUILobbyController getGuiLobbyController() {
+        return guiLobbyController;
+    }
+
+    public void setGuiLobbyController(GUILobbyController guiLobbyController) {
+        this.guiLobbyController = guiLobbyController;
     }
 
 

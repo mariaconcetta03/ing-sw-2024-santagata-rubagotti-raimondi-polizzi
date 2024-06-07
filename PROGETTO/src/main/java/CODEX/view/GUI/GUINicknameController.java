@@ -68,6 +68,17 @@ public class GUINicknameController {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lobby.fxml"));
                 Scene scene = new Scene(fxmlLoader.load());
                 GUILobbyController ctr = fxmlLoader.getController();
+                if(network==1){
+                    synchronized (rmiClient.getGuiGamestateLock()) {
+                        rmiClient.setGuiLobbyController(ctr);
+                        rmiClient.getGuiGamestateLock().notify();
+                    }
+                }if(network==2){
+                    synchronized (clientSCK.getGuiGamestateLock()) {
+                        clientSCK.setGuiLobbyController(ctr);
+                        clientSCK.getGuiGamestateLock().notify();
+                    }
+                }
                 ctr.setStage(stage);
 
                 // old dimensions and position

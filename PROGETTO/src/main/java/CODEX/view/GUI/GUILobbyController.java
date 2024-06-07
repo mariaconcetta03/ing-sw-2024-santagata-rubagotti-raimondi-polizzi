@@ -62,6 +62,8 @@ public class GUILobbyController {
     private int network = 0; //1 = rmi  2 = sck
     private GUIBaseCardController ctr;
     private Stage stage;
+    private Thread pointsThread=null;
+    boolean lobbyHasStarted=false;
 
 
 
@@ -145,25 +147,26 @@ public class GUILobbyController {
         fullLobby.setOpacity(0);
 
         // Dynamic text update in a separate thread
-       Thread t= new Thread(() -> {
-            boolean lobbyHasStarted = false;
+       this.pointsThread= new Thread(() -> {
             while (!lobbyHasStarted) {
                 try {
                     // Update text on the JavaFX Application Thread
                     Platform.runLater(() -> waitingPlayers.setText("Waiting for players"));
-                    Thread.sleep(700);
+                    Thread.sleep(500);
 
                     Platform.runLater(() -> waitingPlayers.setText("Waiting for players."));
-                    Thread.sleep(700);
+                    Thread.sleep(500);
 
                     Platform.runLater(() -> waitingPlayers.setText("Waiting for players.."));
-                    Thread.sleep(700);
+                    Thread.sleep(500);
 
                     Platform.runLater(() -> waitingPlayers.setText("Waiting for players..."));
-                    Thread.sleep(700);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    pointsThread.interrupt();
+                    //throw new RuntimeException(e);
                 }
+                /*
                 System.out.println("sto per controllare");
                 if (network == 1) {
                     System.out.println("sono nel caso RMI");
@@ -176,17 +179,23 @@ public class GUILobbyController {
                         lobbyHasStarted = true;
                     }
                 }
+
+                 */
             }
+
            Platform.runLater(this::changeScene);
             // platform.runLater grants that this method is called in the JAVAFX Application thread
            // "this::changeScene" used for a reference to a NON static method (becomes a runnable)
+
+
        });
-       t.start();
+       pointsThread.start();
     }
 
 
 
     public void changeScene(){
+
         // let's show the new window!
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/baseCard.fxml"));
         Parent root = null;
@@ -319,5 +328,13 @@ public class GUILobbyController {
 
     public void setScheduler(ScheduledExecutorService scheduler) {
         this.scheduler = scheduler;
+    }
+
+    public void updateGameState() {
+
+
+            lobbyHasStarted=true;
+
+            System.out.println("lobbyHasStarted: "+ lobbyHasStarted);
     }
 }
