@@ -276,6 +276,16 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         if(!aDisconnectionHappened) {
             this.gameController.playBaseCard(nickname, baseCard, orientation);
         }
+        //preso da tcp
+        /*
+        while (!responseReceived){
+                try {
+                    actionLock.wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+         */
     }
 
 

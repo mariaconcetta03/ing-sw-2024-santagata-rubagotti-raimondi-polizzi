@@ -7,6 +7,9 @@ import CODEX.utils.Observer;
 import CODEX.utils.executableMessages.events.Event;
 
 import java.rmi.RemoteException;
+import java.util.LinkedList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 
@@ -19,7 +22,18 @@ public class WrappedObserver implements Observer {
     private ClientGeneralInterface remoteClient;
     private String nickname;
     private boolean aDisconnectionHappened=false;
-
+    private ExecutorService executor;
+    private final LinkedList<Event> queue=new LinkedList<>();
+    public void push(Event item) {
+        queue.addFirst(item);
+    }
+    public Event pull() {
+        if (!queue.isEmpty()) {
+            return queue.removeLast();
+        } else {
+            return null;
+        }
+    }
 
     // ----------------- C O M E   A V V I E N E   L' U P D A T E ? --------------------
     // OBSERVABLE SI ACCORGE DEL CAMBIAMENTO (CHE PASSA DALLA VIEW, AL CONTROLLER, AL
@@ -35,7 +49,26 @@ public class WrappedObserver implements Observer {
      * @param ro the RMIClient
      */
     public WrappedObserver(ClientGeneralInterface ro) {
+
         remoteClient = ro;
+
+        /*
+        executor= Executors.newSingleThreadExecutor();
+        executor.execute(()->{
+            while (!aDisconnectionHappened) {
+                Event event = pull();
+                if (event != null) {
+                    try {
+                        event.execute(remoteClient, this);
+                    } catch (RemoteException e) {
+                        aDisconnectionHappened=true; //bisogna notificarlo al server
+                        //gameController.disconnect();
+                    }
+                }
+            }
+        });
+
+         */
     }
 
 
@@ -45,7 +78,14 @@ public class WrappedObserver implements Observer {
      * @param obs is the observable who called the notify
      */
     public void update(Observable obs, Event e) throws RemoteException {
+        /*
+        push(e);
+
+         */
+
         e.execute(remoteClient,this);
+
+
     }
 
 
