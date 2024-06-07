@@ -60,19 +60,20 @@ public class GUILoadingController {
 //                Screen.getPrimary().visualBoundsProperty()));
 
 
-        stage.setScene(scene);
+
         stage.setResizable(true);
         GUINicknameController controller = fxmlLoader.getController();
         controller.setNetwork(network);
-        controller.setStage(stage);
-        stage.show();
-
         if(clientSCK!=null){
             controller.setClientSCK(clientSCK);
         }else if (rmiClient!=null){
             controller.setRmiClient(rmiClient);
         }
-        stage.show();
+        controller.setNicknameOnKeyPressed();
+        controller.setStage(stage);
+        stage.setScene(scene);
+        stage.show(); //questo è il momento in cui la nuova scena viene mostrata (perchè lo stace era stato chiuso e riaperto)
+
     }
 
 
