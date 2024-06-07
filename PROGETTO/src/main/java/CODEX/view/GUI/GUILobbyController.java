@@ -60,7 +60,7 @@ public class GUILobbyController {
     private RMIClient rmiClient;
     private ClientSCK clientSCK;
     private int network = 0; //1 = rmi  2 = sck
-    private GUIBaseCardController ctr;
+    private GUIPawnsController ctr;
     private Stage stage;
     private Thread pointsThread=null;
     boolean lobbyHasStarted=false;
@@ -197,7 +197,7 @@ public class GUILobbyController {
     public void changeScene(){
 
         // let's show the new window!
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/baseCard.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/pawns.fxml"));
         Parent root = null;
         try {
             root = fxmlLoader.load();
@@ -216,14 +216,12 @@ public class GUILobbyController {
         ctr.setRmiClient(rmiClient);
        if (network == 1) {
            while(rmiClient.getPersonalPlayer().getPlayerDeck()[0] == null) {}
-               ctr.setBaseCard1(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId()); // OK
-               ctr.setBaseCard2(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId());
-               ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", which side do you");
+               ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", now click the");
+               ctr.setColoredPanes();
            } else if (network == 2) {
            while(clientSCK.getPersonalPlayer().getPlayerDeck()[0] == null) {}
-           ctr.setBaseCard1(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId()); // OK
-           ctr.setBaseCard2(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId());
-           ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", which side do you");
+               ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", now click the");
+               ctr.setColoredPanes();
         }
 
         // old dimensions and position
@@ -243,9 +241,6 @@ public class GUILobbyController {
         stage.setHeight(height);
         stage.setX(x);
         stage.setY(y);
-
-
-        ctr.startPeriodicDisconnectionCheck();
 
 
         //stage.show(); //si fa solo se cambia lo stage

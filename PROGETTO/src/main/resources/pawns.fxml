@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CODEX.view.GUI.GUIPawnsController">
+    <children>
+        <VBox alignment="CENTER" layoutY="61.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="844.0" prefWidth="1350.0" styleClass="background_pane" stylesheets="@Styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <StackPane alignment="TOP_CENTER" prefHeight="137.0" prefWidth="1350.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <VBox alignment="TOP_CENTER" prefWidth="1350.0" StackPane.alignment="TOP_CENTER">
+                            <children>
+                                <Label fx:id="labelWithPlayerName" alignment="TOP_CENTER" contentDisplay="CENTER" prefHeight="56.0" prefWidth="1350.0" text="&lt;nickname&gt;, now click the" textAlignment="CENTER" textFill="WHITE">
+                                    <font>
+                                        <Font name="Georgia" size="49.0" />
+                                    </font>
+                                    <VBox.margin>
+                                        <Insets top="100.0" />
+                                    </VBox.margin>
+                                </Label>
+                                <Label prefHeight="56.0" prefWidth="661.0" text="color you prefer for your pawn" textFill="WHITE">
+                                    <font>
+                                        <Font name="Georgia" size="49.0" />
+                                    </font>
+                                </Label>
+                        <HBox alignment="CENTER" prefHeight="255.0" prefWidth="1350.0">
+                           <VBox.margin>
+                              <Insets top="50.0" />
+                           </VBox.margin>
+                           <children>
+                              <VBox prefHeight="200.0" prefWidth="300.0">
+                                 <children>
+                                    <Pane fx:id="yellowPane" onMousePressed="#selectedYellow" prefHeight="100.0" prefWidth="300.0">
+                                       <VBox.margin>
+                                          <Insets bottom="30.0" />
+                                       </VBox.margin>
+                                    </Pane>
+                                    <Pane fx:id="redPane" onMousePressed="#selectedRed" prefHeight="100.0" prefWidth="200.0" />
+                                 </children></VBox>
+                              <VBox prefHeight="200.0" prefWidth="300.0">
+                                 <HBox.margin>
+                                    <Insets left="50.0" />
+                                 </HBox.margin>
+                                  <children>
+                                      <Pane fx:id="greenPane" onMousePressed="#selectedGreen" prefHeight="100.0" prefWidth="300.0">
+                                          <VBox.margin>
+                                              <Insets bottom="30.0" />
+                                          </VBox.margin>
+                                      </Pane>
+                                      <Pane fx:id="bluePane" onMousePressed="#selectedBlue" prefHeight="100.0" prefWidth="200.0" />
+                                  </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" prefHeight="42.0" prefWidth="1350.0">
+                           <VBox.margin>
+                              <Insets top="40.0" />
+                           </VBox.margin>
+                           <children>
+                              <Label fx:id="retryLabel" alignment="CENTER" prefHeight="39.0" prefWidth="669.0" text="OOPS! Someone was faster, choose another color." textFill="#a8a800">
+                                 <font>
+                                    <Font name="Georgia Bold" size="25.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                            </children>
+                        </VBox>
+                    </children>
+                </StackPane>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
