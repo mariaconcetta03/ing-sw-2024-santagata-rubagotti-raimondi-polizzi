@@ -936,7 +936,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     @Override
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException {
         playersInTheGame = newPlayingOrder;
-        System.out.println("update ricevuto, tocca a "+playersInTheGame.get(0).getNickname());
+       // System.out.println("update ricevuto, tocca a "+playersInTheGame.get(0).getNickname());
         if (selectedView == 1) {
             if (turnCounter != -1) {
                 if (turnCounter != 0) {
@@ -1106,10 +1106,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             } else if (gameState.equals(Game.GameState.ENDING)) {
                 System.out.println(ANSIFormatter.ANSI_RED+"Ending condition triggered: someone reached 20 points or both the deck are finished."+ANSIFormatter.ANSI_RESET);
             }else if(gameState.equals(Game.GameState.ENDED)){
-                System.out.println(ANSIFormatter.ANSI_RED+"The game has ended."+ANSIFormatter.ANSI_RESET);
+                System.out.println(ANSIFormatter.ANSI_RED+"\nThe game has ended.\n"+ANSIFormatter.ANSI_RESET);
                 //this.schedulerToSendHeartbeat.shutdownNow(); //va fermato subito l'heartBeat? quando il GameController cessa di esistere?
-                tuiView.printWinner(playersInTheGame, personalPlayer.getNickname());
-                executor.execute(()->{System.exit(-1);});
             }
         } else if (selectedView == 2) {
             //guiView.updateGameState(game)
@@ -1135,26 +1133,43 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     /**
      *
-     * @param winners
+     * @param finalScoreBoard is a Map containing all the players' nicknames as values and as keys their positions
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void showWinner(List<Player> winners) throws RemoteException{
+    public void showWinner(Map<Integer, List<String>> finalScoreBoard) throws RemoteException{
         if(selectedView==1) { //TUI
-            if (winners.size() == 1) {
-                System.out.println(winners.get(0).getNickname() + " WON!!!");
-            } else if (winners.size() > 1) {
-                for (Player p : winners) {
-                    System.out.print(p.getNickname() + ", ");
-                }
-                System.out.println("tied!");
+            Map<String, Player> players=new HashMap<>();
+            for(Player p: playersInTheGame){
+                players.put(p.getNickname(), p);
             }
-            //tuiView.printWinner(playersInTheGame, personalPlayer.getNickname());
+            boolean printed=false;
+
+            for(String s: finalScoreBoard.get(1)){
+                if(s.equals(personalPlayer.getNickname())){
+                    tuiView.printWinner(true);
+                    printed=true;
+                }
+            }
+            if(!printed){
+                tuiView.printWinner(false);
+            }
+            System.out.println();
+            System.out.println(ANSIFormatter.ANSI_WHITE_BACKGROUND+ANSIFormatter.ANSI_BLACK+"----- This is the final scoreboard -----"+ANSIFormatter.ANSI_RESET);
+
+            for(Integer i: finalScoreBoard.keySet()) {
+                for (String s : finalScoreBoard.get(i)) {
+                    System.out.println(ANSIFormatter.ANSI_RED+i + "_ "+ANSIFormatter.ANSI_RESET + s+" with "+players.get(s).getPoints()+" points and "+players.get(s).getNumObjectivesReached()+" objectives reached.");
+                }
+            }
+
+            executor.execute(()->{System.exit(-1);});
+
         }
         if(selectedView==2){ //GUI
             // ci sarà un update notificato al GUIGameController. Quando arriva questa notifica allora cambio la schermata
             if(guiGameController!=null){
-                guiGameController.updateWinners(winners);
+                //guiGameController.updateWinners(winners);
                 }
         }
 

@@ -1719,13 +1719,10 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
 
     /**
      * This method is called at the very end to announce to the player if he has won or not.
-     * @param players are all the players of the game
-     * @param personalNickname is the user's nickname
+     * @param winner is true if the player position is 1st, false otherwise
      */
-    public void printWinner(List<Player> players, String personalNickname){
-        players.sort(Comparator.comparingInt(Player::getPoints));
-        Collections.reverse(players);
-        if(players.get(0).getNickname().equals(personalNickname)){
+    public void printWinner(boolean winner){
+        if(winner){
             System.out.println( ANSIFormatter.ANSI_GREEN+
                     "██╗   ██╗ ██████╗ ██╗   ██╗    ██╗    ██╗ ██████╗ ███╗   ██╗██╗\n" +
                     "╚██╗ ██╔╝██╔═══██╗██║   ██║    ██║    ██║██╔═══██╗████╗  ██║██║\n" +
@@ -1742,8 +1739,6 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                     "   ██║   ╚██████╔╝╚██████╔╝    ███████╗╚██████╔╝███████║███████╗██╗██╗██╗\n" +
                     "   ╚═╝    ╚═════╝  ╚═════╝     ╚══════╝ ╚═════╝ ╚══════╝╚══════╝╚═╝╚═╝╚═╝\n"+ANSIFormatter.ANSI_RESET);
         }
-        System.out.println("This is the final score-board:");
-        printScoreBoard(players);
     }
 
     /**
@@ -1754,6 +1749,12 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
      */
     public void printDrawableCards(PlayableDeck goldDeck, PlayableDeck resourceDeck, List<PlayableCard> visibileCards) {
         System.out.println(ANSIFormatter.ANSI_GREEN+"These are the drawable cards."+rst);
+        if(!resourceDeck.getCards().isEmpty()) {
+            System.out.println(">"+ANSIFormatter.ANSI_YELLOW+" The resource deck has "+resourceDeck.getCards().size()+" cards remaining."+rst);
+        }
+        if(!goldDeck.getCards().isEmpty()) {
+            System.out.println(">"+ANSIFormatter.ANSI_YELLOW+" The gold deck has "+goldDeck.getCards().size()+" cards remaining."+rst);
+        }
         PlayableCard placeHolder;
         List<PlayableCard> tmp= new ArrayList<>();
         try {

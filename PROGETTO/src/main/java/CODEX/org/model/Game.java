@@ -275,43 +275,54 @@ public class Game extends Observable implements Serializable {
      * with the same "Points & Objectives completed" situation.
      * @return winner is the List containing the winner or the players who tied
      */
-    public List<Player> winner () throws RemoteException {
-        List<Player> winners = new ArrayList<>();
-        int maxPoints = 0;
-        for (int i = 0; i < this.players.size(); i++) { // looking for the highest points
-            if (maxPoints < this.players.get(i).getPoints()) {
-                maxPoints = this.players.get(i).getPoints();
-            }
+    public Map<Integer, List<String>> winner () throws RemoteException {
+
+        Map<String, Player> playersNicknames=new HashMap<>();
+        for(Player p: players){
+            playersNicknames.put(p.getNickname(), p);
         }
-
-        for (int i = 0; i < this.players.size(); i++) { // putting in the list the player(s) with highest points
-            if (this.players.get(i).getPoints() == maxPoints) {
-                winners.add(this.players.get(i));
-            }
+        List<String> playersToBeRemoved=new ArrayList<>();
+        for(Player p: players){
+            playersToBeRemoved.add(p.getNickname());
         }
+        int position=1;
+        Map<Integer, List<String>> finalScoreBoard=new HashMap<>();
+        List<String> tmp;
+        while(!playersToBeRemoved.isEmpty()) {
+            tmp= new ArrayList<>();
+            int maxPoints = -1;
+            int maxObjReached = -1;
 
-        if (winners.size() > 1) { // I need to check how many objectives every player has respected
-            int maxObjectives = 0;
-
-            for (int i = 0; i < winners.size(); i++) { // checking the higher number of objectives achieved
-                if (winners.get(i).getNumObjectivesReached() > maxObjectives) {
-                    maxObjectives = winners.get(i).getNumObjectivesReached();
+            for (String s : playersToBeRemoved) {
+                if (playersNicknames.get(s).getPoints() > maxPoints) {
+                    maxPoints = playersNicknames.get(s).getPoints();
                 }
             }
 
-            int tmp= winners.size();
-            List<Player> toBeRemoved=new ArrayList<>();
-            for (int i = 0; i < winners.size(); i++) { // I need to remove the ones who have achieved less objectives
-                if (winners.get(i).getNumObjectivesReached() < maxObjectives) {
-                    toBeRemoved.add(winners.get(i));
+            for (String s : playersToBeRemoved) {
+                if ((playersNicknames.get(s).getPoints() == maxPoints)&&(playersNicknames.get(s).getNumObjectivesReached()>maxObjReached)) {
+                    maxObjReached=playersNicknames.get(s).getNumObjectivesReached();
                 }
             }
-            for(Player p: toBeRemoved){
-                winners.remove(p);
+
+            for(String s: playersToBeRemoved){
+                if((playersNicknames.get(s).getNumObjectivesReached()==maxObjReached)&&(playersNicknames.get(s).getPoints()==maxPoints)){
+                    tmp.add(s);
+                }
             }
+            for(String s: tmp){
+                playersToBeRemoved.remove(s);
+            }
+
+            finalScoreBoard.put(position, tmp);
+
+            position+=tmp.size();
+
         }
-        notifyObservers(new winnerEvent(winners));
-        return winners;
+
+
+        notifyObservers(new winnerEvent(finalScoreBoard));
+        return finalScoreBoard;
     }
 
 

@@ -9,6 +9,7 @@ import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -173,12 +174,48 @@ public class GameTest extends TestCase {
         System.out.println("The player Papero has 5 points");
         System.out.println("The player Topolino has 3 points");
 
+        /*
 
         List <Player> winners;
         winners = game.winner();
 
         for (int i = 0; i < winners.size(); i++) {
             System.out.println("The winner is/are: " + winners.get(i).getNickname());
+        }
+
+         */
+
+    }
+
+    public void testWinner4() throws RemoteException {
+        Player p1=new Player();
+        Player p2=new Player();
+        Player p3=new Player();
+        Player p4=new Player();
+        p1.setNickname("pippo");
+        p2.setNickname("pluto");
+        p3.setNickname("topolino");
+        p4.setNickname("paperone");
+        List<Player> tmp=new ArrayList<>();
+        tmp.add(p1);
+        tmp.add(p2);
+        tmp.add(p3);
+        tmp.add(p4);
+
+
+        Game game= new Game(tmp, 0);
+        p1.addPoints(0);
+        p2.addPoints(0);
+        p3.addPoints(0);
+        p4.addPoints(0);
+
+        p1.addNumObjectivesReached();
+
+        Map<Integer, List<String>> scoreBoard=game.winner();
+        for(Integer i: scoreBoard.keySet()) {
+            for (String s : scoreBoard.get(i)) {
+                System.out.println(i + "_ " + s);
+            }
         }
 
     }
@@ -212,12 +249,15 @@ public class GameTest extends TestCase {
         System.out.println("The player Topolino has 5 points");
 
 
+        /*
         List <Player> winners;
         winners = game.winner();
 
         for (int i = 0; i < winners.size(); i++) {
             System.out.println("The winner is/are: " + winners.get(i).getNickname());
         }
+
+         */
 
     }
 
@@ -248,12 +288,15 @@ public class GameTest extends TestCase {
         System.out.println("The player Topolino has 5 points");
 
 
+        /*
         List <Player> winners;
         winners = game.winner();
 
         for (int i = 0; i < winners.size(); i++) {
             System.out.println("The winner is/are: " + winners.get(i).getNickname());
         }
+
+         */
 
     }
 

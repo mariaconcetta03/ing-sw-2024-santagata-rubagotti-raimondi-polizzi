@@ -825,7 +825,7 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
     @Override
-    public void showWinner(List<Player> winners) throws RemoteException {
+    public void showWinner(Map<Integer, List<String>> finalScoreBoard) throws RemoteException {
 
     }
     /**

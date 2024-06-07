@@ -5,6 +5,7 @@ import CODEX.org.model.*;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
 
 public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
 
@@ -27,7 +28,7 @@ public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
     void updateCommonObjectives(ObjectiveCard objCard1, ObjectiveCard objCard2) throws RemoteException;
     void updatePersonalObjective(ObjectiveCard personalObjective, String playerNickname) throws RemoteException;
     void finishedSetUpPhase() throws RemoteException;
-    void showWinner(List<Player> winners) throws RemoteException;
+    void showWinner(Map<Integer, List<String>> finalScoreBoard) throws RemoteException;
     void updateLastMoves(int lastMoves) throws RemoteException;
     //fine update
 

@@ -83,7 +83,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         if (gamePlayers.size() < numberOfPlayers) {
             gamePlayers.add(player);
         } else {
-            throw new ArrayIndexOutOfBoundsException("This lobby is already full!");
+            throw new ArrayIndexOutOfBoundsException("This lobby is already full!"); //@TODO will never actually be thrown
         }
         /*
         if (gamePlayers.size() == numberOfPlayers) {
@@ -121,7 +121,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
             game.startGame();
             game.setLastEvent(ErrorsAssociatedWithExceptions.OK);
         } else {
-            game.setLastEvent(ErrorsAssociatedWithExceptions.INVALID_GAME_STATUS);
+            game.setLastEvent(ErrorsAssociatedWithExceptions.INVALID_GAME_STATUS); //@TODO will never be thrown
             throw new IllegalStateException();
         }
     }
@@ -179,7 +179,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                 game.setLastEvent(ErrorsAssociatedWithExceptions.OK);
             } catch (IllegalArgumentException e) {
                 game.setLastEvent(ErrorsAssociatedWithExceptions.UNABLE_TO_PLAY_CARD); //così però non me lo scrive...@TODO RIMUOVERE
-                throw e;
+                throw e; //@TODO da rimuovere try/catch
             }
         }
     }
@@ -206,7 +206,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                     currentPlayer.drawCard(selectedCard);
                 } catch (CardNotDrawableException e) {
                     System.out.println("This card can't be drawn!");
-                    game.setLastEvent(ErrorsAssociatedWithExceptions.CARD_NOT_DRAWN);
+                    game.setLastEvent(ErrorsAssociatedWithExceptions.CARD_NOT_DRAWN); //@TODO probabilmente da passare
                     return;
                 }catch(EmptyStackException e){
                     System.out.println(e.getMessage());
@@ -237,7 +237,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
             chooser.setPersonalObjective(selectedCard);
             game.setLastEvent (ErrorsAssociatedWithExceptions.OK);
         }catch(CardNotOwnedException e){
-            game.setLastEvent (ErrorsAssociatedWithExceptions.OBJECTIVE_CARD_NOT_OWNED);
+            game.setLastEvent (ErrorsAssociatedWithExceptions.OBJECTIVE_CARD_NOT_OWNED); //@TODO will never be thrown
         }
     }
     public void checkObjectiveCardChosen() throws RemoteException{
@@ -426,8 +426,8 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         }
         game.setLastEvent(new updatePlayersOrderEvent(game.getPlayers())); //lista aggiornata con i punti
         // checking the winner(s)
-        winners = game.winner(); //@TODO dovremmo comunicare noi dal Server il vincitore ai client
-
+        //winners = game.winner(); //@TODO dovremmo comunicare noi dal Server il vincitore ai client
+        game.winner();
         /*
         if(winners.size()==1) { //just for testing
             System.out.println(winners.get(0).getNickname() + " WON!!!");
@@ -454,6 +454,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         for(Player p: gamePlayers) {
             serverController.getAllNicknames().remove(p.getNickname());
         }
+        System.out.println("Ho fatto tutte le rimozioni");
     }
 
 
@@ -590,7 +591,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         synchronized (disconnectionLock) {
             if(firstDisconnection) {
                 System.out.println("the server has detected a disconnection");
-                game.notifYDisconnectionEvent();
+                game.notifYDisconnectionEvent(); //@TODO si puo fare con attributo disconnected, e poi new disconnectionEvent()
                 for (Player p : gamePlayers) {
                     serverController.getAllNicknames().remove(p.getNickname());
                 }
