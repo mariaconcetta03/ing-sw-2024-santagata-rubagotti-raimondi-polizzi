@@ -16,8 +16,9 @@ public class updateCommonObjectivesEvent implements Event {
     }
 
     @Override
-    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.updateCommonObjectives(objCard1, objCard2);
+        return false;
     }
     @Override
     public void executeSCK(ClientGeneralInterface client) {

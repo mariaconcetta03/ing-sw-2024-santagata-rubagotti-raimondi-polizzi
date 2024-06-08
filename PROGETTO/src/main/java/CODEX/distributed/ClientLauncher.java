@@ -39,6 +39,7 @@ public class ClientLauncher {
                     rmiClient.waitingRoom(); //selection of nicknames and lobby functionalities
                 }catch (RemoteException | NotBoundException e){
                     System.out.println("Cannot connect to Server. Shutting down. Try again.");
+                    System.err.println(e.getMessage());
                     System.exit(-1);
                 } catch (IOException e) {
                     throw new RuntimeException(e);

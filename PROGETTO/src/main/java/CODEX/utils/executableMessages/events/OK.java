@@ -5,14 +5,22 @@ import CODEX.distributed.RMI.WrappedObserver;
 
 import java.rmi.RemoteException;
 
-public class OK implements Event{ //andrà usato sia da rmi che da tcp
+public class OK implements Event{
+    private final String nickname;
+
+    public OK(String nickname){
+        this.nickname=new String(nickname);
+    }
     @Override
-    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         //guardare ServerOk in serverMessages
+        client.okEventExecute(this.nickname);
+        return true;
     }
 
     @Override
     public void executeSCK(ClientGeneralInterface client) {
+        //niente
 
     }
 

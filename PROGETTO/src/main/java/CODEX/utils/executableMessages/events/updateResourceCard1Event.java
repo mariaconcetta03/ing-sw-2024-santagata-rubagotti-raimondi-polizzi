@@ -14,8 +14,9 @@ public class updateResourceCard1Event implements Event {
     }
 
     @Override
-    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.updateResourceCard1(card);
+        return false;
     }
     @Override
     public void executeSCK(ClientGeneralInterface client) {

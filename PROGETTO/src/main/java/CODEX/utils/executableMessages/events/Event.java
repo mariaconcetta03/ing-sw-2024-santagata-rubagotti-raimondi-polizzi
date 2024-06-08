@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 
 public interface Event extends Serializable {
 
-    void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException;
+    boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException;
 
 
      void executeSCK(ClientGeneralInterface client); //TCP doesn't need to throw RemoteException + in updatePlayerDeckEvent we have an execute method different from RMI

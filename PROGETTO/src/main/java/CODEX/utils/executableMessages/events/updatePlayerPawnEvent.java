@@ -17,8 +17,9 @@ public class updatePlayerPawnEvent implements Event {
     }
 
     @Override
-    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.updatePawns(nickname, pawn);
+        return false;
     }
     @Override
     public void executeSCK(ClientGeneralInterface client) {

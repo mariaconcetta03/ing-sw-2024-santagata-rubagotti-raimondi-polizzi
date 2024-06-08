@@ -14,8 +14,9 @@ public class updatePlayersOrderEvent implements Event { //questo era prima l'eve
         this.newPlayingOrder = newPlayingOrder;
     }
     @Override
-    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.updateRound(newPlayingOrder);
+        return false;
     }
     @Override
     public void executeSCK(ClientGeneralInterface client) {

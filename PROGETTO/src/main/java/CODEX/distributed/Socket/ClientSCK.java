@@ -211,6 +211,11 @@ public class ClientSCK implements ClientGeneralInterface {
         this.responseReceived=responseReceived;
     }
 
+    @Override
+    public void okEventExecute(String nickname) {
+
+    }
+
     //we have to read this stream every time there is a server update to the client (->in the Thread local to server we modify this stream)
     //public SCKMessage receivedMessage () throws IOException, ClassNotFoundException {
     //    //the socket stream has been changed in the Thread (locally to the server)
@@ -1367,6 +1372,11 @@ public class ClientSCK implements ClientGeneralInterface {
 
         System.exit(0);
 
+    }
+
+    @Override
+    public Object getActionLock() {
+        return this.actionLock;
     }
 
     public void setGuiClosed(boolean guiClosed) {

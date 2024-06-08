@@ -8,6 +8,9 @@ import CODEX.utils.executableMessages.events.Event;
 
 import java.rmi.RemoteException;
 import java.util.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -17,17 +20,20 @@ import java.util.concurrent.ScheduledExecutorService;
  * This class represents a CLIENT as an OBSERVER
  */
 public class WrappedObserver implements Observer {
+    private final Timer timer;
     public ScheduledExecutorService scheduler;
     private static final int HEARTBEAT_INTERVAL = 5; // seconds
     private ClientGeneralInterface remoteClient;
     private String nickname;
     private boolean aDisconnectionHappened=false;
     private ExecutorService executor;
+    private ConcurrentLinkedQueue<Event> eventQueue=new ConcurrentLinkedQueue<>();
+
     private final LinkedList<Event> queue=new LinkedList<>();
-    public void push(Event item) {
+    synchronized public void push(Event item) {
         queue.addFirst(item);
     }
-    public Event pull() {
+    synchronized public Event pull() {
         if (!queue.isEmpty()) {
             return queue.removeLast();
         } else {
@@ -52,24 +58,32 @@ public class WrappedObserver implements Observer {
 
         remoteClient = ro;
 
-        /*
+        this.timer = new Timer(true);
+        WrappedObserver wrappedObserver=this;
         executor= Executors.newSingleThreadExecutor();
-        executor.execute(()->{
-            while (!aDisconnectionHappened) {
-                Event event = pull();
-                if (event != null) {
-                    try {
-                        event.execute(remoteClient, this);
-                    } catch (RemoteException e) {
-                        aDisconnectionHappened=true; //bisogna notificarlo al server
-                        //gameController.disconnect();
+        executor.execute(()-> {
+            while (!aDisconnectionHappened&&!Thread.currentThread().isInterrupted()) {
+                Event event = null;
+                boolean lastEvent = false;
+                while (!lastEvent||event!=null) {
+                    event = eventQueue.poll();
+                    if (event != null) {
+                        try {
+                            lastEvent = event.execute(remoteClient, wrappedObserver);
+                            System.out.println("ho fatto la pull dell'evento");
+
+                        } catch (RemoteException e) {
+                            aDisconnectionHappened = true; //bisogna notificarlo al server
+                            //gameController.disconnect(); //lo rileva l'heartbeat
+                            //timer.cancel();
+                        }
                     }
+
                 }
             }
         });
-
-         */
     }
+
 
 
 
@@ -77,13 +91,16 @@ public class WrappedObserver implements Observer {
      * This is an update method
      * @param obs is the observable who called the notify
      */
-    public void update(Observable obs, Event e) throws RemoteException {
-        /*
-        push(e);
+    public void update(Observable obs, Event event) throws RemoteException {
+        System.out.println("ho fatto la push dell'evento");
+        eventQueue.add(event);
+       // push(e);
 
-         */
 
+    /*
         e.execute(remoteClient,this);
+
+    */
 
 
     }

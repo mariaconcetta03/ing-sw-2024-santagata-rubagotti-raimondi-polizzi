@@ -13,8 +13,9 @@ public class winnerEvent implements Event {
         this.finalScoreBoard=finalScoreBoard;
     }
     @Override
-    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.showWinner(finalScoreBoard);
+        return false;
     }
 
     @Override

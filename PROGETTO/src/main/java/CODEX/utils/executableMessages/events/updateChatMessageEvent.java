@@ -15,8 +15,8 @@ public class updateChatMessageEvent implements Event{
         this.messageToBeAdded=messageToBeAdded;
     }
     @Override
-    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
-
+    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+return false;
     }
 
     @Override

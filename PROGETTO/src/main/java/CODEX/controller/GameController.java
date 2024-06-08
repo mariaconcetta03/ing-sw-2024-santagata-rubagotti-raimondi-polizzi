@@ -9,6 +9,7 @@ import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.*;
 import CODEX.utils.Observer;
 import CODEX.utils.ErrorsAssociatedWithExceptions;
+import CODEX.utils.executableMessages.events.OK;
 import CODEX.utils.executableMessages.events.updatePlayersOrderEvent;
 
 import java.rmi.RemoteException;
@@ -182,6 +183,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                 throw e; //@TODO da rimuovere try/catch
             }
         }
+        game.setLastEvent(new OK(nickname));
     }
 
     /**
@@ -222,8 +224,9 @@ public class GameController extends UnicastRemoteObject implements GameControlle
             }else{
                 //non hai ancora giocato la carta, non puoi pescare!!!
                 game.setLastEvent(ErrorsAssociatedWithExceptions.CARD_NOT_DRAWN);
+            }
         }
-        }
+        game.setLastEvent(new OK(nickname));
     }
 
     /**
@@ -268,6 +271,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                 //game.setLastEvent(ErrorsAssociatedWithExceptions.NOT_AVAILABLE_PAWN); //lancio eccezione?
             }
         }
+        game.setLastEvent(new OK(chooserNickname));
     }
     public void checkChosenPawnColor() throws RemoteException {
         for(Player p1: game.getPlayers()){
@@ -324,6 +328,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                tmp.sendMessage(new ChatMessage(message, senderNickname, receiversNicknames, new Timestamp(System.currentTimeMillis())));
            }
         game.setLastEvent(ErrorsAssociatedWithExceptions.OK);
+        game.setLastEvent(new OK(senderNickname));
     }
 
 

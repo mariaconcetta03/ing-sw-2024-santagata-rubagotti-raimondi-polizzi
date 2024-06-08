@@ -20,8 +20,9 @@ public class updateGoldCard1Event implements Event {
     private PlayableCard card;
 
     @Override
-    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.updateGoldCard1(card);
+        return false;
     }
     @Override
     public void executeSCK(ClientGeneralInterface client) {

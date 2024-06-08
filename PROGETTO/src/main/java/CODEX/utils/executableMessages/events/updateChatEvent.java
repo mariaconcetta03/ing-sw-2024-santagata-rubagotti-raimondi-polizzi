@@ -14,9 +14,10 @@ public class updateChatEvent implements Event{
     }
 
     @Override
-    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
 
         client.updateChat(chatToBeAdded.getId(),chatToBeAdded);
+        return false;
     }
 
     @Override

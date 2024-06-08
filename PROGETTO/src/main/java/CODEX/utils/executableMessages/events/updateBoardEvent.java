@@ -18,8 +18,9 @@ public class updateBoardEvent implements Event { //viene chiamato in playBaseCar
     }
 
     @Override
-    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.updateBoard(boardOwner, board, newCard);
+        return false;
     }
     @Override
     public void executeSCK(ClientGeneralInterface client) {

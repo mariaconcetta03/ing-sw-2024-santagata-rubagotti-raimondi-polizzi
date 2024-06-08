@@ -11,8 +11,9 @@ public class updateLastMovesEvent implements Event{
         this.lastMoves=lastMoves;
     }
     @Override
-    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.updateLastMoves(lastMoves);
+        return false;
     }
 
     @Override

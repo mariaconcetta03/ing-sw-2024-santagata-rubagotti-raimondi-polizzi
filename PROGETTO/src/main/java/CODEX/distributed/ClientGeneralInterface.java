@@ -41,4 +41,10 @@ public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
     void startHeartbeat()throws RemoteException;
 
     void handleDisconnectionFunction()throws RemoteException;
+
+    Object getActionLock()throws RemoteException;
+
+    void setResponseReceived(boolean b)throws RemoteException;
+
+    void okEventExecute(String nickname)throws RemoteException;
 }

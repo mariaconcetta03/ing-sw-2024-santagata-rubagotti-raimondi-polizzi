@@ -18,8 +18,9 @@ public class updatePlayerDeckEvent implements Event {
 
 
     @Override
-    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.updatePlayerDeck(playerNickname, playerDeck);
+        return false;
     }
     @Override
     public void executeSCK(ClientGeneralInterface client) {

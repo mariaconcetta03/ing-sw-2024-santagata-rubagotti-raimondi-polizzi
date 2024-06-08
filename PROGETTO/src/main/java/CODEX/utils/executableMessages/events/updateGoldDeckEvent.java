@@ -17,8 +17,9 @@ public class updateGoldDeckEvent implements Event {
     private PlayableDeck goldDeck;
 
     @Override
-    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.updateGoldDeck(goldDeck);
+        return false;
     }
     @Override
     public void executeSCK(ClientGeneralInterface client) {

@@ -12,8 +12,9 @@ public class updateResourceDeckEvent implements Event {
         this.resourceDeck=resourceDeck;
     }
     @Override
-    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.updateResourceDeck(resourceDeck);
+        return false;
     }
     @Override
     public void executeSCK(ClientGeneralInterface client) {

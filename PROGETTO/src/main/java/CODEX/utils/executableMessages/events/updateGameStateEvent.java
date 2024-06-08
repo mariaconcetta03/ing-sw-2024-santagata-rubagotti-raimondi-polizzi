@@ -21,7 +21,7 @@ public class updateGameStateEvent implements Event{
         }
 
         @Override
-        public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+        public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
             client.updateGameState(gameState); //this method starts the schedulerToSendHeartbeat (client-side)
             if(gameState.equals(Game.GameState.STARTED)){
                 client.startHeartbeat(); // the client starts to check the server heartbeat
@@ -46,7 +46,7 @@ public class updateGameStateEvent implements Event{
             }
 
              */
-
+return false;
 
         }
         @Override

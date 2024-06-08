@@ -16,8 +16,9 @@ public class UpdatePersonalObjectiveEvent implements Event {
     }
 
     @Override
-    public void execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.updatePersonalObjective(personalObjCard, nickname);
+        return false;
     }
     @Override
     public void executeSCK(ClientGeneralInterface client) {
