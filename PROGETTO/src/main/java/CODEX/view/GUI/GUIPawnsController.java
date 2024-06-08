@@ -135,11 +135,13 @@ public class GUIPawnsController {
 
                         rmiClient.getGameController().checkChosenPawnColor();
                         synchronized (rmiClient.getGuiPawnsControllerLock()) {
-                            while (!rmiClient.getSecondUpdateRoundArrived()) {
-                                try {
-                                    rmiClient.getGuiPawnsControllerLock().wait();
-                                } catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
+                            if(!rmiClient.getDone()) {
+                                while (!rmiClient.getSecondUpdateRoundArrived()) {
+                                    try {
+                                        rmiClient.getGuiPawnsControllerLock().wait();
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
                                 }
                             }
                         }
@@ -187,12 +189,15 @@ public class GUIPawnsController {
                             retryLabel.setOpacity(1);
                         });
                         rmiClient.getGameController().checkChosenPawnColor();
+
                         synchronized (rmiClient.getGuiPawnsControllerLock()) {
-                            while (!rmiClient.getSecondUpdateRoundArrived()) {
-                                try {
-                                    rmiClient.getGuiPawnsControllerLock().wait();
-                                } catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
+                            if(!rmiClient.getDone()) {
+                                while (!rmiClient.getSecondUpdateRoundArrived()) {
+                                    try {
+                                        rmiClient.getGuiPawnsControllerLock().wait();
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
                                 }
                             }
                         }

@@ -42,6 +42,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private ScheduledExecutorService schedulerToSendHeartbeat;
     ScheduledExecutorService schedulerToCheckReceivedHeartBeat;
     private long lastHeartbeatTime;
+    private boolean done = false;
     private ServerRMIInterface SRMIInterface; //following the slides' instructions
 
     ExecutorService executor;
@@ -172,6 +173,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         return secondUpdateRoundArrived;
     }
 
+    public boolean getDone(){
+        return this.done;
+    }
     public void setSecondUpdateRoundArrived(boolean secondUpdateRoundArrived) {
         this.secondUpdateRoundArrived = secondUpdateRoundArrived;
     }
@@ -1095,6 +1099,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
                 synchronized (guiPawnsControllerLock){
                     secondUpdateRoundArrived=true;
+                    done=true;
                     guiPawnsControllerLock.notify();
                 }
 
