@@ -87,6 +87,7 @@ public class GUIBaseCardController {
         } else if (network == 2 && !baseCardPlayed) {
             try {
                 clientSCK.playBaseCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], true);
+                clientSCK.checkBaseCardPlayed(); //to be implemented
             } catch (RemoteException | NotBoundException e) {
                 throw new RuntimeException(e);
             }
@@ -131,6 +132,7 @@ public class GUIBaseCardController {
                 try {
                     if (!baseCardPlayed) {
                         clientSCK.playBaseCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], false);
+                        clientSCK.checkBaseCardPlayed(); //to be implemented
                     }
                 } catch (RemoteException | NotBoundException e) {
                     throw new RuntimeException(e);

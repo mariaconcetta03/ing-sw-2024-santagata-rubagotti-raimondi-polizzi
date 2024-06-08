@@ -10,6 +10,7 @@ import CODEX.utils.executableMessages.clientMessages.*;
 import CODEX.view.GUI.*;
 import CODEX.view.TUI.ANSIFormatter;
 import CODEX.view.TUI.InterfaceTUI;
+
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 
@@ -22,6 +23,8 @@ import java.nio.Buffer;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 //PER LA PROSSIMA SETTIMANA: CHIEDIAMO SE DOBBIAMO GESTIRE CASI DI PERDITA DI MESSAGGI IN RETE
 //se vogliamo gestire il caso di perdita di messaggi nella trasmissione in rete li numeriamo (anche i messaggi di ping)
@@ -47,6 +50,10 @@ public class ClientSCK implements ClientGeneralInterface {
     private GUIGameController guiGameController=null;
     private int lastMoves=10;
     private final Object guiGamestateLock=new Object();
+    private final Object guiPawnsControllerLock=new Object();
+    private boolean secondUpdateRoundArrived=false;
+    private boolean done=false;
+    private GUIPawnsController GUIPawnsController=null;
 
     public Player getPersonalPlayer() {
         return personalPlayer;
@@ -61,7 +68,16 @@ public class ClientSCK implements ClientGeneralInterface {
     //private final Thread threadCheckConnection;
     private Player player; //the nickname is saved somewhere
     private List<Player> playersInTheGame;
+    public boolean getDone(){
+        return this.done;
+    }
 
+    public void setDone(boolean done) {
+        this.done = done;
+    }
+    public boolean getSecondUpdateRoundArrived() {
+        return secondUpdateRoundArrived;
+    }
     public ObjectiveCard getCommonObjective1() {
         return commonObjective1;
     }
@@ -465,6 +481,12 @@ public class ClientSCK implements ClientGeneralInterface {
             }
         }
     }
+    public void getAvailableColors(){
+        checkAvailableColors();
+    }
+    public void checkAvailableColors(){
+        //to be implemented
+    }
     public void checkNPlayers(){
         synchronized (actionLock) {
             ClientMessage clientMessage=new CheckNPlayers();
@@ -831,7 +853,51 @@ public class ClientSCK implements ClientGeneralInterface {
 
     @Override
     public void showWinner(Map<Integer, List<String>> finalScoreBoard) throws RemoteException {
+        if(selectedView==1) { //TUI
+            Map<String, Player> players=new HashMap<>();
+            for(Player p: playersInTheGame){
+                players.put(p.getNickname(), p);
+            }
+            boolean printed=false;
 
+            for(String s: finalScoreBoard.get(1)){
+                if(s.equals(personalPlayer.getNickname())){
+                    tuiView.printWinner(true);
+                    printed=true;
+                }
+            }
+            if(!printed){
+                tuiView.printWinner(false);
+            }
+            System.out.println();
+            System.out.println(ANSIFormatter.ANSI_WHITE_BACKGROUND+ANSIFormatter.ANSI_BLACK+"----- This is the final scoreboard -----"+ANSIFormatter.ANSI_RESET);
+
+            for(Integer i: finalScoreBoard.keySet()) {
+                for (String s : finalScoreBoard.get(i)) {
+                    System.out.println(ANSIFormatter.ANSI_RED+i + "_ "+ANSIFormatter.ANSI_RESET + s+" with "+players.get(s).getPoints()+" points and "+players.get(s).getNumObjectivesReached()+" objectives reached.");
+                }
+            }
+            Executor executor= Executors.newSingleThreadExecutor();
+            executor.execute(()->{System.exit(-1);});
+
+        }
+        if(selectedView==2){ //GUI
+            // ci sarà un update notificato al GUIGameController. Quando arriva questa notifica allora cambio la schermata
+            if(guiGameController!=null){
+                Map<String, Player> players=new HashMap<>();
+                for(Player p: playersInTheGame){
+                    players.put(p.getNickname(), p);
+                }
+                List<Player> winners=new ArrayList<>();
+                for(Integer i: finalScoreBoard.keySet()) {
+                    for (String s : finalScoreBoard.get(i)) {
+                        winners.add(players.get(s));
+                    }
+                }
+
+                guiGameController.updateWinners(winners);
+            }
+        }
     }
     /**
      * This is an update method
@@ -936,6 +1002,20 @@ public class ClientSCK implements ClientGeneralInterface {
             System.out.println("I received the updatePawns.");
         } else if (selectedView == 2) {
             //guiView.updatePawns(player, pawn)
+            System.out.println("RMI: sto per entrare nel syn");
+            synchronized (guiPawnsControllerLock) {
+                System.out.println("RMI: nel syn");
+                while (GUIPawnsController == null) {
+                    System.out.println("RMI: adesso faccio la wait()");
+                    try {
+                        guiPawnsControllerLock.wait();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            System.out.println("RMI: uscito dal syn");
+            GUIPawnsController.updatePawns(pawn);
         }
     }
     /**
@@ -986,21 +1066,90 @@ public class ClientSCK implements ClientGeneralInterface {
                     }).start();
                 }
             }
+            if(this.turnCounter==-1){
+                /*
+                //taken from RMI
+                executor.execute(() -> {
+                    boolean ok=false;
+                    try {
+                        while (!ok) {
+                            Pawn selection = tuiView.askPawnSelection(gameController.getGame().getAvailableColors(),sc);
+                            if (selection != null) {
+                                try {
+                                    this.choosePawnColor(personalPlayer.getNickname(), selection);
+                                    ok = true;
+                                    System.out.println("Pawn color correctly selected!");
+                                    gameController.checkChosenPawnColor();
+                                } catch (ColorAlreadyTakenException e) {
+                                    System.out.println("This color is already taken! Please try again.");
+                                }
+                            } else {
+                                System.out.println("Please insert one of the possible colors!");
+                            }
+                        }
+                    } catch (NotBoundException |RemoteException e) {
+                        System.out.println("Unable to communicate with the Server. Shutting down.");
+                        e.printStackTrace();
+                        System.exit(-1);
+                    }
+                });
+                 */
+
+            }
             turnCounter++; //first time: -1 -> 0, second time 0 -> 1  so from the second time on we enter if(turnCounter>=1)
         }
         else if (selectedView == 2) { //GUI
             System.out.println("I received the updateRound.");
-            playersInTheGame = newPlayingOrder;
+            //playersInTheGame = newPlayingOrder;
+            if(this.turnCounter == -1){ //chiedo le pawn
+                synchronized (guiGamestateLock) {
+                    while (guiLobbyController == null) {
+                        try {
+                            guiGamestateLock.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+                guiLobbyController.updateGameState();
+            }
             if (this.turnCounter == 0){
                 //chiamo playBaseCard : se uso un thread per farlo posso continuare a ricevere e a rispondere a ping
+                synchronized (guiPawnsControllerLock){
+                    System.out.println("RMI: sto per fare la notify");
+                    secondUpdateRoundArrived=true;
+                    done=true;
+                    guiPawnsControllerLock.notify();
+                }
             }
             if (this.turnCounter >= 1){
-                //dico ai giocatori chi sta giocando e chi no
-                if(guiGameController!=null){
-                    guiGameController.updatePoints();
-                    guiGameController.updateRound(false); //non è l'ultimo turno
-                }
 
+                if(lastMoves>0) { //viene inizializzato a 10 e viene cambiato con un altro valore solo quando arriva il primo updateLastMovesEvent (dai successivi updateLastMovesEvent viene decrementato)
+                    if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
+                        if (lastMoves <= playersInTheGame.size()) {
+                            System.out.println("This is your last turn! You will not draw.");
+                            //dobbiamo impedire al giocatore di pescare le carte settando un booleano
+                            if (guiGameController != null) {
+                                guiGameController.updatePoints();
+                                guiGameController.updateRound(true); //settiamo lastTurn a true
+                            }
+                        }else {
+                            if (guiGameController != null) {
+                                guiGameController.updatePoints();
+                                guiGameController.updateRound(false); //settiamo lastTurn a true
+
+                            }
+                        }
+                    }else {
+                        if(guiGameController!=null){
+                            guiGameController.updatePoints();
+                            guiGameController.updateRound(false);
+                        }
+
+                    }
+                }else{
+                    inGame=false;
+                }
                 if (this.turnCounter == 1){ //questo è il terzo turno
                     //dal terzo turno è possibile vedere il menù e selezionarne i punti del menù, la TUI qui lancia un thread che va per tutta la partita
                     synchronized (guiLock){
@@ -1114,6 +1263,7 @@ public class ClientSCK implements ClientGeneralInterface {
             if(gameState.equals(Game.GameState.STARTED)) {
                 inGame = true;
                 System.out.println("The game has started!");
+                /*
                 synchronized (guiGamestateLock) {
                     while (guiLobbyController == null) {
                         try {
@@ -1124,6 +1274,8 @@ public class ClientSCK implements ClientGeneralInterface {
                     }
                 }
                 guiLobbyController.updateGameState();
+
+                 */
             }
         }
     }
@@ -1395,6 +1547,14 @@ public class ClientSCK implements ClientGeneralInterface {
         this.guiLobbyController = guiLobbyController;
     }
 
+    public Object getGuiPawnsControllerLock() {
+        return this.guiPawnsControllerLock;
+    }
+
+    public void setGuiPawnsController(GUIPawnsController ctr) {
+        this.GUIPawnsController=ctr;
+    }
+
 
     public static class Settings { //this is an attribute. (qui ci sono indirizzo e porta del server locale
         static int PORT = 9090; // free ports: from 49152 to 65535, 1099 default port for RMI registry
@@ -1435,6 +1595,15 @@ public class ClientSCK implements ClientGeneralInterface {
     }
     public boolean getErrorState(){
         return this.errorState;
+    }
+    public void checkChosenPawnColor(){
+
+    }
+    public void checkObjectiveCardChosen(){
+
+    }
+    public void checkBaseCardPlayed(){
+
     }
 }
 

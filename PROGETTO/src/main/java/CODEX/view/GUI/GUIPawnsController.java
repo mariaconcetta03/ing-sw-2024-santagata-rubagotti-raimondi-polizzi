@@ -171,8 +171,57 @@ public class GUIPawnsController {
                 pause.play();
 
                 // Platform.runLater(this::changeScene);
-            } else if (network == 2) {
-                // Handle network 2 case
+            } else if (network == 2) { //TCP
+                executor.execute(() -> {
+                    try {
+                        clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.YELLOW);
+                        choosen = true;
+                        Platform.runLater(() -> {
+                            greenPane.setOpacity(0);
+                            bluePane.setOpacity(0);
+                            redPane.setOpacity(0);
+                            retryLabel.setText("You have chosen. Now wait a few.");
+                            retryLabel.setOpacity(1);
+                        });
+                        clientSCK.checkChosenPawnColor(); //to be implemented
+                        System.out.println("sto per entrare nella syn");
+                        synchronized (clientSCK.getGuiPawnsControllerLock()) {
+                            System.out.println("sono entrato nella syn");
+                            if(!clientSCK.getDone()) {
+                                System.out.println("non ho ancora ricevuto l'update [done = false], quindi sto per prendere il lock");
+                                while (!clientSCK.getSecondUpdateRoundArrived()) {
+                                    System.out.println("ho preso lock e sono in wait");
+                                    try {
+                                        clientSCK.getGuiPawnsControllerLock().wait();
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                                System.out.println("sono uscito dal lock");
+                            }
+                        }
+                        System.out.println("usciti dal syn");
+
+                    } catch (Exception ignored) {
+                    }
+                    if(clientSCK.getErrorState()){
+                        pawnSelected = false;
+                        Platform.runLater(() -> {
+                            retryLabel.setText("Color already taken, please choose another.");
+                            retryLabel.setOpacity(1);
+                            clientSCK.setErrorState(false);
+                        });
+                    }
+
+                });
+
+
+                PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
+                pause.setOnFinished(event -> {
+                    changeScene();
+                });
+                pause.play();
+
             }
         }
     }
@@ -229,8 +278,57 @@ public class GUIPawnsController {
                 });
                 pause.play();
                 //Platform.runLater(this::changeScene);
-            } else if (network == 2) {
-                // Handle network 2 case
+            } else if (network == 2) { //TCP
+                executor.execute(() -> {
+                    try {
+                        clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.BLUE);
+                        choosen = true;
+                        Platform.runLater(() -> {
+                            greenPane.setOpacity(0);
+                            yellowPane.setOpacity(0);
+                            redPane.setOpacity(0);
+                            retryLabel.setText("You have chosen. Now wait a few.");
+                            retryLabel.setOpacity(1);
+                        });
+                        clientSCK.checkChosenPawnColor(); //to be implemented
+                        System.out.println("sto per entrare nella syn");
+                        synchronized (clientSCK.getGuiPawnsControllerLock()) {
+                            System.out.println("sono entrato nella syn");
+                            if(!clientSCK.getDone()) {
+                                System.out.println("non ho ancora ricevuto l'update [done = false], quindi sto per prendere il lock");
+                                while (!clientSCK.getSecondUpdateRoundArrived()) {
+                                    System.out.println("ho preso lock e sono in wait");
+                                    try {
+                                        clientSCK.getGuiPawnsControllerLock().wait();
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                                System.out.println("sono uscito dal lock");
+                            }
+                        }
+                        System.out.println("usciti dal syn");
+
+                    } catch (Exception ignored) {
+                    }
+                    if(clientSCK.getErrorState()){
+                        pawnSelected = false;
+                        Platform.runLater(() -> {
+                            retryLabel.setText("Color already taken, please choose another.");
+                            retryLabel.setOpacity(1);
+                            clientSCK.setErrorState(false);
+                        });
+                    }
+
+                });
+
+
+                PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
+                pause.setOnFinished(event -> {
+                    changeScene();
+                });
+                pause.play();
+
             }
         }
     }
@@ -288,7 +386,56 @@ public class GUIPawnsController {
 
                 //   Platform.runLater(this::changeScene);
             } else if (network == 2) {
-                // Handle network 2 case
+                executor.execute(() -> {
+                    try {
+                        clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.GREEN);
+                        choosen = true;
+                        Platform.runLater(() -> {
+                            yellowPane.setOpacity(0);
+                            bluePane.setOpacity(0);
+                            redPane.setOpacity(0);
+                            retryLabel.setText("You have chosen. Now wait a few.");
+                            retryLabel.setOpacity(1);
+                        });
+                        clientSCK.checkChosenPawnColor(); //to be implemented
+                        System.out.println("sto per entrare nella syn");
+                        synchronized (clientSCK.getGuiPawnsControllerLock()) {
+                            System.out.println("sono entrato nella syn");
+                            if(!clientSCK.getDone()) {
+                                System.out.println("non ho ancora ricevuto l'update [done = false], quindi sto per prendere il lock");
+                                while (!clientSCK.getSecondUpdateRoundArrived()) {
+                                    System.out.println("ho preso lock e sono in wait");
+                                    try {
+                                        clientSCK.getGuiPawnsControllerLock().wait();
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                                System.out.println("sono uscito dal lock");
+                            }
+                        }
+                        System.out.println("usciti dal syn");
+
+                    } catch (Exception ignored) {
+                    }
+                    if(clientSCK.getErrorState()){
+                        pawnSelected = false;
+                        Platform.runLater(() -> {
+                            retryLabel.setText("Color already taken, please choose another.");
+                            retryLabel.setOpacity(1);
+                            clientSCK.setErrorState(false);
+                        });
+                    }
+
+                });
+
+
+                PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
+                pause.setOnFinished(event -> {
+                    changeScene();
+                });
+                pause.play();
+
             }
         }
     }
@@ -346,8 +493,57 @@ public class GUIPawnsController {
                 pause.play();
 
                 //  Platform.runLater(this::changeScene);
-            } else if (network == 2) {
-                // Handle network 2 case
+            } else if (network == 2) { //TCP
+                executor.execute(() -> {
+                    try {
+                        clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.RED);
+                        choosen = true;
+                        Platform.runLater(() -> {
+                            greenPane.setOpacity(0);
+                            bluePane.setOpacity(0);
+                            yellowPane.setOpacity(0);
+                            retryLabel.setText("You have chosen. Now wait a few.");
+                            retryLabel.setOpacity(1);
+                        });
+                        clientSCK.checkChosenPawnColor(); //to be implemented
+                        System.out.println("sto per entrare nella syn");
+                        synchronized (clientSCK.getGuiPawnsControllerLock()) {
+                            System.out.println("sono entrato nella syn");
+                            if(!clientSCK.getDone()) {
+                                System.out.println("non ho ancora ricevuto l'update [done = false], quindi sto per prendere il lock");
+                                while (!clientSCK.getSecondUpdateRoundArrived()) {
+                                    System.out.println("ho preso lock e sono in wait");
+                                    try {
+                                        clientSCK.getGuiPawnsControllerLock().wait();
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                                System.out.println("sono uscito dal lock");
+                            }
+                        }
+                        System.out.println("usciti dal syn");
+
+                    } catch (Exception ignored) {
+                    }
+                    if(clientSCK.getErrorState()){
+                        pawnSelected = false;
+                        Platform.runLater(() -> {
+                            retryLabel.setText("Color already taken, please choose another.");
+                            retryLabel.setOpacity(1);
+                            clientSCK.setErrorState(false);
+                        });
+                    }
+
+                });
+
+
+                PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
+                pause.setOnFinished(event -> {
+                    changeScene();
+                });
+                pause.play();
+
             }
         }
     }

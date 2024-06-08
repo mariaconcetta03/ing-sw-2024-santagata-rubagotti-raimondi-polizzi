@@ -241,13 +241,11 @@ public class GUILobbyController {
                 rmiClient.setDone(true);
             }
         }if(network==2){ //ancora da implementare
-            /*
-            synchronized (clientSCK.getGuiGamestateLock()) {
+            synchronized (clientSCK.getGuiPawnsControllerLock()) {
                 clientSCK.setGuiPawnsController(ctr);
                 clientSCK.getGuiPawnsControllerLock().notify();
+                clientSCK.setDone(true);
             }
-
-             */
         }
 
         stage.setScene(scene); //questo è il momento in cui la nuova scena viene mostrata

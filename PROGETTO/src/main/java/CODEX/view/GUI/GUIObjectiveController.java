@@ -84,6 +84,7 @@ public class GUIObjectiveController {
             }else if (network == 2 && !objectiveSelected) {
                 try {
                     clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(1));
+                    clientSCK.checkObjectiveCardChosen(); //to be implemented
                 } catch (RemoteException | NotBoundException e) {
                     throw new RuntimeException(e);
                 }
@@ -126,6 +127,7 @@ public class GUIObjectiveController {
             } else if (network == 2 && !objectiveSelected) {
                 try {
                     clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(0));
+                    clientSCK.checkObjectiveCardChosen(); //to be implemented
                 } catch (RemoteException | NotBoundException e) {
                     throw new RuntimeException(e);
                 }

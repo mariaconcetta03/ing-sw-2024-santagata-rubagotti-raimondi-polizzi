@@ -20,7 +20,11 @@ public class winnerEvent implements Event {
 
     @Override
     public void executeSCK(ClientGeneralInterface client) {
+        try {
+            client.showWinner(finalScoreBoard);
+        } catch (RemoteException ignored) {
 
+        }
     }
 
     @Override

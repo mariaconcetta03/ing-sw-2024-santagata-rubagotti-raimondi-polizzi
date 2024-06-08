@@ -1179,20 +1179,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         }
 
                     }
-
-                    /*if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
-                        isPlaying = true;
-                        System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
-                        if (lastMoves <= playersInTheGame.size()) {
-                            System.out.println("This is your last turn! You will not draw.");
-                        }
-
-                    } else {
-                        isPlaying = false;
-                        System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
-                    }
-
-                     */
                 }else{
                     inGame=false;
                 }
@@ -1315,7 +1301,18 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         if(selectedView==2){ //GUI
             // ci sarà un update notificato al GUIGameController. Quando arriva questa notifica allora cambio la schermata
             if(guiGameController!=null){
-                //guiGameController.updateWinners(winners);
+                Map<String, Player> players=new HashMap<>();
+                for(Player p: playersInTheGame){
+                    players.put(p.getNickname(), p);
+                }
+                List<Player> winners=new ArrayList<>();
+                for(Integer i: finalScoreBoard.keySet()) {
+                    for (String s : finalScoreBoard.get(i)) {
+                        winners.add(players.get(s));
+                    }
+                }
+
+                guiGameController.updateWinners(winners);
             }
         }
 

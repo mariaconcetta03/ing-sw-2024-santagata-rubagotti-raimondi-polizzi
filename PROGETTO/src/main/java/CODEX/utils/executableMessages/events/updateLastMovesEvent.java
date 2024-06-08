@@ -18,6 +18,11 @@ public class updateLastMovesEvent implements Event{
 
     @Override
     public void executeSCK(ClientGeneralInterface client) {
+        try {
+            client.updateLastMoves(lastMoves);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
