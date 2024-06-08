@@ -65,8 +65,18 @@ public class GUIBaseCardController {
     }
 
     public void selectedFront() {
+// third thread to change the scene always in JAVA FX thread
+        Platform.runLater(() -> {
+            stateLabel.setText("Front side selected! Now wait for everyone to choose.");
+            System.out.println("selezionato fronte");
+            baseCardPlayed = true;
+            //changeScene();
+         /* PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
+            pause.setOnFinished(event -> changeScene());
+            pause.play();*/
+        });
+
         // second general thread (executed after the first one)
-        new Thread(() -> {
         if (network == 1 && !baseCardPlayed) {
             try {
                 rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], true);
@@ -82,26 +92,25 @@ public class GUIBaseCardController {
             }
         }
 
-        // third thread to change the scene always in JAVA FX thread
-        Platform.runLater(() -> {
-            stateLabel.setText("Front side selected! Now wait for everyone to choose.");
-            System.out.println("selezionato fronte");
-            baseCardPlayed = true;
-            //changeScene();
-          /*  PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
-            pause.setOnFinished(event -> changeScene());
-            pause.play();*/
-        });
-        }).start();
-
         Platform.runLater(()->{changeScene();});
 
     }
 
+
     public void selectedBack() {
+// third thread to change the scene always in JAVA FX thread
+        Platform.runLater(() -> {
+            stateLabel.setText("Back side selected! Now wait for everyone to choose.");
+            baseCardPlayed = true;
+            System.out.println("Selezionato retro");
+            //changeScene();
+              /* PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
+                pause.setOnFinished(event -> changeScene());
+                pause.play(); */
+        });
 
         // second general thread (executed after the first one)
-        new Thread(() -> {
+
             if (network == 1) {
                 try {
                     if (!baseCardPlayed) {
@@ -121,17 +130,6 @@ public class GUIBaseCardController {
                 }
             }
 
-            // third thread to change the scene always in JAVA FX thread
-            Platform.runLater(() -> {
-                stateLabel.setText("Back side selected! Now wait for everyone to choose.");
-                baseCardPlayed = true;
-                System.out.println("Selezionato retro");
-                //changeScene();
-               /* PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
-                pause.setOnFinished(event -> changeScene());
-                pause.play(); */
-            });
-        }).start();
 
         Platform.runLater(()->{changeScene();});
 
