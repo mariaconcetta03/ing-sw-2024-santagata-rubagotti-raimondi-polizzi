@@ -176,6 +176,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public boolean getDone(){
         return this.done;
     }
+
+    public void setDone(boolean done) {
+        this.done = done;
+    }
+    
     public void setSecondUpdateRoundArrived(boolean secondUpdateRoundArrived) {
         this.secondUpdateRoundArrived = secondUpdateRoundArrived;
     }
@@ -426,9 +431,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public void sendMessage(String senderNickname, List<String> receiversNicknames, String message) throws RemoteException, NotBoundException {
         if(!aDisconnectionHappened) {
             synchronized (actionLock) {
-            System.out.println("entrati nel lock di sendMessage");
-            responseReceived=false;
-            this.gameController.sendMessage(senderNickname, receiversNicknames, message);
+                System.out.println("entrati nel lock di sendMessage");
+                responseReceived=false;
+                this.gameController.sendMessage(senderNickname, receiversNicknames, message);
                 while (!responseReceived) {
                     try {
                         actionLock.wait();
@@ -504,14 +509,14 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     }
                     System.out.println("Nickname correctly selected!");
                 }
-                    if (!SRMIInterface.getAvailableGameControllersId().isEmpty()) {
-                        System.out.println("If you want you can join an already created lobby. These are the ones available:");
-                        for (Integer i : SRMIInterface.getAvailableGameControllersId()) {
-                            System.out.println("ID: " + i);
-                        }
-                    } else {
-                        System.out.println("There are no lobby available");
+                if (!SRMIInterface.getAvailableGameControllersId().isEmpty()) {
+                    System.out.println("If you want you can join an already created lobby. These are the ones available:");
+                    for (Integer i : SRMIInterface.getAvailableGameControllersId()) {
+                        System.out.println("ID: " + i);
                     }
+                } else {
+                    System.out.println("There are no lobby available");
+                }
                 ok = false;
                 int gameSelection = 0;
                 while (!ok) {
@@ -520,14 +525,14 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     try {
                         gameSelection = sc.nextInt();
                         if (gameSelection == -2) {
-                                if (!SRMIInterface.getAvailableGameControllersId().isEmpty()) {
-                                    System.out.println("If you want you can join an already created lobby. These are the ones available:");
-                                    for (Integer i : SRMIInterface.getAvailableGameControllersId()) {
-                                        System.out.println("ID: " + i);
-                                    }
-                                } else {
-                                    System.out.println("There are no lobby available");
+                            if (!SRMIInterface.getAvailableGameControllersId().isEmpty()) {
+                                System.out.println("If you want you can join an already created lobby. These are the ones available:");
+                                for (Integer i : SRMIInterface.getAvailableGameControllersId()) {
+                                    System.out.println("ID: " + i);
                                 }
+                            } else {
+                                System.out.println("There are no lobby available");
+                            }
                         } else if ((gameSelection != -1) && (!SRMIInterface.getAvailableGameControllersId().contains(gameSelection))) {
                             System.out.println("You wrote a wrong ID, try again.");
                         } else {
@@ -538,37 +543,37 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         sc.next();
                     }
                 }
-                    ok = false;
-                    while (!ok) {
-                        if (gameSelection == -1) {
-                            System.out.println("How many players would you like to partecipate in this game?");
-                            while (!ok) {
-                                try {
-                                    gameSelection = sc.nextInt();
-                                    ok = true;
-                                } catch (InputMismatchException e) {
-                                    System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
-                                    sc.next();
-                                }
-                            }
-                            createLobby(personalPlayer.getNickname(), gameSelection);
-                            System.out.println("Successfully created a new lobby with id: " + gameController.getId());
-                        } else if (SRMIInterface.getAllGameControllers().containsKey(gameSelection)) {
+                ok = false;
+                while (!ok) {
+                    if (gameSelection == -1) {
+                        System.out.println("How many players would you like to partecipate in this game?");
+                        while (!ok) {
                             try {
-                                System.out.println("Joining the " + gameSelection + " lobby...");
-                                addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
-                                System.out.println("Successfully joined the lobby with id: " + gameController.getId());
+                                gameSelection = sc.nextInt();
                                 ok = true;
-                                gameController.checkNPlayers();
-                            } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException e) {
-                                System.out.println(ANSIFormatter.ANSI_RED + "The lobby you want to join is inaccessible, try again" + ANSIFormatter.ANSI_RESET);
-                            } //counter
+                            } catch (InputMismatchException e) {
+                                System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
+                                sc.next();
+                            }
                         }
+                        createLobby(personalPlayer.getNickname(), gameSelection);
+                        System.out.println("Successfully created a new lobby with id: " + gameController.getId());
+                    } else if (SRMIInterface.getAllGameControllers().containsKey(gameSelection)) {
+                        try {
+                            System.out.println("Joining the " + gameSelection + " lobby...");
+                            addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
+                            System.out.println("Successfully joined the lobby with id: " + gameController.getId());
+                            ok = true;
+                            gameController.checkNPlayers();
+                        } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException e) {
+                            System.out.println(ANSIFormatter.ANSI_RED + "The lobby you want to join is inaccessible, try again" + ANSIFormatter.ANSI_RESET);
+                        } //counter
                     }
-                } catch ( RemoteException | NotBoundException e) {
-                    System.out.println("Unable to communicate with the server! Shutting down.");
-                    System.exit(-1);
                 }
+            } catch ( RemoteException | NotBoundException e) {
+                System.out.println("Unable to communicate with the server! Shutting down.");
+                System.exit(-1);
+            }
         }else{ //GUI
             // NOTHING
 //            String[] network = new String[1];
@@ -716,7 +721,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     System.exit(-1);
                 }
             }
-        }else{ 
+        }else{
             //gui
         }
     }
@@ -745,19 +750,19 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         if (boardOwner.equals(personalPlayer.getNickname())) {
             personalPlayer.setBoard(board);
         }
-            for (Player p : playersInTheGame) {
-                if (boardOwner.equals(p.getNickname())) {
-                    p.setBoard(board);
-                }
-            }
-            if (selectedView == 1) {
-                System.out.println("I received the board update.");
-            } else if (selectedView == 2) {
-                if (guiGameController != null) {
-                    guiGameController.updateBoard(boardOwner, newCard);
-                }
+        for (Player p : playersInTheGame) {
+            if (boardOwner.equals(p.getNickname())) {
+                p.setBoard(board);
             }
         }
+        if (selectedView == 1) {
+            System.out.println("I received the board update.");
+        } else if (selectedView == 2) {
+            if (guiGameController != null) {
+                guiGameController.updateBoard(boardOwner, newCard);
+            }
+        }
+    }
 
     /**
      * This is an update method
@@ -840,32 +845,32 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         if (personalPlayer.getNickname().equals(nickname)) {
             personalPlayer.addPersonalObjective(card);
             if (personalPlayer.getPersonalObjectives().size() == 2) {
-                    if (selectedView == 1) {
-                        executor.execute(()-> {
-                            boolean ok = false;
-                            while (!ok) {
-                                tuiView.printHand(personalPlayer.getPlayerDeck());
-                                try {
-                                    ObjectiveCard tmp=tuiView.askChoosePersonalObjective(sc, personalPlayer.getPersonalObjectives());
-                                    chooseObjectiveCard(personalPlayer.getNickname(),tmp);
-                                    ok = true;
-                                    personalPlayer.setPersonalObjective(tmp);
-                                    System.out.println("You've correctly chosen your objective card!");
-                                    gameController.checkObjectiveCardChosen(); //just added
-                                }catch (RemoteException |NotBoundException e){
-                                    System.out.println("Unable to communicate with the server! Shutting down.");
-                                    System.exit(-1);
-                                }catch (CardNotOwnedException e){
-                                    System.out.println("You don't own this card.");
-                                }
+                if (selectedView == 1) {
+                    executor.execute(()-> {
+                        boolean ok = false;
+                        while (!ok) {
+                            tuiView.printHand(personalPlayer.getPlayerDeck());
+                            try {
+                                ObjectiveCard tmp=tuiView.askChoosePersonalObjective(sc, personalPlayer.getPersonalObjectives());
+                                chooseObjectiveCard(personalPlayer.getNickname(),tmp);
+                                ok = true;
+                                personalPlayer.setPersonalObjective(tmp);
+                                System.out.println("You've correctly chosen your objective card!");
+                                gameController.checkObjectiveCardChosen(); //just added
+                            }catch (RemoteException |NotBoundException e){
+                                System.out.println("Unable to communicate with the server! Shutting down.");
+                                System.exit(-1);
+                            }catch (CardNotOwnedException e){
+                                System.out.println("You don't own this card.");
                             }
-                        });
-                    } else if (selectedView == 2) {
-                        //gui
-                        synchronized (guiLock){
-                            guiLock.notify();
                         }
+                    });
+                } else if (selectedView == 2) {
+                    //gui
+                    synchronized (guiLock){
+                        guiLock.notify();
                     }
+                }
 
             }
         }
@@ -899,8 +904,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-   public void updateResourceCard2(PlayableCard card) throws RemoteException {
-       this.resourceCard2=card;
+    public void updateResourceCard2(PlayableCard card) throws RemoteException {
+        this.resourceCard2=card;
         if (selectedView == 1) {
             //System.out.println("I received the resource Card2.");
         } else if (selectedView == 2) {
@@ -922,7 +927,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public void updateGoldCard1(PlayableCard card) throws RemoteException {
         this.goldCard1=card;
         if (selectedView == 1) {
-                //System.out.println("I received the goldCard 1");
+            //System.out.println("I received the goldCard 1");
         } else if (selectedView == 2) {
             //guiView.updateGoldCard1(card)
             if(guiGameController!=null){
@@ -1001,8 +1006,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
         } else if (selectedView == 2) { //arriva la scelta degli altri, ma se io ho già scelto ignoro questo update
             //guiView.updatePawns(player, pawn)
+            System.out.println("RMI: sto per entrare nel syn");
             synchronized (guiPawnsControllerLock) {
+                System.out.println("RMI: nel syn");
                 while (GUIPawnsController == null) {
+                    System.out.println("RMI: adesso faccio la wait()");
                     try {
                         guiPawnsControllerLock.wait();
                     } catch (InterruptedException e) {
@@ -1010,6 +1018,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     }
                 }
             }
+            System.out.println("RMI: uscito dal syn");
             GUIPawnsController.updatePawns(pawn);
         }
     }
@@ -1022,7 +1031,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     @Override
     public void updateRound(List<Player> newPlayingOrder) throws RemoteException {
         playersInTheGame = newPlayingOrder;
-       // System.out.println("update ricevuto, tocca a "+playersInTheGame.get(0).getNickname());
+        // System.out.println("update ricevuto, tocca a "+playersInTheGame.get(0).getNickname());
         if (selectedView == 1) {
             if (turnCounter != -1) {
                 if (turnCounter != 0) {
@@ -1041,19 +1050,19 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     }else{
                         inGame=false;
                     }
-                        if (turnCounter == 1) {
-                            executor.execute(() -> {
-                                try {
-                                    while (inGame) {
-                                        gameTurn();
-                                    }
-                                } catch (InterruptedException e) {
-                                    System.out.println("Issues while executing the app. Closing the program.");
-                                    e.printStackTrace();
-                                    System.exit(-1);
+                    if (turnCounter == 1) {
+                        executor.execute(() -> {
+                            try {
+                                while (inGame) {
+                                    gameTurn();
                                 }
-                            });
-                        }
+                            } catch (InterruptedException e) {
+                                System.out.println("Issues while executing the app. Closing the program.");
+                                e.printStackTrace();
+                                System.exit(-1);
+                            }
+                        });
+                    }
                 } else if (turnCounter == 0) {
                     baseCard = true;
                     executor.execute(() -> {
@@ -1098,6 +1107,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 //chiamo playBaseCard : se uso un thread per farlo posso continuare a ricevere e a rispondere a ping
 
                 synchronized (guiPawnsControllerLock){
+                    System.out.println("RMI: sto per fare la notify");
                     secondUpdateRoundArrived=true;
                     done=true;
                     guiPawnsControllerLock.notify();
@@ -1257,7 +1267,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             // ci sarà un update notificato al GUIGameController. Quando arriva questa notifica allora cambio la schermata
             if(guiGameController!=null){
                 //guiGameController.updateWinners(winners);
-                }
+            }
         }
 
     }

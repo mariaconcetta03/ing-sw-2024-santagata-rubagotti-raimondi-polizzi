@@ -26,7 +26,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class GUIPawnsController {  
+public class GUIPawnsController {
     private GUIBaseCardController ctr;
     private Stage stage;
     private int network;
@@ -52,61 +52,61 @@ public class GUIPawnsController {
 
     public void changeScene(){
 
-            // let's show the new window!
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/baseCard.fxml"));
-            Parent root = null;
-            try {
-                root = fxmlLoader.load();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        // let's show the new window!
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/baseCard.fxml"));
+        Parent root = null;
+        try {
+            root = fxmlLoader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        while (ctr == null) {
+            ctr = fxmlLoader.getController();
+        }
+
+        // setting the parameters in the new controller, also the BASE CARD (front and back)
+        ctr.setStage(stage);
+        ctr.setNetwork(network);
+        ctr.setClientSCK(clientSCK);
+        ctr.setRmiClient(rmiClient);
+        if (network == 1) {
+            while (rmiClient.getPersonalPlayer().getPlayerDeck()[0] == null) {
             }
-
-            while (ctr == null) {
-                ctr = fxmlLoader.getController();
+            ctr.setBaseCard1(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId()); // OK
+            ctr.setBaseCard2(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId());
+            ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", which side do you");
+        } else if (network == 2) {
+            while (clientSCK.getPersonalPlayer().getPlayerDeck()[0] == null) {
             }
+            ctr.setBaseCard1(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId()); // OK
+            ctr.setBaseCard2(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId());
+            ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", which side do you");
+        }
 
-            // setting the parameters in the new controller, also the BASE CARD (front and back)
-            ctr.setStage(stage);
-            ctr.setNetwork(network);
-            ctr.setClientSCK(clientSCK);
-            ctr.setRmiClient(rmiClient);
-            if (network == 1) {
-                while (rmiClient.getPersonalPlayer().getPlayerDeck()[0] == null) {
-                }
-                ctr.setBaseCard1(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId()); // OK
-                ctr.setBaseCard2(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId());
-                ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", which side do you");
-            } else if (network == 2) {
-                while (clientSCK.getPersonalPlayer().getPlayerDeck()[0] == null) {
-                }
-                ctr.setBaseCard1(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId()); // OK
-                ctr.setBaseCard2(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId());
-                ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", which side do you");
-            }
+        // old dimensions and position
+        double width = stage.getWidth();
+        double height = stage.getHeight();
+        double x = stage.getX();
+        double y = stage.getY();
 
-            // old dimensions and position
-            double width = stage.getWidth();
-            double height = stage.getHeight();
-            double x = stage.getX();
-            double y = stage.getY();
+        // new scene
+        Scene scene;
+        scene = new Scene(root);
 
-            // new scene
-            Scene scene;
-            scene = new Scene(root);
+        stage.setScene(scene); //questo è il momento in cui la nuova scena viene mostrata
 
-            stage.setScene(scene); //questo è il momento in cui la nuova scena viene mostrata
-
-            // setting the od values of position and dimension
-            stage.setWidth(width);
-            stage.setHeight(height);
-            stage.setX(x);
-            stage.setY(y);
+        // setting the od values of position and dimension
+        stage.setWidth(width);
+        stage.setHeight(height);
+        stage.setX(x);
+        stage.setY(y);
 
 
-            ctr.startPeriodicDisconnectionCheck();
+        ctr.startPeriodicDisconnectionCheck();
 
 
-            //stage.show(); //si fa solo se cambia lo stage
+        //stage.show(); //si fa solo se cambia lo stage
 
     }
 
@@ -134,15 +134,20 @@ public class GUIPawnsController {
                         });
 
                         rmiClient.getGameController().checkChosenPawnColor();
+                        System.out.println("sto per entrare nella syn");
                         synchronized (rmiClient.getGuiPawnsControllerLock()) {
+                            System.out.println("sono entrato nella syn");
                             if(!rmiClient.getDone()) {
+                                System.out.println("non ho ancora ricevuto l'update [done = false], quindi sto per prendere il lock");
                                 while (!rmiClient.getSecondUpdateRoundArrived()) {
+                                    System.out.println("ho preso lock e sono in wait");
                                     try {
                                         rmiClient.getGuiPawnsControllerLock().wait();
                                     } catch (InterruptedException e) {
                                         throw new RuntimeException(e);
                                     }
                                 }
+                                System.out.println("sono uscito dal lock");
                             }
                         }
                         System.out.println("usciti dal syn");
@@ -165,8 +170,8 @@ public class GUIPawnsController {
                 });
                 pause.play();
 
-               // Platform.runLater(this::changeScene);
-         } else if (network == 2) {
+                // Platform.runLater(this::changeScene);
+            } else if (network == 2) {
                 // Handle network 2 case
             }
         }
@@ -189,16 +194,20 @@ public class GUIPawnsController {
                             retryLabel.setOpacity(1);
                         });
                         rmiClient.getGameController().checkChosenPawnColor();
-
+                        System.out.println("sto per entrare nella syn");
                         synchronized (rmiClient.getGuiPawnsControllerLock()) {
+                            System.out.println("sono entrato nella syn");
                             if(!rmiClient.getDone()) {
+                                System.out.println("non ho ancora ricevuto l'update [done = false], quindi sto per prendere il lock");
                                 while (!rmiClient.getSecondUpdateRoundArrived()) {
+                                    System.out.println("ho preso lock e sono in wait");
                                     try {
                                         rmiClient.getGuiPawnsControllerLock().wait();
                                     } catch (InterruptedException e) {
                                         throw new RuntimeException(e);
                                     }
                                 }
+                                System.out.println("sono uscito dal lock");
                             }
                         }
                         System.out.println("usciti dal syn");
@@ -242,16 +251,20 @@ public class GUIPawnsController {
                             retryLabel.setOpacity(1);
                         });
                         rmiClient.getGameController().checkChosenPawnColor();
-
+                        System.out.println("sto per entrare nella syn");
                         synchronized (rmiClient.getGuiPawnsControllerLock()) {
+                            System.out.println("sono entrato nella syn");
                             if(!rmiClient.getDone()) {
-                            while (!rmiClient.getSecondUpdateRoundArrived()) {
-                                try {
-                                    rmiClient.getGuiPawnsControllerLock().wait();
-                                } catch (InterruptedException e) {
-                                    throw new RuntimeException(e);
+                                System.out.println("non ho ancora ricevuto l'update [done = false], quindi sto per prendere il lock");
+                                while (!rmiClient.getSecondUpdateRoundArrived()) {
+                                    System.out.println("ho preso lock e sono in wait");
+                                    try {
+                                        rmiClient.getGuiPawnsControllerLock().wait();
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
                                 }
-                            }
+                                System.out.println("sono uscito dal lock");
                             }
                         }
                         System.out.println("usciti dal syn");
@@ -273,7 +286,7 @@ public class GUIPawnsController {
                 });
                 pause.play();
 
-             //   Platform.runLater(this::changeScene);
+                //   Platform.runLater(this::changeScene);
             } else if (network == 2) {
                 // Handle network 2 case
             }
@@ -296,16 +309,20 @@ public class GUIPawnsController {
                             retryLabel.setOpacity(1);
                         });
                         rmiClient.getGameController().checkChosenPawnColor();
-
+                        System.out.println("sto per entrare nella syn");
                         synchronized (rmiClient.getGuiPawnsControllerLock()) {
+                            System.out.println("sono entrato nella syn");
                             if(!rmiClient.getDone()) {
+                                System.out.println("non ho ancora ricevuto l'update [done = false], quindi sto per prendere il lock");
                                 while (!rmiClient.getSecondUpdateRoundArrived()) {
+                                    System.out.println("ho preso lock e sono in wait");
                                     try {
                                         rmiClient.getGuiPawnsControllerLock().wait();
                                     } catch (InterruptedException e) {
                                         throw new RuntimeException(e);
                                     }
                                 }
+                                System.out.println("sono uscito dal lock");
                             }
                         }
                         System.out.println("usciti dal syn");
@@ -328,7 +345,7 @@ public class GUIPawnsController {
                 });
                 pause.play();
 
-              //  Platform.runLater(this::changeScene);
+                //  Platform.runLater(this::changeScene);
             } else if (network == 2) {
                 // Handle network 2 case
             }

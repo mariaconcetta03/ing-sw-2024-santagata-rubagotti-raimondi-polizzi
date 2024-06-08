@@ -183,12 +183,12 @@ public class GUILobbyController {
                  */
             }
 
+           System.out.println("sono prima del runlater, changescene");
            Platform.runLater(this::changeScene);
             // platform.runLater grants that this method is called in the JAVAFX Application thread
            // "this::changeScene" used for a reference to a NON static method (becomes a runnable)
-
-
        });
+        System.out.println("sto per far partire i puntini");
        pointsThread.start();
     }
 
@@ -238,6 +238,7 @@ public class GUILobbyController {
             synchronized (rmiClient.getGuiPawnsControllerLock()) {
                 rmiClient.setGuiPawnsController(ctr);
                 rmiClient.getGuiPawnsControllerLock().notify();
+                rmiClient.setDone(true);
             }
         }if(network==2){ //ancora da implementare
             /*
