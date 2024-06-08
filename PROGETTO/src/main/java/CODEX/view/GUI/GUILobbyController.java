@@ -215,11 +215,11 @@ public class GUILobbyController {
         ctr.setClientSCK(clientSCK);
         ctr.setRmiClient(rmiClient);
        if (network == 1) {
-           while(rmiClient.getPersonalPlayer().getPlayerDeck()[0] == null) {}
+           //while(rmiClient.getPersonalPlayer().getPlayerDeck()[0] == null) {}
                ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", now click the");
                ctr.setColoredPanes();
            } else if (network == 2) {
-           while(clientSCK.getPersonalPlayer().getPlayerDeck()[0] == null) {}
+           //while(clientSCK.getPersonalPlayer().getPlayerDeck()[0] == null) {}
                ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", now click the");
                ctr.setColoredPanes();
         }

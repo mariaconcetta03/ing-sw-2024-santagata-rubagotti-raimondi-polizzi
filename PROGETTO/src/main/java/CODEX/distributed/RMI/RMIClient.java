@@ -34,6 +34,9 @@ import java.util.concurrent.*;
 
 
 public class RMIClient extends UnicastRemoteObject implements ClientGeneralInterface{
+    private final Object playCardLock=new Object();
+    private boolean cardPlayed=false;
+    private boolean playCardTerminated=false;
     private final Object guiLock;
     private final Object printLock;
     private boolean finishedSetup=false;
@@ -185,6 +188,26 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         this.secondUpdateRoundArrived = secondUpdateRoundArrived;
     }
 
+    public Object getPlayCardLock() {
+        return playCardLock;
+    }
+
+    public boolean getCardPlayed() {
+        return cardPlayed;
+    }
+
+    public void setCardPlayed(boolean cardPlayed) {
+        this.cardPlayed = cardPlayed;
+    }
+
+    public boolean getPlayCardTerminated() {
+        return playCardTerminated;
+    }
+
+    public void setPlayCardTerminated(boolean playCardTerminated) {
+        this.playCardTerminated = playCardTerminated;
+    }
+
 
     /**
      * Settings class
@@ -284,21 +307,26 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     @Override
     public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, NotBoundException, IllegalArgumentException {
-        if(!aDisconnectionHappened) {
-            synchronized (actionLock) {
-                System.out.println("entrati nel lock di playCard");
-                responseReceived=false;
-                System.out.println("chiamo this.gameController.playCard");
-                this.gameController.playCard(nickname, selectedCard, position, orientation);
-                while (!responseReceived) {
-                    try {
-                        actionLock.wait();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+        if(selectedView==1) { //TUI
+            if (!aDisconnectionHappened) {
+                synchronized (actionLock) {
+                    System.out.println("entrati nel lock di playCard");
+                    responseReceived = false;
+                    System.out.println("chiamo this.gameController.playCard");
+                    this.gameController.playCard(nickname, selectedCard, position, orientation);
+                    while (!responseReceived) {
+                        try {
+                            actionLock.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
+                System.out.println("usciti dal lock di playCard");
             }
-            System.out.println("usciti dal lock di playCard");
+        }else if(selectedView==2){ //GUI
+            this.gameController.playCard(nickname, selectedCard, position, orientation);
+
         }
     }
 
@@ -1103,6 +1131,18 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             //gui
             System.out.println("I received the updateRound.");
             //playersInTheGame = newPlayingOrder;
+            if(this.turnCounter == -1){ //chiedo le pawn
+                synchronized (guiGamestateLock) {
+                    while (guiLobbyController == null) {
+                        try {
+                            guiGamestateLock.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+                guiLobbyController.updateGameState();
+            }
             if (this.turnCounter == 0){
                 //chiamo playBaseCard : se uso un thread per farlo posso continuare a ricevere e a rispondere a ping
 
@@ -1124,6 +1164,12 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                             if (guiGameController != null) {
                                 guiGameController.updatePoints();
                                 guiGameController.updateRound(true); //settiamo lastTurn a true
+                            }
+                        }else {
+                            if (guiGameController != null) {
+                                guiGameController.updatePoints();
+                                guiGameController.updateRound(false); //settiamo lastTurn a true
+
                             }
                         }
                     }else {
@@ -1209,6 +1255,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         } else if (selectedView == 2) {
             //guiView.updateGameState(game)
             if(gameState.equals(Game.GameState.STARTED)) {
+                /*
                 synchronized (guiGamestateLock) {
                     while (guiLobbyController == null) {
                         try {
@@ -1219,6 +1266,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     }
                 }
                 guiLobbyController.updateGameState();
+
+                 */
             }
 
         }
