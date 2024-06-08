@@ -92,7 +92,14 @@ public class GUIBaseCardController {
             }
         }
 
-        Platform.runLater(()->{changeScene();});
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
+        pause.setOnFinished(event -> {
+            changeScene();
+        });
+        pause.play();
+
+        // Platform.runLater(()->{changeScene();});
 
     }
 
@@ -130,8 +137,13 @@ public class GUIBaseCardController {
                 }
             }
 
+        PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
+        pause.setOnFinished(event -> {
+            changeScene();
+        });
+        pause.play();
 
-        Platform.runLater(()->{changeScene();});
+//        Platform.runLater(()->{changeScene();});
 
     }
 
