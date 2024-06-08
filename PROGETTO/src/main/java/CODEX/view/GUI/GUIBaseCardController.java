@@ -87,11 +87,14 @@ public class GUIBaseCardController {
             System.out.println("selezionato fronte");
             baseCardPlayed = true;
             //changeScene();
-            PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
+          /*  PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
             pause.setOnFinished(event -> changeScene());
-            pause.play();
+            pause.play();*/
         });
         }).start();
+
+        Platform.runLater(()->{changeScene();});
+
     }
 
     public void selectedBack() {
@@ -122,11 +125,13 @@ public class GUIBaseCardController {
                 baseCardPlayed = true;
                 System.out.println("Selezionato retro");
                 //changeScene();
-                PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
+               /* PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
                 pause.setOnFinished(event -> changeScene());
-                pause.play();
+                pause.play(); */
             });
         }).start();
+        Platform.runLater(()->{changeScene();});
+
     }
 
 
