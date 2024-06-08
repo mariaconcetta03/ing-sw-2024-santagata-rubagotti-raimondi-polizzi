@@ -70,6 +70,7 @@ public class GUIBaseCardController {
         if (network == 1 && !baseCardPlayed) {
             try {
                 rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], true);
+                rmiClient.getGameController().checkBaseCardPlayed();
             } catch (RemoteException | NotBoundException e) {
                 throw new RuntimeException(e);
             }
@@ -105,6 +106,7 @@ public class GUIBaseCardController {
                 try {
                     if (!baseCardPlayed) {
                         rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], false);
+                        rmiClient.getGameController().checkBaseCardPlayed();
                     }
                 } catch (RemoteException | NotBoundException e) {
                     throw new RuntimeException(e);
@@ -130,6 +132,7 @@ public class GUIBaseCardController {
                 pause.play(); */
             });
         }).start();
+
         Platform.runLater(()->{changeScene();});
 
     }

@@ -141,7 +141,7 @@ public class GUIPawnsController {
                             }
                         }
                         System.out.println("usciti dal syn");
-                        Platform.runLater(this::changeScene);
+
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     } catch (ColorAlreadyTakenException e) {
@@ -152,6 +152,7 @@ public class GUIPawnsController {
                         });
                     }
                 });
+                Platform.runLater(this::changeScene);
             } else if (network == 2) {
                 // Handle network 2 case
             }
@@ -185,7 +186,7 @@ public class GUIPawnsController {
                             }
                         }
                         System.out.println("usciti dal syn");
-                        Platform.runLater(this::changeScene);
+
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     } catch (ColorAlreadyTakenException e) {
@@ -196,6 +197,7 @@ public class GUIPawnsController {
                         });
                     }
                 });
+                Platform.runLater(this::changeScene);
             } else if (network == 2) {
                 // Handle network 2 case
             }
@@ -229,7 +231,7 @@ public class GUIPawnsController {
                             }
                         }
                         System.out.println("usciti dal syn");
-                        Platform.runLater(this::changeScene);
+
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     } catch (ColorAlreadyTakenException e) {
@@ -240,6 +242,8 @@ public class GUIPawnsController {
                         });
                     }
                 });
+
+                Platform.runLater(this::changeScene);
             } else if (network == 2) {
                 // Handle network 2 case
             }
@@ -273,7 +277,7 @@ public class GUIPawnsController {
                             }
                         }
                         System.out.println("usciti dal syn");
-                        Platform.runLater(this::changeScene);
+
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     } catch (ColorAlreadyTakenException e) {
@@ -284,6 +288,7 @@ public class GUIPawnsController {
                         });
                     }
                 });
+                Platform.runLater(this::changeScene);
             } else if (network == 2) {
                 // Handle network 2 case
             }

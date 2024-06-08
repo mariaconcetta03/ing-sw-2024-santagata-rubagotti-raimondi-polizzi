@@ -77,6 +77,7 @@ public class GUIObjectiveController {
 
                 try {
                     rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(1));
+                    rmiClient.getGameController().checkObjectiveCardChosen();
                 } catch (RemoteException | NotBoundException e) {
                     throw new RuntimeException(e);
                 }
@@ -118,6 +119,7 @@ public class GUIObjectiveController {
             if (network == 1 && !objectiveSelected) {
                 try {
                     rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(0));
+                    rmiClient.getGameController().checkObjectiveCardChosen();
                 } catch (RemoteException | NotBoundException e) {
                     throw new RuntimeException(e);
                 }
