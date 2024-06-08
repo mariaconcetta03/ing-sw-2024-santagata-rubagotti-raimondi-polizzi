@@ -359,7 +359,10 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             writeTheStream(new SCKMessage(serverMessage));
         }catch (RemoteException ignored){
 
-        }catch (ColorAlreadyTakenException e){}
+        }catch (ColorAlreadyTakenException e){
+            ServerMessage serverMessage= new ServerError(ErrorsAssociatedWithExceptions.COLOR_ALREADY_TAKEN);
+            writeTheStream(new SCKMessage(serverMessage));
+        }
     }
 
 

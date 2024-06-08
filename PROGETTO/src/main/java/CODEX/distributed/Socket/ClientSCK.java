@@ -40,6 +40,7 @@ import java.util.concurrent.Executors;
  * through the socket to be processed
  */
 public class ClientSCK implements ClientGeneralInterface {
+    List<Pawn> availableColors;
     private boolean guiClosed=false;
     private boolean aDisconnectionHappened=false;
     private final Object disconnectionLock=new Object();
@@ -481,11 +482,29 @@ public class ClientSCK implements ClientGeneralInterface {
             }
         }
     }
-    public void getAvailableColors(){
+    public List<Pawn> getAvailableColors(){
         checkAvailableColors();
+        return this.availableColors;
+    }
+    public void setAvailableColors(List<Pawn> availableColors){
+        this.availableColors=availableColors;
     }
     public void checkAvailableColors(){
-        //to be implemented
+        synchronized (actionLock) {
+            ClientMessage clientMessage= new ClientAvailableColors();
+            try {
+                sendMessage(new SCKMessage(clientMessage));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            while (!responseReceived) {
+                try {
+                    actionLock.wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
     public void checkNPlayers(){
         synchronized (actionLock) {
@@ -495,7 +514,7 @@ public class ClientSCK implements ClientGeneralInterface {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            while (!responseReceived){
+            while (!responseReceived){ //in realtà qua non avremmo bisogno di aspettare la risposta
                 try {
                     actionLock.wait();
                 } catch (InterruptedException e) {
@@ -825,6 +844,7 @@ public class ClientSCK implements ClientGeneralInterface {
                                     ok = true;
                                     personalPlayer.setPersonalObjective(tmp);
                                     System.out.println("You've correctly chosen your objective card!");
+                                    checkObjectiveCardChosen();
                                 }catch (RemoteException |NotBoundException e){ //sarebbe 'ignored'
                                     System.out.println("Unable to communicate with the server! Shutting down.");
                                     System.exit(-1);
@@ -1036,6 +1056,7 @@ public class ClientSCK implements ClientGeneralInterface {
                     try {
                         boolean choice = tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]);
                         playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0], choice);
+                        checkBaseCardPlayed();
                     } catch (NotBoundException|RemoteException ignored) { //non si verifica
                     }
                 }).start();
@@ -1067,33 +1088,34 @@ public class ClientSCK implements ClientGeneralInterface {
                 }
             }
             if(this.turnCounter==-1){
-                /*
+                Executor executor= Executors.newSingleThreadExecutor();
                 //taken from RMI
                 executor.execute(() -> {
                     boolean ok=false;
                     try {
                         while (!ok) {
-                            Pawn selection = tuiView.askPawnSelection(gameController.getGame().getAvailableColors(),sc);
+                            Pawn selection = tuiView.askPawnSelection(getAvailableColors(),sc);
                             if (selection != null) {
-                                try {
-                                    this.choosePawnColor(personalPlayer.getNickname(), selection);
+                                this.choosePawnColor(personalPlayer.getNickname(), selection);
+                                if(errorState){
+                                    System.out.println("This color is already taken! Please try again.");
+                                    errorState=false;
+                                }else {
                                     ok = true;
                                     System.out.println("Pawn color correctly selected!");
-                                    gameController.checkChosenPawnColor();
-                                } catch (ColorAlreadyTakenException e) {
-                                    System.out.println("This color is already taken! Please try again.");
+                                    checkChosenPawnColor();
                                 }
                             } else {
                                 System.out.println("Please insert one of the possible colors!");
                             }
                         }
-                    } catch (NotBoundException |RemoteException e) {
+                    } catch (NotBoundException |RemoteException e) { //ignored
                         System.out.println("Unable to communicate with the Server. Shutting down.");
                         e.printStackTrace();
                         System.exit(-1);
                     }
                 });
-                 */
+
 
             }
             turnCounter++; //first time: -1 -> 0, second time 0 -> 1  so from the second time on we enter if(turnCounter>=1)
@@ -1597,12 +1619,30 @@ public class ClientSCK implements ClientGeneralInterface {
         return this.errorState;
     }
     public void checkChosenPawnColor(){
+        ClientMessage clientMessage=new CheckChosenPawnColor();
+        try {
+            sendMessage(new SCKMessage(clientMessage));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
     public void checkObjectiveCardChosen(){
+        ClientMessage clientMessage=new CheckObjectiveCardChosen();
+        try {
+            sendMessage(new SCKMessage(clientMessage));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
     public void checkBaseCardPlayed(){
+        ClientMessage clientMessage=new CheckBaseCardPlayed();
+        try {
+            sendMessage(new SCKMessage(clientMessage));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 }
