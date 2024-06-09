@@ -11,10 +11,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import javafx.scene.control.Label;
@@ -63,8 +59,7 @@ public class GUIObjectiveController {
     private int network = 0; //1 = rmi  2 = sck
     private boolean objectiveSelected = false;
     private ObjectiveCard objectiveCardselected=null;
-    private StackPane root;
-    private Rectangle overlay;
+
 
 
     // ------------ C O M E    F U N Z I O N A    U P D A T E R O U N D ? ----------------
@@ -77,58 +72,53 @@ public class GUIObjectiveController {
 
 
     public synchronized void selectedRightObjective () {
-        root.getChildren().add(overlay); // Add overlay
-        if (!objectiveSelected) {
-            objectiveSelected = true;
 
 
-            new Thread(() -> {
-                if (network == 1) {
+        new Thread(() -> {
+            if (network == 1 && !objectiveSelected) {
 
-                    try {
-                        rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(1));
-                        rmiClient.getGameController().checkObjectiveCardChosen();
-                        objectiveCardselected = rmiClient.getPersonalPlayer().getPersonalObjectives().get(1);
-                    } catch (RemoteException | NotBoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                } else if (network == 2) {
-                    try {
-                        clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(1));
-                        clientSCK.checkObjectiveCardChosen();
-                        objectiveCardselected = clientSCK.getPersonalPlayer().getPersonalObjectives().get(1);
-                    } catch (RemoteException | NotBoundException e) {
-                        throw new RuntimeException(e);
-                    }
-
+                try {
+                    rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(1));
+                    rmiClient.getGameController().checkObjectiveCardChosen();
+                    objectiveCardselected=rmiClient.getPersonalPlayer().getPersonalObjectives().get(1);
+                } catch (RemoteException | NotBoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }else if (network == 2 && !objectiveSelected) {
+                try {
+                    clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(1));
+                    clientSCK.checkObjectiveCardChosen();
+                    objectiveCardselected=clientSCK.getPersonalPlayer().getPersonalObjectives().get(1);
+                } catch (RemoteException | NotBoundException e) {
+                    throw new RuntimeException(e);
                 }
 
+            }
 
-                // third thread to change the scene always in JAVA FX thread
-                Platform.runLater(() -> {
-                    System.out.println("sto per chiamare il selectionLabel");
-                    selectionLabel.setText("Right objective selected. Now wait for everyone to choose.");
-                    System.out.println("selezionato destra");
-                    objectiveSelected = true;
-                    //changeScene();
-                    // Aggiungi un ritardo prima di cambiare scena
-                    PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
-                    pause.setOnFinished(event -> {
-                        try {
-                            changeScene();
-                        } catch (RemoteException e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
-                    pause.play();
+
+            // third thread to change the scene always in JAVA FX thread
+            Platform.runLater(() -> {
+                System.out.println("sto per chiamare il selectionLabel");
+                selectionLabel.setText("Right objective selected. Now wait for everyone to choose.");
+                System.out.println("selezionato destra");
+                objectiveSelected = true;
+                //changeScene();
+                // Aggiungi un ritardo prima di cambiare scena
+                PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
+                pause.setOnFinished(event -> {
+                    try {
+                        changeScene();
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
                 });
-            }).start();
-        }
+                pause.play();
+              });
+        }).start();
     }
 
 
     public synchronized void selectedLeftObjective () { // objectiveCard 1 --> get(0)
-        root.getChildren().add(overlay); // Add overlay
         if (!objectiveSelected) {
             objectiveSelected = true;
             new Thread(() -> {
@@ -175,9 +165,9 @@ public class GUIObjectiveController {
     public void changeScene() throws RemoteException {
         // let's show the new window!
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/game.fxml"));
-        StackPane nextRoot = null;
+        Parent root = null;
         try {
-            nextRoot = fxmlLoader.load();
+            root = fxmlLoader.load();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -240,19 +230,7 @@ public class GUIObjectiveController {
 
             // new scene
             Scene scene;
-            scene = new Scene(nextRoot);
-
-            // Create a transparent overlay
-            Rectangle nextOverlay = new Rectangle();
-            nextOverlay.setFill(Color.TRANSPARENT);
-            nextOverlay.setOnMouseClicked(MouseEvent::consume); // Consume all mouse clicks
-
-            // Bind the overlay's size to the root's size
-            nextOverlay.widthProperty().bind(nextRoot.widthProperty());
-            nextOverlay.heightProperty().bind(nextRoot.heightProperty());
-
-            ctr.setRoot (nextRoot);
-            ctr.setOverlay(nextOverlay);
+            scene = new Scene(root);
 
             try {
                 ctr.setAllFeatures();
@@ -267,8 +245,6 @@ public class GUIObjectiveController {
 
             GUIGameController finalCtr = ctr;
             stage.setOnCloseRequest(event -> finalCtr.leaveGame());
-
-            root.getChildren().remove(overlay); // Remove overlay
             stage.setScene(scene); //viene già qui mostrata la scena : nel caso in in cui arrivi prima un evento di disconnessione questa scena non verrà mai mostrata
 
             // setting the od values of position and dimension
@@ -428,13 +404,5 @@ public class GUIObjectiveController {
 
     public void setDisconnectionLock(Object disconnectionLock) {
         this.disconnectionLock = disconnectionLock;
-    }
-
-    public void setRoot(StackPane root) {
-        this.root=root;
-    }
-
-    public void setOverlay(Rectangle overlay) {
-        this.overlay=overlay;
     }
 }

@@ -10,10 +10,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.util.Duration;
@@ -47,17 +48,15 @@ public class GUIPawnsController {
     private Label labelWithPlayerName;
     @FXML
     private Label retryLabel;
-    private StackPane root;
-    private Rectangle overlay;
 
 
     public void changeScene(){
 
         // let's show the new window!
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/baseCard.fxml"));
-        StackPane nextRoot = null;
+        Parent root = null;
         try {
-            nextRoot = fxmlLoader.load();
+            root = fxmlLoader.load();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -107,20 +106,7 @@ public class GUIPawnsController {
 
         // new scene
         Scene scene;
-        scene = new Scene(nextRoot);
-        // Create a transparent overlay
-        Rectangle nextOverlay = new Rectangle();
-        nextOverlay.setFill(Color.TRANSPARENT);
-        nextOverlay.setOnMouseClicked(MouseEvent::consume); // Consume all mouse clicks
-
-        // Bind the overlay's size to the root's size
-        nextOverlay.widthProperty().bind(nextRoot.widthProperty());
-        nextOverlay.heightProperty().bind(nextRoot.heightProperty());
-
-        ctr.setRoot (nextRoot);
-        ctr.setOverlay(nextOverlay);
-
-        root.getChildren().remove(overlay); // Remove overlay
+        scene = new Scene(root);
 
         stage.setScene(scene); //questo è il momento in cui la nuova scena viene mostrata
 
@@ -145,7 +131,6 @@ public class GUIPawnsController {
 
 
     synchronized public void selectedYellow() {
-        root.getChildren().add(overlay); // Add overlay
         if (yellowPane.getOpacity() != 0 && !pawnSelected) {
             pawnSelected = true;
             if (network == 1) {
@@ -184,7 +169,6 @@ public class GUIPawnsController {
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     } catch (ColorAlreadyTakenException e) {
-                        root.getChildren().remove(overlay); // Remove overlay
                         pawnSelected = false;
                         Platform.runLater(() -> {
                             retryLabel.setText("Color already taken, please choose another.");
@@ -206,7 +190,6 @@ public class GUIPawnsController {
                     try {
                         clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.YELLOW);
                         if(clientSCK.getErrorState()){
-                            root.getChildren().remove(overlay); // Remove overlay
                             pawnSelected = false;
                             Platform.runLater(() -> {
                                 retryLabel.setText("Color already taken, please choose another.");
@@ -254,13 +237,10 @@ public class GUIPawnsController {
                 pause.play();
 
             }
-        }else{
-            root.getChildren().remove(overlay); // Remove overlay
         }
     }
 
     synchronized public void selectedBlue() {
-        root.getChildren().add(overlay); // Add overlay
         if (bluePane.getOpacity() != 0 && !pawnSelected) {
             pawnSelected = true;
             if (network == 1) {
@@ -298,7 +278,6 @@ public class GUIPawnsController {
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     } catch (ColorAlreadyTakenException e) {
-                        root.getChildren().remove(overlay); // Remove overlay
                         pawnSelected = false;
                         Platform.runLater(() -> {
                             retryLabel.setText("Color already taken, please choose another.");
@@ -318,7 +297,6 @@ public class GUIPawnsController {
                     try {
                         clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.BLUE);
                         if(clientSCK.getErrorState()){
-                            root.getChildren().remove(overlay); // Remove overlay
                             pawnSelected = false;
                             Platform.runLater(() -> {
                                 retryLabel.setText("Color already taken, please choose another.");
@@ -366,13 +344,10 @@ public class GUIPawnsController {
                 pause.play();
 
             }
-        }else{
-            root.getChildren().remove(overlay); // Remove overlay
         }
     }
 
     synchronized public void selectedGreen() {
-        root.getChildren().add(overlay); // Add overlay
         if (greenPane.getOpacity() != 0 && !pawnSelected) {
             pawnSelected = true;
             if (network == 1) {
@@ -409,7 +384,6 @@ public class GUIPawnsController {
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     } catch (ColorAlreadyTakenException e) {
-                        root.getChildren().remove(overlay); // Remove overlay
                         pawnSelected = false;
                         Platform.runLater(() -> {
                             retryLabel.setText("Color already taken, please choose another.");
@@ -430,7 +404,6 @@ public class GUIPawnsController {
                     try {
                         clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.GREEN);
                         if(clientSCK.getErrorState()){
-                            root.getChildren().remove(overlay); // Remove overlay
                             pawnSelected = false;
                             Platform.runLater(() -> {
                                 retryLabel.setText("Color already taken, please choose another.");
@@ -478,13 +451,10 @@ public class GUIPawnsController {
                 pause.play();
 
             }
-        }else {
-            root.getChildren().remove(overlay); // Remove overlay
         }
     }
 
     synchronized public void selectedRed() {
-        root.getChildren().add(overlay); // Add overlay
         if (redPane.getOpacity() != 0 && !pawnSelected) {
             pawnSelected = true;
             if (network == 1) {
@@ -521,7 +491,6 @@ public class GUIPawnsController {
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     } catch (ColorAlreadyTakenException e) {
-                        root.getChildren().remove(overlay); // Remove overlay
                         pawnSelected = false;
                         Platform.runLater(() -> {
                             retryLabel.setText("Color already taken, please choose another.");
@@ -543,7 +512,6 @@ public class GUIPawnsController {
                     try {
                         clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.RED);
                         if(clientSCK.getErrorState()){
-                            root.getChildren().remove(overlay); // Remove overlay
                             pawnSelected = false;
                             Platform.runLater(() -> {
                                 retryLabel.setText("Color already taken, please choose another.");
@@ -592,8 +560,6 @@ public class GUIPawnsController {
                 pause.play();
 
             }
-        }else{
-            root.getChildren().remove(overlay); // Remove overlay
         }
     }
 
@@ -642,13 +608,5 @@ public class GUIPawnsController {
                 }
             });
         }
-    }
-
-    public void setRoot(StackPane root) {
-        this.root=root;
-    }
-
-    public void setOverlay(Rectangle overlay) {
-        this.overlay=overlay;
     }
 }
