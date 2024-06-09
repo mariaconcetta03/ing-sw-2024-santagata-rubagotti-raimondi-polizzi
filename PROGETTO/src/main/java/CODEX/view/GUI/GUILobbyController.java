@@ -14,7 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -69,7 +69,7 @@ public class GUILobbyController {
     private Stage stage;
     private Thread pointsThread=null;
     boolean lobbyHasStarted=false;
-    private StackPane root;
+    private AnchorPane root;
     private Rectangle overlay;
 
 
@@ -204,7 +204,7 @@ public class GUILobbyController {
 
         // let's show the new window!
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/pawns.fxml"));
-        StackPane nextRoot = null;
+        AnchorPane nextRoot = null;
         try {
             nextRoot = fxmlLoader.load();
         } catch (IOException e) {
@@ -294,8 +294,9 @@ public class GUILobbyController {
                 clientSCK.setDone(true);
             }
         }
-        root.getChildren().remove(overlay); // Remove overlay
-        stage.setScene(scene); //questo è il momento in cui la nuova scena viene mostrata
+        Platform.runLater(() -> {
+            root.getChildren().remove(overlay); // Add overlay
+        });        stage.setScene(scene); //questo è il momento in cui la nuova scena viene mostrata
 
         // setting the od values of position and dimension
         stage.setWidth(width);
@@ -309,8 +310,9 @@ public class GUILobbyController {
 
 
     public void joinLobby() {
-        root.getChildren().add(overlay); // Add overlay
-        fullLobby.setOpacity(0);
+        Platform.runLater(() -> {
+            root.getChildren().add(overlay); // Add overlay
+        });        fullLobby.setOpacity(0);
         if (availableLobbies.getValue() != null) {
             if (network == 1) {
                 try {
@@ -323,7 +325,9 @@ public class GUILobbyController {
                 } catch (RemoteException | GameNotExistsException | NotBoundException e) {
                     throw new RuntimeException(e);
                 } catch (GameAlreadyStartedException | FullLobbyException e) {
-                    root.getChildren().remove(overlay); // Remove overlay
+                    Platform.runLater(() -> {
+                        root.getChildren().remove(overlay); // Add overlay
+                    });
                     fullLobby.setOpacity(1); // shows the message error "This lobby is full"
                     updateAvailableLobbies(); // updates the available lobbies
                 }
@@ -334,7 +338,9 @@ public class GUILobbyController {
                 }
                 if(clientSCK.getErrorState()) {
                     clientSCK.setErrorState(false);
-                    root.getChildren().remove(overlay); // Remove overlay
+                    Platform.runLater(() -> {
+                        root.getChildren().add(overlay); // Add overlay
+                    });
                     fullLobby.setOpacity(1); // shows the message error "This lobby is full"
                     updateAvailableLobbies(); // updates the available lobbies
                 }else{
@@ -343,8 +349,9 @@ public class GUILobbyController {
                 }
             }
         }else{
-            root.getChildren().remove(overlay); // Remove overlay
-        }
+            Platform.runLater(() -> {
+                root.getChildren().remove(overlay); // Add overlay
+            });        }
     }
 
 
@@ -368,8 +375,10 @@ public class GUILobbyController {
 
 
     public void createNewLobby(){
+        Platform.runLater(() -> {
             root.getChildren().add(overlay); // Add overlay
-            wrongNumber.setOpacity(0);
+        });
+        wrongNumber.setOpacity(0);
             int number;
             String input = createText.getText();
             if (!input.isBlank() && (input.equals("2") || input.equals("3") || input.equals("4"))) {
@@ -425,7 +434,7 @@ public class GUILobbyController {
             System.out.println("lobbyHasStarted: "+ lobbyHasStarted);
     }
 
-    public void setRoot(StackPane root) {
+    public void setRoot(AnchorPane root) {
         this.root=root;
     }
 

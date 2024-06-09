@@ -15,7 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -32,7 +32,7 @@ public class GUINicknameController {
     private int network = 0; // it means that user hasn't chosen (1 = rmi  2 = sck)
     private RMIClient rmiClient;
     private ClientSCK clientSCK;
-    private StackPane root;
+    private AnchorPane root;
     private Rectangle overlay;
 
     public void setStage(Stage stage) {
@@ -49,7 +49,9 @@ public class GUINicknameController {
 
 
     public void sendNickname() throws IOException {
-        root.getChildren().add(overlay); // Add overlay
+        Platform.runLater(() -> {
+            root.getChildren().add(overlay); // Add overlay
+        });
         String input = nickname.getText();
         if(!input.isBlank()) {
             System.out.println(nickname.getCharacters());
@@ -67,7 +69,9 @@ public class GUINicknameController {
             }
 
             if (!correctNickname) {
-                root.getChildren().remove(overlay); // Remove overlay
+                Platform.runLater(() -> {
+                    root.getChildren().remove(overlay); // Add overlay
+                });
                 nicknameUsed.setText("WARNING! The nickname you have selected is already in use, please retry ");
                 nicknameUsed.setOpacity(1); // shows the message error
                 nickname.clear(); // se il nick è sbagliato, allora cancello il field in modo che l'utente inserisca daccapo
@@ -76,7 +80,7 @@ public class GUINicknameController {
 
                 // let's show the new window!
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lobby.fxml"));
-                StackPane nextRoot  = fxmlLoader.load();
+                AnchorPane nextRoot  = fxmlLoader.load();
                 Scene scene = new Scene(nextRoot);
                 // Create a transparent overlay
                 Rectangle nextOverlay = new Rectangle();
@@ -149,7 +153,9 @@ public class GUINicknameController {
                     ctr.setClientSCK(clientSCK);
                     ctr.setNetwork(2);
                 }
-                root.getChildren().remove(overlay); // Remove overlay
+                Platform.runLater(() -> {
+                    root.getChildren().remove(overlay); // Add overlay
+                });
                 // new scene
                 stage.setScene(scene); //viene mostrata la nuova scena
             }
@@ -190,7 +196,7 @@ public class GUINicknameController {
         });
     }
 
-    public void setRoot(StackPane root) {
+    public void setRoot(AnchorPane root) {
         this.root=root;
     }
 

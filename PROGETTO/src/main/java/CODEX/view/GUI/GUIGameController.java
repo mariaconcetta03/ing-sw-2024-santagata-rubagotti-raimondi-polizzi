@@ -19,7 +19,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -163,7 +163,7 @@ public class GUIGameController {
     private Label selectedCardLabel;
     @FXML
     private Label boardLabel;
-    private StackPane root;
+    private AnchorPane root;
     private Rectangle overlay;
 
 
@@ -2298,7 +2298,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
         this.objectiveCardselected = objectiveCardselected;
     }
 
-    public void setRoot(StackPane root) {
+    public void setRoot(AnchorPane root) {
     this.root=root;
     }
 

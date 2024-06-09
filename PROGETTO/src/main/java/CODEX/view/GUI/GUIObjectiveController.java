@@ -12,7 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -63,7 +63,7 @@ public class GUIObjectiveController {
     private int network = 0; //1 = rmi  2 = sck
     private boolean objectiveSelected = false;
     private ObjectiveCard objectiveCardselected=null;
-    private StackPane root;
+    private AnchorPane root;
     private Rectangle overlay;
 
 
@@ -77,7 +77,7 @@ public class GUIObjectiveController {
 
 
     public synchronized void selectedRightObjective () {
-        root.getChildren().add(overlay); // Add overlay
+        Platform.runLater(() ->root.getChildren().add(overlay)); // Add overlay
         if (!objectiveSelected) {
             objectiveSelected = true;
 
@@ -128,7 +128,7 @@ public class GUIObjectiveController {
 
 
     public synchronized void selectedLeftObjective () { // objectiveCard 1 --> get(0)
-        root.getChildren().add(overlay); // Add overlay
+        Platform.runLater(() ->root.getChildren().add(overlay)); // Add overlay
         if (!objectiveSelected) {
             objectiveSelected = true;
             new Thread(() -> {
@@ -175,7 +175,7 @@ public class GUIObjectiveController {
     public void changeScene() throws RemoteException {
         // let's show the new window!
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/game.fxml"));
-        StackPane nextRoot = null;
+        AnchorPane nextRoot = null;
         try {
             nextRoot = fxmlLoader.load();
         } catch (IOException e) {
@@ -268,7 +268,7 @@ public class GUIObjectiveController {
             GUIGameController finalCtr = ctr;
             stage.setOnCloseRequest(event -> finalCtr.leaveGame());
 
-            root.getChildren().remove(overlay); // Remove overlay
+            Platform.runLater(() ->root.getChildren().remove(overlay)); // Remove overlay
             stage.setScene(scene); //viene già qui mostrata la scena : nel caso in in cui arrivi prima un evento di disconnessione questa scena non verrà mai mostrata
 
             // setting the od values of position and dimension
@@ -430,7 +430,7 @@ public class GUIObjectiveController {
         this.disconnectionLock = disconnectionLock;
     }
 
-    public void setRoot(StackPane root) {
+    public void setRoot(AnchorPane root) {
         this.root=root;
     }
 
