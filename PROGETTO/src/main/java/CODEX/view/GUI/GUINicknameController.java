@@ -1,6 +1,7 @@
 package CODEX.view.GUI;
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 
 import java.io.IOException;
@@ -14,7 +15,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.scene.input.MouseEvent;
 
 public class GUINicknameController {
 
@@ -27,6 +32,9 @@ public class GUINicknameController {
     private int network = 0; // it means that user hasn't chosen (1 = rmi  2 = sck)
     private RMIClient rmiClient;
     private ClientSCK clientSCK;
+    private StackPane root;
+    private Rectangle overlay;
+
     public void setStage(Stage stage) {
         this.stage = stage;
     }
@@ -41,6 +49,7 @@ public class GUINicknameController {
 
 
     public void sendNickname() throws IOException {
+        root.getChildren().add(overlay); // Add overlay
         String input = nickname.getText();
         if(!input.isBlank()) {
             System.out.println(nickname.getCharacters());
@@ -58,6 +67,7 @@ public class GUINicknameController {
             }
 
             if (!correctNickname) {
+                root.getChildren().remove(overlay); // Remove overlay
                 nicknameUsed.setText("WARNING! The nickname you have selected is already in use, please retry ");
                 nicknameUsed.setOpacity(1); // shows the message error
                 nickname.clear(); // se il nick è sbagliato, allora cancello il field in modo che l'utente inserisca daccapo
@@ -66,8 +76,20 @@ public class GUINicknameController {
 
                 // let's show the new window!
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lobby.fxml"));
-                Scene scene = new Scene(fxmlLoader.load());
+                StackPane nextRoot  = fxmlLoader.load();
+                Scene scene = new Scene(nextRoot);
+                // Create a transparent overlay
+                Rectangle nextOverlay = new Rectangle();
+                nextOverlay.setFill(Color.TRANSPARENT);
+                nextOverlay.setOnMouseClicked(MouseEvent::consume); // Consume all mouse clicks
+
+                // Bind the overlay's size to the root's size
+                nextOverlay.widthProperty().bind(nextRoot.widthProperty());
+                nextOverlay.heightProperty().bind(nextRoot.heightProperty());
+
                 GUILobbyController ctr = fxmlLoader.getController();
+                ctr.setRoot (nextRoot );
+                ctr.setOverlay(nextOverlay);
                 if(network==1){
                     synchronized (rmiClient.getGuiGamestateLock()) {
                         rmiClient.setGuiLobbyController(ctr);
@@ -102,8 +124,7 @@ public class GUINicknameController {
                 double x = stage.getX();
                 double y = stage.getY();
 
-                // new scene
-                stage.setScene(scene);
+
 
                 // setting the od values of position and dimension
                 stage.setWidth(width);
@@ -128,8 +149,12 @@ public class GUINicknameController {
                     ctr.setClientSCK(clientSCK);
                     ctr.setNetwork(2);
                 }
+                root.getChildren().remove(overlay); // Remove overlay
+                // new scene
+                stage.setScene(scene); //viene mostrata la nuova scena
             }
         }else {
+            root.getChildren().remove(overlay); // Remove overlay
             nicknameUsed.setText("INVALID NICKNAME");
             nicknameUsed.setOpacity(1);
             nickname.clear();
@@ -163,6 +188,14 @@ public class GUINicknameController {
                 nicknameUsed.setOpacity(0);
             }
         });
+    }
+
+    public void setRoot(StackPane root) {
+        this.root=root;
+    }
+
+    public void setOverlay(Rectangle overlay) {
+        this.overlay=overlay;
     }
 }
 

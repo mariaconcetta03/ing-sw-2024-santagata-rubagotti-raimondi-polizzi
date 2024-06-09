@@ -13,6 +13,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 
@@ -65,7 +69,8 @@ public class GUILobbyController {
     private Stage stage;
     private Thread pointsThread=null;
     boolean lobbyHasStarted=false;
-
+    private StackPane root;
+    private Rectangle overlay;
 
 
     public void setAvailableLobbies(List<Integer> lobby){
@@ -199,9 +204,9 @@ public class GUILobbyController {
 
         // let's show the new window!
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/pawns.fxml"));
-        Parent root = null;
+        StackPane nextRoot = null;
         try {
-            root = fxmlLoader.load();
+            nextRoot = fxmlLoader.load();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -262,7 +267,19 @@ public class GUILobbyController {
 
         // new scene
         Scene scene;
-        scene = new Scene(root);
+        scene = new Scene(nextRoot);
+
+        // Create a transparent overlay
+        Rectangle nextOverlay = new Rectangle();
+        nextOverlay.setFill(Color.TRANSPARENT);
+        nextOverlay.setOnMouseClicked(MouseEvent::consume); // Consume all mouse clicks
+
+        // Bind the overlay's size to the root's size
+        nextOverlay.widthProperty().bind(nextRoot.widthProperty());
+        nextOverlay.heightProperty().bind(nextRoot.heightProperty());
+
+        ctr.setRoot (nextRoot);
+        ctr.setOverlay(nextOverlay);
 
         if(network==1){
             synchronized (rmiClient.getGuiPawnsControllerLock()) {
@@ -277,7 +294,7 @@ public class GUILobbyController {
                 clientSCK.setDone(true);
             }
         }
-
+        root.getChildren().remove(overlay); // Remove overlay
         stage.setScene(scene); //questo è il momento in cui la nuova scena viene mostrata
 
         // setting the od values of position and dimension
@@ -292,6 +309,7 @@ public class GUILobbyController {
 
 
     public void joinLobby() {
+        root.getChildren().add(overlay); // Add overlay
         fullLobby.setOpacity(0);
         if (availableLobbies.getValue() != null) {
             if (network == 1) {
@@ -305,21 +323,27 @@ public class GUILobbyController {
                 } catch (RemoteException | GameNotExistsException | NotBoundException e) {
                     throw new RuntimeException(e);
                 } catch (GameAlreadyStartedException | FullLobbyException e) {
+                    root.getChildren().remove(overlay); // Remove overlay
                     fullLobby.setOpacity(1); // shows the message error "This lobby is full"
                     updateAvailableLobbies(); // updates the available lobbies
                 }
             } else if (network == 2) {
                 try {
                     clientSCK.addPlayerToLobby(clientSCK.getPersonalPlayer().getNickname(), availableLobbies.getValue());
-                    clientSCK.checkNPlayers(); // starts the game if the number of players is correct
-                    setWaitingPlayers();
-                } catch (GameNotExistsException | NotBoundException | RemoteException e) {
-                    throw new RuntimeException(e);
-                } catch (GameAlreadyStartedException | FullLobbyException e) {
+                } catch (Exception ignored) {
+                }
+                if(clientSCK.getErrorState()) {
+                    clientSCK.setErrorState(false);
+                    root.getChildren().remove(overlay); // Remove overlay
                     fullLobby.setOpacity(1); // shows the message error "This lobby is full"
                     updateAvailableLobbies(); // updates the available lobbies
+                }else{
+                    clientSCK.checkNPlayers(); // starts the game if the number of players is correct
+                    setWaitingPlayers();
                 }
             }
+        }else{
+            root.getChildren().remove(overlay); // Remove overlay
         }
     }
 
@@ -344,6 +368,7 @@ public class GUILobbyController {
 
 
     public void createNewLobby(){
+            root.getChildren().add(overlay); // Add overlay
             wrongNumber.setOpacity(0);
             int number;
             String input = createText.getText();
@@ -363,6 +388,7 @@ public class GUILobbyController {
                 updateAvailableLobbies();
                 setWaitingPlayers();
             } else {
+                root.getChildren().remove(overlay); // Remove overlay
                 wrongNumber.setOpacity(1);
             }
     }
@@ -397,5 +423,13 @@ public class GUILobbyController {
             lobbyHasStarted=true;
 
             System.out.println("lobbyHasStarted: "+ lobbyHasStarted);
+    }
+
+    public void setRoot(StackPane root) {
+        this.root=root;
+    }
+
+    public void setOverlay(Rectangle overlay) {
+        this.overlay=overlay;
     }
 }

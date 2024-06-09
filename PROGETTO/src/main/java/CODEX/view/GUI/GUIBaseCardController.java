@@ -9,6 +9,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import java.awt.image.*;
 import javafx.scene.image.Image;
@@ -48,6 +52,8 @@ public class GUIBaseCardController {
     private boolean baseCardPlayed = false;
     private GUIObjectiveController ctr;
     private int network = 0; //1 = rmi  2 = sck
+    private StackPane root;
+    private Rectangle overlay;
 
 
     public void setBaseCard1(int cardID) {
@@ -65,6 +71,7 @@ public class GUIBaseCardController {
     }
 
     public synchronized void selectedFront() {
+        root.getChildren().add(overlay); // Add overlay
 // third thread to change the scene always in JAVA FX thread
         Platform.runLater(() -> {
             stateLabel.setText("Front side selected! Now wait for everyone to choose.");
@@ -106,6 +113,7 @@ public class GUIBaseCardController {
 
 
     public synchronized void selectedBack() {
+    root.getChildren().add(overlay); // Add overlay
     // third thread to change the scene always in JAVA FX thread
         if (!baseCardPlayed) {
             baseCardPlayed = true;
@@ -176,9 +184,9 @@ public class GUIBaseCardController {
     public void changeScene() {
         // let's show the new window!
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/objective.fxml"));
-        Parent root = null;
+        StackPane nextRoot = null;
         try {
-            root = fxmlLoader.load();
+            nextRoot = fxmlLoader.load();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -267,9 +275,21 @@ public class GUIBaseCardController {
 
             // new scene
             Scene scene;
-            scene = new Scene(root);
+            scene = new Scene(nextRoot);
 
+            // Create a transparent overlay
+            Rectangle nextOverlay = new Rectangle();
+            nextOverlay.setFill(Color.TRANSPARENT);
+            nextOverlay.setOnMouseClicked(MouseEvent::consume); // Consume all mouse clicks
 
+            // Bind the overlay's size to the root's size
+            nextOverlay.widthProperty().bind(nextRoot.widthProperty());
+            nextOverlay.heightProperty().bind(nextRoot.heightProperty());
+
+            ctr.setRoot (nextRoot);
+            ctr.setOverlay(nextOverlay);
+
+            root.getChildren().remove(overlay); // Remove overlay
             stage.setScene(scene); //viene già qui mostrata la scena : nel caso in in cui arrivi prima un evento di disconnessione questa scena non verrà mai mostrata
 
             // setting the od values of position and dimension
@@ -283,55 +303,6 @@ public class GUIBaseCardController {
         }
     }
 
-
-    public void checkDisconnection() {  //da migliorare: blocca la scelta della carta
-        /*
-
-        synchronized (clientSCK.getDisconnectionLock()) {
-            if(!clientSCK.getADisconnectionHappened()) {
-                while (!clientSCK.getADisconnectionHappened()) {
-                    try {
-                        clientSCK.getDisconnectionLock().wait();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        }
-
-        System.out.println("rilevata disconnessione");
-        //changeScene():
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/handleDisconnection.fxml"));
-        Parent root = null;
-        try {
-            root = fxmlLoader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        double width = stage.getWidth();
-        double height = stage.getHeight();
-        double x = stage.getX();
-        double y = stage.getY();
-
-        // new scene
-        Scene scene;
-        scene = new Scene(root);
-
-        stage.setScene(scene);
-
-        // setting the od values of position and dimension
-        stage.setWidth(width);
-        stage.setHeight(height);
-        stage.setX(x);
-        stage.setY(y);
-
-        PauseTransition pause = new PauseTransition(Duration.seconds(9)); // 2 secondi di ritardo
-        pause.setOnFinished(event -> stageClose());
-        pause.play();
-
-         */
-    }
 
     public void startPeriodicDisconnectionCheck() {
         scheduler.scheduleAtFixedRate(() -> {
@@ -394,4 +365,11 @@ public class GUIBaseCardController {
     }
 
 
+    public void setRoot(StackPane root) {
+        this.root=root;
+    }
+
+    public void setOverlay(Rectangle overlay) {
+        this.overlay=overlay;
+    }
 }

@@ -18,9 +18,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.scene.input.MouseEvent;
 
 public class GUILoadingController {
 
@@ -43,13 +47,21 @@ public class GUILoadingController {
         stage.setTitle("Codex Naturalis");
         System.out.println("sto per fare fxmlloader di nickname... arriverà un messaggio di conferma quando ho finito");
         FXMLLoader fxmlLoader = new FXMLLoader(GUILoadingController.class.getResource("/nickname.fxml"));
-        Parent root = fxmlLoader.load();
+        StackPane nextRoot  = fxmlLoader.load();
         System.out.println("ho finito fxmlloader di nickname");
-        Scene scene = new Scene(root);
+        Scene scene = new Scene(nextRoot );
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-
-        stage.setWidth(primaryScreenBounds.getWidth() * 0.8);
-        stage.setHeight(primaryScreenBounds.getHeight() * 0.8);
+        double stageWidth=primaryScreenBounds.getWidth() * 0.8;
+        double stageHeight=primaryScreenBounds.getHeight() * 0.8;
+        stage.setWidth(stageWidth);
+        stage.setHeight(stageHeight);
+        // Create a transparent nextOverlay
+        Rectangle nextOverlay = new Rectangle();
+        nextOverlay.setFill(Color.TRANSPARENT);
+        nextOverlay.setOnMouseClicked(MouseEvent::consume); // Consume all mouse clicks
+        // Bind the nextOverlay's size to the nextRoot 's size
+        nextOverlay.widthProperty().bind(nextRoot .widthProperty());
+        nextOverlay.heightProperty().bind(nextRoot .heightProperty());
 
 //        Bind the stage size to screen dimensions (optional, for dynamic resizing)
 //        stage.widthProperty().bind(Bindings.createDoubleBinding(() ->
@@ -64,6 +76,8 @@ public class GUILoadingController {
         stage.setResizable(true);
         GUINicknameController controller = fxmlLoader.getController();
         controller.setNetwork(network);
+        controller.setRoot (nextRoot );
+        controller.setOverlay(nextOverlay);
         stage.setOnCloseRequest(event -> {
             if (network == 1) {
                 try {
@@ -110,4 +124,6 @@ public class GUILoadingController {
         this.rmiClient=rmiClient;
     }
 
+    public void setFXMLloader(FXMLLoader fxmlLoader) {
+    }
 }
