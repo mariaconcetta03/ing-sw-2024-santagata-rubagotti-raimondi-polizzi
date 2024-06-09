@@ -64,7 +64,21 @@ public class GUIPawnsController {
         while (ctr == null) {
             ctr = fxmlLoader.getController();
         }
+        stage.setOnCloseRequest(event -> {
+            if (network == 1) {
+                try {
+                    rmiClient.handleDisconnectionFunction();
+                } catch (RemoteException ignored) {
 
+                }
+            } else if (network == 2) {
+                try {
+                    clientSCK.handleDisconnectionFunction();
+                } catch (RemoteException ignored) {
+
+                }
+            }
+        });
         // setting the parameters in the new controller, also the BASE CARD (front and back)
         ctr.setStage(stage);
         ctr.setNetwork(network);

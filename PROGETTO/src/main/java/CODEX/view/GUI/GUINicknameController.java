@@ -79,6 +79,21 @@ public class GUINicknameController {
                         clientSCK.getGuiGamestateLock().notify();
                     }
                 }
+                stage.setOnCloseRequest(event -> {
+                    if (network == 1) {
+                        try {
+                            rmiClient.handleDisconnectionFunction();
+                        } catch (RemoteException ignored) {
+
+                        }
+                    } else if (network == 2) {
+                        try {
+                            clientSCK.handleDisconnectionFunction();
+                        } catch (RemoteException ignored) {
+
+                        }
+                    }
+                });
                 ctr.setStage(stage);
 
                 // old dimensions and position
