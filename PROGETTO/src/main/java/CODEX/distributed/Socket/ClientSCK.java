@@ -147,10 +147,10 @@ public class ClientSCK implements ClientGeneralInterface {
      * Constructor method
      * @throws IOException
      */
-    public ClientSCK() throws IOException { //we call this constructor after we ask the IP address and the port of the server
+    public ClientSCK(String serverAddress) throws IOException { //we call this constructor after we ask the IP address and the port of the server
         this.socket = new Socket();
         // this.socket.connect(new InetSocketAddress(Settings.SERVER_NAME, Settings.PORT), 1000); //the address and the port of the server
-        InetAddress inetAddress = InetAddress.getByName("localhost");
+        InetAddress inetAddress = InetAddress.getByName(serverAddress);
         int port = 1085; // Porta del server
         SocketAddress socketAddress = new InetSocketAddress(inetAddress, port);
         socket.connect(socketAddress);
