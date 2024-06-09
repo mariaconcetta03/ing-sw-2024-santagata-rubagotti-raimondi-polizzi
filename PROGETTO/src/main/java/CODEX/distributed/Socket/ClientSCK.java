@@ -1260,6 +1260,7 @@ public class ClientSCK implements ClientGeneralInterface {
             } else if (gameState.equals(Game.GameState.ENDING)) {
 
             }else if(gameState.equals(Game.GameState.ENDED)){ //we do not return to the lobby -> we have to close the connection and stop the threads
+                /*
                 System.out.println("game state: ENDED");
                 running=false;
                 inGame=false;
@@ -1272,6 +1273,8 @@ public class ClientSCK implements ClientGeneralInterface {
                 }
                 //the TimerTask that checks the connection should end by itself when the application ends
                 this.timer.cancel(); //to be sure
+
+                 */
 
             }
         } else if (selectedView == 2) {

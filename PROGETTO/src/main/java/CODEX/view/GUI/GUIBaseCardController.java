@@ -64,7 +64,7 @@ public class GUIBaseCardController {
         baseCard2.setImage(image);
     }
 
-    public void selectedFront() {
+    public synchronized void selectedFront() {
 // third thread to change the scene always in JAVA FX thread
         Platform.runLater(() -> {
             stateLabel.setText("Front side selected! Now wait for everyone to choose.");
@@ -105,7 +105,7 @@ public class GUIBaseCardController {
     }
 
 
-    public void selectedBack() {
+    public synchronized void selectedBack() {
 // third thread to change the scene always in JAVA FX thread
         Platform.runLater(() -> {
             stateLabel.setText("Back side selected! Now wait for everyone to choose.");

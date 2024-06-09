@@ -2,6 +2,7 @@ package CODEX.view.GUI;
 
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
+import CODEX.org.model.ObjectiveCard;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -57,6 +58,7 @@ public class GUIObjectiveController {
     private int card3ID;
     private int network = 0; //1 = rmi  2 = sck
     private boolean objectiveSelected = false;
+    private ObjectiveCard objectiveCardselected=null;
 
 
 
@@ -69,7 +71,7 @@ public class GUIObjectiveController {
     // è iniziata. ora si puo iniziare a giocare
 
 
-    public void selectedRightObjective () {
+    public synchronized void selectedRightObjective () {
 
 
         new Thread(() -> {
@@ -78,13 +80,15 @@ public class GUIObjectiveController {
                 try {
                     rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(1));
                     rmiClient.getGameController().checkObjectiveCardChosen();
+                    objectiveCardselected=rmiClient.getPersonalPlayer().getPersonalObjectives().get(1);
                 } catch (RemoteException | NotBoundException e) {
                     throw new RuntimeException(e);
                 }
             }else if (network == 2 && !objectiveSelected) {
                 try {
                     clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(1));
-                    clientSCK.checkObjectiveCardChosen(); //to be implemented
+                    clientSCK.checkObjectiveCardChosen();
+                    objectiveCardselected=clientSCK.getPersonalPlayer().getPersonalObjectives().get(1);
                 } catch (RemoteException | NotBoundException e) {
                     throw new RuntimeException(e);
                 }
@@ -114,13 +118,14 @@ public class GUIObjectiveController {
     }
 
 
-    public void selectedLeftObjective () { // objectiveCard 1 --> get(0)
+    public synchronized void selectedLeftObjective () { // objectiveCard 1 --> get(0)
 
         new Thread(() -> {
             if (network == 1 && !objectiveSelected) {
                 try {
                     rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(0));
                     rmiClient.getGameController().checkObjectiveCardChosen();
+                    objectiveCardselected=rmiClient.getPersonalPlayer().getPersonalObjectives().get(0);
                 } catch (RemoteException | NotBoundException e) {
                     throw new RuntimeException(e);
                 }
@@ -128,6 +133,7 @@ public class GUIObjectiveController {
                 try {
                     clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(0));
                     clientSCK.checkObjectiveCardChosen(); //to be implemented
+                    objectiveCardselected=clientSCK.getPersonalPlayer().getPersonalObjectives().get(0);
                 } catch (RemoteException | NotBoundException e) {
                     throw new RuntimeException(e);
                 }
@@ -213,6 +219,7 @@ public class GUIObjectiveController {
             }
         }
         if ((network == 1)||(network == 2 && !clientSCK.getADisconnectionHappened())) {
+            ctr.setObjectiveCardselected(objectiveCardselected);
             ctr.setAllFeatures();
 
             // old dimensions and position

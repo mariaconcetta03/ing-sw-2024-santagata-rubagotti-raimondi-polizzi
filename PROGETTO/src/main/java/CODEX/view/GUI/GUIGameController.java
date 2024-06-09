@@ -72,6 +72,7 @@ public class GUIGameController {
     private Integer p3Counter=1;
     private Integer p4Counter=1;
     private Integer emptySpace=0;
+    private ObjectiveCard objectiveCardselected=null;
 
     //IDEA: confrontiamo le playable position precedenti con quelle nuove: controlliamo le posizioni della matrice dove è stata tolta una playable position per vedere se è stata aggiunta una carta
     //OPPURE: MOLTO MEGLIO -> ci facciamo arrivare assieme alla board la carta che è stata aggiunta (che ha già dentro di sè le coordinate giuste)
@@ -508,7 +509,7 @@ public void updateLabel(Label label, String text){
 
             // SETTING THE PERSONAL OBJECTIVE
             String path;
-            path = "/images/cards/front/  (" + rmiClient.getPersonalPlayer().getPersonalObjective().getId() + ").png";
+            path = "/images/cards/front/  (" + objectiveCardselected.getId() + ").png";
             Image persObj = new Image(getClass().getResourceAsStream(path));
             personalObj.setImage(persObj);
 
@@ -580,7 +581,7 @@ public void updateLabel(Label label, String text){
 
             // SETTING THE PERSONAL OBJECTIVE
             String path;
-            path = "/images/cards/front/  (" + clientSCK.getPersonalPlayer().getPersonalObjective().getId() + ").png";
+            path = "/images/cards/front/  (" + objectiveCardselected.getId() + ").png";
             Image persObj = new Image(getClass().getResourceAsStream(path));
             personalObj.setImage(persObj);
 
@@ -1264,7 +1265,7 @@ public void updateLabel(Label label, String text){
     }
 
 
-    public void drawCardFromRD() {
+    public synchronized void drawCardFromRD() {
         if(!finishedRD) {
             if (emptySpace != 0 && !lastRound) {
                 Integer temp = emptySpace;
@@ -1312,7 +1313,7 @@ public void updateLabel(Label label, String text){
 
     }
 
-    public void drawCardFromGD() {
+    public synchronized void drawCardFromGD() {
 
         if(!finishedGD) {
             if (emptySpace != 0 && !lastRound) {
@@ -1358,7 +1359,7 @@ public void updateLabel(Label label, String text){
         }
     }
 
-    public void drawCardFromRC1(){
+    public synchronized void drawCardFromRC1(){
         if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
             emptySpace=0;
@@ -1398,7 +1399,7 @@ public void updateLabel(Label label, String text){
 
     }
 
-    public void drawCardFromRC2(){
+    public synchronized void drawCardFromRC2(){
         if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
             emptySpace=0;
@@ -1437,7 +1438,7 @@ public void updateLabel(Label label, String text){
 
     }
 
-    public void drawCardFromGC1(){
+    public synchronized void drawCardFromGC1(){
         if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
             emptySpace=0;
@@ -1475,7 +1476,7 @@ public void updateLabel(Label label, String text){
 
     }
 
-    public void drawCardFromGC2(){
+    public synchronized void drawCardFromGC2(){
         if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
             emptySpace=0;
@@ -1966,7 +1967,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                     showP1Board(); // RICARICO LA BOARD
                     //se è l'ultimo turno diciamo al giocatore che non può pescare una nuova carta
                     if(lastRound){
-                        selectedCardLabel.setText("This is your last round: YOU CAN'T DRAW ANY CARDS");
+                        selectedCardLabel.setText("This was your last round: YOU CAN'T DRAW ANY CARDS");
                     }
                 }
 
@@ -2280,4 +2281,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
         this.mediaPlayer = mp;
     }
 
+    public void setObjectiveCardselected(ObjectiveCard objectiveCardselected) {
+        this.objectiveCardselected = objectiveCardselected;
+    }
 }
