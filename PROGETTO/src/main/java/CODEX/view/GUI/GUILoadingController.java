@@ -64,6 +64,21 @@ public class GUILoadingController {
         stage.setResizable(true);
         GUINicknameController controller = fxmlLoader.getController();
         controller.setNetwork(network);
+        stage.setOnCloseRequest(event -> {
+            if (network == 1) {
+                try {
+                    rmiClient.handleDisconnectionFunction();
+                } catch (RemoteException ignored) {
+
+                }
+            } else if (network == 2) {
+                try {
+                    clientSCK.handleDisconnectionFunction();
+                } catch (RemoteException ignored) {
+
+                }
+            }
+        });
         if(clientSCK!=null){
             controller.setClientSCK(clientSCK);
         }else if (rmiClient!=null){

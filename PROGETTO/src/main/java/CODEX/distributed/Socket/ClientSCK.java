@@ -1530,9 +1530,15 @@ public class ClientSCK implements ClientGeneralInterface {
         running=false;
         inGame=false;
         try {
-            inputStream.close();
-            outputStream.close();
-            socket.close();
+            if(inputStream!=null) {
+                inputStream.close();
+            }
+            if(outputStream!=null){
+                outputStream.close();
+            }
+            if(socket!=null&&!socket.isClosed()) {
+                socket.close();
+            }
         } catch (IOException e) { //needed for the close clause
             throw new RuntimeException(e);
         }

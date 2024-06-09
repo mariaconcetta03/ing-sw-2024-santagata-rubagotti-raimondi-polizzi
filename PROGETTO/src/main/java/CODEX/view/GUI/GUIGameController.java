@@ -2228,7 +2228,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
         while (ctr == null) {
             ctr = fxmlLoader.getController();
         }
-
+        stage.setOnCloseRequest(event -> this.leaveGame());
         // setting the parameters in the new controller
         ctr.setStage(stage);
         ctr.setNetwork(network);

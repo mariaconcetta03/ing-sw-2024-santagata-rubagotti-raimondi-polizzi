@@ -225,6 +225,21 @@ public class GUILobbyController {
             }
         });
         // setting the parameters in the new controller, also the BASE CARD (front and back)
+        stage.setOnCloseRequest(event -> {
+            if (network == 1) {
+                try {
+                    rmiClient.handleDisconnectionFunction();
+                } catch (RemoteException ignored) {
+
+                }
+            } else if (network == 2) {
+                try {
+                    clientSCK.handleDisconnectionFunction();
+                } catch (RemoteException ignored) {
+
+                }
+            }
+        });
         ctr.setStage(stage);
         ctr.setNetwork(network);
         ctr.setClientSCK(clientSCK);
