@@ -179,8 +179,8 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                 }
                 game.setLastEvent(ErrorsAssociatedWithExceptions.OK);
             } catch (IllegalArgumentException e) {
-                game.setLastEvent(ErrorsAssociatedWithExceptions.UNABLE_TO_PLAY_CARD); //così però non me lo scrive...@TODO RIMUOVERE
-                throw e; //@TODO da rimuovere try/catch
+                game.setLastEvent(ErrorsAssociatedWithExceptions.UNABLE_TO_PLAY_CARD); //così però non me lo scrive...
+                throw e;
             }
         }
         game.setLastEvent(new OK(nickname));

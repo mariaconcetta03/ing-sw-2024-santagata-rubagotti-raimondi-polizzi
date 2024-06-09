@@ -204,11 +204,19 @@
         </VBox>
         <StackPane AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="14.0">
             <children>
+                <HBox alignment="CENTER_RIGHT" prefHeight="38.0" prefWidth="284.0">
+                    <Button alignment="CENTER" mnemonicParsing="false" onAction="#musicONOFF" prefHeight="38.0" prefWidth="145.0" text="MUSIC ON/OFF" textFill="#c90101">
+                        <font>
+                            <Font name="Georgia" size="15.0" />
+                        </font>
+                    </Button>
+                    <Separator opacity="0.0" prefWidth="7.0" />
                 <Button alignment="CENTER" mnemonicParsing="false" onAction="#leaveGame" prefHeight="38.0" prefWidth="139.0" text="LEAVE GAME" textFill="#c90101">
                     <font>
                         <Font name="Georgia Bold" size="15.0" />
                     </font>
                 </Button>
+                </HBox>
             </children>
         </StackPane>
         <StackPane prefHeight="200.0" prefWidth="139.0" AnchorPane.bottomAnchor="-20.0" AnchorPane.rightAnchor="0.0">

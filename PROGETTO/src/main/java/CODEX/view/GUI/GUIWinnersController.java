@@ -49,6 +49,15 @@ public class GUIWinnersController {
     private Label points3;
     @FXML
     private Label points4;
+    @FXML
+    private Label obj1;
+    @FXML
+    private Label obj2;
+    @FXML
+    private Label obj3;
+    @FXML
+    private Label obj4;
+
 
 
 
@@ -94,10 +103,16 @@ public class GUIWinnersController {
             points2.setOpacity(1);
             points3.setOpacity(0);
             points4.setOpacity(0);
+            obj1.setOpacity(1);
+            obj2.setOpacity(1);
+            obj3.setOpacity(0);
+            obj4.setOpacity(0);
             player1.setText(allPlayers.get(0).getNickname());
             player2.setText(allPlayers.get(1).getNickname());
             points1.setText(String.valueOf(allPlayers.get(0).getPoints()) + " pt");
             points2.setText(String.valueOf(allPlayers.get(1).getPoints()) + " pt");
+            obj1.setText(String.valueOf(allPlayers.get(0).getNumObjectivesReached()));
+            obj2.setText(String.valueOf(allPlayers.get(1).getNumObjectivesReached()));
 
         } else if (allPlayers.size() == 3) {
             position1.setOpacity(1);
@@ -112,12 +127,19 @@ public class GUIWinnersController {
             points2.setOpacity(1);
             points3.setOpacity(1);
             points4.setOpacity(0);
+            obj1.setOpacity(1);
+            obj2.setOpacity(1);
+            obj3.setOpacity(1);
+            obj4.setOpacity(0);
             player1.setText(allPlayers.get(0).getNickname());
             player2.setText(allPlayers.get(1).getNickname());
             player3.setText(allPlayers.get(2).getNickname());
             points1.setText(String.valueOf(allPlayers.get(0).getPoints()) + " pt");
             points2.setText(String.valueOf(allPlayers.get(1).getPoints()) + " pt");
             points3.setText(String.valueOf(allPlayers.get(2).getPoints()) + " pt");
+            obj1.setText(String.valueOf(allPlayers.get(0).getNumObjectivesReached()));
+            obj2.setText(String.valueOf(allPlayers.get(1).getNumObjectivesReached()));
+            obj3.setText(String.valueOf(allPlayers.get(2).getNumObjectivesReached()));
 
         } else if (allPlayers.size() == 4) {
             position1.setOpacity(1);
@@ -132,6 +154,10 @@ public class GUIWinnersController {
             points2.setOpacity(1);
             points3.setOpacity(1);
             points4.setOpacity(1);
+            obj1.setOpacity(1);
+            obj2.setOpacity(1);
+            obj3.setOpacity(1);
+            obj4.setOpacity(1);
             player1.setText(allPlayers.get(0).getNickname());
             player2.setText(allPlayers.get(1).getNickname());
             player3.setText(allPlayers.get(2).getNickname());
@@ -140,7 +166,10 @@ public class GUIWinnersController {
             points2.setText(String.valueOf(allPlayers.get(1).getPoints()) + " pt");
             points3.setText(String.valueOf(allPlayers.get(2).getPoints()) + " pt");
             points4.setText(String.valueOf(allPlayers.get(3).getPoints()) + " pt");
-
+            obj1.setText(String.valueOf(allPlayers.get(0).getNumObjectivesReached()));
+            obj2.setText(String.valueOf(allPlayers.get(1).getNumObjectivesReached()));
+            obj3.setText(String.valueOf(allPlayers.get(2).getNumObjectivesReached()));
+            obj4.setText(String.valueOf(allPlayers.get(3).getNumObjectivesReached()));
         }
 
         // SETTING THE CORRECT POSITION (TEXT) LABELS FOR THE FIRST POSITION TIE
@@ -172,24 +201,28 @@ public class GUIWinnersController {
 
         // HIGHLIGHTING THE POSITION OF THE CURRENT PLAYER: HIS LINE HAS A DIFFERENT COLOUR
         if (personalPlayer.getNickname().equals(allPlayers.get(0).getNickname())) {
-            position1.setStyle("-fx-text-fill: #2a00d3;");
-            points1.setStyle("-fx-text-fill: #2a00d3;");
-            player1.setStyle("-fx-text-fill: #2a00d3;");
+            position1.setStyle("-fx-text-fill: #a20062;");
+            points1.setStyle("-fx-text-fill: #a20062;");
+            player1.setStyle("-fx-text-fill: #a20062;");
+            obj1.setStyle("-fx-text-fill: #a20062;");
 
         } else if (personalPlayer.getNickname().equals(allPlayers.get(1).getNickname())) {
-            position2.setStyle("-fx-text-fill: #2a00d3;");
-            points2.setStyle("-fx-text-fill: #2a00d3;");
-            player2.setStyle("-fx-text-fill: #2a00d3;");
+            position2.setStyle("-fx-text-fill: #a20062;");
+            points2.setStyle("-fx-text-fill: #a20062;");
+            player2.setStyle("-fx-text-fill: #a20062;");
+            obj2.setStyle("-fx-text-fill: #a20062;");
 
         } else if (personalPlayer.getNickname().equals(allPlayers.get(2).getNickname())) {
-            position3.setStyle("-fx-text-fill: #2a00d3;");
-            points3.setStyle("-fx-text-fill: #2a00d3;");
-            player3.setStyle("-fx-text-fill: #2a00d3;");
+            position3.setStyle("-fx-text-fill: #a20062;");
+            points3.setStyle("-fx-text-fill: #a20062;");
+            player3.setStyle("-fx-text-fill: #a20062;");
+            obj3.setStyle("-fx-text-fill: #a20062;");
 
         } else if (personalPlayer.getNickname().equals(allPlayers.get(3).getNickname())) {
-            position4.setStyle("-fx-text-fill: #2a00d3;");
-            points4.setStyle("-fx-text-fill: #2a00d3;");
-            player4.setStyle("-fx-text-fill: #2a00d3;");
+            position4.setStyle("-fx-text-fill: #a20062;");
+            points4.setStyle("-fx-text-fill: #a20062;");
+            player4.setStyle("-fx-text-fill: #a20062;");
+            obj4.setStyle("-fx-text-fill: #a20062;");
 
         }
 

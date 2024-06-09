@@ -19,6 +19,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
 import javafx.util.Duration;
@@ -78,6 +79,8 @@ public class GUIGameController {
     private Set<Coordinates> p3PlayablePositions;
     private Set<Coordinates> p4PlayablePositions;
     private boolean lastRound=false;
+    private MediaPlayer mediaPlayer;
+    private boolean playingMusic = true;
 
 
 
@@ -645,6 +648,15 @@ public void updateLabel(Label label, String text){
                 player1Nickname.setStyle("-fx-text-fill: green;");
             }
             player2Nickname.setText(playersInOrder.get(1).getNickname());
+            if (playersInOrder.get(1).getChosenColor() == Pawn.RED) {
+                player2Nickname.setStyle("-fx-text-fill: red;");
+            } else if (playersInOrder.get(1).getChosenColor() == Pawn.BLUE) {
+                player2Nickname.setStyle("-fx-text-fill: blue;");
+            } else if (playersInOrder.get(1).getChosenColor() == Pawn.YELLOW) {
+                player2Nickname.setStyle("-fx-text-fill: yellow;");
+            } else if (playersInOrder.get(1).getChosenColor() == Pawn.GREEN) {
+                player2Nickname.setStyle("-fx-text-fill: green;");
+            }
             player1Nickname.setOpacity(1);
             player2Nickname.setOpacity(1);
             player3Nickname.setOpacity(0);
@@ -679,6 +691,15 @@ public void updateLabel(Label label, String text){
                 player1Nickname.setStyle("-fx-text-fill: green;");
             }
             player2Nickname.setText(playersInOrder.get(1).getNickname());
+            if (playersInOrder.get(1).getChosenColor() == Pawn.RED) {
+                player2Nickname.setStyle("-fx-text-fill: red;");
+            } else if (playersInOrder.get(1).getChosenColor() == Pawn.BLUE) {
+                player2Nickname.setStyle("-fx-text-fill: blue;");
+            } else if (playersInOrder.get(1).getChosenColor() == Pawn.YELLOW) {
+                player2Nickname.setStyle("-fx-text-fill: yellow;");
+            } else if (playersInOrder.get(1).getChosenColor() == Pawn.GREEN) {
+                player2Nickname.setStyle("-fx-text-fill: green;");
+            }
             player3Nickname.setText(playersInOrder.get(2).getNickname());
             if (playersInOrder.get(2).getChosenColor() == Pawn.RED) {
                 player3Nickname.setStyle("-fx-text-fill: red;");
@@ -725,6 +746,15 @@ public void updateLabel(Label label, String text){
                 player1Nickname.setStyle("-fx-text-fill: green;");
             }
             player2Nickname.setText(playersInOrder.get(1).getNickname());
+            if (playersInOrder.get(1).getChosenColor() == Pawn.RED) {
+                player2Nickname.setStyle("-fx-text-fill: red;");
+            } else if (playersInOrder.get(1).getChosenColor() == Pawn.BLUE) {
+                player2Nickname.setStyle("-fx-text-fill: blue;");
+            } else if (playersInOrder.get(1).getChosenColor() == Pawn.YELLOW) {
+                player2Nickname.setStyle("-fx-text-fill: yellow;");
+            } else if (playersInOrder.get(1).getChosenColor() == Pawn.GREEN) {
+                player2Nickname.setStyle("-fx-text-fill: green;");
+            }
             player3Nickname.setText(playersInOrder.get(2).getNickname());
             if (playersInOrder.get(2).getChosenColor() == Pawn.RED) {
                 player3Nickname.setStyle("-fx-text-fill: red;");
@@ -1800,6 +1830,10 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                             updateLabel(selectedCardLabel, "You don't have enough resources!");
                             cardPlaced = false;
+                        } catch (IllegalArgumentException e){
+                            System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                            updateLabel(selectedCardLabel, "You don't have enough resources!");
+                            cardPlaced = false;
                         }
                     } else if (selectedCard == 3) {
                         cardPlaced = true;
@@ -2041,6 +2075,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                     resourceDeck.setImage(newCard);
                 } catch (EmptyStackException e) {
                     resourceDeck.setImage(null);
+                    finishedRD = true;
                 }
             }else if(network==2){
                 try {
@@ -2048,8 +2083,9 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                     Image newCard = new Image(getClass().getResourceAsStream(path));
                     resourceDeck.setImage(newCard);
                 } catch (EmptyStackException e) {
-                resourceDeck.setImage(null);
-            }
+                    resourceDeck.setImage(null);
+                    finishedRD = true;
+                }
             }
         });
     }
@@ -2073,6 +2109,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                     goldDeck.setImage(newCard);
                 } catch (EmptyStackException e) {
                     goldDeck.setImage(null);
+                    finishedGD = true;
                 }
             }
         });
@@ -2223,6 +2260,24 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
             System.out.println("tied!");
         }
         Platform.runLater(() -> changeScene(winners));
+    }
+
+
+
+    public void musicONOFF() {
+        if (playingMusic) {
+            mediaPlayer.stop();
+            playingMusic = false;
+        }else{
+            mediaPlayer.play();
+            playingMusic = true;
+        }
+    }
+
+
+
+    public void setMediaPlayer(MediaPlayer mp) {
+        this.mediaPlayer = mp;
     }
 
 }

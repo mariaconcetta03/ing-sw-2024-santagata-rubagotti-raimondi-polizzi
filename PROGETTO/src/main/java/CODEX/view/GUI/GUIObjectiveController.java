@@ -212,7 +212,7 @@ public class GUIObjectiveController {
                 }
             }
         }
-        if ((network == 1)||(network == 2&&!clientSCK.getADisconnectionHappened())) {
+        if ((network == 1)||(network == 2 && !clientSCK.getADisconnectionHappened())) {
             ctr.setAllFeatures();
 
             // old dimensions and position
@@ -250,7 +250,11 @@ public class GUIObjectiveController {
             Media sound = new Media(musicPath);
             MediaPlayer mediaPlayer = new MediaPlayer(sound);
             mediaPlayer.play();
-
+            ctr.setMediaPlayer(mediaPlayer);
+            mediaPlayer.setOnEndOfMedia(() -> {
+                mediaPlayer.seek(Duration.ZERO); // Riavvia dall'inizio
+                mediaPlayer.play(); // Riproduci di nuovo
+            });
         }
     }
 

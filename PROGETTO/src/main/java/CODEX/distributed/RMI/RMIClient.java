@@ -325,7 +325,12 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 System.out.println("usciti dal lock di playCard");
             }
         }else if(selectedView==2){ //GUI
-            this.gameController.playCard(nickname, selectedCard, position, orientation);
+            try {
+                this.gameController.playCard(nickname, selectedCard, position, orientation);
+            }catch (IllegalArgumentException e){
+                System.out.println("RMICLIENT: ho catchato un'illegal argument exp");
+                throw e;
+            }
 
         }
     }
