@@ -909,11 +909,11 @@ public class ClientSCK implements ClientGeneralInterface {
                     players.put(p.getNickname(), p);
                 }
                 List<Player> winners=new ArrayList<>();
-                for(Integer i: finalScoreBoard.keySet()) {
-                    for (String s : finalScoreBoard.get(i)) {
-                        winners.add(players.get(s));
-                    }
+
+                for (String s : finalScoreBoard.get(1)) { //passo alla gui solo i giocatori in prima posizione
+                    winners.add(players.get(s));
                 }
+
 
                 guiGameController.updateWinners(winners);
             }
@@ -1147,28 +1147,22 @@ public class ClientSCK implements ClientGeneralInterface {
             if (this.turnCounter >= 1){
 
                 if(lastMoves>0) { //viene inizializzato a 10 e viene cambiato con un altro valore solo quando arriva il primo updateLastMovesEvent (dai successivi updateLastMovesEvent viene decrementato)
-                    if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
-                        if (lastMoves <= playersInTheGame.size()) {
-                            System.out.println("This is your last turn! You will not draw.");
-                            //dobbiamo impedire al giocatore di pescare le carte settando un booleano
-                            if (guiGameController != null) {
-                                guiGameController.updatePoints();
-                                guiGameController.updateRound(true); //settiamo lastTurn a true
-                            }
-                        }else {
-                            if (guiGameController != null) {
-                                guiGameController.updatePoints();
-                                guiGameController.updateRound(false); //settiamo lastTurn a true
 
-                            }
+                    if (lastMoves <= playersInTheGame.size()) {
+                        System.out.println("This is your last turn! You will not draw.");
+                        //dobbiamo impedire al giocatore di pescare le carte settando un booleano
+                        if (guiGameController != null) {
+                            guiGameController.updatePoints();
+                            guiGameController.updateRound(true); //settiamo lastTurn a true
                         }
                     }else {
-                        if(guiGameController!=null){
+                        if (guiGameController != null) {
                             guiGameController.updatePoints();
-                            guiGameController.updateRound(false);
-                        }
+                            guiGameController.updateRound(false); //settiamo lastTurn a true
 
+                        }
                     }
+
                 }else{
                     inGame=false;
                 }

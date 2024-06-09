@@ -1332,34 +1332,35 @@ public void updateLabel(Label label, String text){
         if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
             emptySpace=0;
-            if(temp==1){
-                player1Card1.setImage(resourceCard1.getImage());
+            if(resourceCard1.getImage()!=null) {
+                if (temp == 1) {
+                    player1Card1.setImage(resourceCard1.getImage());
 
-            }else if(temp==2){
-                player1Card2.setImage(resourceCard1.getImage());
-            }else if(temp==3){
-                player1Card3.setImage(resourceCard1.getImage());
-            }
-            if(network==2) {
-                try {
-                    clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getResourceCard1());
-                } catch (RemoteException e) {
-                    System.out.println("errore nel pescaggio");
-                    throw new RuntimeException(e);
-                } catch (NotBoundException e) {
-                    System.out.println("errore nel pescaggio");
-                    throw new RuntimeException(e);
+                } else if (temp == 2) {
+                    player1Card2.setImage(resourceCard1.getImage());
+                } else if (temp == 3) {
+                    player1Card3.setImage(resourceCard1.getImage());
                 }
-            }
-            else if(network==1) {
-                try {
-                    rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getResourceCard1());
-                } catch (RemoteException e) {
-                    System.out.println("errore nel pescaggio");
-                    throw new RuntimeException(e);
-                } catch (NotBoundException e) {
-                    System.out.println("errore nel pescaggio");
-                    throw new RuntimeException(e);
+                if (network == 2) {
+                    try {
+                        clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getResourceCard1());
+                    } catch (RemoteException e) {
+                        System.out.println("errore nel pescaggio");
+                        throw new RuntimeException(e);
+                    } catch (NotBoundException e) {
+                        System.out.println("errore nel pescaggio");
+                        throw new RuntimeException(e);
+                    }
+                } else if (network == 1) {
+                    try {
+                        rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getResourceCard1());
+                    } catch (RemoteException e) {
+                        System.out.println("errore nel pescaggio");
+                        throw new RuntimeException(e);
+                    } catch (NotBoundException e) {
+                        System.out.println("errore nel pescaggio");
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 
@@ -1371,34 +1372,35 @@ public void updateLabel(Label label, String text){
         if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
             emptySpace=0;
-            if(temp==1){
-                player1Card1.setImage(resourceCard2.getImage());
+            if(resourceCard2.getImage()!=null) {
+                if (temp == 1) {
+                    player1Card1.setImage(resourceCard2.getImage());
 
-            }else if(temp==2){
-                player1Card2.setImage(resourceCard2.getImage());
-            }else if(temp==3){
-                player1Card3.setImage(resourceCard2.getImage());
-            }
-            if(network==2) {
-                try {
-                    clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getResourceCard2());
-                } catch (RemoteException e) {
-                    System.out.println("errore nel pescaggio");
-                    throw new RuntimeException(e);
-                } catch (NotBoundException e) {
-                    System.out.println("errore nel pescaggio");
-                    throw new RuntimeException(e);
+                } else if (temp == 2) {
+                    player1Card2.setImage(resourceCard2.getImage());
+                } else if (temp == 3) {
+                    player1Card3.setImage(resourceCard2.getImage());
                 }
-            }
-            else if(network==1) {
-                try {
-                    rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getResourceCard2());
-                } catch (RemoteException e) {
-                    System.out.println("errore nel pescaggio");
-                    throw new RuntimeException(e);
-                } catch (NotBoundException e) {
-                    System.out.println("errore nel pescaggio");
-                    throw new RuntimeException(e);
+                if (network == 2) {
+                    try {
+                        clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getResourceCard2());
+                    } catch (RemoteException e) {
+                        System.out.println("errore nel pescaggio");
+                        throw new RuntimeException(e);
+                    } catch (NotBoundException e) {
+                        System.out.println("errore nel pescaggio");
+                        throw new RuntimeException(e);
+                    }
+                } else if (network == 1) {
+                    try {
+                        rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getResourceCard2());
+                    } catch (RemoteException e) {
+                        System.out.println("errore nel pescaggio");
+                        throw new RuntimeException(e);
+                    } catch (NotBoundException e) {
+                        System.out.println("errore nel pescaggio");
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }
@@ -1409,32 +1411,34 @@ public void updateLabel(Label label, String text){
         if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
             emptySpace=0;
-            if(temp==1){
-                player1Card1.setImage(goldCard1.getImage());
-            }else if(temp==2){
-                player1Card2.setImage(goldCard1.getImage());
-            }else if(temp==3){
-                player1Card3.setImage(goldCard1.getImage());
-            }
-            if(network==2) {
-                try {
-                    clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getGoldCard1());
-                } catch (RemoteException e) {
-                    System.out.println("errore nel pescaggio");
-                    throw new RuntimeException(e);
-                } catch (NotBoundException e) {
-                    System.out.println("errore nel pescaggio");
-                    throw new RuntimeException(e);
+            if(goldCard1.getImage()!=null) {
+                if (temp == 1) {
+                    player1Card1.setImage(goldCard1.getImage());
+                } else if (temp == 2) {
+                    player1Card2.setImage(goldCard1.getImage());
+                } else if (temp == 3) {
+                    player1Card3.setImage(goldCard1.getImage());
                 }
-            }else if(network==1) {
-                try {
-                    rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getGoldCard1());
-                } catch (RemoteException e) {
-                    System.out.println("errore nel pescaggio");
-                    throw new RuntimeException(e);
-                } catch (NotBoundException e) {
-                    System.out.println("errore nel pescaggio");
-                    throw new RuntimeException(e);
+                if (network == 2) {
+                    try {
+                        clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getGoldCard1());
+                    } catch (RemoteException e) {
+                        System.out.println("errore nel pescaggio");
+                        throw new RuntimeException(e);
+                    } catch (NotBoundException e) {
+                        System.out.println("errore nel pescaggio");
+                        throw new RuntimeException(e);
+                    }
+                } else if (network == 1) {
+                    try {
+                        rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getGoldCard1());
+                    } catch (RemoteException e) {
+                        System.out.println("errore nel pescaggio");
+                        throw new RuntimeException(e);
+                    } catch (NotBoundException e) {
+                        System.out.println("errore nel pescaggio");
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }
@@ -1445,32 +1449,34 @@ public void updateLabel(Label label, String text){
         if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
             emptySpace=0;
-            if(temp==1){
-                player1Card1.setImage(goldCard2.getImage());
-            }else if(temp==2){
-                player1Card2.setImage(goldCard2.getImage());
-            }else if(temp==3){
-                player1Card3.setImage(goldCard2.getImage());
-            }
-            if(network==2) {
-                try {
-                    clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getGoldCard2());
-                } catch (RemoteException e) {
-                    System.out.println("errore nel pescaggio");
-                    throw new RuntimeException(e);
-                } catch (NotBoundException e) {
-                    System.out.println("errore nel pescaggio");
-                    throw new RuntimeException(e);
+            if(goldCard2.getImage()!=null) {
+                if (temp == 1) {
+                    player1Card1.setImage(goldCard2.getImage());
+                } else if (temp == 2) {
+                    player1Card2.setImage(goldCard2.getImage());
+                } else if (temp == 3) {
+                    player1Card3.setImage(goldCard2.getImage());
                 }
-            }else if(network==1) {
-                try {
-                    rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getGoldCard2());
-                } catch (RemoteException e) {
-                    System.out.println("errore nel pescaggio");
-                    throw new RuntimeException(e);
-                } catch (NotBoundException e) {
-                    System.out.println("errore nel pescaggio");
-                    throw new RuntimeException(e);
+                if (network == 2) {
+                    try {
+                        clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getGoldCard2());
+                    } catch (RemoteException e) {
+                        System.out.println("errore nel pescaggio");
+                        throw new RuntimeException(e);
+                    } catch (NotBoundException e) {
+                        System.out.println("errore nel pescaggio");
+                        throw new RuntimeException(e);
+                    }
+                } else if (network == 1) {
+                    try {
+                        rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getGoldCard2());
+                    } catch (RemoteException e) {
+                        System.out.println("errore nel pescaggio");
+                        throw new RuntimeException(e);
+                    } catch (NotBoundException e) {
+                        System.out.println("errore nel pescaggio");
+                        throw new RuntimeException(e);
+                    }
                 }
             }
 

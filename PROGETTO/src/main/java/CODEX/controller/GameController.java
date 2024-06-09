@@ -22,7 +22,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class GameController extends UnicastRemoteObject implements GameControllerInterface {
-    private static final int TIMEOUT = 7; // seconds
+    private static final int TIMEOUT = 4; // seconds
     private boolean disconnection=false; //per controllare quando fermare gli heartbeat agli altri player che non si sono disconnessi ma che giocavano con uno che si è disconnesso
     private boolean firstDisconnection=true; //per chiamre disconnection() solo per il primo player che si disconnette
     Map <String, Long> lastHeartbeatTimesOfEachPlayer;

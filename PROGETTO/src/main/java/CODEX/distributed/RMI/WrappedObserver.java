@@ -22,7 +22,7 @@ import java.util.concurrent.ScheduledExecutorService;
 public class WrappedObserver implements Observer {
     private final Timer timer;
     public ScheduledExecutorService scheduler;
-    private static final int HEARTBEAT_INTERVAL = 5; // seconds
+    private static final int HEARTBEAT_INTERVAL = 2; // seconds
     private ClientGeneralInterface remoteClient;
     private String nickname;
     private boolean aDisconnectionHappened=false;

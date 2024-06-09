@@ -40,8 +40,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private final Object guiLock;
     private final Object printLock;
     private boolean finishedSetup=false;
-    private static final int HEARTBEAT_INTERVAL = 5; // seconds
-    private static final int TIMEOUT = 7; // seconds
+    private static final int HEARTBEAT_INTERVAL = 2; // seconds
+    private static final int TIMEOUT = 4; // seconds
     private ScheduledExecutorService schedulerToSendHeartbeat;
     ScheduledExecutorService schedulerToCheckReceivedHeartBeat;
     private long lastHeartbeatTime;
@@ -1157,28 +1157,22 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             if (this.turnCounter >= 1){
 
                 if(lastMoves>0) { //viene inizializzato a 10 e viene cambiato con un altro valore solo quando arriva il primo updateLastMovesEvent (dai successivi updateLastMovesEvent viene decrementato)
-                    if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
-                        if (lastMoves <= playersInTheGame.size()) {
-                            System.out.println("This is your last turn! You will not draw.");
-                            //dobbiamo impedire al giocatore di pescare le carte settando un booleano
-                            if (guiGameController != null) {
-                                guiGameController.updatePoints();
-                                guiGameController.updateRound(true); //settiamo lastTurn a true
-                            }
-                        }else {
-                            if (guiGameController != null) {
-                                guiGameController.updatePoints();
-                                guiGameController.updateRound(false); //settiamo lastTurn a true
 
-                            }
+                    if (lastMoves <= playersInTheGame.size()) {
+                        System.out.println("This is your last turn! You will not draw.");
+                        //dobbiamo impedire al giocatore di pescare le carte settando un booleano
+                        if (guiGameController != null) {
+                            guiGameController.updatePoints();
+                            guiGameController.updateRound(true); //settiamo lastTurn a true
                         }
                     }else {
-                        if(guiGameController!=null){
+                        if (guiGameController != null) {
                             guiGameController.updatePoints();
-                            guiGameController.updateRound(false);
-                        }
+                            guiGameController.updateRound(false); //settiamo lastTurn a true
 
+                        }
                     }
+
                 }else{
                     inGame=false;
                 }
@@ -1306,11 +1300,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     players.put(p.getNickname(), p);
                 }
                 List<Player> winners=new ArrayList<>();
-                for(Integer i: finalScoreBoard.keySet()) {
-                    for (String s : finalScoreBoard.get(i)) {
-                        winners.add(players.get(s));
-                    }
+
+                for (String s : finalScoreBoard.get(1)) { //passo alla gui solo i giocatori in prima posizione
+                    winners.add(players.get(s));
                 }
+
 
                 guiGameController.updateWinners(winners);
             }
