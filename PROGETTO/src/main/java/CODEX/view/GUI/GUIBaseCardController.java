@@ -106,47 +106,45 @@ public class GUIBaseCardController {
 
 
     public synchronized void selectedBack() {
-// third thread to change the scene always in JAVA FX thread
-        Platform.runLater(() -> {
-            stateLabel.setText("Back side selected! Now wait for everyone to choose.");
+    // third thread to change the scene always in JAVA FX thread
+        if (!baseCardPlayed) {
             baseCardPlayed = true;
-            System.out.println("Selezionato retro");
-            //changeScene();
+
+            Platform.runLater(() -> {
+                stateLabel.setText("Back side selected! Now wait for everyone to choose.");
+                System.out.println("Selezionato retro");
+                //changeScene();
               /* PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
                 pause.setOnFinished(event -> changeScene());
                 pause.play(); */
-        });
+            });
 
-        // second general thread (executed after the first one)
+            // second general thread (executed after the first one)
 
             if (network == 1) {
                 try {
-                    if (!baseCardPlayed) {
-                        rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], false);
-                        rmiClient.getGameController().checkBaseCardPlayed();
-                    }
+                    rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], false);
+                    rmiClient.getGameController().checkBaseCardPlayed();
                 } catch (RemoteException | NotBoundException e) {
                     throw new RuntimeException(e);
                 }
             } else if (network == 2) {
                 try {
-                    if (!baseCardPlayed) {
-                        clientSCK.playBaseCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], false);
-                        clientSCK.checkBaseCardPlayed(); //to be implemented
-                    }
+                    clientSCK.playBaseCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], false);
+                    clientSCK.checkBaseCardPlayed(); //to be implemented
                 } catch (RemoteException | NotBoundException e) {
                     throw new RuntimeException(e);
                 }
             }
 
-        PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
-        pause.setOnFinished(event -> {
-            changeScene();
-        });
-        pause.play();
+            PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
+            pause.setOnFinished(event -> {
+                changeScene();
+            });
+            pause.play();
 
 //        Platform.runLater(()->{changeScene();});
-
+        }
     }
 
 

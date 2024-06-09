@@ -60,7 +60,7 @@ public class GUINicknameController {
             if (!correctNickname) {
                 nicknameUsed.setText("WARNING! The nickname you have selected is already in use, please retry ");
                 nicknameUsed.setOpacity(1); // shows the message error
-                nickname.clear();
+                nickname.clear(); // se il nick è sbagliato, allora cancello il field in modo che l'utente inserisca daccapo
             } else {
                 nicknameUsed.setOpacity(0); // not necessary because we will change our window!
 
@@ -98,6 +98,8 @@ public class GUINicknameController {
 
                 // setting the dynamic parameters of the new window
                 System.out.println("NET" + network);
+
+                ctr.setOnEnterPressed();
 
                 if (network == 1) {
                     ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", now join a lobby");

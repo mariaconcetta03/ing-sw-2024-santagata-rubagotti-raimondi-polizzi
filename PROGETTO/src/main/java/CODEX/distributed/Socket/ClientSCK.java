@@ -3,6 +3,7 @@ package CODEX.distributed.Socket;
 
 import CODEX.Exceptions.*;
 import CODEX.distributed.ClientGeneralInterface;
+import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.messages.SCKMessage;
 import CODEX.org.model.*;
 
@@ -1586,7 +1587,9 @@ public class ClientSCK implements ClientGeneralInterface {
         public static void setServerName(String serverName) {
             SERVER_NAME = serverName;
         }
+
     }
+
 
     public void setIsPlaying(boolean isPlaying){
         this.isPlaying=isPlaying;

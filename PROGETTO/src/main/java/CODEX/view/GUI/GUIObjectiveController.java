@@ -119,45 +119,46 @@ public class GUIObjectiveController {
 
 
     public synchronized void selectedLeftObjective () { // objectiveCard 1 --> get(0)
-
-        new Thread(() -> {
-            if (network == 1 && !objectiveSelected) {
-                try {
-                    rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(0));
-                    rmiClient.getGameController().checkObjectiveCardChosen();
-                    objectiveCardselected=rmiClient.getPersonalPlayer().getPersonalObjectives().get(0);
-                } catch (RemoteException | NotBoundException e) {
-                    throw new RuntimeException(e);
-                }
-            } else if (network == 2 && !objectiveSelected) {
-                try {
-                    clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(0));
-                    clientSCK.checkObjectiveCardChosen(); //to be implemented
-                    objectiveCardselected=clientSCK.getPersonalPlayer().getPersonalObjectives().get(0);
-                } catch (RemoteException | NotBoundException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-
-            // third thread to change the scene always in JAVA FX thread
-            Platform.runLater(() -> {
-                selectionLabel.setText("Left objective selected. Now wait for everyone to choose.");
-                System.out.println("selezionato sinistra");
-                objectiveSelected = true;
-                //changeScene();
-                // Aggiungi un ritardo prima di cambiare scena
-                PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
-                pause.setOnFinished(event -> {
+        if (!objectiveSelected) {
+            objectiveSelected = true;
+            new Thread(() -> {
+                if (network == 1) {
                     try {
-                        changeScene();
-                    } catch (RemoteException e) {
+                        rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(0));
+                        rmiClient.getGameController().checkObjectiveCardChosen();
+                        objectiveCardselected = rmiClient.getPersonalPlayer().getPersonalObjectives().get(0);
+                    } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     }
+                } else if (network == 2) {
+                    try {
+                        clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(0));
+                        clientSCK.checkObjectiveCardChosen(); //to be implemented
+                        objectiveCardselected = clientSCK.getPersonalPlayer().getPersonalObjectives().get(0);
+                    } catch (RemoteException | NotBoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+
+                // third thread to change the scene always in JAVA FX thread
+                Platform.runLater(() -> {
+                    selectionLabel.setText("Left objective selected. Now wait for everyone to choose.");
+                    System.out.println("selezionato sinistra");
+                    //changeScene();
+                    // Aggiungi un ritardo prima di cambiare scena
+                    PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
+                    pause.setOnFinished(event -> {
+                        try {
+                            changeScene();
+                        } catch (RemoteException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                    pause.play();
                 });
-                pause.play();
-            });
-        }).start();
+            }).start();
+        }
     }
 
 
@@ -243,6 +244,8 @@ public class GUIObjectiveController {
             //        clientSCK.setGuiGameController(ctr);
             //  }
 
+            GUIGameController finalCtr = ctr;
+            stage.setOnCloseRequest(event -> finalCtr.leaveGame());
             stage.setScene(scene); //viene già qui mostrata la scena : nel caso in in cui arrivi prima un evento di disconnessione questa scena non verrà mai mostrata
 
             // setting the od values of position and dimension

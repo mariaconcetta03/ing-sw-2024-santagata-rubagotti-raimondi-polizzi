@@ -278,14 +278,14 @@ public class GUIGameController {
                 if (network == 1) {
                     try {
                         this.rmiClient.leaveGame(this.rmiClient.getPersonalPlayer().getNickname()); //lato server verrà mandato agli altri player evento disconnessione
-                    } catch (RemoteException | NotBoundException e) {
-                        throw new RuntimeException(e);
+                    } catch (RemoteException | NotBoundException e) { //nel caso in cui la disconnessione abbia già chiuso tutto
+                        //throw new RuntimeException(e);
                     }
                 } else if (network == 2) {
                     try { //in clientSCK viene fatta la exit
                         this.clientSCK.leaveGame(this.clientSCK.getPersonalPlayer().getNickname()); //lato server verrà mandato agli altri player evento disconnessione
-                    } catch (RemoteException | NotBoundException e) {
-                        throw new RuntimeException(e);
+                    } catch (RemoteException | NotBoundException e) { //nel caso in cui la disconnessione abbia già chiuso tutto
+                        //throw new RuntimeException(e);
                     }
                 }
             }
@@ -644,7 +644,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.BLUE) {
                 player1Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.YELLOW) {
-                player1Nickname.setStyle("-fx-text-fill: yellow;");
+                player1Nickname.setStyle("-fx-text-fill: #ceca00;");
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.GREEN) {
                 player1Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -654,7 +654,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.BLUE) {
                 player2Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.YELLOW) {
-                player2Nickname.setStyle("-fx-text-fill: yellow;");
+                player2Nickname.setStyle("-fx-text-fill: #ceca00;");
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.GREEN) {
                 player2Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -687,7 +687,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.BLUE) {
                 player1Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.YELLOW) {
-                player1Nickname.setStyle("-fx-text-fill: yellow;");
+                player1Nickname.setStyle("-fx-text-fill: #ceca00;");
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.GREEN) {
                 player1Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -697,7 +697,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.BLUE) {
                 player2Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.YELLOW) {
-                player2Nickname.setStyle("-fx-text-fill: yellow;");
+                player2Nickname.setStyle("-fx-text-fill: #ceca00;");
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.GREEN) {
                 player2Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -707,7 +707,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(2).getChosenColor() == Pawn.BLUE) {
                 player3Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(2).getChosenColor() == Pawn.YELLOW) {
-                player3Nickname.setStyle("-fx-text-fill: yellow;");
+                player3Nickname.setStyle("-fx-text-fill: #ceca00;");
             } else if (playersInOrder.get(2).getChosenColor() == Pawn.GREEN) {
                 player3Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -742,7 +742,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.BLUE) {
                 player1Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.YELLOW) {
-                player1Nickname.setStyle("-fx-text-fill: yellow;");
+                player1Nickname.setStyle("-fx-text-fill: #ceca00;");
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.GREEN) {
                 player1Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -752,7 +752,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.BLUE) {
                 player2Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.YELLOW) {
-                player2Nickname.setStyle("-fx-text-fill: yellow;");
+                player2Nickname.setStyle("-fx-text-fill: #ceca00;");
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.GREEN) {
                 player2Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -762,7 +762,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(2).getChosenColor() == Pawn.BLUE) {
                 player3Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(2).getChosenColor() == Pawn.YELLOW) {
-                player3Nickname.setStyle("-fx-text-fill: yellow;");
+                player3Nickname.setStyle("-fx-text-fill: #ceca00;");
             } else if (playersInOrder.get(2).getChosenColor() == Pawn.GREEN) {
                 player3Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -772,7 +772,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(3).getChosenColor() == Pawn.BLUE) {
                 player4Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(3).getChosenColor() == Pawn.YELLOW) {
-                player4Nickname.setStyle("-fx-text-fill: yellow;");
+                player4Nickname.setStyle("-fx-text-fill: #ceca00;");
             } else if (playersInOrder.get(3).getChosenColor() == Pawn.GREEN) {
                 player4Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -831,6 +831,10 @@ public void updateLabel(Label label, String text){
         // SETTING THE LABEL WITH THE CORRECT NAME OF THE PLAYER IN TURN
         setTurnLabel(false);
 
+
+        // SHOWING MY OWN BOARD
+        showP1Board();
+
         // INITIALIZING THE CELLS IN THE SCROLLPANE
         //initializeGridPaneCells();
 
@@ -843,61 +847,67 @@ public void updateLabel(Label label, String text){
 
 
 
-    public void turnCard1() {
-        selectedCard = 1;
-        selectedCardLabel.setText("Selected Card: LEFT");
-        if (orientationCard1) {
-            orientationCard1 = false;
-            String path;
-            path = "/images/cards/back/  (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
-            Image card1 = new Image(getClass().getResourceAsStream(path));
-            player1Card1.setImage(card1);
-        } else {
-            orientationCard1 = true;
-            String path;
-            path = "/images/cards/front/  (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
-            Image card1 = new Image(getClass().getResourceAsStream(path));
-            player1Card1.setImage(card1);
+    public synchronized void turnCard1() {
+        if(player1Card1.getImage()!=null) { //se non c'è la carta non la giro
+            selectedCard = 1;
+            selectedCardLabel.setText("Selected Card: LEFT");
+            if (orientationCard1) {
+                orientationCard1 = false;
+                String path;
+                path = "/images/cards/back/  (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
+                Image card1 = new Image(getClass().getResourceAsStream(path));
+                player1Card1.setImage(card1);
+            } else {
+                orientationCard1 = true;
+                String path;
+                path = "/images/cards/front/  (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
+                Image card1 = new Image(getClass().getResourceAsStream(path));
+                player1Card1.setImage(card1);
+            }
         }
     }
 
 
 
-    public void turnCard2() {
-        selectedCard = 2;
-        selectedCardLabel.setText("Selected Card: CENTER");
-        if (orientationCard2) {
-            orientationCard2 = false;
-            String path;
-            path = "/images/cards/back/  (" + playersInOrder.get(0).getPlayerDeck()[1].getId() + ").png";
-            Image card1 = new Image(getClass().getResourceAsStream(path));
-            player1Card2.setImage(card1);
-        } else {
-            orientationCard2 = true;
-            String path;
-            path = "/images/cards/front/  (" + playersInOrder.get(0).getPlayerDeck()[1].getId() + ").png";
-            Image card1 = new Image(getClass().getResourceAsStream(path));
-            player1Card2.setImage(card1);
+    public synchronized void turnCard2() {
+        if(player1Card2.getImage()!=null) { //se non c'è la carta non la giro
+            selectedCard = 2;
+            selectedCardLabel.setText("Selected Card: CENTER");
+            if (orientationCard2) {
+                orientationCard2 = false;
+                String path;
+                path = "/images/cards/back/  (" + playersInOrder.get(0).getPlayerDeck()[1].getId() + ").png";
+                Image card1 = new Image(getClass().getResourceAsStream(path));
+                player1Card2.setImage(card1);
+            } else {
+                orientationCard2 = true;
+                String path;
+                path = "/images/cards/front/  (" + playersInOrder.get(0).getPlayerDeck()[1].getId() + ").png";
+                Image card1 = new Image(getClass().getResourceAsStream(path));
+                player1Card2.setImage(card1);
+            }
         }
     }
 
 
 
-    public void turnCard3() {
-        selectedCard = 3;
-        selectedCardLabel.setText("Selected Card: RIGHT");
-        if (orientationCard3) {
-            orientationCard3 = false;
-            String path;
-            path = "/images/cards/back/  (" + playersInOrder.get(0).getPlayerDeck()[2].getId() + ").png";
-            Image card1 = new Image(getClass().getResourceAsStream(path));
-            player1Card3.setImage(card1);
-        } else {
-            orientationCard3 = true;
-            String path;
-            path = "/images/cards/front/  (" + playersInOrder.get(0).getPlayerDeck()[2].getId() + ").png";
-            Image card1 = new Image(getClass().getResourceAsStream(path));
-            player1Card3.setImage(card1);
+    public synchronized void turnCard3() {
+        if(player1Card3.getImage()!=null) { //se non c'è la carta non la giro
+            selectedCard = 3;
+            selectedCardLabel.setText("Selected Card: RIGHT");
+            if (orientationCard3) {
+                orientationCard3 = false;
+                String path;
+                path = "/images/cards/back/  (" + playersInOrder.get(0).getPlayerDeck()[2].getId() + ").png";
+                Image card1 = new Image(getClass().getResourceAsStream(path));
+                player1Card3.setImage(card1);
+            } else {
+                orientationCard3 = true;
+                String path;
+                path = "/images/cards/front/  (" + playersInOrder.get(0).getPlayerDeck()[2].getId() + ").png";
+                Image card1 = new Image(getClass().getResourceAsStream(path));
+                player1Card3.setImage(card1);
+            }
         }
     }
 
@@ -1266,7 +1276,7 @@ public void updateLabel(Label label, String text){
 
 
     public synchronized void drawCardFromRD() {
-        if(!finishedRD) {
+        if(resourceDeck.getImage()!=null) {
             if (emptySpace != 0 && !lastRound) {
                 Integer temp = emptySpace;
                 emptySpace = 0;
@@ -1315,7 +1325,7 @@ public void updateLabel(Label label, String text){
 
     public synchronized void drawCardFromGD() {
 
-        if(!finishedGD) {
+        if(goldDeck.getImage()!=null) {
             if (emptySpace != 0 && !lastRound) {
                 Integer temp = emptySpace;
                 emptySpace = 0;
@@ -2101,7 +2111,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                     goldDeck.setImage(newCard);
                 } catch (EmptyStackException e) {
                     goldDeck.setImage(null);
-                    finishedGD = true;
+                    //finishedGD = true;
                 }
             }else if(network==2){
                 try {
@@ -2110,7 +2120,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                     goldDeck.setImage(newCard);
                 } catch (EmptyStackException e) {
                     goldDeck.setImage(null);
-                    finishedGD = true;
+                    //finishedGD = true;
                 }
             }
         });

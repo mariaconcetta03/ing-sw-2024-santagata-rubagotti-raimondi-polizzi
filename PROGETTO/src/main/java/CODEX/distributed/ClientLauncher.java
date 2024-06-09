@@ -21,7 +21,7 @@ public class ClientLauncher {
         Scanner sc=new Scanner(System.in);
 
         System.out.println("Insert the Server's Ip address (leave blank for LocalHost): ");
-        serverAddress=sc.nextLine(); //@TODO se blank è localHost, non fa ancora nulla
+        serverAddress=sc.nextLine(); 
         System.out.println(ANSIFormatter.ANSI_BLUE+"Choose a connection protocol and an interface:"+ANSIFormatter.ANSI_RESET+": \n-Type 1 for RMI+TUI\n-Type 2 for RMI+GUI\n-Type 3 for TCP+TUI\n-Type 4 for TCP+GUI");
         do{
             try {
@@ -34,7 +34,7 @@ public class ClientLauncher {
                     rmiClient.getNetworkSettings().setSERVER_NAME(serverAddress); //setting the Server Address
                     rmiClient.setSelectedView(1); //TUI
                     rmiClient.SRMIInterfaceFromRegistry();
-                    InterfaceTUI.clearScreen(); //@TODO NON SERVE A NIENTE?
+                    InterfaceTUI.clearScreen();
                     //connect the client
                     rmiClient.waitingRoom(); //selection of nicknames and lobby functionalities
                 }catch (RemoteException | NotBoundException e){
@@ -49,6 +49,7 @@ public class ClientLauncher {
                 RMIClient rmiClient=null; //bisogna gestirlo con un'eccezione se dopo il try rimane null
                 try {
                     rmiClient = new RMIClient();
+                    rmiClient.getNetworkSettings().setSERVER_NAME(serverAddress); //setting the Server Address
                     rmiClient.setSelectedView(2); //GUI
                     try {
                         rmiClient.SRMIInterfaceFromRegistry();
@@ -68,6 +69,14 @@ public class ClientLauncher {
                     ClientSCK clientSCK = new ClientSCK(); //per TCP dobbiamo solo chiedere porte disponibili lato client
                     clientSCK.setSelectedView(1); //TUI
 
+                    if (serverAddress.equals("")) { // se la stringa è vuota, allora metto il localhost
+                        ClientSCK.Settings.setServerName("127.0.0.1");
+                        System.out.println("hai lasciato la stringa vuota! quindi ho settato il localhost: 127.0.0.1");
+                    } else {
+                        ClientSCK.Settings.setServerName(serverAddress);
+                        System.out.println("hai inserito l'IP, quindi ho settato il server name a: " + serverAddress);
+                    }
+
                     clientSCK.waitingRoom();
                     //connect the client
                 }catch(IOException e){
@@ -82,6 +91,15 @@ public class ClientLauncher {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+
+                if (serverAddress.equals("")) { // se la stringa è vuota, allora metto il localhost
+                    ClientSCK.Settings.setServerName("127.0.0.1");
+                    System.out.println("hai lasciato la stringa vuota! quindi ho settato il localhost: 127.0.0.1");
+                } else {
+                    ClientSCK.Settings.setServerName(serverAddress);
+                    System.out.println("hai inserito l'IP, quindi ho settato il server name a: " + serverAddress);
+                }
+
                 selected = true;
                 String[] network = new String[1];
                 network[0] = "TCP";

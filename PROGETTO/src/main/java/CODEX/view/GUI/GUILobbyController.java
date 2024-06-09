@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
 
@@ -208,7 +209,21 @@ public class GUILobbyController {
         while (ctr == null) {
             ctr = fxmlLoader.getController();
         }
+        stage.setOnCloseRequest(event -> {
+            if (network == 1) {
+                try {
+                    rmiClient.handleDisconnectionFunction();
+                } catch (RemoteException ignored) {
 
+                }
+            } else if (network == 2) {
+                try {
+                    clientSCK.handleDisconnectionFunction();
+                } catch (RemoteException ignored) {
+
+                }
+            }
+        });
         // setting the parameters in the new controller, also the BASE CARD (front and back)
         ctr.setStage(stage);
         ctr.setNetwork(network);
@@ -289,6 +304,25 @@ public class GUILobbyController {
             }
         }
     }
+
+
+    public void setOnEnterPressed() {
+        // JOINING A LOBBY
+        availableLobbies.setOnKeyPressed(event -> {
+                    if (event.getCode() == KeyCode.ENTER) {
+                        // Chiamata alla tua funzione qui
+                        joinLobby();
+                    }
+                });
+
+        // CREATING A LOBBY
+        createText.setOnKeyPressed(event-> {
+            if(event.getCode() == KeyCode.ENTER){
+                createNewLobby();
+            }
+        });
+    }
+
 
 
     public void createNewLobby(){

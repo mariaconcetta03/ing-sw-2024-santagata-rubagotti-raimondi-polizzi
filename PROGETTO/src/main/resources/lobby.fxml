@@ -29,7 +29,7 @@
                         <HBox alignment="TOP_CENTER" prefHeight="323.0" prefWidth="1350.0">
                            <children>
                               <Separator opacity="0.0" prefHeight="46.0" prefWidth="239.0" />
-                              <VBox prefHeight="340.0" prefWidth="256.0">
+                              <VBox prefHeight="340.0" prefWidth="256.0" HBox.hgrow="NEVER">
                                  <children>
                                     <Label fx:id="joinLabel" text="JOIN" textFill="WHITE">
                                        <font>
@@ -39,20 +39,20 @@
                                           <Insets bottom="40.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <HBox prefHeight="40.0" prefWidth="256.0">
+                                    <HBox prefHeight="40.0" prefWidth="256.0" VBox.vgrow="NEVER">
                                        <children>
-                                          <ComboBox fx:id="availableLobbies" prefHeight="40.0" prefWidth="175.0" />
+                                          <ComboBox fx:id="availableLobbies" prefHeight="40.0" prefWidth="175.0" HBox.hgrow="NEVER" />
                                        </children>
                                     </HBox>
-                                    <HBox prefHeight="40.0" prefWidth="256.0">
+                                    <HBox prefHeight="40.0" prefWidth="256.0" VBox.vgrow="NEVER">
                                        <children>
-                                          <Button fx:id="refreshButton" mnemonicParsing="false" onMouseClicked="#updateAvailableLobbies" prefHeight="40.0" prefWidth="76.0" text="Refresh">
+                                          <Button fx:id="refreshButton" mnemonicParsing="false" onMouseClicked="#updateAvailableLobbies" prefHeight="40.0" prefWidth="76.0" text="Refresh" HBox.hgrow="NEVER">
                                              <font>
                                                 <Font name="Georgia Bold" size="14.0" />
                                              </font>
                                           </Button>
                                           <Separator opacity="0.0" prefHeight="15.0" prefWidth="24.0" />
-                                          <Button fx:id="joinButton" mnemonicParsing="false" onAction="#joinLobby" prefHeight="40.0" prefWidth="76.0" text="Join">
+                                          <Button fx:id="joinButton" mnemonicParsing="false" onAction="#joinLobby" prefHeight="40.0" prefWidth="76.0" text="Join" HBox.hgrow="NEVER">
                                              <font>
                                                 <Font name="Georgia Bold" size="14.0" />
                                              </font></Button>
@@ -86,7 +86,7 @@
                                  </children>
                               </VBox>
                               <Separator opacity="0.0" prefHeight="73.0" prefWidth="202.0" />
-                              <VBox prefHeight="285.0" prefWidth="398.0">
+                              <VBox prefHeight="285.0" prefWidth="398.0" HBox.hgrow="NEVER">
                                  <children>
                                     <Label fx:id="createLabel" text="CREATE" textFill="WHITE">
                                        <font>
@@ -109,8 +109,8 @@
                                           <Insets bottom="10.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <TextField fx:id="createText" prefHeight="40.0" prefWidth="435.0" />
-                                    <Button fx:id="createButton" mnemonicParsing="false" onAction="#createNewLobby" prefHeight="40.0" prefWidth="78.0" text="Create">
+                                    <TextField fx:id="createText" prefHeight="40.0" prefWidth="435.0" VBox.vgrow="NEVER" />
+                                    <Button fx:id="createButton" mnemonicParsing="false" onAction="#createNewLobby" prefHeight="40.0" prefWidth="78.0" text="Create" VBox.vgrow="NEVER">
                                        <VBox.margin>
                                           <Insets top="20.0" />
                                        </VBox.margin>
@@ -134,12 +134,12 @@
                               <Separator opacity="0.0" prefWidth="200.0" />
                            </children>
                            <VBox.margin>
-                              <Insets top="130.0" />
+                              <Insets top="100.0" />
                            </VBox.margin>
                         </HBox>
-                        <HBox alignment="CENTER" prefHeight="201.0" prefWidth="1350.0">
+                        <HBox alignment="TOP_CENTER" prefHeight="201.0" prefWidth="1350.0">
                            <children>
-                              <Label fx:id="waitingPlayers" alignment="CENTER" opacity="0.0" prefHeight="106.0" prefWidth="249.0" text="Waiting for players..." textFill="#85ff8e">
+                              <Label fx:id="waitingPlayers" alignment="TOP_CENTER" opacity="0.0" prefHeight="106.0" prefWidth="249.0" text="Waiting for players..." textFill="#85ff8e">
                                  <font>
                                     <Font name="Georgia Bold" size="22.0" />
                                  </font>

@@ -218,8 +218,15 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
 
         public void setSERVER_NAME(String SERVER_NAME) {
-            this.SERVER_NAME = SERVER_NAME;
+            if (SERVER_NAME.equals("")) { // se la stringa è vuota, allora metto il localhost
+                Settings.this.SERVER_NAME = "127.0.0.1";
+                System.out.println("hai lasciato la stringa vuota! quindi ho settato il localhost: 127.0.0.1");
+            } else {
+                this.SERVER_NAME = SERVER_NAME;
+                System.out.println("hai inserito l'IP, quindi ho settato il server name a: " + SERVER_NAME);
+            }
         }
+
         public String getSERVER_NAME(){
             return this.SERVER_NAME;
         }
