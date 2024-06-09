@@ -1360,9 +1360,12 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         if(this.executor!=null) {
             this.executor.shutdown();
         }
-        this.schedulerToCheckReceivedHeartBeat.shutdown();
-        this.schedulerToSendHeartbeat.shutdown(); //va prima chiuso l'heartbeat receiver lato server -> lo facciamo la prima volta che il controller chiama disconnect()
-
+        if(this.schedulerToCheckReceivedHeartBeat!=null) {
+            this.schedulerToCheckReceivedHeartBeat.shutdown();
+        }
+        if(this.schedulerToSendHeartbeat!=null) {
+            this.schedulerToSendHeartbeat.shutdown(); //va prima chiuso l'heartbeat receiver lato server -> lo facciamo la prima volta che il controller chiama disconnect()
+        }
         Timer timer=new Timer();
         timer.schedule(
                 new TimerTask() {

@@ -176,7 +176,6 @@ public class GUIObjectiveController {
         while (ctr == null) {
             ctr = fxmlLoader.getController();
         }
-
         // setting the parameters in the new controller
         ctr.setDisconnectionLock(disconnectionLock);
         ctr.setScheduler(scheduler);
