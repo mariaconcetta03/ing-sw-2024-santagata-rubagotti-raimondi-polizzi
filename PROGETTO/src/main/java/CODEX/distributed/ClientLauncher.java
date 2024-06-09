@@ -29,7 +29,7 @@ public class ClientLauncher {
             if(selection==1){
                 selected=true;
                 try {
-                    System.setProperty("java.rmi.server.hostname", Inet4Address.getLocalHost().getHostAddress()); //don't know if it works also for @mcs
+                    System.setProperty("java.rmi.server.hostname", "192.168.196.10"); //don't know if it works also for @mcs
                     RMIClient rmiClient = new RMIClient();
                     rmiClient.getNetworkSettings().setSERVER_NAME(serverAddress); //setting the Server Address
                     rmiClient.setSelectedView(1); //TUI
@@ -49,6 +49,7 @@ public class ClientLauncher {
                 RMIClient rmiClient=null; //bisogna gestirlo con un'eccezione se dopo il try rimane null
                 try {
                     rmiClient = new RMIClient();
+                    System.setProperty("java.rmi.server.hostname", "192.168.196.10"); //don't know if it works also for @mcs
                     rmiClient.getNetworkSettings().setSERVER_NAME(serverAddress); //setting the Server Address
                     rmiClient.setSelectedView(2); //GUI
                     try {
