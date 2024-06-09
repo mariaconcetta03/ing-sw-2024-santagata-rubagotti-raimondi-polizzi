@@ -296,8 +296,11 @@ public class GUILobbyController {
         if (availableLobbies.getValue() != null) {
             if (network == 1) {
                 try {
+                    System.out.println("sto per chiamare addplayertolobby");
                     rmiClient.addPlayerToLobby(rmiClient.getPersonalPlayer().getNickname(), availableLobbies.getValue());
+                    System.out.println("ho chiamato addplayer to lobby e sto per chiamare checknplayers");
                     rmiClient.getGameController().checkNPlayers(); // starts the game if the number of players is correct
+                    System.out.println("ho chiamato il checknplayers e chiamo SETWAITINGPLAYERS");
                     setWaitingPlayers();
                 } catch (RemoteException | GameNotExistsException | NotBoundException e) {
                     throw new RuntimeException(e);
