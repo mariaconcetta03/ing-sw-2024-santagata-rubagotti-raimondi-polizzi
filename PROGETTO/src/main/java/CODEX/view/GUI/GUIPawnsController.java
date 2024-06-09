@@ -47,7 +47,7 @@ public class GUIPawnsController {
     private Label labelWithPlayerName;
     @FXML
     private Label retryLabel;
-    private AnchorPane root;
+    private StackPane root;
     private Rectangle overlay;
 
 
@@ -55,7 +55,7 @@ public class GUIPawnsController {
 
         // let's show the new window!
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/baseCard.fxml"));
-        AnchorPane nextRoot = null;
+        StackPane nextRoot = null;
         try {
             nextRoot = fxmlLoader.load();
         } catch (IOException e) {
@@ -145,7 +145,7 @@ public class GUIPawnsController {
 
 
     synchronized public void selectedYellow() {
-        Platform.runLater(() ->root.getChildren().add(overlay)); // Add overlay
+        root.getChildren().add(overlay); // Add overlay
         if (yellowPane.getOpacity() != 0 && !pawnSelected) {
             pawnSelected = true;
             if (network == 1) {
@@ -184,7 +184,7 @@ public class GUIPawnsController {
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     } catch (ColorAlreadyTakenException e) {
-                        Platform.runLater(() ->root.getChildren().remove(overlay)); // Remove overlay
+                        root.getChildren().remove(overlay); // Remove overlay
                         pawnSelected = false;
                         Platform.runLater(() -> {
                             retryLabel.setText("Color already taken, please choose another.");
@@ -206,7 +206,7 @@ public class GUIPawnsController {
                     try {
                         clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.YELLOW);
                         if(clientSCK.getErrorState()){
-                            Platform.runLater(() ->root.getChildren().remove(overlay)); // Remove overlay
+                            root.getChildren().remove(overlay); // Remove overlay
                             pawnSelected = false;
                             Platform.runLater(() -> {
                                 retryLabel.setText("Color already taken, please choose another.");
@@ -255,12 +255,12 @@ public class GUIPawnsController {
 
             }
         }else{
-            Platform.runLater(() ->root.getChildren().remove(overlay)); // Remove overlay
+            root.getChildren().remove(overlay); // Remove overlay
         }
     }
 
     synchronized public void selectedBlue() {
-        Platform.runLater(() ->root.getChildren().add(overlay)); // Add overlay
+        root.getChildren().add(overlay); // Add overlay
         if (bluePane.getOpacity() != 0 && !pawnSelected) {
             pawnSelected = true;
             if (network == 1) {
@@ -298,7 +298,7 @@ public class GUIPawnsController {
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     } catch (ColorAlreadyTakenException e) {
-                        Platform.runLater(() ->root.getChildren().remove(overlay)); // Remove overlay
+                        root.getChildren().remove(overlay); // Remove overlay
                         pawnSelected = false;
                         Platform.runLater(() -> {
                             retryLabel.setText("Color already taken, please choose another.");
@@ -318,7 +318,7 @@ public class GUIPawnsController {
                     try {
                         clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.BLUE);
                         if(clientSCK.getErrorState()){
-                            Platform.runLater(() ->root.getChildren().remove(overlay)); // Remove overlay
+                            root.getChildren().remove(overlay); // Remove overlay
                             pawnSelected = false;
                             Platform.runLater(() -> {
                                 retryLabel.setText("Color already taken, please choose another.");
@@ -367,12 +367,12 @@ public class GUIPawnsController {
 
             }
         }else{
-            Platform.runLater(() ->root.getChildren().remove(overlay)); // Remove overlay
+            root.getChildren().remove(overlay); // Remove overlay
         }
     }
 
     synchronized public void selectedGreen() {
-        Platform.runLater(() ->root.getChildren().add(overlay)); // Add overlay
+        root.getChildren().add(overlay); // Add overlay
         if (greenPane.getOpacity() != 0 && !pawnSelected) {
             pawnSelected = true;
             if (network == 1) {
@@ -409,7 +409,7 @@ public class GUIPawnsController {
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     } catch (ColorAlreadyTakenException e) {
-                        Platform.runLater(() ->root.getChildren().remove(overlay)); // Remove overlay
+                        root.getChildren().remove(overlay); // Remove overlay
                         pawnSelected = false;
                         Platform.runLater(() -> {
                             retryLabel.setText("Color already taken, please choose another.");
@@ -430,7 +430,7 @@ public class GUIPawnsController {
                     try {
                         clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.GREEN);
                         if(clientSCK.getErrorState()){
-                            Platform.runLater(() ->root.getChildren().remove(overlay)); // Remove overlay
+                            root.getChildren().remove(overlay); // Remove overlay
                             pawnSelected = false;
                             Platform.runLater(() -> {
                                 retryLabel.setText("Color already taken, please choose another.");
@@ -479,12 +479,12 @@ public class GUIPawnsController {
 
             }
         }else {
-            Platform.runLater(() ->root.getChildren().remove(overlay)); // Remove overlay
+            root.getChildren().remove(overlay); // Remove overlay
         }
     }
 
     synchronized public void selectedRed() {
-        Platform.runLater(() ->root.getChildren().add(overlay)); // Add overlay
+        root.getChildren().add(overlay); // Add overlay
         if (redPane.getOpacity() != 0 && !pawnSelected) {
             pawnSelected = true;
             if (network == 1) {
@@ -521,7 +521,7 @@ public class GUIPawnsController {
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     } catch (ColorAlreadyTakenException e) {
-                        Platform.runLater(() ->root.getChildren().remove(overlay)); // Remove overlay
+                        root.getChildren().remove(overlay); // Remove overlay
                         pawnSelected = false;
                         Platform.runLater(() -> {
                             retryLabel.setText("Color already taken, please choose another.");
@@ -543,7 +543,7 @@ public class GUIPawnsController {
                     try {
                         clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.RED);
                         if(clientSCK.getErrorState()){
-                            Platform.runLater(() ->root.getChildren().remove(overlay)); // Remove overlay
+                            root.getChildren().remove(overlay); // Remove overlay
                             pawnSelected = false;
                             Platform.runLater(() -> {
                                 retryLabel.setText("Color already taken, please choose another.");
@@ -593,7 +593,7 @@ public class GUIPawnsController {
 
             }
         }else{
-            Platform.runLater(() ->root.getChildren().remove(overlay)); // Remove overlay
+            root.getChildren().remove(overlay); // Remove overlay
         }
     }
 
@@ -644,7 +644,7 @@ public class GUIPawnsController {
         }
     }
 
-    public void setRoot(AnchorPane root) {
+    public void setRoot(StackPane root) {
         this.root=root;
     }
 

@@ -18,8 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
@@ -48,7 +47,7 @@ public class GUILoadingController {
         stage.setTitle("Codex Naturalis");
         System.out.println("sto per fare fxmlloader di nickname... arriverà un messaggio di conferma quando ho finito");
         FXMLLoader fxmlLoader = new FXMLLoader(GUILoadingController.class.getResource("/nickname.fxml"));
-        AnchorPane nextRoot  = fxmlLoader.load();
+        StackPane nextRoot  = fxmlLoader.load();
         System.out.println("ho finito fxmlloader di nickname");
         Scene scene = new Scene(nextRoot );
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
@@ -61,8 +60,8 @@ public class GUILoadingController {
         nextOverlay.setFill(Color.TRANSPARENT);
         nextOverlay.setOnMouseClicked(MouseEvent::consume); // Consume all mouse clicks
         // Bind the nextOverlay's size to the nextRoot 's size
-        nextOverlay.widthProperty().bind(nextRoot.widthProperty());
-        nextOverlay.heightProperty().bind(nextRoot.heightProperty());
+        nextOverlay.widthProperty().bind(nextRoot .widthProperty());
+        nextOverlay.heightProperty().bind(nextRoot .heightProperty());
 
 //        Bind the stage size to screen dimensions (optional, for dynamic resizing)
 //        stage.widthProperty().bind(Bindings.createDoubleBinding(() ->

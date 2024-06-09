@@ -10,7 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -52,7 +52,7 @@ public class GUIBaseCardController {
     private boolean baseCardPlayed = false;
     private GUIObjectiveController ctr;
     private int network = 0; //1 = rmi  2 = sck
-    private AnchorPane root;
+    private StackPane root;
     private Rectangle overlay;
 
 
@@ -71,9 +71,7 @@ public class GUIBaseCardController {
     }
 
     public synchronized void selectedFront() {
-        Platform.runLater(() -> {
-            root.getChildren().add(overlay); // Add overlay
-        });
+        root.getChildren().add(overlay); // Add overlay
 // third thread to change the scene always in JAVA FX thread
         Platform.runLater(() -> {
             stateLabel.setText("Front side selected! Now wait for everyone to choose.");
@@ -115,10 +113,8 @@ public class GUIBaseCardController {
 
 
     public synchronized void selectedBack() {
-        Platform.runLater(() -> {
-            root.getChildren().add(overlay); // Add overlay
-        });
-        // third thread to change the scene always in JAVA FX thread
+    root.getChildren().add(overlay); // Add overlay
+    // third thread to change the scene always in JAVA FX thread
         if (!baseCardPlayed) {
             baseCardPlayed = true;
 
@@ -188,7 +184,7 @@ public class GUIBaseCardController {
     public void changeScene() {
         // let's show the new window!
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/objective.fxml"));
-        AnchorPane nextRoot = null;
+        StackPane nextRoot = null;
         try {
             nextRoot = fxmlLoader.load();
         } catch (IOException e) {
@@ -293,9 +289,7 @@ public class GUIBaseCardController {
             ctr.setRoot (nextRoot);
             ctr.setOverlay(nextOverlay);
 
-            Platform.runLater(() -> {
-                root.getChildren().remove(overlay); // Add overlay
-            });
+            root.getChildren().remove(overlay); // Remove overlay
             stage.setScene(scene); //viene già qui mostrata la scena : nel caso in in cui arrivi prima un evento di disconnessione questa scena non verrà mai mostrata
 
             // setting the od values of position and dimension
@@ -371,7 +365,7 @@ public class GUIBaseCardController {
     }
 
 
-    public void setRoot(AnchorPane root) {
+    public void setRoot(StackPane root) {
         this.root=root;
     }
 
