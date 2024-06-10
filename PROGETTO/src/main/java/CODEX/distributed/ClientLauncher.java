@@ -55,7 +55,7 @@ public class ClientLauncher {
                 }
                 //generate client RMI
             }else if(selection == 2){
-                RMIClient rmiClient=new RMIClient(); //bisogna gestirlo con un'eccezione se dopo il try rimane null
+                RMIClient rmiClient;
                 Scanner sc2 =new Scanner(System.in);
                 System.out.println("Insert your ip address (leave blank for LocalHost): ");
                 String clientAddress = "";
@@ -67,6 +67,7 @@ public class ClientLauncher {
                     } else {
                         System.setProperty("java.rmi.server.hostname", clientAddress); //don't know if it works also for @mcs
                     }
+                    rmiClient=new RMIClient(); //bisogna gestirlo con un'eccezione se dopo il try rimane null
                     rmiClient.getNetworkSettings().setSERVER_NAME(serverAddress); //setting the Server Address
                     rmiClient.setSelectedView(2); //GUI
                     try {
@@ -129,8 +130,6 @@ public class ClientLauncher {
                 sc.next();
                 System.out.println("Please type 1 (RMI+TUI), 2 (RMI+GUI), 3 (TCP+TUI), 4 (TCP+GUI)");
             } catch (UnknownHostException e) {
-                throw new RuntimeException(e);
-            } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
         }while(!selected);
