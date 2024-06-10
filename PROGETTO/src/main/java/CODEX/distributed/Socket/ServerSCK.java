@@ -21,10 +21,6 @@ public class ServerSCK extends UnicastRemoteObject {
     private final int port;
     private final ServerController serverController;
 
-    public ServerSCK (int port,ServerController serverController) throws RemoteException {
-        this.port = port; //we can ask the virtual machine which port is available
-        this.serverController=serverController;
-    }
 
     //costruttore per testare la prima versione TCP locale
     public ServerSCK (ServerController serverController) throws RemoteException {
@@ -38,9 +34,8 @@ public class ServerSCK extends UnicastRemoteObject {
         ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket;
         try {
-            // serverSocket = new ServerSocket(port); //This port number can then be retrieved by calling getLocalPort
-            InetAddress localAddress = InetAddress.getByName("127.0.0.1");
-            serverSocket = new ServerSocket(1085, 10, localAddress);
+            InetAddress serverAddress = InetAddress.getByName(Settings.SERVER_NAME);
+            serverSocket = new ServerSocket(1085, 10, serverAddress);
         } catch (IOException e) {
             System.err.println(e.getMessage()); // Porta non disponibile
             return;
@@ -69,6 +64,9 @@ public class ServerSCK extends UnicastRemoteObject {
         static int PORT = 50000; // free ports: from 49152 to 65535, 1099 default port for RMI registry
         static String SERVER_NAME = "127.0.0.1"; // LOCALHOST (every client has the same virtual server at this @address)
 
+        public static void setServerName(String serverName) {
+            SERVER_NAME = serverName;
+        }
     }
 
 

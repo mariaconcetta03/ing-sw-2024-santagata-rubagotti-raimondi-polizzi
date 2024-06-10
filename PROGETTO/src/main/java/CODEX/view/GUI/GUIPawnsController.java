@@ -16,6 +16,8 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.Scene;
 import javafx.util.Duration;
 
@@ -35,15 +37,23 @@ public class GUIPawnsController {
     private boolean choosen = false;
     private ExecutorService executor = Executors.newCachedThreadPool();
     private boolean pawnSelected=false;
-
+    
     @FXML
-    private Pane yellowPane;
+    private ImageView yellowPawn;
     @FXML
-    private Pane greenPane;
+    private ImageView redPawn;
     @FXML
-    private Pane bluePane;
+    private ImageView greenPawn;
     @FXML
-    private Pane redPane;
+    private ImageView bluePawn;
+//    @FXML
+//    private Pane yellowPawn;
+//    @FXML
+//    private Pane greenPawn;
+//    @FXML
+//    private Pane bluePawn;
+//    @FXML
+//    private Pane redPawn;
     @FXML
     private Label labelWithPlayerName;
     @FXML
@@ -114,14 +124,14 @@ public class GUIPawnsController {
 
             }
         }if(network==2){
-            /*
-            synchronized (clientSCK.getGuiPawnsControllerLock()) {
-                clientSCK.setGuiPawnsController(ctr);
-                clientSCK.getGuiPawnsControllerLock().notify();
-                clientSCK.setDone(true);
+
+            synchronized (clientSCK.getGuiBaseCardControllerLock()) {
+                clientSCK.setGuiBaseCardController(ctr);
+                clientSCK.getGuiBaseCardControllerLock().notify();
+
             }
 
-             */
+
         }
 
         stage.setScene(scene); //questo è il momento in cui la nuova scena viene mostrata
@@ -147,7 +157,7 @@ public class GUIPawnsController {
 
 
     synchronized public void selectedYellow() {
-        if (yellowPane.getOpacity() != 0 && !pawnSelected) {
+        if (yellowPawn.getOpacity() != 0 && !pawnSelected) {
             pawnSelected = true;
             if (network == 1) {
                 executor.execute(() -> {
@@ -156,13 +166,13 @@ public class GUIPawnsController {
                         choosen = true;
 
                         Platform.runLater(() -> {
-                            greenPane.setOpacity(0);
-                            bluePane.setOpacity(0);
-                            redPane.setOpacity(0);
-                            greenPane.disabledProperty();
-                            bluePane.disabledProperty();
-                            redPane.disabledProperty();
-                            yellowPane.disabledProperty();
+                            greenPawn.setOpacity(0);
+                            bluePawn.setOpacity(0);
+                            redPawn.setOpacity(0);
+                            greenPawn.disabledProperty();
+                            bluePawn.disabledProperty();
+                            redPawn.disabledProperty();
+                            yellowPawn.disabledProperty();
                             retryLabel.setText("You have chosen. Now wait the others.");
                             retryLabel.setOpacity(1);
                         });
@@ -222,13 +232,18 @@ public class GUIPawnsController {
                         }else {
                             choosen = true;
                             Platform.runLater(() -> {
-                                greenPane.setOpacity(0);
-                                bluePane.setOpacity(0);
-                                redPane.setOpacity(0);
+                                greenPawn.setOpacity(0);
+                                bluePawn.setOpacity(0);
+                                redPawn.setOpacity(0);
+                                greenPawn.disabledProperty();
+                                bluePawn.disabledProperty();
+                                redPawn.disabledProperty();
+                                yellowPawn.disabledProperty();
                                 retryLabel.setText("You have chosen. Now wait the others.");
                                 retryLabel.setOpacity(1);
                             });
-                            clientSCK.checkChosenPawnColor(); //to be implemented
+                            clientSCK.checkChosenPawnColor();
+                            /*
                             System.out.println("sto per entrare nella syn");
                             synchronized (clientSCK.getGuiPawnsControllerLock()) {
                                 System.out.println("sono entrato nella syn");
@@ -246,6 +261,8 @@ public class GUIPawnsController {
                                 }
                             }
                             System.out.println("usciti dal syn");
+
+                             */
                         }
                     } catch (Exception ignored) {
                     }
@@ -264,7 +281,7 @@ public class GUIPawnsController {
     }
 
     synchronized public void selectedBlue() {
-        if (bluePane.getOpacity() != 0 && !pawnSelected) {
+        if (bluePawn.getOpacity() != 0 && !pawnSelected) {
             pawnSelected = true;
             if (network == 1) {
                 executor.execute(() -> {
@@ -273,13 +290,13 @@ public class GUIPawnsController {
                         choosen = true;
 
                         Platform.runLater(() -> {
-                            greenPane.setOpacity(0);
-                            yellowPane.setOpacity(0);
-                            redPane.setOpacity(0);
-                            greenPane.disabledProperty();
-                            bluePane.disabledProperty();
-                            redPane.disabledProperty();
-                            yellowPane.disabledProperty();
+                            greenPawn.setOpacity(0);
+                            yellowPawn.setOpacity(0);
+                            redPawn.setOpacity(0);
+                            greenPawn.disabledProperty();
+                            bluePawn.disabledProperty();
+                            redPawn.disabledProperty();
+                            yellowPawn.disabledProperty();
                             retryLabel.setText("You have chosen. Now wait the others.");
                             retryLabel.setOpacity(1);
                         });
@@ -336,13 +353,18 @@ public class GUIPawnsController {
                         }else {
                             choosen = true;
                             Platform.runLater(() -> {
-                                greenPane.setOpacity(0);
-                                yellowPane.setOpacity(0);
-                                redPane.setOpacity(0);
+                                greenPawn.setOpacity(0);
+                                yellowPawn.setOpacity(0);
+                                redPawn.setOpacity(0);
+                                greenPawn.disabledProperty();
+                                bluePawn.disabledProperty();
+                                redPawn.disabledProperty();
+                                yellowPawn.disabledProperty();
                                 retryLabel.setText("You have chosen. Now wait the others.");
                                 retryLabel.setOpacity(1);
                             });
                             clientSCK.checkChosenPawnColor(); //to be implemented
+                            /*
                             System.out.println("sto per entrare nella syn");
                             synchronized (clientSCK.getGuiPawnsControllerLock()) {
                                 System.out.println("sono entrato nella syn");
@@ -360,6 +382,8 @@ public class GUIPawnsController {
                                 }
                             }
                             System.out.println("usciti dal syn");
+
+                             */
                         }
                     } catch (Exception ignored) {
                     }
@@ -378,7 +402,7 @@ public class GUIPawnsController {
     }
 
     synchronized public void selectedGreen() {
-        if (greenPane.getOpacity() != 0 && !pawnSelected) {
+        if (greenPawn.getOpacity() != 0 && !pawnSelected) {
             pawnSelected = true;
             if (network == 1) {
                 executor.execute(() -> {
@@ -386,13 +410,13 @@ public class GUIPawnsController {
                         rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.GREEN);
                         choosen = true;
                         Platform.runLater(() -> {
-                            yellowPane.setOpacity(0);
-                            bluePane.setOpacity(0);
-                            redPane.setOpacity(0);
-                            greenPane.disabledProperty();
-                            bluePane.disabledProperty();
-                            redPane.disabledProperty();
-                            yellowPane.disabledProperty();
+                            yellowPawn.setOpacity(0);
+                            bluePawn.setOpacity(0);
+                            redPawn.setOpacity(0);
+                            greenPawn.disabledProperty();
+                            bluePawn.disabledProperty();
+                            redPawn.disabledProperty();
+                            yellowPawn.disabledProperty();
                             retryLabel.setText("You have chosen. Now wait the others.");
                             retryLabel.setOpacity(1);
                         });
@@ -450,13 +474,18 @@ public class GUIPawnsController {
                         }else {
                             choosen = true;
                             Platform.runLater(() -> {
-                                yellowPane.setOpacity(0);
-                                bluePane.setOpacity(0);
-                                redPane.setOpacity(0);
+                                yellowPawn.setOpacity(0);
+                                bluePawn.setOpacity(0);
+                                redPawn.setOpacity(0);
+                                greenPawn.disabledProperty();
+                                bluePawn.disabledProperty();
+                                redPawn.disabledProperty();
+                                yellowPawn.disabledProperty();
                                 retryLabel.setText("You have chosen. Now wait the others.");
                                 retryLabel.setOpacity(1);
                             });
                             clientSCK.checkChosenPawnColor(); //to be implemented
+                            /*
                             System.out.println("sto per entrare nella syn");
                             synchronized (clientSCK.getGuiPawnsControllerLock()) {
                                 System.out.println("sono entrato nella syn");
@@ -474,6 +503,8 @@ public class GUIPawnsController {
                                 }
                             }
                             System.out.println("usciti dal syn");
+
+                             */
                         }
                     } catch (Exception ignored) {
                     }
@@ -492,7 +523,7 @@ public class GUIPawnsController {
     }
 
     synchronized public void selectedRed() {
-        if (redPane.getOpacity() != 0 && !pawnSelected) {
+        if (redPawn.getOpacity() != 0 && !pawnSelected) {
             pawnSelected = true;
             if (network == 1) {
                 executor.execute(() -> {
@@ -500,13 +531,13 @@ public class GUIPawnsController {
                         rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.RED);
                         choosen = true;
                         Platform.runLater(() -> {
-                            greenPane.setOpacity(0);
-                            bluePane.setOpacity(0);
-                            yellowPane.setOpacity(0);
-                            greenPane.disabledProperty();
-                            bluePane.disabledProperty();
-                            redPane.disabledProperty();
-                            yellowPane.disabledProperty();
+                            greenPawn.setOpacity(0);
+                            bluePawn.setOpacity(0);
+                            yellowPawn.setOpacity(0);
+                            greenPawn.disabledProperty();
+                            bluePawn.disabledProperty();
+                            redPawn.disabledProperty();
+                            yellowPawn.disabledProperty();
                             retryLabel.setText("You have chosen. Now wait the others.");
                             retryLabel.setOpacity(1);
                         });
@@ -565,13 +596,18 @@ public class GUIPawnsController {
                         }else {
                             choosen = true;
                             Platform.runLater(() -> {
-                                greenPane.setOpacity(0);
-                                bluePane.setOpacity(0);
-                                yellowPane.setOpacity(0);
+                                greenPawn.setOpacity(0);
+                                bluePawn.setOpacity(0);
+                                yellowPawn.setOpacity(0);
+                                greenPawn.disabledProperty();
+                                bluePawn.disabledProperty();
+                                redPawn.disabledProperty();
+                                yellowPawn.disabledProperty();
                                 retryLabel.setText("You have chosen. Now wait the others.");
                                 retryLabel.setOpacity(1);
                             });
                             clientSCK.checkChosenPawnColor(); //to be implemented
+                            /*
                             System.out.println("sto per entrare nella syn");
                             synchronized (clientSCK.getGuiPawnsControllerLock()) {
                                 System.out.println("sono entrato nella syn");
@@ -589,6 +625,8 @@ public class GUIPawnsController {
                                 }
                             }
                             System.out.println("usciti dal syn");
+
+                             */
                         }
                     } catch (Exception ignored) {
                     }
@@ -608,12 +646,34 @@ public class GUIPawnsController {
     }
 
 
-    public void setColoredPanes() {
+    public void setColoredPawns() {
         retryLabel.setOpacity(0);
-        yellowPane.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, null)));
-        greenPane.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, null)));
-        redPane.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, null)));
-        bluePane.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, null)));
+        String path;
+        yellowPawn.setOpacity(1);
+        greenPawn.setOpacity(1);
+        bluePawn.setOpacity(1);
+        redPawn.setOpacity(1);
+
+        path = "/images/pawns/Yellow_Pawn.png";
+        Image y = new Image(getClass().getResourceAsStream(path));
+        yellowPawn.setImage(y);
+
+        path = "/images/pawns/Red_Pawn.png";
+        Image r = new Image(getClass().getResourceAsStream(path));
+        redPawn.setImage(r);
+
+        path = "/images/pawns/Blue_Pawn.png";
+        Image b = new Image(getClass().getResourceAsStream(path));
+        bluePawn.setImage(b);
+
+        path = "/images/pawns/Green_Pawn.png";
+        Image g = new Image(getClass().getResourceAsStream(path));
+        greenPawn.setImage(g);
+
+//        yellowPawn.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, null)));
+//        greenPawn.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, null)));
+//        redPawn.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, null)));
+//        bluePawn.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, null)));
     }
 
 
@@ -641,14 +701,14 @@ public class GUIPawnsController {
             Platform.runLater(()-> {
                 if (pawn == Pawn.BLUE) {
 
-                    bluePane.setOpacity(0);
+                    bluePawn.setOpacity(0);
 
                 } else if (pawn == Pawn.YELLOW) {
-                    yellowPane.setOpacity(0);
+                    yellowPawn.setOpacity(0);
                 } else if (pawn == Pawn.GREEN) {
-                    greenPane.setOpacity(0);
+                    greenPawn.setOpacity(0);
                 } else if (pawn == Pawn.RED) {
-                    redPane.setOpacity(0);
+                    redPawn.setOpacity(0);
                 }
             });
         }

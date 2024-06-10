@@ -56,6 +56,10 @@ public class ClientSCK implements ClientGeneralInterface {
     private boolean secondUpdateRoundArrived=false;
     private boolean done=false;
     private GUIPawnsController GUIPawnsController=null;
+    private final Object guiBaseCardControllerLock=new Object();
+    private GUIBaseCardController guiBaseCardController=null;
+    private final Object guiObjectiveControllerLock=new Object();
+    private GUIObjectiveController guiObjectiveController=null;
 
     public Player getPersonalPlayer() {
         return personalPlayer;
@@ -150,9 +154,8 @@ public class ClientSCK implements ClientGeneralInterface {
     public ClientSCK(String serverAddress) throws IOException { //we call this constructor after we ask the IP address and the port of the server
         this.socket = new Socket();
         // this.socket.connect(new InetSocketAddress(Settings.SERVER_NAME, Settings.PORT), 1000); //the address and the port of the server
-        InetAddress inetAddress = InetAddress.getByName(serverAddress);
         int port = 1085; // Porta del server
-        SocketAddress socketAddress = new InetSocketAddress(inetAddress, port);
+        SocketAddress socketAddress = new InetSocketAddress(serverAddress, port);
         socket.connect(socketAddress);
 
         lobbyId = new HashSet<>();
@@ -369,73 +372,81 @@ public class ClientSCK implements ClientGeneralInterface {
             printLobby(lobbyId);
             ok=false;
             int gameSelection=0;
+
             while(!ok) {
-                System.out.println("Type -1 if you want to create a new lobby, or the lobby id if you want to join it (if there are any available)");
-                System.out.println("Type -2  to refresh the available lobbies.");
-                try {
-                    sc=new Scanner(System.in);
-                    gameSelection = sc.nextInt();
-                    if(gameSelection==-2){
-                        this.checkAvailableLobby();
-                        if(!(lobbyId.isEmpty())) {
-                            System.out.println("If you want you can join an already created lobby. These are the ones available:");
-                            printLobby(lobbyId);
-                        }else {
-                            System.out.println("There are no lobby available");
+                boolean secondOk=false;
+                while ((!secondOk)) {
+                    System.out.println("Type -1 if you want to create a new lobby, or the lobby id if you want to join it (if there are any available)");
+                    System.out.println("Type -2  to refresh the available lobbies.");
+                    try {
+                        gameSelection = sc.nextInt();
+                        if (gameSelection == -2) {
+                            lobbyId=new HashSet<>();
+                            this.checkAvailableLobby();
+                            if (!(lobbyId.isEmpty())) {
+                                System.out.println("If you want you can join an already created lobby. These are the ones available:");
+                                printLobby(lobbyId);
+                            } else {
+                                System.out.println("There are no lobby available");
+                            }
+                        } else if ((gameSelection != -1) && (!lobbyId.contains(gameSelection))) {
+                            System.out.println("You wrote a wrong ID, try again.");
+                        } else {
+                            secondOk = true;
                         }
+                    } catch (InputMismatchException e) {
+                        System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
                     }
-                    else if((gameSelection!=-1)&&(!lobbyId.contains(gameSelection))){
-                        System.out.println("You wrote a wrong ID, try again.");
-                    }else{
-                        ok = true;
-                    }
-                } catch (InputMismatchException e) {
-                    System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
                 }
-            }
-            try {
-                ok=false;
-                while(!ok) {
-                    sc=new Scanner(System.in);
+                try {
+
+                    boolean thirdOk=false;
                     if (gameSelection == -1) {
                         System.out.println("How many players would you like to join you in this game?");
-                        while(!ok) {
+                        while (!thirdOk) {
                             try {
-                                sc=new Scanner(System.in);
+                                sc = new Scanner(System.in);
                                 gameSelection = sc.nextInt();
-                                ok=true;
+                                thirdOk = true;
                             } catch (InputMismatchException e) {
                                 System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
                             }
                         }
                         createLobby(personalPlayer.getNickname(), gameSelection); //the controller (server side) doesn't have other exceptions (so we can't have an errorState here)
                         System.out.println("Successfully created a new lobby with id: " + this.gameID);
+                        ok=true;
                     } else if (lobbyId.contains(gameSelection)) {
                         try {
                             addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
-                            if(errorState){
+                            if (errorState) {
                                 System.out.println(ANSIFormatter.ANSI_RED + "The game you want to join is inaccessible, try again" + ANSIFormatter.ANSI_RESET);
-                                errorState=false;
-                            }else{
+                                errorState = false;
+                            } else {
                                 System.out.println("Successfully joined the lobby with id: " + this.gameID);
                                 checkNPlayers(); //this method in the server side makes the game start
-                                if(errorState){ //l'eccezione lato server in checkNPlayers però non è ancora stata aggiunta
+                                /*
+                                if (errorState) { //l'eccezione lato server in checkNPlayers però non è ancora stata aggiunta
                                     System.out.println("The game is already started!");
-                                    errorState=false;
-                                }else {
-                                    ok=true;
-                                }
+                                    errorState = false;
+                                } else {
+                                ok = true;
+
+                                 */
+                                ok=true;
                             }
-                        } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException e) { //da togliere
+                        } catch (Exception ignored) { //da togliere
                             //queste sono eccezioni da togliere dalla signature dei metodi in comune tra rmi e tcp
                         } //counter
                     } else {
                         System.out.println("You wrote a wrong id, try again!"); //nel caso non ci siano lobby non si esce più da questo ciclo (perchè la gameSelection è scritta prima del ciclo)
                     }
+
+
+                } catch (RemoteException |
+                         NotBoundException e) { //queste sono eccezioni da togliere dalla signature dei metodi in comune tra rmi e tcp
+                    System.out.println("Unable to communicate with the server! Shutting down.");
+                    System.exit(-1);
                 }
-            }catch (RemoteException |NotBoundException e){ //queste sono eccezioni da togliere dalla signature dei metodi in comune tra rmi e tcp
-                System.out.println("Unable to communicate with the server! Shutting down.");
-                System.exit(-1);
             }
         } else {
             // NOTHING
@@ -858,9 +869,14 @@ public class ClientSCK implements ClientGeneralInterface {
 
                     } else if (selectedView == 2) {
                         //gui
+                        /*
                         synchronized (guiLock){
                             guiLock.notify();
                         }
+
+                         */
+                        //se ho due objective card sicuramente ho anche guiBaseCardController
+                        guiBaseCardController.updateGameState();
                     }
 
             }
@@ -1138,12 +1154,17 @@ public class ClientSCK implements ClientGeneralInterface {
             }
             if (this.turnCounter == 0){
                 //chiamo playBaseCard : se uso un thread per farlo posso continuare a ricevere e a rispondere a ping
+                /*
                 synchronized (guiPawnsControllerLock){
                     System.out.println("RMI: sto per fare la notify");
                     secondUpdateRoundArrived=true;
                     done=true;
                     guiPawnsControllerLock.notify();
                 }
+
+                 */
+                //se arriva il secondo updateRound: ho già fatto la scelta della pawn e quindi ho il GUIPawnsController
+                GUIPawnsController.updateGameState();
             }
             if (this.turnCounter >= 1){
 
@@ -1169,10 +1190,14 @@ public class ClientSCK implements ClientGeneralInterface {
                 }
                 if (this.turnCounter == 1){ //questo è il terzo turno
                     //dal terzo turno è possibile vedere il menù e selezionarne i punti del menù, la TUI qui lancia un thread che va per tutta la partita
+                    /*
                     synchronized (guiLock){
                         finishedSetup=true;
                         guiLock.notify();
                     }
+
+                     */
+                    guiObjectiveController.updateGameState();
                 }
             }
             turnCounter++; //quando il model fa un updateRound per la terza volta siamo in turnCounter==1 e si può iniziare a selezionare il menù
@@ -1579,6 +1604,22 @@ public class ClientSCK implements ClientGeneralInterface {
 
     public void setGuiPawnsController(GUIPawnsController ctr) {
         this.GUIPawnsController=ctr;
+    }
+
+    public Object getGuiBaseCardControllerLock() {
+        return this.guiBaseCardControllerLock;
+    }
+
+    public void setGuiBaseCardController(GUIBaseCardController ctr) {
+        this.guiBaseCardController=ctr;
+    }
+
+    public Object getGuiObjectiveControllerLock() {
+        return this.guiObjectiveControllerLock;
+    }
+
+    public void setGuiObjectiveController(GUIObjectiveController ctr) {
+        this.guiObjectiveController=ctr;
     }
 
 
