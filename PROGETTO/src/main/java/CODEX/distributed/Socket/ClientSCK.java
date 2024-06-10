@@ -56,6 +56,10 @@ public class ClientSCK implements ClientGeneralInterface {
     private boolean secondUpdateRoundArrived=false;
     private boolean done=false;
     private GUIPawnsController GUIPawnsController=null;
+    private final Object guiBaseCardControllerLock=new Object();
+    private GUIBaseCardController guiBaseCardController=null;
+    private final Object guiObjectiveControllerLock=new Object();
+    private GUIObjectiveController guiObjectiveController=null;
 
     public Player getPersonalPlayer() {
         return personalPlayer;
@@ -858,9 +862,14 @@ public class ClientSCK implements ClientGeneralInterface {
 
                     } else if (selectedView == 2) {
                         //gui
+                        /*
                         synchronized (guiLock){
                             guiLock.notify();
                         }
+
+                         */
+                        //se ho due objective card sicuramente ho anche guiBaseCardController
+                        guiBaseCardController.updateGameState();
                     }
 
             }
@@ -1138,12 +1147,17 @@ public class ClientSCK implements ClientGeneralInterface {
             }
             if (this.turnCounter == 0){
                 //chiamo playBaseCard : se uso un thread per farlo posso continuare a ricevere e a rispondere a ping
+                /*
                 synchronized (guiPawnsControllerLock){
                     System.out.println("RMI: sto per fare la notify");
                     secondUpdateRoundArrived=true;
                     done=true;
                     guiPawnsControllerLock.notify();
                 }
+
+                 */
+                //se arriva il secondo updateRound: ho già fatto la scelta della pawn e quindi ho il GUIPawnsController
+                GUIPawnsController.updateGameState();
             }
             if (this.turnCounter >= 1){
 
@@ -1169,10 +1183,14 @@ public class ClientSCK implements ClientGeneralInterface {
                 }
                 if (this.turnCounter == 1){ //questo è il terzo turno
                     //dal terzo turno è possibile vedere il menù e selezionarne i punti del menù, la TUI qui lancia un thread che va per tutta la partita
+                    /*
                     synchronized (guiLock){
                         finishedSetup=true;
                         guiLock.notify();
                     }
+
+                     */
+                    guiObjectiveController.updateGameState();
                 }
             }
             turnCounter++; //quando il model fa un updateRound per la terza volta siamo in turnCounter==1 e si può iniziare a selezionare il menù
@@ -1579,6 +1597,22 @@ public class ClientSCK implements ClientGeneralInterface {
 
     public void setGuiPawnsController(GUIPawnsController ctr) {
         this.GUIPawnsController=ctr;
+    }
+
+    public Object getGuiBaseCardControllerLock() {
+        return this.guiBaseCardControllerLock;
+    }
+
+    public void setGuiBaseCardController(GUIBaseCardController ctr) {
+        this.guiBaseCardController=ctr;
+    }
+
+    public Object getGuiObjectiveControllerLock() {
+        return this.guiObjectiveControllerLock;
+    }
+
+    public void setGuiObjectiveController(GUIObjectiveController ctr) {
+        this.guiObjectiveController=ctr;
     }
 
 

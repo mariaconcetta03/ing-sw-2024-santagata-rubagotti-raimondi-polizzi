@@ -270,7 +270,7 @@ public class GUILobbyController {
                 rmiClient.getGuiPawnsControllerLock().notify();
                 rmiClient.setDone(true);
             }
-        }if(network==2){ //ancora da implementare
+        }if(network==2){
             synchronized (clientSCK.getGuiPawnsControllerLock()) {
                 clientSCK.setGuiPawnsController(ctr);
                 clientSCK.getGuiPawnsControllerLock().notify();

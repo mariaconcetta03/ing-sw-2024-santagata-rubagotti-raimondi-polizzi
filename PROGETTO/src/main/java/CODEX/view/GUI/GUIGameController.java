@@ -1780,213 +1780,213 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
      */
 }
 
-    private void buttonClicked(Button button) { //se ho potuto vedere e cliccare un bottone allora è il mio turno (io sono sempre p1)
-        String buttonText = button.getText();
-        String[] coordinates = buttonText.split(",");
-        try {
-            int col = Integer.parseInt(coordinates[0]);
-            int row = Integer.parseInt(coordinates[1]);
+    private synchronized void buttonClicked(Button button) { //se ho potuto vedere e cliccare un bottone allora è il mio turno (io sono sempre p1)
+         if(!cardPlaced) {
+             String buttonText = button.getText();
+             String[] coordinates = buttonText.split(",");
+             try {
+                 int col = Integer.parseInt(coordinates[0]);
+                 int row = Integer.parseInt(coordinates[1]);
 
-            // Esegui le operazioni desiderate con 'row' e 'col'
-            // Esempio: aggiungi un'immagine
-            String path=null;
-            if (selectedCard != 0) { //è stata selezionata una carta
-                if(network==1){
-                    PlayableCard[] playerDeck=rmiClient.getPersonalPlayer().getPlayerDeck();
-                    if (selectedCard == 1) {
-                        cardPlaced = true;
-                        System.out.println("PLAYED CARD 1");
-                        try {
-                            rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[0], new Coordinates(col,row), orientationCard1);
-                            p1Counter++;
-                            PlayableCard playableCard=playerDeck[0];
-                            playableCard.setPosition(new Coordinates(col,row));
-                            playableCard.setOrientation(orientationCard1);
-                            cardsOnP1Board.put(p1Counter,playableCard);
-                            if(orientationCard1) {
-                                path = "/images/cards/front/  (" + playerDeck[0].getId() + ").png";
-                            }else {
-                                path = "/images/cards/back/  (" + playerDeck[0].getId() + ").png";
-                            }
-                            player1Card1.setImage(null);
-                            emptySpace=1;
+                 // Esegui le operazioni desiderate con 'row' e 'col'
+                 // Esempio: aggiungi un'immagine
+                 String path = null;
+                 if (selectedCard != 0) { //è stata selezionata una carta
+                     if (network == 1) {
+                         PlayableCard[] playerDeck = rmiClient.getPersonalPlayer().getPlayerDeck();
+                         if (selectedCard == 1) {
+                             cardPlaced = true;
+                             System.out.println("PLAYED CARD 1");
+                             try {
+                                 rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[0], new Coordinates(col, row), orientationCard1);
+                                 p1Counter++;
+                                 PlayableCard playableCard = playerDeck[0];
+                                 playableCard.setPosition(new Coordinates(col, row));
+                                 playableCard.setOrientation(orientationCard1);
+                                 cardsOnP1Board.put(p1Counter, playableCard);
+                                 if (orientationCard1) {
+                                     path = "/images/cards/front/  (" + playerDeck[0].getId() + ").png";
+                                 } else {
+                                     path = "/images/cards/back/  (" + playerDeck[0].getId() + ").png";
+                                 }
+                                 player1Card1.setImage(null);
+                                 emptySpace = 1;
 
-                        } catch (RemoteException | NotBoundException e) {
-                            System.out.println("UNABLE TO COMMUNICATE W SERVER");
-                            updateLabel(selectedCardLabel, "You don't have enough resources!");
-                            cardPlaced = false;
-                        } catch (IllegalArgumentException e) {
-                            System.out.println("Qui non ho abbastanza risorse");
-                            updateLabel(selectedCardLabel, "You don't have enough resources!");
-                            cardPlaced = false;
-                        }
-                    } else if (selectedCard == 2) {
-                        cardPlaced = true;
-                        System.out.println("PLAYED CARD 2");
-                        try {
-                            rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[1], new Coordinates(col,row), orientationCard2);
-                            p1Counter++;
-                            PlayableCard playableCard=playerDeck[1];
-                            playableCard.setPosition(new Coordinates(col,row));
-                            playableCard.setOrientation(orientationCard2);
-                            cardsOnP1Board.put(p1Counter,playableCard);
-                            if(orientationCard1) {
-                                path = "/images/cards/front/  (" + playerDeck[1].getId() + ").png";
-                            }else {
-                                path = "/images/cards/back/  (" + playerDeck[1].getId() + ").png";
-                            }
-                            player1Card2.setImage(null);
-                            emptySpace=2;
-                        } catch (RemoteException | NotBoundException e) {
-                            System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updateLabel(selectedCardLabel, "You don't have enough resources!");
-                            cardPlaced = false;
-                        } catch (IllegalArgumentException e){
-                            System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updateLabel(selectedCardLabel, "You don't have enough resources!");
-                            cardPlaced = false;
-                        }
-                    } else if (selectedCard == 3) {
-                        cardPlaced = true;
-                        System.out.println("PLAYED CARD 3");
-                        try {
-                            rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[2], new Coordinates(col,row), orientationCard3);
-                            p1Counter++;
-                            PlayableCard playableCard=playerDeck[2];
-                            playableCard.setPosition(new Coordinates(col,row));
-                            playableCard.setOrientation(orientationCard3);
-                            cardsOnP1Board.put(p1Counter,playableCard);
-                            if(orientationCard1) {
-                                path = "/images/cards/front/  (" + playerDeck[2].getId() + ").png";
-                            }else {
-                                path = "/images/cards/back/  (" + playerDeck[2].getId() + ").png";
-                            }
-                            player1Card3.setImage(null);
-                            emptySpace=3;
-                        } catch (RemoteException | NotBoundException e) {
-                            System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updateLabel(selectedCardLabel, "You don't have enough resources!");
-                            cardPlaced = false;
-                        } catch (IllegalArgumentException e){
-                            System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updateLabel(selectedCardLabel, "You don't have enough resources!");
-                            cardPlaced = false;
-                        }
-                    }
+                             } catch (RemoteException | NotBoundException e) {
+                                 System.out.println("UNABLE TO COMMUNICATE W SERVER");
+                                 updateLabel(selectedCardLabel, "You don't have enough resources!");
+                                 cardPlaced = false;
+                             } catch (IllegalArgumentException e) {
+                                 System.out.println("Qui non ho abbastanza risorse");
+                                 updateLabel(selectedCardLabel, "You don't have enough resources!");
+                                 cardPlaced = false;
+                             }
+                         } else if (selectedCard == 2) {
+                             cardPlaced = true;
+                             System.out.println("PLAYED CARD 2");
+                             try {
+                                 rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[1], new Coordinates(col, row), orientationCard2);
+                                 p1Counter++;
+                                 PlayableCard playableCard = playerDeck[1];
+                                 playableCard.setPosition(new Coordinates(col, row));
+                                 playableCard.setOrientation(orientationCard2);
+                                 cardsOnP1Board.put(p1Counter, playableCard);
+                                 if (orientationCard1) {
+                                     path = "/images/cards/front/  (" + playerDeck[1].getId() + ").png";
+                                 } else {
+                                     path = "/images/cards/back/  (" + playerDeck[1].getId() + ").png";
+                                 }
+                                 player1Card2.setImage(null);
+                                 emptySpace = 2;
+                             } catch (RemoteException | NotBoundException e) {
+                                 System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                                 updateLabel(selectedCardLabel, "You don't have enough resources!");
+                                 cardPlaced = false;
+                             } catch (IllegalArgumentException e) {
+                                 System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                                 updateLabel(selectedCardLabel, "You don't have enough resources!");
+                                 cardPlaced = false;
+                             }
+                         } else if (selectedCard == 3) {
+                             cardPlaced = true;
+                             System.out.println("PLAYED CARD 3");
+                             try {
+                                 rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[2], new Coordinates(col, row), orientationCard3);
+                                 p1Counter++;
+                                 PlayableCard playableCard = playerDeck[2];
+                                 playableCard.setPosition(new Coordinates(col, row));
+                                 playableCard.setOrientation(orientationCard3);
+                                 cardsOnP1Board.put(p1Counter, playableCard);
+                                 if (orientationCard1) {
+                                     path = "/images/cards/front/  (" + playerDeck[2].getId() + ").png";
+                                 } else {
+                                     path = "/images/cards/back/  (" + playerDeck[2].getId() + ").png";
+                                 }
+                                 player1Card3.setImage(null);
+                                 emptySpace = 3;
+                             } catch (RemoteException | NotBoundException e) {
+                                 System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                                 updateLabel(selectedCardLabel, "You don't have enough resources!");
+                                 cardPlaced = false;
+                             } catch (IllegalArgumentException e) {
+                                 System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                                 updateLabel(selectedCardLabel, "You don't have enough resources!");
+                                 cardPlaced = false;
+                             }
+                         }
 
-                }if(network==2){
-                    PlayableCard[] playerDeck=clientSCK.getPersonalPlayer().getPlayerDeck();
-                    if (selectedCard == 1) {
-                        cardPlaced = true;
-                        System.out.println("PLAYED CARD 1");
-                        try {
-                            clientSCK.setErrorState(false);
-                            clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), playerDeck[0], new Coordinates(col,row), orientationCard1);
-                        } catch (RemoteException | NotBoundException ignored) {
-                        }
-                        if (clientSCK.getErrorState()) {
-                            System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updateLabel(selectedCardLabel, "You don't have enough resources!");
-                            cardPlaced = false;
-                            clientSCK.setErrorState(false);
-                        }else{
-                            p1Counter++;
-                            PlayableCard playableCard=playerDeck[0];
-                            playableCard.setPosition(new Coordinates(col,row));
-                            playableCard.setOrientation(orientationCard1);
-                            cardsOnP1Board.put(p1Counter,playableCard);
-                            for(Integer i:cardsOnP1Board.keySet()){
-                                System.out.println(i);
-                            }
-                            if(orientationCard1) {
-                                path = "/images/cards/front/  (" + playerDeck[0].getId() + ").png";
-                            }else {
-                                path = "/images/cards/back/  (" + playerDeck[0].getId() + ").png";
-                            }
-                            player1Card1.setImage(null);
-                            emptySpace=1;
-                        }
-                    }else if (selectedCard == 2) {
-                        cardPlaced = true;
-                        System.out.println("PLAYED CARD 2");
-                        try {
-                            clientSCK.setErrorState(false);
-                            clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), playerDeck[1], new Coordinates(col,row), orientationCard2);
-                        } catch (RemoteException | NotBoundException ignored) {
-                        }
-                        if (clientSCK.getErrorState()) {
-                            System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updateLabel(selectedCardLabel, "You don't have enough resources!");
-                            cardPlaced = false;
-                            clientSCK.setErrorState(false);
-                        }
-                        else{
-                            p1Counter++;
-                            PlayableCard playableCard=playerDeck[1];
-                            playableCard.setPosition(new Coordinates(col,row));
-                            playableCard.setOrientation(orientationCard2);
-                            cardsOnP1Board.put(p1Counter,playableCard);
-                            if(orientationCard1) {
-                                path = "/images/cards/front/  (" + playerDeck[1].getId() + ").png";
-                            }else {
-                                path = "/images/cards/back/  (" + playerDeck[1].getId() + ").png";
-                            }
-                            player1Card2.setImage(null);
-                            emptySpace=2;
-                        }
-                    }else if (selectedCard == 3) {
-                        cardPlaced = true;
-                        System.out.println("PLAYED CARD 3");
-                        try {
-                            clientSCK.setErrorState(false);
-                            clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), playerDeck[2], new Coordinates(col,row), orientationCard3);
-                        } catch (RemoteException | NotBoundException ignored) {
-                        }
-                        if(clientSCK.getErrorState()){
-                            System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updateLabel(selectedCardLabel, "You don't have enough resources!");
-                            cardPlaced = false;
-                            clientSCK.setErrorState(false);
-                        }
-                        else{
-                            p1Counter++;
-                            PlayableCard playableCard=playerDeck[2];
-                            playableCard.setPosition(new Coordinates(col,row));
-                            playableCard.setOrientation(orientationCard3);
-                            cardsOnP1Board.put(p1Counter,playableCard);
-                            if(orientationCard1) {
-                                path = "/images/cards/front/  (" + playerDeck[2].getId() + ").png";
-                            }else {
-                                path = "/images/cards/back/  (" + playerDeck[2].getId() + ").png";
-                            }
-                            player1Card3.setImage(null);
-                            emptySpace=3;
-                        }
-                    }
-                }
-                if(cardPlaced) {
-                    Image card1 = new Image(getClass().getResourceAsStream(path));
-                    ImageView imageView = new ImageView(card1);
-                    imageView.setFitWidth(100.0);  // larghezza desiderata
-                    imageView.setFitHeight(68.25); // altezza desiderata
-                    imageView.setPreserveRatio(true);
-                    imageView.setSmooth(true);
-                   Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
-                    GridPane.setMargin(imageView, insets);
-                    grid.add(imageView, col, 81-row);
-                    showP1Board(); // RICARICO LA BOARD
-                    //se è l'ultimo turno diciamo al giocatore che non può pescare una nuova carta
-                    if(lastRound){
-                        selectedCardLabel.setText("This was your last round: YOU CAN'T DRAW ANY CARDS");
-                    }
-                }
+                     }
+                     if (network == 2) {
+                         PlayableCard[] playerDeck = clientSCK.getPersonalPlayer().getPlayerDeck();
+                         if (selectedCard == 1) {
+                             cardPlaced = true;
+                             System.out.println("PLAYED CARD 1");
+                             try {
+                                 clientSCK.setErrorState(false);
+                                 clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), playerDeck[0], new Coordinates(col, row), orientationCard1);
+                             } catch (RemoteException | NotBoundException ignored) {
+                             }
+                             if (clientSCK.getErrorState()) {
+                                 System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                                 updateLabel(selectedCardLabel, "You don't have enough resources!");
+                                 cardPlaced = false;
+                                 clientSCK.setErrorState(false);
+                             } else {
+                                 p1Counter++;
+                                 PlayableCard playableCard = playerDeck[0];
+                                 playableCard.setPosition(new Coordinates(col, row));
+                                 playableCard.setOrientation(orientationCard1);
+                                 cardsOnP1Board.put(p1Counter, playableCard);
+                                 for (Integer i : cardsOnP1Board.keySet()) {
+                                     System.out.println(i);
+                                 }
+                                 if (orientationCard1) {
+                                     path = "/images/cards/front/  (" + playerDeck[0].getId() + ").png";
+                                 } else {
+                                     path = "/images/cards/back/  (" + playerDeck[0].getId() + ").png";
+                                 }
+                                 player1Card1.setImage(null);
+                                 emptySpace = 1;
+                             }
+                         } else if (selectedCard == 2) {
+                             cardPlaced = true;
+                             System.out.println("PLAYED CARD 2");
+                             try {
+                                 clientSCK.setErrorState(false);
+                                 clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), playerDeck[1], new Coordinates(col, row), orientationCard2);
+                             } catch (RemoteException | NotBoundException ignored) {
+                             }
+                             if (clientSCK.getErrorState()) {
+                                 System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                                 updateLabel(selectedCardLabel, "You don't have enough resources!");
+                                 cardPlaced = false;
+                                 clientSCK.setErrorState(false);
+                             } else {
+                                 p1Counter++;
+                                 PlayableCard playableCard = playerDeck[1];
+                                 playableCard.setPosition(new Coordinates(col, row));
+                                 playableCard.setOrientation(orientationCard2);
+                                 cardsOnP1Board.put(p1Counter, playableCard);
+                                 if (orientationCard1) {
+                                     path = "/images/cards/front/  (" + playerDeck[1].getId() + ").png";
+                                 } else {
+                                     path = "/images/cards/back/  (" + playerDeck[1].getId() + ").png";
+                                 }
+                                 player1Card2.setImage(null);
+                                 emptySpace = 2;
+                             }
+                         } else if (selectedCard == 3) {
+                             cardPlaced = true;
+                             System.out.println("PLAYED CARD 3");
+                             try {
+                                 clientSCK.setErrorState(false);
+                                 clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), playerDeck[2], new Coordinates(col, row), orientationCard3);
+                             } catch (RemoteException | NotBoundException ignored) {
+                             }
+                             if (clientSCK.getErrorState()) {
+                                 System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
+                                 updateLabel(selectedCardLabel, "You don't have enough resources!");
+                                 cardPlaced = false;
+                                 clientSCK.setErrorState(false);
+                             } else {
+                                 p1Counter++;
+                                 PlayableCard playableCard = playerDeck[2];
+                                 playableCard.setPosition(new Coordinates(col, row));
+                                 playableCard.setOrientation(orientationCard3);
+                                 cardsOnP1Board.put(p1Counter, playableCard);
+                                 if (orientationCard1) {
+                                     path = "/images/cards/front/  (" + playerDeck[2].getId() + ").png";
+                                 } else {
+                                     path = "/images/cards/back/  (" + playerDeck[2].getId() + ").png";
+                                 }
+                                 player1Card3.setImage(null);
+                                 emptySpace = 3;
+                             }
+                         }
+                     }
+                     if (cardPlaced) {
+                         Image card1 = new Image(getClass().getResourceAsStream(path));
+                         ImageView imageView = new ImageView(card1);
+                         imageView.setFitWidth(100.0);  // larghezza desiderata
+                         imageView.setFitHeight(68.25); // altezza desiderata
+                         imageView.setPreserveRatio(true);
+                         imageView.setSmooth(true);
+                         Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
+                         GridPane.setMargin(imageView, insets);
+                         grid.add(imageView, col, 81 - row);
+                         showP1Board(); // RICARICO LA BOARD
+                         //se è l'ultimo turno diciamo al giocatore che non può pescare una nuova carta
+                         if (lastRound) {
+                             selectedCardLabel.setText("This was your last round: YOU CAN'T DRAW ANY CARDS");
+                         }
+                     }
 
-            }
-        } catch(NumberFormatException | ArrayIndexOutOfBoundsException e){
-            // Gestisci eventuali eccezioni durante la conversione delle coordinate
-            e.printStackTrace();
-        }
-
+                 }
+             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                 // Gestisci eventuali eccezioni durante la conversione delle coordinate
+                 e.printStackTrace();
+             }
+         }
     }
 
 

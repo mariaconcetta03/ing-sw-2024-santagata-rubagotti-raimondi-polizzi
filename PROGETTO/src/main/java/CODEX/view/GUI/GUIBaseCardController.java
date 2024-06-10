@@ -282,14 +282,14 @@ public class GUIBaseCardController {
 
                 }
             }if(network==2){
-            /*
-            synchronized (clientSCK.getGuiPawnsControllerLock()) {
-                clientSCK.setGuiPawnsController(ctr);
-                clientSCK.getGuiPawnsControllerLock().notify();
-                clientSCK.setDone(true);
+
+            synchronized (clientSCK.getGuiObjectiveControllerLock()) {
+                clientSCK.setGuiObjectiveController(ctr);
+                clientSCK.getGuiObjectiveControllerLock().notify();
+
             }
 
-             */
+
             }
 
 

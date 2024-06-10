@@ -74,36 +74,39 @@ public class GUIObjectiveController {
     public synchronized void selectedRightObjective () {
         objCard1.disabledProperty();
         objCard2.disabledProperty();
+        if (!objectiveSelected) {
+            new Thread(() -> {
+                if (network == 1) {
 
-        new Thread(() -> {
-            if (network == 1 && !objectiveSelected) {
+                    try {
+                        rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(1));
+                        rmiClient.getGameController().checkObjectiveCardChosen();
+                        objectiveCardselected = rmiClient.getPersonalPlayer().getPersonalObjectives().get(1);
+                    } catch (RemoteException | NotBoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else if (network == 2) {
+                    try {
+                        clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(1));
 
-                try {
-                    rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(1));
-                    rmiClient.getGameController().checkObjectiveCardChosen();
-                    objectiveCardselected=rmiClient.getPersonalPlayer().getPersonalObjectives().get(1);
-                } catch (RemoteException | NotBoundException e) {
-                    throw new RuntimeException(e);
+                    } catch (Exception ignored) {
+                    }
+                    if(!clientSCK.getErrorState()){
+                        clientSCK.checkObjectiveCardChosen();
+                        objectiveCardselected = clientSCK.getPersonalPlayer().getPersonalObjectives().get(1);
+
+                    }
+
                 }
-            }else if (network == 2 && !objectiveSelected) {
-                try {
-                    clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(1));
-                    clientSCK.checkObjectiveCardChosen();
-                    objectiveCardselected=clientSCK.getPersonalPlayer().getPersonalObjectives().get(1);
-                } catch (RemoteException | NotBoundException e) {
-                    throw new RuntimeException(e);
-                }
-
-            }
 
 
-            // third thread to change the scene always in JAVA FX thread
-            Platform.runLater(() -> {
-                System.out.println("sto per chiamare il selectionLabel");
-                selectionLabel.setText("Right objective selected. Now wait for everyone to choose.");
-                System.out.println("selezionato destra");
-                objectiveSelected = true;
-                //changeScene();
+                // third thread to change the scene always in JAVA FX thread
+                Platform.runLater(() -> {
+                    System.out.println("sto per chiamare il selectionLabel");
+                    selectionLabel.setText("Right objective selected. Now wait for everyone to choose.");
+                    System.out.println("selezionato destra");
+                    objectiveSelected = true;
+                    //changeScene();
                 /*
                 // Aggiungi un ritardo prima di cambiare scena
                 PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
@@ -117,8 +120,9 @@ public class GUIObjectiveController {
                 pause.play();
 
                  */
-              });
-        }).start();
+                });
+            }).start();
+        }
     }
 
 
@@ -139,10 +143,13 @@ public class GUIObjectiveController {
                 } else if (network == 2) {
                     try {
                         clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(0));
+
+                    } catch (Exception ignored) {
+                    }
+                    if(!clientSCK.getErrorState()){
                         clientSCK.checkObjectiveCardChosen(); //to be implemented
                         objectiveCardselected = clientSCK.getPersonalPlayer().getPersonalObjectives().get(0);
-                    } catch (RemoteException | NotBoundException e) {
-                        throw new RuntimeException(e);
+
                     }
                 }
 
@@ -213,6 +220,7 @@ public class GUIObjectiveController {
              */
         } else if (network == 2) {
             System.out.println("il player ha scelto obiettivo con ID: " + clientSCK.getPersonalPlayer().getPersonalObjective());
+            /*
             Object guiLock = clientSCK.getGuiLock();
             synchronized (guiLock) {
                 boolean finishedSetup=clientSCK.getFinishedSetup(); //se qui è già true non ho bisogno di entrare nel while che fa la wait
@@ -230,6 +238,8 @@ public class GUIObjectiveController {
                     }
                 }
             }
+
+             */
         }
         if ((network == 1)||(network == 2 && !clientSCK.getADisconnectionHappened())) {
             ctr.setObjectiveCardselected(objectiveCardselected);
@@ -287,7 +297,7 @@ public class GUIObjectiveController {
     }
 
 
-    public void changeOrientationCard1(){
+    public synchronized void changeOrientationCard1(){
         if(orientationCard1) {
             String path;
             path = "/images/cards/back/  (" + card1ID + ").png";
@@ -304,7 +314,7 @@ public class GUIObjectiveController {
     }
 
 
-    public void changeOrientationCard2(){
+    public synchronized void changeOrientationCard2(){
         if(orientationCard2) {
             String path;
             path = "/images/cards/back/  (" + card2ID + ").png";
@@ -321,7 +331,7 @@ public class GUIObjectiveController {
     }
 
 
-    public void changeOrientationCard3(){
+    public synchronized void changeOrientationCard3(){
         if(orientationCard3) {
             String path;
             path = "/images/cards/back/  (" + card3ID + ").png";

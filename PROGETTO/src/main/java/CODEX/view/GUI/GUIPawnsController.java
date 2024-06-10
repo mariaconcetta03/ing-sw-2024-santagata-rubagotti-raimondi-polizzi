@@ -114,14 +114,14 @@ public class GUIPawnsController {
 
             }
         }if(network==2){
-            /*
-            synchronized (clientSCK.getGuiPawnsControllerLock()) {
-                clientSCK.setGuiPawnsController(ctr);
-                clientSCK.getGuiPawnsControllerLock().notify();
-                clientSCK.setDone(true);
+
+            synchronized (clientSCK.getGuiBaseCardControllerLock()) {
+                clientSCK.setGuiBaseCardController(ctr);
+                clientSCK.getGuiBaseCardControllerLock().notify();
+
             }
 
-             */
+
         }
 
         stage.setScene(scene); //questo è il momento in cui la nuova scena viene mostrata
@@ -225,10 +225,15 @@ public class GUIPawnsController {
                                 greenPane.setOpacity(0);
                                 bluePane.setOpacity(0);
                                 redPane.setOpacity(0);
+                                greenPane.disabledProperty();
+                                bluePane.disabledProperty();
+                                redPane.disabledProperty();
+                                yellowPane.disabledProperty();
                                 retryLabel.setText("You have chosen. Now wait the others.");
                                 retryLabel.setOpacity(1);
                             });
-                            clientSCK.checkChosenPawnColor(); //to be implemented
+                            clientSCK.checkChosenPawnColor();
+                            /*
                             System.out.println("sto per entrare nella syn");
                             synchronized (clientSCK.getGuiPawnsControllerLock()) {
                                 System.out.println("sono entrato nella syn");
@@ -246,6 +251,8 @@ public class GUIPawnsController {
                                 }
                             }
                             System.out.println("usciti dal syn");
+
+                             */
                         }
                     } catch (Exception ignored) {
                     }
@@ -339,10 +346,15 @@ public class GUIPawnsController {
                                 greenPane.setOpacity(0);
                                 yellowPane.setOpacity(0);
                                 redPane.setOpacity(0);
+                                greenPane.disabledProperty();
+                                bluePane.disabledProperty();
+                                redPane.disabledProperty();
+                                yellowPane.disabledProperty();
                                 retryLabel.setText("You have chosen. Now wait the others.");
                                 retryLabel.setOpacity(1);
                             });
                             clientSCK.checkChosenPawnColor(); //to be implemented
+                            /*
                             System.out.println("sto per entrare nella syn");
                             synchronized (clientSCK.getGuiPawnsControllerLock()) {
                                 System.out.println("sono entrato nella syn");
@@ -360,6 +372,8 @@ public class GUIPawnsController {
                                 }
                             }
                             System.out.println("usciti dal syn");
+
+                             */
                         }
                     } catch (Exception ignored) {
                     }
@@ -453,10 +467,15 @@ public class GUIPawnsController {
                                 yellowPane.setOpacity(0);
                                 bluePane.setOpacity(0);
                                 redPane.setOpacity(0);
+                                greenPane.disabledProperty();
+                                bluePane.disabledProperty();
+                                redPane.disabledProperty();
+                                yellowPane.disabledProperty();
                                 retryLabel.setText("You have chosen. Now wait the others.");
                                 retryLabel.setOpacity(1);
                             });
                             clientSCK.checkChosenPawnColor(); //to be implemented
+                            /*
                             System.out.println("sto per entrare nella syn");
                             synchronized (clientSCK.getGuiPawnsControllerLock()) {
                                 System.out.println("sono entrato nella syn");
@@ -474,6 +493,8 @@ public class GUIPawnsController {
                                 }
                             }
                             System.out.println("usciti dal syn");
+
+                             */
                         }
                     } catch (Exception ignored) {
                     }
@@ -568,10 +589,15 @@ public class GUIPawnsController {
                                 greenPane.setOpacity(0);
                                 bluePane.setOpacity(0);
                                 yellowPane.setOpacity(0);
+                                greenPane.disabledProperty();
+                                bluePane.disabledProperty();
+                                redPane.disabledProperty();
+                                yellowPane.disabledProperty();
                                 retryLabel.setText("You have chosen. Now wait the others.");
                                 retryLabel.setOpacity(1);
                             });
                             clientSCK.checkChosenPawnColor(); //to be implemented
+                            /*
                             System.out.println("sto per entrare nella syn");
                             synchronized (clientSCK.getGuiPawnsControllerLock()) {
                                 System.out.println("sono entrato nella syn");
@@ -589,6 +615,8 @@ public class GUIPawnsController {
                                 }
                             }
                             System.out.println("usciti dal syn");
+
+                             */
                         }
                     } catch (Exception ignored) {
                     }
