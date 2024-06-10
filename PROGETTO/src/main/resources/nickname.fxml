@@ -43,7 +43,7 @@
                                  </HBox.margin>
                               </TextField>
                               <Separator opacity="0.0" prefHeight="9.0" prefWidth="2.0" />
-                              <Button alignment="TOP_CENTER" mnemonicParsing="false" onAction="#sendNickname" opacity="0.8" prefHeight="47.0" prefWidth="155.0" text="Done" textAlignment="CENTER">
+                              <Button fx:id="sendNicknameButton" alignment="TOP_CENTER" mnemonicParsing="false" onAction="#sendNickname" opacity="0.8" prefHeight="47.0" prefWidth="155.0" text="Done" textAlignment="CENTER">
                                  <font>
                                     <Font name="Georgia" size="25.0" />
                                  </font>

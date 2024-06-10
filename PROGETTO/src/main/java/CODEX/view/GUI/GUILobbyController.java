@@ -291,7 +291,7 @@ public class GUILobbyController {
     }
 
 
-    public void joinLobby() {
+    public synchronized void joinLobby() {
         fullLobby.setOpacity(0);
         if (availableLobbies.getValue() != null) {
             if (network == 1) {
@@ -301,6 +301,7 @@ public class GUILobbyController {
                     System.out.println("ho chiamato addplayer to lobby e sto per chiamare checknplayers");
                     rmiClient.getGameController().checkNPlayers(); // starts the game if the number of players is correct
                     System.out.println("ho chiamato il checknplayers e chiamo SETWAITINGPLAYERS");
+                    joinButton.disabledProperty();
                     setWaitingPlayers();
                 } catch (RemoteException | GameNotExistsException | NotBoundException e) {
                     throw new RuntimeException(e);
@@ -343,7 +344,7 @@ public class GUILobbyController {
 
 
 
-    public void createNewLobby(){
+    public synchronized void createNewLobby(){
             wrongNumber.setOpacity(0);
             int number;
             String input = createText.getText();
@@ -351,6 +352,9 @@ public class GUILobbyController {
                 if (network == 1) {
                     try {
                         rmiClient.createLobby(rmiClient.getPersonalPlayer().getNickname(), Integer.parseInt(input));
+                        createButton.disabledProperty();
+                        joinButton.disabledProperty();
+                        createButton.disabledProperty();
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     }

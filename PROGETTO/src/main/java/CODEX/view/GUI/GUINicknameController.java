@@ -10,6 +10,7 @@ import java.rmi.RemoteException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
@@ -18,6 +19,7 @@ import javafx.stage.Stage;
 
 public class GUINicknameController {
 
+    public Button sendNicknameButton;
     @FXML
     private TextField nickname;
     @FXML
@@ -40,7 +42,7 @@ public class GUINicknameController {
 
 
 
-    public void sendNickname() throws IOException {
+    public synchronized void sendNickname() throws IOException {
         String input = nickname.getText();
         if(!input.isBlank()) {
             System.out.println(nickname.getCharacters());
@@ -63,7 +65,8 @@ public class GUINicknameController {
                 nickname.clear(); // se il nick è sbagliato, allora cancello il field in modo che l'utente inserisca daccapo
             } else {
                 nicknameUsed.setOpacity(0); // not necessary because we will change our window!
-
+                nickname.disabledProperty();
+                sendNicknameButton.disabledProperty();
                 // let's show the new window!
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lobby.fxml"));
                 Scene scene = new Scene(fxmlLoader.load());

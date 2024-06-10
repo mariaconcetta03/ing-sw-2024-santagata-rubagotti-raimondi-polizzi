@@ -65,6 +65,8 @@ public class GUIBaseCardController {
     }
 
     public synchronized void selectedFront() {
+        baseCard1.disabledProperty();
+        baseCard2.disabledProperty();
 // third thread to change the scene always in JAVA FX thread
         Platform.runLater(() -> {
             stateLabel.setText("Front side selected! Now wait for everyone to choose.");
@@ -94,11 +96,11 @@ public class GUIBaseCardController {
         }
 
 
-        PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
+        /*PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
         pause.setOnFinished(event -> {
             changeScene();
         });
-        pause.play();
+        pause.play();*/
 
         // Platform.runLater(()->{changeScene();});
 
@@ -106,6 +108,8 @@ public class GUIBaseCardController {
 
 
     public synchronized void selectedBack() {
+        baseCard1.disabledProperty();
+        baseCard2.disabledProperty();
     // third thread to change the scene always in JAVA FX thread
         if (!baseCardPlayed) {
             baseCardPlayed = true;
@@ -137,11 +141,11 @@ public class GUIBaseCardController {
                 }
             }
 
-            PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
+           /*  PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
             pause.setOnFinished(event -> {
                 changeScene();
             });
-            pause.play();
+            pause.play();*/
 
 //        Platform.runLater(()->{changeScene();});
         }
@@ -210,6 +214,7 @@ public class GUIBaseCardController {
         ctr.setRmiClient(rmiClient);
 
         if (network == 1) {
+            /*
             Object guiLock=rmiClient.getGuiLock();
             synchronized (guiLock) {
                 while (rmiClient.getPersonalPlayer().getPersonalObjectives().size() < 2) { //arriva l'update delle due objective card tra cui scegliere dopo l'update del player deck
@@ -220,6 +225,8 @@ public class GUIBaseCardController {
                     }
                 }
             }
+
+             */
             ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", now choose your");
             ctr.setCard1(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId());
             ctr.setCard2(rmiClient.getPersonalPlayer().getPlayerDeck()[1].getId());
@@ -268,6 +275,22 @@ public class GUIBaseCardController {
             // new scene
             Scene scene;
             scene = new Scene(root);
+            if(network==1){
+                synchronized (rmiClient.getGuiObjectiveControllerLock()) {
+                    rmiClient.setGuiObjectiveController(ctr);
+                    rmiClient.getGuiObjectiveControllerLock().notify();
+
+                }
+            }if(network==2){
+            /*
+            synchronized (clientSCK.getGuiPawnsControllerLock()) {
+                clientSCK.setGuiPawnsController(ctr);
+                clientSCK.getGuiPawnsControllerLock().notify();
+                clientSCK.setDone(true);
+            }
+
+             */
+            }
 
 
             stage.setScene(scene); //viene già qui mostrata la scena : nel caso in in cui arrivi prima un evento di disconnessione questa scena non verrà mai mostrata
@@ -394,4 +417,7 @@ public class GUIBaseCardController {
     }
 
 
+    public void updateGameState() {
+        Platform.runLater(this::changeScene);
+    }
 }

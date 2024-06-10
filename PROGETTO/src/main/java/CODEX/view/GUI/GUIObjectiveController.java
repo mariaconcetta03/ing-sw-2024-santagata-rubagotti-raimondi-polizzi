@@ -72,7 +72,8 @@ public class GUIObjectiveController {
 
 
     public synchronized void selectedRightObjective () {
-
+        objCard1.disabledProperty();
+        objCard2.disabledProperty();
 
         new Thread(() -> {
             if (network == 1 && !objectiveSelected) {
@@ -103,6 +104,7 @@ public class GUIObjectiveController {
                 System.out.println("selezionato destra");
                 objectiveSelected = true;
                 //changeScene();
+                /*
                 // Aggiungi un ritardo prima di cambiare scena
                 PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
                 pause.setOnFinished(event -> {
@@ -113,12 +115,16 @@ public class GUIObjectiveController {
                     }
                 });
                 pause.play();
+
+                 */
               });
         }).start();
     }
 
 
     public synchronized void selectedLeftObjective () { // objectiveCard 1 --> get(0)
+        objCard1.disabledProperty();
+        objCard2.disabledProperty();
         if (!objectiveSelected) {
             objectiveSelected = true;
             new Thread(() -> {
@@ -146,6 +152,8 @@ public class GUIObjectiveController {
                     selectionLabel.setText("Left objective selected. Now wait for everyone to choose.");
                     System.out.println("selezionato sinistra");
                     //changeScene();
+
+                    /*
                     // Aggiungi un ritardo prima di cambiare scena
                     PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
                     pause.setOnFinished(event -> {
@@ -156,6 +164,8 @@ public class GUIObjectiveController {
                         }
                     });
                     pause.play();
+
+                     */
                 });
             }).start();
         }
@@ -186,6 +196,7 @@ public class GUIObjectiveController {
 
         if (network == 1) {
             System.out.println("il player ha scelto obiettivo con ID: " + rmiClient.getPersonalPlayer().getPersonalObjective());
+            /*
             Object guiLock = rmiClient.getGuiLock();
             synchronized (guiLock) {
                 boolean finishedSetup=rmiClient.getFinishedSetup(); //se qui è già true non ho bisogno di entrare nel while che fa la wait
@@ -198,6 +209,8 @@ public class GUIObjectiveController {
                     }
                 }
             }
+
+             */
         } else if (network == 2) {
             System.out.println("il player ha scelto obiettivo con ID: " + clientSCK.getPersonalPlayer().getPersonalObjective());
             Object guiLock = clientSCK.getGuiLock();
@@ -404,5 +417,15 @@ public class GUIObjectiveController {
 
     public void setDisconnectionLock(Object disconnectionLock) {
         this.disconnectionLock = disconnectionLock;
+    }
+
+    public void updateGameState() {
+        Platform.runLater(()->{
+            try {
+                changeScene();
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

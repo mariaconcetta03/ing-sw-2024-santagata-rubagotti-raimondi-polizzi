@@ -107,6 +107,22 @@ public class GUIPawnsController {
         // new scene
         Scene scene;
         scene = new Scene(root);
+        if(network==1){
+            synchronized (rmiClient.getGuiBaseCardControllerLock()) {
+                rmiClient.setGuiBaseCardController(ctr);
+                rmiClient.getGuiBaseCardControllerLock().notify();
+
+            }
+        }if(network==2){
+            /*
+            synchronized (clientSCK.getGuiPawnsControllerLock()) {
+                clientSCK.setGuiPawnsController(ctr);
+                clientSCK.getGuiPawnsControllerLock().notify();
+                clientSCK.setDone(true);
+            }
+
+             */
+        }
 
         stage.setScene(scene); //questo è il momento in cui la nuova scena viene mostrata
 
@@ -143,11 +159,16 @@ public class GUIPawnsController {
                             greenPane.setOpacity(0);
                             bluePane.setOpacity(0);
                             redPane.setOpacity(0);
-                            retryLabel.setText("You have chosen. Now wait a few.");
+                            greenPane.disabledProperty();
+                            bluePane.disabledProperty();
+                            redPane.disabledProperty();
+                            yellowPane.disabledProperty();
+                            retryLabel.setText("You have chosen. Now wait the others.");
                             retryLabel.setOpacity(1);
                         });
 
                         rmiClient.getGameController().checkChosenPawnColor();
+                        /*
                         System.out.println("sto per entrare nella syn");
                         synchronized (rmiClient.getGuiPawnsControllerLock()) {
                             System.out.println("sono entrato nella syn");
@@ -166,6 +187,8 @@ public class GUIPawnsController {
                         }
                         System.out.println("usciti dal syn");
 
+                         */
+
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     } catch (ColorAlreadyTakenException e) {
@@ -178,11 +201,11 @@ public class GUIPawnsController {
 
                 });
 
-                PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
+                /* PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
                 pause.setOnFinished(event -> {
                     changeScene();
                 });
-                pause.play();
+                pause.play();*/
 
                 // Platform.runLater(this::changeScene);
             } else if (network == 2) { //TCP
@@ -202,7 +225,7 @@ public class GUIPawnsController {
                                 greenPane.setOpacity(0);
                                 bluePane.setOpacity(0);
                                 redPane.setOpacity(0);
-                                retryLabel.setText("You have chosen. Now wait a few.");
+                                retryLabel.setText("You have chosen. Now wait the others.");
                                 retryLabel.setOpacity(1);
                             });
                             clientSCK.checkChosenPawnColor(); //to be implemented
@@ -230,11 +253,11 @@ public class GUIPawnsController {
                 });
 
 
-                PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
+                /* PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
                 pause.setOnFinished(event -> {
                     changeScene();
                 });
-                pause.play();
+                pause.play();*/
 
             }
         }
@@ -253,10 +276,15 @@ public class GUIPawnsController {
                             greenPane.setOpacity(0);
                             yellowPane.setOpacity(0);
                             redPane.setOpacity(0);
-                            retryLabel.setText("You have chosen. Now wait a few.");
+                            greenPane.disabledProperty();
+                            bluePane.disabledProperty();
+                            redPane.disabledProperty();
+                            yellowPane.disabledProperty();
+                            retryLabel.setText("You have chosen. Now wait the others.");
                             retryLabel.setOpacity(1);
                         });
                         rmiClient.getGameController().checkChosenPawnColor();
+                        /*
                         System.out.println("sto per entrare nella syn");
                         synchronized (rmiClient.getGuiPawnsControllerLock()) {
                             System.out.println("sono entrato nella syn");
@@ -275,6 +303,8 @@ public class GUIPawnsController {
                         }
                         System.out.println("usciti dal syn");
 
+                         */
+
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     } catch (ColorAlreadyTakenException e) {
@@ -286,11 +316,11 @@ public class GUIPawnsController {
                     }
                 });
 
-                PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
+                /* PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
                 pause.setOnFinished(event -> {
                     changeScene();
                 });
-                pause.play();
+                pause.play();*/
                 //Platform.runLater(this::changeScene);
             } else if (network == 2) { //TCP
                 executor.execute(() -> {
@@ -309,7 +339,7 @@ public class GUIPawnsController {
                                 greenPane.setOpacity(0);
                                 yellowPane.setOpacity(0);
                                 redPane.setOpacity(0);
-                                retryLabel.setText("You have chosen. Now wait a few.");
+                                retryLabel.setText("You have chosen. Now wait the others.");
                                 retryLabel.setOpacity(1);
                             });
                             clientSCK.checkChosenPawnColor(); //to be implemented
@@ -337,11 +367,11 @@ public class GUIPawnsController {
                 });
 
 
-                PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
+                /* PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
                 pause.setOnFinished(event -> {
                     changeScene();
                 });
-                pause.play();
+                pause.play();*/
 
             }
         }
@@ -359,10 +389,15 @@ public class GUIPawnsController {
                             yellowPane.setOpacity(0);
                             bluePane.setOpacity(0);
                             redPane.setOpacity(0);
-                            retryLabel.setText("You have chosen. Now wait a few.");
+                            greenPane.disabledProperty();
+                            bluePane.disabledProperty();
+                            redPane.disabledProperty();
+                            yellowPane.disabledProperty();
+                            retryLabel.setText("You have chosen. Now wait the others.");
                             retryLabel.setOpacity(1);
                         });
                         rmiClient.getGameController().checkChosenPawnColor();
+                        /*
                         System.out.println("sto per entrare nella syn");
                         synchronized (rmiClient.getGuiPawnsControllerLock()) {
                             System.out.println("sono entrato nella syn");
@@ -381,6 +416,8 @@ public class GUIPawnsController {
                         }
                         System.out.println("usciti dal syn");
 
+                         */
+
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     } catch (ColorAlreadyTakenException e) {
@@ -392,11 +429,11 @@ public class GUIPawnsController {
                     }
                 });
 
-                PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
+                /* PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
                 pause.setOnFinished(event -> {
                     changeScene();
                 });
-                pause.play();
+                pause.play();*/
 
                 //   Platform.runLater(this::changeScene);
             } else if (network == 2) {
@@ -416,7 +453,7 @@ public class GUIPawnsController {
                                 yellowPane.setOpacity(0);
                                 bluePane.setOpacity(0);
                                 redPane.setOpacity(0);
-                                retryLabel.setText("You have chosen. Now wait a few.");
+                                retryLabel.setText("You have chosen. Now wait the others.");
                                 retryLabel.setOpacity(1);
                             });
                             clientSCK.checkChosenPawnColor(); //to be implemented
@@ -444,11 +481,11 @@ public class GUIPawnsController {
                 });
 
 
-                PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
+                /* PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
                 pause.setOnFinished(event -> {
                     changeScene();
                 });
-                pause.play();
+                pause.play();*/
 
             }
         }
@@ -466,10 +503,15 @@ public class GUIPawnsController {
                             greenPane.setOpacity(0);
                             bluePane.setOpacity(0);
                             yellowPane.setOpacity(0);
-                            retryLabel.setText("You have chosen. Now wait a few.");
+                            greenPane.disabledProperty();
+                            bluePane.disabledProperty();
+                            redPane.disabledProperty();
+                            yellowPane.disabledProperty();
+                            retryLabel.setText("You have chosen. Now wait the others.");
                             retryLabel.setOpacity(1);
                         });
                         rmiClient.getGameController().checkChosenPawnColor();
+                        /*
                         System.out.println("sto per entrare nella syn");
                         synchronized (rmiClient.getGuiPawnsControllerLock()) {
                             System.out.println("sono entrato nella syn");
@@ -488,6 +530,8 @@ public class GUIPawnsController {
                         }
                         System.out.println("usciti dal syn");
 
+                         */
+
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     } catch (ColorAlreadyTakenException e) {
@@ -499,12 +543,12 @@ public class GUIPawnsController {
                     }
                 });
 
-
-                PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
+                
+                /* PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
                 pause.setOnFinished(event -> {
                     changeScene();
                 });
-                pause.play();
+                pause.play();*/
 
                 //  Platform.runLater(this::changeScene);
             } else if (network == 2) { //TCP
@@ -524,7 +568,7 @@ public class GUIPawnsController {
                                 greenPane.setOpacity(0);
                                 bluePane.setOpacity(0);
                                 yellowPane.setOpacity(0);
-                                retryLabel.setText("You have chosen. Now wait a few.");
+                                retryLabel.setText("You have chosen. Now wait the others.");
                                 retryLabel.setOpacity(1);
                             });
                             clientSCK.checkChosenPawnColor(); //to be implemented
@@ -553,11 +597,11 @@ public class GUIPawnsController {
                 });
 
 
-                PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
+                /* PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
                 pause.setOnFinished(event -> {
                     changeScene();
                 });
-                pause.play();
+                pause.play();*/
 
             }
         }
@@ -608,5 +652,9 @@ public class GUIPawnsController {
                 }
             });
         }
+    }
+
+    public void updateGameState() {
+        Platform.runLater(this::changeScene);
     }
 }
