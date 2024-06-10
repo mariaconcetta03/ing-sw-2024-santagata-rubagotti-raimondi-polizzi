@@ -161,4 +161,66 @@ public class ObjectiveCardTest extends TestCase {
         card87.addPointsToPlayer(player);
         System.out.println("I punti sono: "+player.getPoints());
     }
+
+
+    public void testObjectiveCard91(){
+        ObjectiveDeck objDeck= ObjectiveDeck.objectiveDeck();
+        ObjectiveCard objCard;
+        for(ObjectiveCard obj: objDeck.getCards()){
+            if(obj.getId()==91){
+                objCard=obj;
+            }
+        }
+        Player player = new Player(); //this constructor set the points to zero
+        Board board = new Board(player);
+        board.setBoard(2);
+        player.setBoard(board);
+        //
+
+        List<AngleType> centralResources = new ArrayList<>(); //this is random
+        centralResources.add(AngleType.FUNGI);
+
+        //
+        List<AngleType> centralResources2 = new ArrayList<>(); //this is random
+        centralResources2.add(AngleType.INSECT);
+
+        PlayableCard baseCard = new PlayableCard (81, 0, AngleType.NATURE, AngleType.ANIMAL, AngleType.ANIMAL, AngleType.INSECT, AngleType.NATURE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, centralResources, false, false, false, false, null);
+        board.placeBaseCard(baseCard); //placing this card is something that is needed because in this way we update for the first time the playable positions
+        //creating Objective Card
+        ObjectiveCard card87=new ObjectiveCard();
+        card87.setCard0Type(AngleType.FUNGI);
+        card87.setCard2Type(AngleType.FUNGI);
+        card87.setCard1Type(AngleType.FUNGI);
+        card87.setCardPoints(2);
+        card87.setPositionCard1(new Coordinates(1, 1));
+        card87.setPositionCard2(new Coordinates(2, 2));
+        card87.setId(87);
+        //
+        PlayableCard[] playerDeck= new PlayableCard[3];
+        playerDeck[0]=new PlayableCard(2, 0, AngleType.FUNGI, AngleType.FUNGI, AngleType.NO_RESOURCE, AngleType.ABSENT, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, centralResources2, false, false, false, false, null);
+        playerDeck[1]=new PlayableCard(3, 0, AngleType.FUNGI, AngleType.FUNGI, AngleType.NO_RESOURCE, AngleType.ABSENT, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, centralResources, false, false, false, false, null);
+        playerDeck[2]=new PlayableCard(4, 0, AngleType.FUNGI, AngleType.FUNGI, AngleType.NO_RESOURCE, AngleType.ABSENT, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, centralResources, false, false, false, false, null);
+
+        player.setPlayerDeck(playerDeck);
+        //
+        player.playCard(new PlayableCard(2, 0, AngleType.FUNGI, AngleType.FUNGI, AngleType.NO_RESOURCE, AngleType.ABSENT, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, centralResources2, false, false, false, false, null), new Coordinates(41, 41), false);
+        //
+        playerDeck[0]=new PlayableCard(2, 0, AngleType.FUNGI, AngleType.FUNGI, AngleType.NO_RESOURCE, AngleType.ABSENT, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, centralResources2, false, false, false, false, null);
+        player.setPlayerDeck(playerDeck);
+        //
+        player.playCard(new PlayableCard(3, 0, AngleType.FUNGI, AngleType.FUNGI, AngleType.NO_RESOURCE, AngleType.ABSENT, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, centralResources, false, false, false, false, null), new Coordinates(42, 42), false);
+        //
+        playerDeck[1]=new PlayableCard(3, 0, AngleType.FUNGI, AngleType.FUNGI, AngleType.NO_RESOURCE, AngleType.ABSENT, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, centralResources, false, false, false, false, null);
+        player.setPlayerDeck(playerDeck);
+        //
+        player.playCard(new PlayableCard(4, 0, AngleType.FUNGI, AngleType.FUNGI, AngleType.NO_RESOURCE, AngleType.ABSENT, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, centralResources, false, false, false, false, null), new Coordinates(43, 43), false);
+
+        /*
+        board.placeCard(new PlayableCard(2, 0, AngleType.FUNGI, AngleType.FUNGI, AngleType.NO_RESOURCE, AngleType.ABSENT, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, centralResources, false, false, false, false, null), new Coordinates(41, 41));
+        board.placeCard(new PlayableCard(3, 0, AngleType.FUNGI, AngleType.FUNGI, AngleType.NO_RESOURCE, AngleType.ABSENT, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, centralResources, false, false, false, false, null), new Coordinates(42, 42));
+        board.placeCard(new PlayableCard(4, 0, AngleType.FUNGI, AngleType.FUNGI, AngleType.NO_RESOURCE, AngleType.ABSENT, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, centralResources, false, false, false, false, null), new Coordinates(43, 43));
+         */
+        card87.addPointsToPlayer(player);
+
+    }
     }

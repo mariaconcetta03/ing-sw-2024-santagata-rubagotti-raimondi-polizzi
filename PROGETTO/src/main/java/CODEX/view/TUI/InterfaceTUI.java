@@ -306,7 +306,7 @@ public class InterfaceTUI implements Serializable { //I don't think it has to ex
                 System.out.println(ANSIFormatter.ANSI_RED + "You can't play a card here!" + ANSIFormatter.ANSI_RESET);
                 return null;
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) { //added outofbounds
             System.out.println("Not valid coordinates, returning to menu.");
             return null;
         }

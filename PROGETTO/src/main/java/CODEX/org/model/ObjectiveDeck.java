@@ -71,8 +71,9 @@ public class ObjectiveDeck extends Deck implements Serializable {
         return cards.pop();
     }
 
-
-
+    public Stack<ObjectiveCard> getCards(){
+        return cards;
+    }
     /**
      * This method creates a goldDeck with all his 40 cards
      * @return goldDeck

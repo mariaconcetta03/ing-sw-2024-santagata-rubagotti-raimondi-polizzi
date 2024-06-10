@@ -139,9 +139,11 @@ public class BoardTest extends TestCase {
 
     //Test created by FRA to solve the problem related to contains
     public void testContainsCard(){
+        PlayableDeck baseDeck=PlayableDeck.baseDeck();
         Player p1 = new Player();
         Board board = new Board(p1);
         board.setBoard(2);
+        board.placeBaseCard(baseDeck.getFirstCard());
         List<AngleType> centralRes1=new ArrayList<>();
         centralRes1.add(AngleType.FUNGI);
         PlayableCard pc=new PlayableCard(1, 2, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE, AngleType.NO_RESOURCE,
@@ -191,7 +193,7 @@ public class BoardTest extends TestCase {
         PlayableCard resourceCard = new PlayableCard(1, 2, AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
                 AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE, centralResources, false,
                 false, false, false, null);
-        Coordinates position = new Coordinates(41,41);
+        Coordinates position = new Coordinates(39,39);
         resourceCard.setOrientation(true);
         resourceCard.setPosition(position);
         board.placeCard(resourceCard, position);
