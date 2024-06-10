@@ -25,15 +25,15 @@ public class ServerLauncher extends UnicastRemoteObject {
 
         // QUESTE COSE SONO MESSE FRATTANTO CHE SI USA ZEROTIER / SI PROVA IN LOCALE
         String serverAddress = "";
-        System.out.println("Inserisci l'IP del server, oppure schiaccia ENTER senza digitare nulla per LOCALHOST: ");
+        System.out.println("Insert Server's IP address (leave blank for localHost): ");
         Scanner sc = new Scanner(System.in);
         serverAddress = sc.nextLine();
         if (serverAddress.equals("")) { // se la stringa è vuota, allora metto il localhost
             System.setProperty("java.rmi.server.hostname", "127.0.0.1");
-            System.out.println("HO MESSO LOCALHOST: 127.0.0.1");
+            System.out.println("Server address: 127.0.0.1");
         } else {
             System.setProperty("java.rmi.server.hostname", serverAddress); // faccio scegliere la scheda di rete corretta
-            System.out.println("hai inserito l'IP, quindi ho settato l'IP del server a: " + serverAddress);
+            System.out.println("Server address: " + serverAddress);
         }
         // --------------------------------------------------------------------------------------------------------------
 
@@ -43,6 +43,7 @@ public class ServerLauncher extends UnicastRemoteObject {
         rmiServer.startServer();
 
         ServerSCK socketServer= new ServerSCK(serverController);
+        ServerSCK.Settings.setServerName(serverAddress);
         socketServer.startServer();
     }
 }

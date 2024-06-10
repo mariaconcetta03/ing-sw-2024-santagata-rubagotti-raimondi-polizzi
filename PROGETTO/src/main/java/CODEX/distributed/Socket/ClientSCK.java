@@ -154,9 +154,8 @@ public class ClientSCK implements ClientGeneralInterface {
     public ClientSCK(String serverAddress) throws IOException { //we call this constructor after we ask the IP address and the port of the server
         this.socket = new Socket();
         // this.socket.connect(new InetSocketAddress(Settings.SERVER_NAME, Settings.PORT), 1000); //the address and the port of the server
-        InetAddress inetAddress = InetAddress.getByName(serverAddress);
         int port = 1085; // Porta del server
-        SocketAddress socketAddress = new InetSocketAddress(inetAddress, port);
+        SocketAddress socketAddress = new InetSocketAddress(serverAddress, port);
         socket.connect(socketAddress);
 
         lobbyId = new HashSet<>();
