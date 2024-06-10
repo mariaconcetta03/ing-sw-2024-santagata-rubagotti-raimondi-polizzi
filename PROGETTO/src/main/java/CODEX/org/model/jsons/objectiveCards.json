@@ -74,11 +74,11 @@
       "resources": {},
       "positionCard1": {
         "x": 0,
-        "y": -1
+        "y": -2
       },
       "positionCard2": {
         "x": 1,
-        "y": -2
+        "y": -3
       },
       "card0Type": "FUNGI",
       "card1Type": "FUNGI",
@@ -91,11 +91,11 @@
       "resources": {},
       "positionCard1": {
         "x": 0,
-        "y": -1
+        "y": -2
       },
       "positionCard2": {
         "x": -1,
-        "y": -2
+        "y": -3
       },
       "card0Type": "NATURE",
       "card1Type": "NATURE",
@@ -108,7 +108,7 @@
       "resources": {},
       "positionCard1": {
         "x": 0,
-        "y": -1
+        "y": -2
       },
       "positionCard2": {
         "x": 1,
@@ -125,7 +125,7 @@
       "resources": {},
       "positionCard1": {
         "x": 0,
-        "y": -1
+        "y": -2
       },
       "positionCard2": {
         "x": -1,
