@@ -381,7 +381,6 @@ public class ClientSCK implements ClientGeneralInterface {
                     try {
                         gameSelection = sc.nextInt();
                         if (gameSelection == -2) {
-                            lobbyId=new HashSet<>();
                             this.checkAvailableLobby();
                             if (!(lobbyId.isEmpty())) {
                                 System.out.println("If you want you can join an already created lobby. These are the ones available:");
@@ -479,6 +478,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
     public void checkAvailableLobby(){
         synchronized (actionLock) {
+            lobbyId=new HashSet<>();
             ClientMessage clientMessage= new ClientAvailableLobbies();
             try {
                 sendMessage(new SCKMessage(clientMessage));
