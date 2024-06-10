@@ -2262,6 +2262,28 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
         stage.setY(y);
 
         stage.show();
+        int seconds=6;
+        PauseTransition delay = new PauseTransition(Duration.seconds(seconds));
+        delay.setOnFinished(event -> {
+            stage.close();
+            if (network==1){
+                try {
+                    rmiClient.handleDisconnectionFunction();
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+                ;
+            }
+            else if(network==2){
+                try {
+                    clientSCK.handleDisconnectionFunction();
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        });
+        delay.play();
     }
 
 

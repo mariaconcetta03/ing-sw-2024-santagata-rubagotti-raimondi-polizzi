@@ -372,73 +372,81 @@ public class ClientSCK implements ClientGeneralInterface {
             printLobby(lobbyId);
             ok=false;
             int gameSelection=0;
+
             while(!ok) {
-                System.out.println("Type -1 if you want to create a new lobby, or the lobby id if you want to join it (if there are any available)");
-                System.out.println("Type -2  to refresh the available lobbies.");
-                try {
-                    sc=new Scanner(System.in);
-                    gameSelection = sc.nextInt();
-                    if(gameSelection==-2){
-                        this.checkAvailableLobby();
-                        if(!(lobbyId.isEmpty())) {
-                            System.out.println("If you want you can join an already created lobby. These are the ones available:");
-                            printLobby(lobbyId);
-                        }else {
-                            System.out.println("There are no lobby available");
+                boolean secondOk=false;
+                while ((!secondOk)) {
+                    System.out.println("Type -1 if you want to create a new lobby, or the lobby id if you want to join it (if there are any available)");
+                    System.out.println("Type -2  to refresh the available lobbies.");
+                    try {
+                        gameSelection = sc.nextInt();
+                        if (gameSelection == -2) {
+                            lobbyId=new HashSet<>();
+                            this.checkAvailableLobby();
+                            if (!(lobbyId.isEmpty())) {
+                                System.out.println("If you want you can join an already created lobby. These are the ones available:");
+                                printLobby(lobbyId);
+                            } else {
+                                System.out.println("There are no lobby available");
+                            }
+                        } else if ((gameSelection != -1) && (!lobbyId.contains(gameSelection))) {
+                            System.out.println("You wrote a wrong ID, try again.");
+                        } else {
+                            secondOk = true;
                         }
+                    } catch (InputMismatchException e) {
+                        System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
                     }
-                    else if((gameSelection!=-1)&&(!lobbyId.contains(gameSelection))){
-                        System.out.println("You wrote a wrong ID, try again.");
-                    }else{
-                        ok = true;
-                    }
-                } catch (InputMismatchException e) {
-                    System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
                 }
-            }
-            try {
-                ok=false;
-                while(!ok) {
-                    sc=new Scanner(System.in);
+                try {
+
+                    boolean thirdOk=false;
                     if (gameSelection == -1) {
                         System.out.println("How many players would you like to join you in this game?");
-                        while(!ok) {
+                        while (!thirdOk) {
                             try {
-                                sc=new Scanner(System.in);
+                                sc = new Scanner(System.in);
                                 gameSelection = sc.nextInt();
-                                ok=true;
+                                thirdOk = true;
                             } catch (InputMismatchException e) {
                                 System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
                             }
                         }
                         createLobby(personalPlayer.getNickname(), gameSelection); //the controller (server side) doesn't have other exceptions (so we can't have an errorState here)
                         System.out.println("Successfully created a new lobby with id: " + this.gameID);
+                        ok=true;
                     } else if (lobbyId.contains(gameSelection)) {
                         try {
                             addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
-                            if(errorState){
+                            if (errorState) {
                                 System.out.println(ANSIFormatter.ANSI_RED + "The game you want to join is inaccessible, try again" + ANSIFormatter.ANSI_RESET);
-                                errorState=false;
-                            }else{
+                                errorState = false;
+                            } else {
                                 System.out.println("Successfully joined the lobby with id: " + this.gameID);
                                 checkNPlayers(); //this method in the server side makes the game start
-                                if(errorState){ //l'eccezione lato server in checkNPlayers però non è ancora stata aggiunta
+                                /*
+                                if (errorState) { //l'eccezione lato server in checkNPlayers però non è ancora stata aggiunta
                                     System.out.println("The game is already started!");
-                                    errorState=false;
-                                }else {
-                                    ok=true;
-                                }
+                                    errorState = false;
+                                } else {
+                                ok = true;
+
+                                 */
+                                ok=true;
                             }
-                        } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException e) { //da togliere
+                        } catch (Exception ignored) { //da togliere
                             //queste sono eccezioni da togliere dalla signature dei metodi in comune tra rmi e tcp
                         } //counter
                     } else {
                         System.out.println("You wrote a wrong id, try again!"); //nel caso non ci siano lobby non si esce più da questo ciclo (perchè la gameSelection è scritta prima del ciclo)
                     }
+
+
+                } catch (RemoteException |
+                         NotBoundException e) { //queste sono eccezioni da togliere dalla signature dei metodi in comune tra rmi e tcp
+                    System.out.println("Unable to communicate with the server! Shutting down.");
+                    System.exit(-1);
                 }
-            }catch (RemoteException |NotBoundException e){ //queste sono eccezioni da togliere dalla signature dei metodi in comune tra rmi e tcp
-                System.out.println("Unable to communicate with the server! Shutting down.");
-                System.exit(-1);
             }
         } else {
             // NOTHING

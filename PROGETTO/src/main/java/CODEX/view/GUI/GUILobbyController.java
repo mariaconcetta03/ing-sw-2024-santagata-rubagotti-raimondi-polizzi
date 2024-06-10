@@ -147,6 +147,10 @@ public class GUILobbyController {
         waitingPlayers.setOpacity(1);
         fullLobby.setOpacity(0);
 
+        availableLobbies.disabledProperty();
+        createText.disabledProperty();
+        refreshButton.disabledProperty();
+
         // Dynamic text update in a separate thread
        this.pointsThread= new Thread(() -> {
             while (!lobbyHasStarted) {
@@ -301,6 +305,7 @@ public class GUILobbyController {
                     System.out.println("ho chiamato addplayer to lobby e sto per chiamare checknplayers");
                     rmiClient.getGameController().checkNPlayers(); // starts the game if the number of players is correct
                     System.out.println("ho chiamato il checknplayers e chiamo SETWAITINGPLAYERS");
+                    createButton.disabledProperty();
                     joinButton.disabledProperty();
                     setWaitingPlayers();
                 } catch (RemoteException | GameNotExistsException | NotBoundException e) {
@@ -313,14 +318,18 @@ public class GUILobbyController {
             } else if (network == 2) {
                 try {
                     clientSCK.addPlayerToLobby(clientSCK.getPersonalPlayer().getNickname(), availableLobbies.getValue());
-                    clientSCK.checkNPlayers(); // starts the game if the number of players is correct
-                    setWaitingPlayers();
-                } catch (GameNotExistsException | NotBoundException | RemoteException e) {
-                    throw new RuntimeException(e);
-                } catch (GameAlreadyStartedException | FullLobbyException e) {
+                } catch (Exception ignored) {
+
+                } if(clientSCK.getErrorState()) {
+                    clientSCK.setErrorState(false);
                     System.out.println("TCP: QUESTA LOBBY A CUI STAI CERCANDO DI AGGIUNGERTI è PIENA!");
                     fullLobby.setOpacity(1); // shows the message error "This lobby is full"
                     updateAvailableLobbies(); // updates the available lobbies
+                }else {
+                    clientSCK.checkNPlayers(); // starts the game if the number of players is correct
+                    createButton.disabledProperty();
+                    joinButton.disabledProperty();
+                    setWaitingPlayers();
                 }
             }
         }
@@ -356,7 +365,6 @@ public class GUILobbyController {
                         rmiClient.createLobby(rmiClient.getPersonalPlayer().getNickname(), Integer.parseInt(input));
                         createButton.disabledProperty();
                         joinButton.disabledProperty();
-                        createButton.disabledProperty();
                     } catch (RemoteException | NotBoundException e) {
                         throw new RuntimeException(e);
                     }
@@ -364,7 +372,9 @@ public class GUILobbyController {
                     try {
                         clientSCK.createLobby(clientSCK.getPersonalPlayer().getNickname(), Integer.parseInt(input));
                     } catch (Exception ignored) {
-                    }
+                    }//non controllo clientSCK.getErrorState perchè createLobby in tcp non genera eccezioni
+                    createButton.disabledProperty();
+                    joinButton.disabledProperty();
                 }
                 updateAvailableLobbies();
                 setWaitingPlayers();
