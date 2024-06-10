@@ -644,7 +644,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.BLUE) {
                 player1Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.YELLOW) {
-                player1Nickname.setStyle("-fx-text-fill: #ceca00;");
+                player1Nickname.setStyle("-fx-text-fill: #d0ff00;");
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.GREEN) {
                 player1Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -654,7 +654,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.BLUE) {
                 player2Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.YELLOW) {
-                player2Nickname.setStyle("-fx-text-fill: #ceca00;");
+                player2Nickname.setStyle("-fx-text-fill: #d0ff00;");
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.GREEN) {
                 player2Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -687,7 +687,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.BLUE) {
                 player1Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.YELLOW) {
-                player1Nickname.setStyle("-fx-text-fill: #ceca00;");
+                player1Nickname.setStyle("-fx-text-fill: #d0ff00;");
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.GREEN) {
                 player1Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -697,7 +697,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.BLUE) {
                 player2Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.YELLOW) {
-                player2Nickname.setStyle("-fx-text-fill: #ceca00;");
+                player2Nickname.setStyle("-fx-text-fill: #d0ff00;");
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.GREEN) {
                 player2Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -707,7 +707,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(2).getChosenColor() == Pawn.BLUE) {
                 player3Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(2).getChosenColor() == Pawn.YELLOW) {
-                player3Nickname.setStyle("-fx-text-fill: #ceca00;");
+                player3Nickname.setStyle("-fx-text-fill: #d0ff00;");
             } else if (playersInOrder.get(2).getChosenColor() == Pawn.GREEN) {
                 player3Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -742,7 +742,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.BLUE) {
                 player1Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.YELLOW) {
-                player1Nickname.setStyle("-fx-text-fill: #ceca00;");
+                player1Nickname.setStyle("-fx-text-fill: #d0ff00;");
             } else if (playersInOrder.get(0).getChosenColor() == Pawn.GREEN) {
                 player1Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -752,7 +752,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.BLUE) {
                 player2Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.YELLOW) {
-                player2Nickname.setStyle("-fx-text-fill: #ceca00;");
+                player2Nickname.setStyle("-fx-text-fill: #d0ff00;");
             } else if (playersInOrder.get(1).getChosenColor() == Pawn.GREEN) {
                 player2Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -762,7 +762,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(2).getChosenColor() == Pawn.BLUE) {
                 player3Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(2).getChosenColor() == Pawn.YELLOW) {
-                player3Nickname.setStyle("-fx-text-fill: #ceca00;");
+                player3Nickname.setStyle("-fx-text-fill: #d0ff00;");
             } else if (playersInOrder.get(2).getChosenColor() == Pawn.GREEN) {
                 player3Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -772,7 +772,7 @@ public void updateLabel(Label label, String text){
             } else if (playersInOrder.get(3).getChosenColor() == Pawn.BLUE) {
                 player4Nickname.setStyle("-fx-text-fill: blue;");
             } else if (playersInOrder.get(3).getChosenColor() == Pawn.YELLOW) {
-                player4Nickname.setStyle("-fx-text-fill: #ceca00;");
+                player4Nickname.setStyle("-fx-text-fill: #d0ff00;");
             } else if (playersInOrder.get(3).getChosenColor() == Pawn.GREEN) {
                 player4Nickname.setStyle("-fx-text-fill: green;");
             }
@@ -1585,6 +1585,7 @@ public void updateLabel(Label label, String text){
                                 System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                                 updateLabel(selectedCardLabel, "You don't have enough resources!");
                             }
+                            orientationCard1 = true;
                         } else if (selectedCard == 2) {
                             System.out.println("PLAYED CARD 2");
                             cardPlaced = true;
@@ -1594,6 +1595,7 @@ public void updateLabel(Label label, String text){
                                 System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                                 updateLabel(selectedCardLabel, "You don't have enough resources!");
                             }
+                            orientationCard2 = true;
                         } else if (selectedCard == 3) {
                             System.out.println("PLAYED CARD 3");
                             cardPlaced = true;
@@ -1603,6 +1605,7 @@ public void updateLabel(Label label, String text){
                                 System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                                 updateLabel(selectedCardLabel, "You don't have enough resources!");
                             }
+                            orientationCard3 = true;
                         } else if (selectedCard == 0) {
                             selectedCardLabel.setText("Please, select a card to play first!");
                             System.out.println("select a card!");
@@ -1628,6 +1631,7 @@ public void updateLabel(Label label, String text){
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                             updateLabel(selectedCardLabel, "You don't have enough resources!");
                         }
+                        orientationCard1 = true ;
                     } else if (selectedCard == 2) {
                         cardPlaced = true;
                         System.out.println("PLAYED CARD 2");
@@ -1637,6 +1641,7 @@ public void updateLabel(Label label, String text){
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                             updateLabel(selectedCardLabel, "You don't have enough resources!");
                         }
+                        orientationCard2 = true;
                     } else if (selectedCard == 3) {
                         cardPlaced = true;
                         System.out.println("PLAYED CARD 3");
@@ -1646,6 +1651,7 @@ public void updateLabel(Label label, String text){
                             System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                             updateLabel(selectedCardLabel, "You don't have enough resources!");
                         }
+                        orientationCard3 = true;
                     } else if (selectedCard == 0) {
                         selectedCardLabel.setText("Please, select a card to play first!");
                         System.out.println("select a card!");

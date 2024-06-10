@@ -247,11 +247,11 @@ public class GUILobbyController {
        if (network == 1) {
            //while(rmiClient.getPersonalPlayer().getPlayerDeck()[0] == null) {}
                ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", now click the");
-               ctr.setColoredPanes();
+               ctr.setColoredPawns();
            } else if (network == 2) {
            //while(clientSCK.getPersonalPlayer().getPlayerDeck()[0] == null) {}
                ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", now click the");
-               ctr.setColoredPanes();
+               ctr.setColoredPawns();
         }
 
         // old dimensions and position
@@ -306,6 +306,7 @@ public class GUILobbyController {
                 } catch (RemoteException | GameNotExistsException | NotBoundException e) {
                     throw new RuntimeException(e);
                 } catch (GameAlreadyStartedException | FullLobbyException e) {
+                    System.out.println("RMI: QUESTA LOBBY A CUI STAI CERCANDO DI AGGIUNGERTI è PIENA!");
                     fullLobby.setOpacity(1); // shows the message error "This lobby is full"
                     updateAvailableLobbies(); // updates the available lobbies
                 }
@@ -317,6 +318,7 @@ public class GUILobbyController {
                 } catch (GameNotExistsException | NotBoundException | RemoteException e) {
                     throw new RuntimeException(e);
                 } catch (GameAlreadyStartedException | FullLobbyException e) {
+                    System.out.println("TCP: QUESTA LOBBY A CUI STAI CERCANDO DI AGGIUNGERTI è PIENA!");
                     fullLobby.setOpacity(1); // shows the message error "This lobby is full"
                     updateAvailableLobbies(); // updates the available lobbies
                 }
