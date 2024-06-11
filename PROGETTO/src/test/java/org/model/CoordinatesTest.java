@@ -3,7 +3,22 @@ package org.model;
 import CODEX.org.model.Coordinates;
 import junit.framework.TestCase;
 public class CoordinatesTest extends TestCase {
+    public void testEquals(){
+        Coordinates coordinates1= new Coordinates();
+        coordinates1.setX(10);
+        coordinates1.setY(20);
+        Coordinates coordinates2=new Coordinates(10, 20);
+        System.out.println(coordinates1.hashCode());
+        System.out.println(coordinates2.hashCode());
+        assertTrue(coordinates2.equals(coordinates1));
+        assertTrue(coordinates1.equals(coordinates1));
+        coordinates2.setX(11);
+        assertFalse(coordinates1.equals(coordinates2));
+        coordinates2.setX(10);
+        coordinates1.setY(21);
+        assertFalse(coordinates1.equals(coordinates2));
 
+    }
     public void testFindUpRight() {
         Coordinates initialPosition= new Coordinates(1,1);
         Coordinates newPosition= initialPosition.findUpRight();

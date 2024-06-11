@@ -328,4 +328,7 @@ public class ObjectiveCard extends Card implements Serializable {
         this.card2Type = card2Type;
     }
 
+    public void setResources(Map<AngleType, Integer> resources) {
+        this.resources = resources;
+    }
 }

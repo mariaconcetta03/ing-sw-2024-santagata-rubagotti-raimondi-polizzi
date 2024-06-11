@@ -196,6 +196,7 @@ public class BoardTest extends TestCase {
         Coordinates position = new Coordinates(39,39);
         resourceCard.setOrientation(true);
         resourceCard.setPosition(position);
+        assertFalse(board.placeCard(resourceCard, new Coordinates(200, 200)));
         board.placeCard(resourceCard, position);
 
         // printing the positions where matrix is not null

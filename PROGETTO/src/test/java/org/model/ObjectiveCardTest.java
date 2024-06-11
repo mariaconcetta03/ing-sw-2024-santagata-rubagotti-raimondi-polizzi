@@ -221,6 +221,40 @@ public class ObjectiveCardTest extends TestCase {
          */
         objCard.addPointsToPlayer(player);
         System.out.println(player.getPoints());
+    }
 
+    public void testEquals(){
+        ObjectiveCard obj1= new ObjectiveCard();
+        ObjectiveCard obj2= new ObjectiveCard();
+
+        obj1.setId(1);
+        obj2.setId(2);
+        assertFalse(obj1.equals(obj2));
+
+        obj1= new ObjectiveCard();
+        obj2= new ObjectiveCard();
+        obj1.setCardPoints(1);
+        obj2.setCardPoints(2);
+        assertFalse(obj1.equals(obj2));
+
+        obj1= new ObjectiveCard();
+        obj2= new ObjectiveCard();
+        obj1.setCardPoints(1);
+        obj2.setCardPoints(2);
+        assertFalse(obj1.equals(obj2));
+
+        obj1= new ObjectiveCard();
+        obj2= new ObjectiveCard();
+        obj1.setPositionCard1(new Coordinates(2, 1));
+        obj2.setPositionCard1(new Coordinates(1, 1));
+        assertFalse(obj1.equals(obj2));
+
+        obj1= new ObjectiveCard();
+        obj2= new ObjectiveCard();
+        obj1.setCardPoints(1);
+        obj2.setCardPoints(2);
+        assertFalse(obj1.equals(obj2));
+
+        assertFalse(obj1.hashCode()==obj2.hashCode());
     }
     }

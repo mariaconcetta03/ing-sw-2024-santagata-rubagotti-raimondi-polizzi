@@ -117,14 +117,4 @@ public class Coordinates implements Serializable {
         return new Coordinates(this.x - 1, this.y - 1);
     }
 
-
-    /**
-     * Equals method re defined
-     * @param c coordinates to compare
-     * @return true or false
-     */
-    public boolean equals(Coordinates c) {
-        return (this.x == c.getX() && this.y == c.getY());
-    }
-
 }

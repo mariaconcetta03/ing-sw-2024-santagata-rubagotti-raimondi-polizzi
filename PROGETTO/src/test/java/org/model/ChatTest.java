@@ -27,7 +27,7 @@ public class ChatTest extends TestCase {
         Timestamp t1= new Timestamp(System.currentTimeMillis());
         ChatMessage m=new ChatMessage("Ciao", s1, receiver, t1);
         c1.sendMessage(m);
-        System.out.println("Chat "+c1.getId()+", users "+c1.getUsers().get(0)+", "+c1.getUsers().get(1)+": "+c1.getMessages().get(0).getMessage());
+        System.out.println("Chat "+c1.getId()+", users "+c1.getUsers().get(0)+", "+c1.getUsers().get(1)+": "+c1.getMessages().get(0).getMessage()+" sent by "+c1.getMessages().get(0).getSender()+" at "+c1.getMessages().get(0).getTimestamp());
     }
 
     public void testMessagesReceivedByPlayer() throws RemoteException {

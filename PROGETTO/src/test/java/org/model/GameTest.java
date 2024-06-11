@@ -4,6 +4,7 @@ import CODEX.org.model.ChatMessage;
 import CODEX.org.model.Game;
 import CODEX.org.model.Player;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -13,14 +14,13 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
 public class GameTest extends TestCase {
 
     public void testAddPlayer() {
         Player p1 = new Player();
         p1.setNickname("Topino");
         Game game = new Game(p1, 1);
-        Player p = new Player(game);
+        Player p = new Player();
         p.setNickname("Papero");
         List<Player> players = new ArrayList<>();
         players = game.getPlayers();
@@ -37,13 +37,13 @@ public class GameTest extends TestCase {
         Player p1 = new Player();
         p1.setNickname("Topino");
         Game game = new Game(p1, 1);
-        Player p = new Player(game);
+        Player p = new Player();
         p.setNickname("Papero");
         List<Player> players = new ArrayList<>();
         players = game.getPlayers();
         game.setnPlayers(2);
         game.addPlayer(p);
-        Player p3 = new Player(game);
+        Player p3 = new Player();
         p3.setNickname("Minnie");
         assertThrows(ArrayIndexOutOfBoundsException.class, ()->{
             game.addPlayer(p3);
@@ -59,9 +59,9 @@ public class GameTest extends TestCase {
     public void testStartGame() throws RemoteException  {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
-        Player p2 = new Player(game);
-        Player p3 = new Player(game);
-        Player p4 = new Player(game);
+        Player p2 = new Player();
+        Player p3 = new Player();
+        Player p4 = new Player();
         game.setnPlayers(4);
         game.addPlayer(p2);
         game.addPlayer(p3);
@@ -125,7 +125,7 @@ public class GameTest extends TestCase {
     public void testGiveInitialCards() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1,1);
-        Player p = new Player(game);
+        Player p = new Player();
         game.setnPlayers(2);
         game.addPlayer(p);
 
@@ -154,7 +154,7 @@ public class GameTest extends TestCase {
     public void testWinner() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
-        Player p = new Player(game);
+        Player p = new Player();
         game.setnPlayers(2);
         game.addPlayer(p);
 
@@ -226,7 +226,7 @@ public class GameTest extends TestCase {
     public void testWinner2() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
-        Player p = new Player(game);
+        Player p = new Player();
         game.setnPlayers(2);
         game.addPlayer(p);
 
@@ -267,7 +267,7 @@ public class GameTest extends TestCase {
     public void testWinner3() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
-        Player p = new Player(game);
+        Player p = new Player();
         game.setnPlayers(2);
         game.addPlayer(p);
 
@@ -306,7 +306,7 @@ public class GameTest extends TestCase {
     public void testStartChat() {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
-        Player p = new Player(game);
+        Player p = new Player();
         game.setnPlayers(2);
         game.addPlayer(p);
 
@@ -398,9 +398,9 @@ public class GameTest extends TestCase {
     public void testNextRound() {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
-        Player p2 = new Player(game);
-        Player p3 = new Player(game);
-        Player p4 = new Player(game);
+        Player p2 = new Player();
+        Player p3 = new Player();
+        Player p4 = new Player();
         game.setnPlayers(4);
         game.addPlayer(p2);
         game.addPlayer(p3);
@@ -438,9 +438,9 @@ public class GameTest extends TestCase {
     public void testResetGoldCard1() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
-        Player p2 = new Player(game);
-        Player p3 = new Player(game);
-        Player p4 = new Player(game);
+        Player p2 = new Player();
+        Player p3 = new Player();
+        Player p4 = new Player();
         game.setnPlayers(4);
         game.addPlayer(p2);
         game.addPlayer(p3);
@@ -471,9 +471,9 @@ public class GameTest extends TestCase {
     public void testResetGoldCard2() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
-        Player p2 = new Player(game);
-        Player p3 = new Player(game);
-        Player p4 = new Player(game);
+        Player p2 = new Player();
+        Player p3 = new Player();
+        Player p4 = new Player();
         game.setnPlayers(4);
         game.addPlayer(p2);
         game.addPlayer(p3);
@@ -504,9 +504,9 @@ public class GameTest extends TestCase {
     public void testResetResourceCard1() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
-        Player p2 = new Player(game);
-        Player p3 = new Player(game);
-        Player p4 = new Player(game);
+        Player p2 = new Player();
+        Player p3 = new Player();
+        Player p4 = new Player();
         game.setnPlayers(4);
         game.addPlayer(p2);
         game.addPlayer(p3);
@@ -537,9 +537,9 @@ public class GameTest extends TestCase {
     public void testResetResourceCard2() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
-        Player p2 = new Player(game);
-        Player p3 = new Player(game);
-        Player p4 = new Player(game);
+        Player p2 = new Player();
+        Player p3 = new Player();
+        Player p4 = new Player();
         game.setnPlayers(4);
         game.addPlayer(p2);
         game.addPlayer(p3);
