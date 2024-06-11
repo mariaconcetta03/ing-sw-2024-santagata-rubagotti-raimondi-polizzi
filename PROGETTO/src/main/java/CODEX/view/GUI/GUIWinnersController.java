@@ -137,7 +137,7 @@ public class GUIWinnersController {
 
                 if(i == 0){
                     pawn1.setImage(image);
-                }else if (i == 2){
+                }else if (i == 1){
                     pawn2.setImage(image);
                 }
             }
@@ -185,9 +185,9 @@ public class GUIWinnersController {
 
                 if(i == 0){
                     pawn1.setImage(image);
-                }else if (i == 2){
+                }else if (i == 1){
                     pawn2.setImage(image);
-                }else if (i == 3){
+                }else if (i == 2){
                     pawn3.setImage(image);
                 }
             }
@@ -237,11 +237,11 @@ public class GUIWinnersController {
 
                 if(i == 0){
                     pawn1.setImage(image);
-                }else if (i == 2){
+                }else if (i == 1){
                     pawn2.setImage(image);
                 }else if (i == 2){
                     pawn3.setImage(image);
-                }else if (i == 4){
+                }else if (i == 3){
                 pawn4.setImage(image);
             }
             }
