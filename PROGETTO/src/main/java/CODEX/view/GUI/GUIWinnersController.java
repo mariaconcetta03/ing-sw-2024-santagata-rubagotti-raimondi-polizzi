@@ -140,7 +140,29 @@ public class GUIWinnersController {
             obj1.setText(String.valueOf(allPlayers.get(0).getNumObjectivesReached()));
             obj2.setText(String.valueOf(allPlayers.get(1).getNumObjectivesReached()));
             obj3.setText(String.valueOf(allPlayers.get(2).getNumObjectivesReached()));
+            String path = null;
 
+            for(int i = 0; i< 3; i++){
+                if (allPlayers.get(i).getChosenColor().equals(Pawn.YELLOW)) {
+                    path = "/images/pawns/Yellow_Pawn.png";
+                } else if (allPlayers.get(i).getChosenColor().equals(Pawn.RED)) {
+                    path = "/images/pawns/Red_Pawn.png";
+                } else if (allPlayers.get(i).getChosenColor().equals(Pawn.BLUE)) {
+                    path = "/images/pawns/Blue_Pawn.png";
+                } else if (allPlayers.get(i).getChosenColor().equals(Pawn.GREEN)) {
+                    path = "/images/pawns/Green_Pawn.png";
+                }
+
+                Image image = new Image(getClass().getResourceAsStream(path));
+
+                if(i == 0){
+                    pawn1.setImage(image);
+                }else if (i == 2){
+                    pawn2.setImage(image);
+                }else if (i == 3){
+                    pawn3.setImage(image);
+                }
+            }
         } else if (allPlayers.size() == 4) {
             position1.setOpacity(1);
             position2.setOpacity(1);
@@ -170,6 +192,31 @@ public class GUIWinnersController {
             obj2.setText(String.valueOf(allPlayers.get(1).getNumObjectivesReached()));
             obj3.setText(String.valueOf(allPlayers.get(2).getNumObjectivesReached()));
             obj4.setText(String.valueOf(allPlayers.get(3).getNumObjectivesReached()));
+            String path = null;
+
+            for(int i = 0; i< 4; i++){
+                if (allPlayers.get(i).getChosenColor().equals(Pawn.YELLOW)) {
+                    path = "/images/pawns/Yellow_Pawn.png";
+                } else if (allPlayers.get(i).getChosenColor().equals(Pawn.RED)) {
+                    path = "/images/pawns/Red_Pawn.png";
+                } else if (allPlayers.get(i).getChosenColor().equals(Pawn.BLUE)) {
+                    path = "/images/pawns/Blue_Pawn.png";
+                } else if (allPlayers.get(i).getChosenColor().equals(Pawn.GREEN)) {
+                    path = "/images/pawns/Green_Pawn.png";
+                }
+
+                Image image = new Image(getClass().getResourceAsStream(path));
+
+                if(i == 0){
+                    pawn1.setImage(image);
+                }else if (i == 2){
+                    pawn2.setImage(image);
+                }else if (i == 3){
+                    pawn3.setImage(image);
+                }else if (i == 4){
+                pawn4.setImage(image);
+            }
+            }
         }
 
         // SETTING THE CORRECT POSITION (TEXT) LABELS FOR THE FIRST POSITION TIE

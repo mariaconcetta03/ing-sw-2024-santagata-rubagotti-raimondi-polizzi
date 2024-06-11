@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
@@ -26,8 +27,9 @@
                <GridPane gridLinesVisible="true" prefWidth="450.0">
                  <columnConstraints>
                    <ColumnConstraints hgrow="NEVER" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" />
-                   <ColumnConstraints hgrow="NEVER" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" />
-                     <ColumnConstraints hgrow="NEVER" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+                     <ColumnConstraints hgrow="NEVER" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" />
+                   <ColumnConstraints hgrow="NEVER" maxWidth="300.0" minWidth="261.0" prefWidth="263.0" />
+                     <ColumnConstraints hgrow="NEVER" maxWidth="110.0" minWidth="110.0" prefWidth="110.0" />
                      <ColumnConstraints hgrow="NEVER" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
                  </columnConstraints>
                  <rowConstraints>
@@ -43,11 +45,11 @@
                            <Font name="System Bold" size="20.0" />
                         </font>
                      </Label>
-                     <Label fx:id="player1" alignment="CENTER" prefHeight="50.0" prefWidth="300.0" text="Player1" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <Label fx:id="player1" alignment="CENTER" prefHeight="50.0" prefWidth="300.0" text="Player1" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
                         <font>
                            <Font name="System Bold" size="20.0" />
                         </font></Label>
-                     <Label fx:id="points1" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" text="100 pt" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <Label fx:id="points1" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" text="100 pt" GridPane.columnIndex="3" GridPane.rowIndex="1">
                         <font>
                            <Font name="System Bold" size="20.0" />
                         </font>
@@ -58,11 +60,11 @@
                               <Font name="System Bold" size="20.0" />
                           </font>
                       </Label>
-                      <Label fx:id="player2" alignment="CENTER" prefHeight="50.0" prefWidth="300.0" text="Player2" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                      <Label fx:id="player2" alignment="CENTER" prefHeight="50.0" prefWidth="300.0" text="Player2" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="2">
                           <font>
                               <Font name="System Bold" size="20.0" />
                           </font></Label>
-                      <Label fx:id="points2" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" text="50 pt" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                      <Label fx:id="points2" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" text="50 pt" GridPane.columnIndex="3" GridPane.rowIndex="2">
                           <font>
                               <Font name="System Bold" size="20.0" />
                           </font>
@@ -73,11 +75,11 @@
                               <Font name="System Bold" size="20.0" />
                           </font>
                       </Label>
-                      <Label fx:id="player3" alignment="CENTER" prefHeight="50.0" prefWidth="300.0" text="Player3" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                      <Label fx:id="player3" alignment="CENTER" prefHeight="50.0" prefWidth="300.0" text="Player3" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="3">
                           <font>
                               <Font name="System Bold" size="20.0" />
                           </font></Label>
-                      <Label fx:id="points3" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" text="25 pt" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                      <Label fx:id="points3" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" text="25 pt" GridPane.columnIndex="3" GridPane.rowIndex="3">
                           <font>
                               <Font name="System Bold" size="20.0" />
                           </font>
@@ -88,50 +90,73 @@
                               <Font name="System Bold" size="20.0" />
                           </font>
                       </Label>
-                      <Label fx:id="player4" alignment="CENTER" prefHeight="50.0" prefWidth="300.0" text="Player4" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                      <Label fx:id="player4" alignment="CENTER" prefHeight="50.0" prefWidth="300.0" text="Player4" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="4">
                           <font>
                               <Font name="System Bold" size="20.0" />
                           </font></Label>
-                      <Label fx:id="points4" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" text="5 pt" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                      <Label fx:id="points4" alignment="CENTER" prefHeight="50.0" prefWidth="100.0" text="5 pt" GridPane.columnIndex="3" GridPane.rowIndex="4">
                           <font>
                               <Font name="System Bold" size="20.0" />
                           </font>
                       </Label>
-                     <Label alignment="CENTER" prefHeight="55.0" prefWidth="300.0" text="NICKNAME" GridPane.columnIndex="1">
+                     <Label alignment="CENTER" prefHeight="55.0" prefWidth="300.0" text="NICKNAME" GridPane.columnIndex="2">
                         <font>
                            <Font name="System Bold Italic" size="25.0" />
                         </font>
                      </Label>
-                     <Label alignment="CENTER" prefHeight="53.0" prefWidth="100.0" text="POINTS" GridPane.columnIndex="2">
+                     <Label alignment="CENTER" prefHeight="53.0" prefWidth="110.0" text="POINTS" GridPane.columnIndex="3">
                         <font>
                            <Font name="System Bold Italic" size="25.0" />
                         </font>
                      </Label>
-                     <Label alignment="CENTER" prefHeight="58.0" prefWidth="105.0" text="OBJ" GridPane.columnIndex="3">
+                     <Label alignment="CENTER" prefHeight="58.0" prefWidth="105.0" text="OBJ" GridPane.columnIndex="4">
                         <font>
                            <Font name="System Bold Italic" size="25.0" />
                         </font>
                      </Label>
-                     <Label fx:id="obj1" alignment="CENTER" prefHeight="51.0" prefWidth="100.0" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                     <Label fx:id="obj1" alignment="CENTER" prefHeight="51.0" prefWidth="100.0" text="Label" GridPane.columnIndex="4" GridPane.rowIndex="1">
                         <font>
                            <Font name="System Bold" size="20.0" />
                         </font>
                      </Label>
-                     <Label fx:id="obj2" alignment="CENTER" prefHeight="52.0" prefWidth="109.0" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                     <Label fx:id="obj2" alignment="CENTER" prefHeight="52.0" prefWidth="109.0" text="Label" GridPane.columnIndex="4" GridPane.rowIndex="2">
                         <font>
                            <Font name="System Bold" size="20.0" />
                         </font>
                      </Label>
-                     <Label fx:id="obj3" alignment="CENTER" prefHeight="53.0" prefWidth="104.0" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                     <Label fx:id="obj3" alignment="CENTER" prefHeight="53.0" prefWidth="104.0" text="Label" GridPane.columnIndex="4" GridPane.rowIndex="3">
                         <font>
                            <Font name="System Bold" size="20.0" />
                         </font>
                      </Label>
-                     <Label fx:id="obj4" alignment="CENTER" prefHeight="59.0" prefWidth="107.0" text="Label" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                     <Label fx:id="obj4" alignment="CENTER" prefHeight="59.0" prefWidth="107.0" text="Label" GridPane.columnIndex="4" GridPane.rowIndex="4">
                         <font>
                            <Font name="System Bold" size="20.0" />
                         </font>
                      </Label>
+                     <Label alignment="CENTER" prefHeight="50.0" prefWidth="94.0" text="PAWN" GridPane.columnIndex="1">
+                        <font>
+                           <Font name="System Bold Italic" size="25.0" />
+                        </font>
+                     </Label>
+                     <ImageView fx:id="pawn1" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <GridPane.margin>
+                           <Insets left="20.0" />
+                        </GridPane.margin></ImageView>
+                     <ImageView fx:id="pawn2" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <GridPane.margin>
+                           <Insets left="20.0" />
+                        </GridPane.margin></ImageView>
+                     <ImageView fx:id="pawn3" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <GridPane.margin>
+                           <Insets left="20.0" />
+                        </GridPane.margin>
+                     </ImageView>
+                     <ImageView fx:id="pawn4" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <GridPane.margin>
+                           <Insets left="20.0" />
+                        </GridPane.margin>
+                     </ImageView>
                   </children>
                </GridPane>
             </children>
