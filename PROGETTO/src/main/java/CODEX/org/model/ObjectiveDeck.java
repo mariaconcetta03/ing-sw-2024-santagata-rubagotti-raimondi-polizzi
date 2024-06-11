@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.*;
 
@@ -33,9 +34,11 @@ public class ObjectiveDeck extends Deck implements Serializable {
     public static ObjectiveDeck objectiveDeck(){
         Stack<ObjectiveCard> objectiveDeck = new Stack<>();
         ObjectMapper objectMapper = new ObjectMapper();
-        File file= new File("PROGETTO/src/main/java/CODEX/org/model/jsons/objectiveCards.json");
+
+        InputStream stream= ObjectiveDeck.class.getClassLoader().getResourceAsStream("objectiveCards.json");
+
         try{
-            objectiveDeck=objectMapper.readValue(file, new TypeReference<Stack<ObjectiveCard>>() {});
+            objectiveDeck=objectMapper.readValue(stream, new TypeReference<Stack<ObjectiveCard>>() {});
         }catch (IOException e){
             e.printStackTrace();
         }
