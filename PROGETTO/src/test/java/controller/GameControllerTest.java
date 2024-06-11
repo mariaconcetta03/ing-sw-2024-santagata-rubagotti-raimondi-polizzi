@@ -8,6 +8,7 @@ import CODEX.Exceptions.GameAlreadyStartedException;
 import CODEX.Exceptions.GameNotExistsException;
 import CODEX.org.model.*;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
 import java.rmi.RemoteException;
 import java.util.*;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GameControllerTest extends TestCase {
-
+    @Test
     //not a very good test because the id is created by the ServerController...
     public void testCreateGame() throws RemoteException {
         GameController g1= new GameController();
@@ -39,6 +40,7 @@ public class GameControllerTest extends TestCase {
     }
 
     //it correctly starts the game, then you will have to play the baseCards
+    @Test
     public void testAddPlayer_CorrectBehaviour() throws RemoteException  {
         GameController g1= new GameController();
         ServerController s1= new ServerController();
@@ -66,6 +68,7 @@ public class GameControllerTest extends TestCase {
     }
 
     //we will never get too many players because when we reach the correct number the game starts and it isn't accessible anymore
+   @Test
     public void testAddPlayer_TooManyPlayers() throws RemoteException {
     GameController g1= new GameController();
     ServerController s1= new ServerController();
@@ -97,7 +100,8 @@ public class GameControllerTest extends TestCase {
         s1.addPlayerToLobby(p5.getNickname(), 1); //the game doesn't exist!
     }catch(GameNotExistsException | GameAlreadyStartedException | FullLobbyException ignored){}
 }
-    public void testStartGame() throws RemoteException {
+@Test
+public void testStartGame() throws RemoteException {
         GameController g1= new GameController();
         Player p1=new Player();
         p1.setNickname("Pippo");
@@ -123,6 +127,7 @@ public class GameControllerTest extends TestCase {
 
     }
 
+    @Test
     public void testPlayCard() throws RemoteException, ColorAlreadyTakenException {
         GameController g1 = new GameController();
         ServerController s1= new ServerController();
@@ -193,6 +198,7 @@ public class GameControllerTest extends TestCase {
 
     }
 
+    @Test
     public void testPlayBaseCard() throws RemoteException {
         GameController g1 = new GameController();
         ServerController s1= new ServerController();
@@ -243,6 +249,7 @@ public class GameControllerTest extends TestCase {
     //problemi in player, non vengono tolte le carte dai deck quando chiamo drawCard().
     //2_ Chi controlla se sto pescando una carta legittima allora?
     //3_ Passiamo i player per nickname o Player? Passiamo le carte per id o meno?
+    @Test
     public void testDrawCard() throws RemoteException {
         GameController g1 = new GameController();
         ServerController s1= new ServerController();
@@ -318,6 +325,7 @@ public class GameControllerTest extends TestCase {
 
     }
 
+    @Test
     public void testDrawCard_finishDecks() throws RemoteException {
         GameController g1= new GameController();
         ServerController s1= new ServerController();
@@ -509,6 +517,7 @@ public class GameControllerTest extends TestCase {
             g1.drawCard(currentPlayer.getNickname(), g1.getGame().getResourceCard1());
         }
 
+    @Test
     public void testChooseObjectiveCard() throws RemoteException {
         ObjectiveDeck obDeck= ObjectiveDeck.objectiveDeck();
         GameController g1= new GameController();
@@ -558,6 +567,7 @@ public class GameControllerTest extends TestCase {
         assertEquals(cardToBeSelected,p1.getPersonalObjective());
     }
 
+    @Test
     public void testChoosePawnColor() throws RemoteException, ColorAlreadyTakenException {
         GameController g1= new GameController();
         ServerController s1= new ServerController();
@@ -613,6 +623,7 @@ public class GameControllerTest extends TestCase {
         }
     }
 
+    @Test
     public void testSendMessage() throws RemoteException {
         GameController g1= new GameController();
         ServerController s1= new ServerController();
@@ -708,6 +719,7 @@ public class GameControllerTest extends TestCase {
     }
 
     //ok!!
+    @Test
     public void testNextPhase_1() throws RemoteException {
         GameController g1= new GameController();
         ServerController s1= new ServerController();
@@ -834,6 +846,7 @@ public class GameControllerTest extends TestCase {
     }
 
     //test end game
+    @Test
     public void testNextPhase_2() throws RemoteException {
         GameController g1= new GameController();
         ServerController s1= new ServerController();
@@ -876,6 +889,7 @@ public class GameControllerTest extends TestCase {
         g1.playBaseCard("Pluto", p2.getPlayerDeck(1), true);
     }
 
+    @Test
     public void testLeaveGame() throws RemoteException{
         GameController g1= new GameController();
         ServerController s1= new ServerController();
@@ -924,6 +938,7 @@ public class GameControllerTest extends TestCase {
         g1.leaveGame("Topolino");
     }
 
+    @Test
     public void testEndGame() throws RemoteException, ColorAlreadyTakenException {
         GameController g1= new GameController();
         ServerController s1= new ServerController();

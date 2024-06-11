@@ -8,6 +8,7 @@ import CODEX.Exceptions.GameNotExistsException;
 import CODEX.Exceptions.NicknameAlreadyTakenException;
 import junit.framework.TestCase;
 import CODEX.org.model.Player;
+import org.junit.jupiter.api.Test;
 
 import java.rmi.RemoteException;
 
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ServerControllerTest extends TestCase {
 
+    @Test
     public void testStartLobby() throws RemoteException {
         ServerController s1=new ServerController();
         Player p1= new Player();
@@ -30,6 +32,7 @@ public class ServerControllerTest extends TestCase {
         }
     }
     //Bisogna impedire ad un giocatore gia in una partita di entrare in un'altra?
+    @Test
     public void testAddPlayerToLobby() throws RemoteException {
         ServerController s1 = new ServerController();
         Player p1 = new Player();
@@ -62,6 +65,7 @@ public class ServerControllerTest extends TestCase {
 
     }
 
+    @Test
     public void testChooseNickname() throws RemoteException {
         ServerController s1= new ServerController();
         try {
@@ -72,6 +76,7 @@ public class ServerControllerTest extends TestCase {
         assertThrows(NicknameAlreadyTakenException.class, ()->{s1.chooseNickname("Pippo");});
     }
 
+    @Test
     public void testIsNicknameAvailable() {
         Player p1=new Player();
         p1.setNickname("Pippo");
