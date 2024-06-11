@@ -239,7 +239,7 @@ public class GUIWinnersController {
                     pawn1.setImage(image);
                 }else if (i == 2){
                     pawn2.setImage(image);
-                }else if (i == 3){
+                }else if (i == 2){
                     pawn3.setImage(image);
                 }else if (i == 4){
                 pawn4.setImage(image);
