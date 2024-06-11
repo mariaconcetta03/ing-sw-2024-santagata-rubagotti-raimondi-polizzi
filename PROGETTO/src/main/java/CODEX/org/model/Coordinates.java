@@ -5,9 +5,6 @@ import java.io.Serializable;
 /**
  * This class represents a couple of coordinates: (x,y)
  */
-
-
-
 public class Coordinates implements Serializable {
     private int x;
     private int y;
@@ -25,8 +22,11 @@ public class Coordinates implements Serializable {
     }
 
 
-
+    /**
+     * Class constructor default
+     */
     public Coordinates() {}
+
 
 
     @Override
@@ -47,6 +47,8 @@ public class Coordinates implements Serializable {
         return true;
     }
 
+
+
     @Override
     public int hashCode() {
         final int start=17;
@@ -57,10 +59,11 @@ public class Coordinates implements Serializable {
     }
 
 
-        /**
-         * Getter method
-         * @return x
-         */
+
+    /**
+     * Getter method
+     * @return x
+     */
     public int getX() {
         return x;
     }
@@ -96,6 +99,7 @@ public class Coordinates implements Serializable {
     }
 
 
+
     /**
      * These 4 functions return the coordinates which surround the current Coordinate object
      * @return Coordinates(x,y)
@@ -113,6 +117,12 @@ public class Coordinates implements Serializable {
         return new Coordinates(this.x - 1, this.y - 1);
     }
 
+
+    /**
+     * Equals method re defined
+     * @param c coordinates to compare
+     * @return true or false
+     */
     public boolean equals(Coordinates c) {
         return (this.x == c.getX() && this.y == c.getY());
     }

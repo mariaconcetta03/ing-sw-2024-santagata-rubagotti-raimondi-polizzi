@@ -1,13 +1,9 @@
 package CODEX.org.model;
 
-
 import CODEX.Exceptions.CardNotDrawableException;
 import CODEX.Exceptions.CardNotOwnedException;
-
-
 import CODEX.utils.Observable;
 import CODEX.utils.executableMessages.events.*;
-
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -17,56 +13,28 @@ import java.util.*;
  */
 
 public class Player extends Observable implements Serializable {
+
     private List<ObjectiveCard> personalObjective; // set a personal objective chosen by a player
-
-
-    public enum PlayerState {
-        IS_PLAYING,
-        IS_WAITING,
-        IS_DISCONNECTED //TODO da rimuovere, non gestiamo disconnessioni
-    }
-
     private String nickname;
-    private Board board; //we have a board for each player
+    private Board board; // there's a board for each player
     private int points;
     private Game game;
-    private PlayableCard[] playerDeck; //each player has a deck of 3 cards
+    private PlayableCard[] playerDeck; // each player has a deck of 3 cards
     private boolean isFirst; // you can see if a player is the first one
-    private Pawn color;
-
-
-    /**
-     * that's the color that the card has and it's chosen between the colors
-     * listed in the Enumeration Pawn
-    */
+    private Pawn color; // it's the color associated with the pawn
     private PlayerState state;
     private int numObjectivesReached;
-
-
+    public enum PlayerState {
+        IS_PLAYING,
+        IS_WAITING
+    } // it's the state associated to the player during the game
 
 
 
     /**
      * Class constructor
-     * @param game is the game in which the player is (the player is created when the game already exists)
-     */
-    public Player(Game game) { //TODO da cancellare perchè non lo usiamo
-        this.nickname = null;
-        this.board = null;
-        this.points = 0;
-        this.isFirst = false;
-        this.personalObjective = new ArrayList<>();
-        this.state = PlayerState.IS_WAITING;
-        this.playerDeck = new PlayableCard[]{null, null, null};
-        this.game = game;
-        this.numObjectivesReached = 0;
-    }
-
-
-    /**
-     * Class constructor
-     * this method would be called in the case the player is created
-     * before a Game instance is located
+     * this method would be called if the player is created
+     * before locating a Game instance
      */
     public Player() {
         this.nickname = null;
@@ -81,17 +49,19 @@ public class Player extends Observable implements Serializable {
     }
 
 
+
     /**
-     * draws a card and if there's an association between game and player then
-     * modifies the market if it has been used
+     * This method draws a card and if there's an association between game and player then
+     * modifies the market, whilst if it has been used
      * introduces another card in the player's deck
-     * @param card is the card the player has taken from a deck or from the market
+     * @param card is the card that the player has taken from a deck or from the market
      */
     public void drawCard(PlayableCard card) throws CardNotDrawableException, RemoteException {
         boolean drawn = false;
 
-        PlayableDeck baseDeck=PlayableDeck.baseDeck();
+        PlayableDeck baseDeck = PlayableDeck.baseDeck();
 
+        // this next ones are the cards belonging to the market
         PlayableCard resourceCard1 = game.getResourceCard1(); //market
         PlayableCard resourceCard2 = game.getResourceCard2(); //market
         PlayableCard goldCard1 = game.getGoldCard1(); //market
@@ -99,23 +69,22 @@ public class Player extends Observable implements Serializable {
 
         //checking card type then calling reset methods from game to set up market area
         if (card.equals(goldCard1)) {
-                //setting new card of goldCard1 in market
-                game.resetGoldCard1();
-
+            //setting new card of goldCard1 in market
+            game.resetGoldCard1();
         } else if (card.equals(goldCard2)) {
-                //setting new card of goldCard2 in market
-                game.resetGoldCard2();
+            //setting new card of goldCard2 in market
+            game.resetGoldCard2();
         } else if (card.equals(resourceCard1)) {
-                //setting new card of resource in market
-                game.resetResourceCard1();
+            //setting new card of resource in market
+            game.resetResourceCard1();
         } else if (card.equals(resourceCard2)) {
-                //setting new card of resource in market
-                game.resetResourceCard2();
-        } else if ((!game.getResourceDeck().isFinished())&&(card.equals(game.getResourceDeck().checkFirstCard()))){
-            card= game.getResourceDeck().getFirstCard();
+            //setting new card of resource in market
+            game.resetResourceCard2();
+        } else if ((!game.getResourceDeck().isFinished()) && ( card.equals(game.getResourceDeck().checkFirstCard()))){
+            card = game.getResourceDeck().getFirstCard();
             notifyObservers(new updateResourceDeckEvent(game.getResourceDeck()));
-        } else if ((!game.getGoldDeck().isFinished())&&card.equals(game.getGoldDeck().checkFirstCard())){
-            card= game.getGoldDeck().getFirstCard();
+        } else if ((!game.getGoldDeck().isFinished()) && card.equals(game.getGoldDeck().checkFirstCard())){
+            card = game.getGoldDeck().getFirstCard();
             notifyObservers(new updateGoldDeckEvent(game.getGoldDeck()));
         }else if(!baseDeck.getCards().contains(card)){
             throw new CardNotDrawableException("You can't throw this card!");
@@ -134,8 +103,6 @@ public class Player extends Observable implements Serializable {
 
 
 
-
-
     /**
      * This method plays a card and removes it from playerDeck
      * @param card the card the player wants to place on his board
@@ -146,34 +113,33 @@ public class Player extends Observable implements Serializable {
 
         card.setOrientation(orientation);
 
-        // I'll add a method for giving coordinates to the board
         if (!board.placeCard(card, position)) {
-            throw new IllegalArgumentException(); // if I can't play the card here [position + resources]
+            throw new IllegalArgumentException(); // if I can't play the card here
         }
 
         for (int i = 0; i < 3; i++) {
             if (playerDeck[i].equals(card)) {
-                playerDeck[i] = null;      // value 0 in playerDeck, as no id will be = 0
+                playerDeck[i] = null;      // value 0 in playerDeck, as no id is equals to 0
             }
         }
 
-        List<Object> tmp1=new ArrayList<>();
+        List<Object> tmp1 = new ArrayList<>();
         tmp1.add(this.nickname);
         tmp1.add(this.playerDeck);
-        List<Object> tmp2=new ArrayList<>();
+        List<Object> tmp2 = new ArrayList<>();
         tmp2.add(this.nickname);
         tmp2.add(this.board);
+
         try {
             notifyObservers(new updatePlayerDeckEvent(this.nickname, this.playerDeck));
             notifyObservers(new updateBoardEvent(this.nickname, this.board, card)); // add the last added card
-        }catch (RemoteException e){}
+        } catch (RemoteException ignored){}
     }
 
 
 
-
     /**
-     * if base card set orientation and place base card
+     * This method sets base card orientation and places it
      * @param orientation of the card (decided by the player himself)
      * @param card it's the first base card
      */
@@ -181,22 +147,23 @@ public class Player extends Observable implements Serializable {
         card.setOrientation(orientation);
         board.placeBaseCard(card);
 
-        List<Object> tmp1=new ArrayList<>();
+        List<Object> tmp1 = new ArrayList<>();
         tmp1.add(this.nickname);
         tmp1.add(this.playerDeck);
-        List<Object> tmp2=new ArrayList<>();
+        List<Object> tmp2 = new ArrayList<>();
         tmp2.add(this.nickname);
         tmp2.add(this.board);
+
         try {
             notifyObservers(new updatePlayerDeckEvent(this.nickname, this.playerDeck));
             notifyObservers(new updateBoardEvent(this.nickname, this.board, card));
-        }catch (RemoteException e){}
+        } catch (RemoteException ignored){}
     }
-    //non serve notify, non puo essere posizionata male.
+
 
 
     /**
-     * This function adds the points to the player
+     * This method adds the points to the player
      * @param points points to add to the player
      */
     public void addPoints (int points) {
@@ -215,7 +182,7 @@ public class Player extends Observable implements Serializable {
 
 
     /**
-     * Adds an objective card to the list. The list will contain 2 random objective cards, and the player will need to select only one of them
+     * This method adds an objective card to the list. The list will contain 2 random objective cards and the player will need to select only one of them
      * @param card is the objective card you need to add to the list
      */
     public void addPersonalObjective(ObjectiveCard card) throws RemoteException{
@@ -285,6 +252,25 @@ public class Player extends Observable implements Serializable {
 
 
 
+    /**
+     * Setter method
+     * @param state of the player
+     */
+    public void setState(PlayerState state) {
+        this.state = state;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param playerDeck which represents the cards that the player has
+     */
+    public void setPlayerDeck(PlayableCard[] playerDeck){
+        this.playerDeck = playerDeck;
+    }
+
+
 
     /**
      * Setter method
@@ -295,7 +281,7 @@ public class Player extends Observable implements Serializable {
     }
 
 
-    
+
     /**
      * Getter method
      * @return isFirst says if the player is the first or not
@@ -354,9 +340,17 @@ public class Player extends Observable implements Serializable {
         return this.personalObjective.get(0);
     }
 
+
+
+    /**
+     * Getter method
+     * @return a list of objective to make the player choose the personal objective
+     * */
     public List<ObjectiveCard> getPersonalObjectives(){
         return this.personalObjective;
     }
+
+
 
     /**
      * Getter method
@@ -366,9 +360,16 @@ public class Player extends Observable implements Serializable {
         return numObjectivesReached;
     }
 
+
+
+    /**
+     * Getter method
+     * @return the player's deck
+     */
     public PlayableCard[] getPlayerDeck() {
         return playerDeck;
     }
+
 
 
     /**
@@ -378,7 +379,6 @@ public class Player extends Observable implements Serializable {
     public Game getGame () {
         return this.game;
     }
-
 
 
 
@@ -396,12 +396,4 @@ public class Player extends Observable implements Serializable {
         }
     }
 
-    public void setState(PlayerState state) {
-        this.state = state;
-    }
-
-    public void setPlayerDeck(PlayableCard[] playerDeck){
-        this.playerDeck = playerDeck;
-    }
 }
-

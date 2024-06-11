@@ -1,33 +1,47 @@
 package CODEX.org.model;
 import java.io.Serializable;
 import java.util.*;
-import CODEX.utils.Observable;
 
+
+/**
+ * This class represents a board for a player. This is a space where the player can place his cards during the
+ * game. It has dynamic dimensions, depending on how many players there are in a game.
+ */
 public class Board implements Serializable  {
+
+    // BOARD'S LIMITS
     private Coordinates upperLimit;
     private Coordinates bottomLimit;
     private Coordinates leftLimit;
     private Coordinates rightLimit;
+    private int boardDimensions;
+
     private static final int numCarte=80;
     private int playOrder=0;
     private Set<Coordinates> playablePositions;
     private Set<Coordinates> unPlayablePositions;
-    private Map<Coordinates, AngleType> playedCards; //we need that for the objective_pattern
-    private int boardDimensions;
-    private Map<AngleType, Integer> numResources;
-    //this will be the board of each player
+    private Map<Coordinates, AngleType> playedCards; // useful for objective cards
+    private Map<AngleType, Integer> numResources; // counter for how many resources are visible on the table
     private PlayableCard table[][];
-    private Player player;
-    //constructor of Board that takes the number of player that are playing the game
+    private Player player; // board's owner
+
+
+
+
+    /**
+     * Class constructor
+     * @param player board's owner
+     */
     public Board(Player player){
-        //to round up the result
+        // main initializations
         this.boardDimensions = 0;
         this.playablePositions = new HashSet<>();
         this.unPlayablePositions = new HashSet<>();
         this.playedCards = new HashMap<>();
         this.table = null;
         this.player = player;
-        //initialisation of the resource Map
+
+        // initialization of the resource Map
         numResources = new HashMap<>();
         numResources.put(AngleType.FUNGI,0);
         numResources.put(AngleType.INSECT,0);
@@ -36,10 +50,14 @@ public class Board implements Serializable  {
         numResources.put(AngleType.JAR,0);
         numResources.put(AngleType.SCROLL,0);
         numResources.put(AngleType.FEATHER,0);
-        //these 2 should not be counted but we will have to because of our algorithm
+
+        // these 2 should not be counted, but we will have to, because of our algorithm
         numResources.put(AngleType.NO_RESOURCE,0);
         numResources.put(AngleType.ABSENT,0);
     }
+
+
+
     /**
      * This method creates and initialises the table of the specific Player, after the number of players is set
      * @param nPlayers is the number of players that are playing the Game
@@ -53,25 +71,27 @@ public class Board implements Serializable  {
             }
         }
     }
+
+
+
     /**
-     * This method places the first card for a player in the middle of the table (boardDimension/2) and adds related resources
+     * This method places the first card for a player in the middle of the table (boardDimension/2) and adds
+     * related resources
      * @param baseCard is the base card the Player has placed
      */
     public void placeBaseCard(PlayableCard baseCard){
         this.table[boardDimensions/2][boardDimensions/2] = baseCard;
         baseCard.setPosition(new Coordinates(boardDimensions/2, boardDimensions/2));
         unPlayablePositions.add(new Coordinates(boardDimensions/2, boardDimensions/2));
-        //adding the new card resources
-        //if played on the front (only 4 angles)
 
         if(baseCard.getOrientation()) {
+            // adding the new card resources if played on the front (only 4 angles)
             numResources.put(baseCard.get_front_down_left(), numResources.get(baseCard.get_front_down_left()) + 1);
             numResources.put(baseCard.get_front_down_right(), numResources.get(baseCard.get_front_down_right()) + 1);
             numResources.put(baseCard.get_front_up_left(), numResources.get(baseCard.get_front_up_left()) + 1);
             numResources.put(baseCard.get_front_up_right(), numResources.get(baseCard.get_front_up_right()) + 1);
         }else{
-            //if played on the back side (4 angles and central resources
-
+            // adding the new card resources if played on the back side (4 angles and central resources)
             for(AngleType t : baseCard.getCentralResources()){
                 numResources.put(t, numResources.get(t)+1);
             }
@@ -80,7 +100,8 @@ public class Board implements Serializable  {
             numResources.put(baseCard.get_back_up_left(), numResources.get(baseCard.get_back_up_left()) + 1);
             numResources.put(baseCard.get_back_up_right(), numResources.get(baseCard.get_back_up_right()) + 1);
         }
-        //is always the first card played
+
+        // the base card is always the first card played
         baseCard.setPlayOrder(-1);
 
         upperLimit=new Coordinates(boardDimensions/2, boardDimensions/2);
@@ -92,40 +113,46 @@ public class Board implements Serializable  {
         updatePlayablePositions(baseCard);
     }
 
+
+
     /**
      * Places a card in the table and updates playable/unplayable positions
      * @param card is the card (gold/resource) the Player wants to play
      * @param position is the place where the Player wants to play the card
      * @return true if the card can be placed, false if the card can't be placed in that position
      */
-    //we have to add the requirements in the gold cards
     public boolean placeCard(PlayableCard card, Coordinates position) {
         int coveredAngles = 0;
         if (playablePositions.contains(position) && enoughResources(card)) {
-            //all the angles of the adjacent cards we could cover with the one we are placing
+            // all the angles of the adjacent cards we could cover with the one we are placing
             AngleType upLeft=null;
             AngleType upRight=null;
             AngleType downLeft=null;
             AngleType downRight=null;
-            //inserting the card
+
+            // inserting the card
             playablePositions.remove(position);
             unPlayablePositions.add(position);
             card.setPosition(position);
             this.table[position.getX()][position.getY()] = card;
-            playedCards.put(position, card.getCentralResources().get(0)); //only the base card (here not considered) has more than one resource in the center
-            //adding the new card resources
+            playedCards.put(position, card.getCentralResources().get(0));
+            // "0" because only the base card (here not considered) has more than one resource in the center
+
+            // adding the new card resources
             if(card.getOrientation()) {
+                // adds the front angle resources if played on the front side
                 numResources.put(card.get_front_down_left(), numResources.get(card.get_front_down_left())+1);
                 numResources.put(card.get_front_down_right(), numResources.get(card.get_front_down_right())+1);
                 numResources.put(card.get_front_up_left(), numResources.get(card.get_front_up_left())+1);
                 numResources.put(card.get_front_up_right(), numResources.get(card.get_front_up_right())+1);
             }else{
-                //adds the back resource if played on the back side
+                // adds the back resource if played on the back side
                 numResources.put(card.getCentralResources().get(0),numResources.get(card.getCentralResources().get(0))+1);
             }
+
+            // checks adjacent card's angles we might be covering with the new card (checking also the side where
+            // the card temp we are checking is played)
             PlayableCard temp;
-            //checks adjacent card's angles we might be covering with the new card (checking also the side where
-            //the card temp we are checking is played)
             if(table[position.getX()-1][position.getY()+1]!=null) {
                 temp = table[position.getX() - 1][position.getY() + 1];
                 if (temp.getOrientation()) {
@@ -134,6 +161,7 @@ public class Board implements Serializable  {
                     upLeft = temp.get_back_down_right();
                 }
             }
+
             if(table[position.getX()+1][position.getY()+1]!=null) {
                 temp=table[position.getX()+1][position.getY()+1];
                 if(temp.getOrientation()){
@@ -142,6 +170,7 @@ public class Board implements Serializable  {
                     upRight = temp.get_back_down_left();
                 }
             }
+
             if(table[position.getX()-1][position.getY()-1]!=null) {
                 temp = table[position.getX() - 1][position.getY() - 1];
                 if (temp.getOrientation()) {
@@ -150,6 +179,7 @@ public class Board implements Serializable  {
                     downLeft = temp.get_back_up_right();
                 }
             }
+
             if (table[position.getX() + 1][position.getY() - 1] != null) {
                 temp = table[position.getX() + 1][position.getY() - 1];
                 if (temp.getOrientation()) {
@@ -158,7 +188,8 @@ public class Board implements Serializable  {
                     downRight = temp.get_back_up_left();
                 }
             }
-            //subtracting the resource we are loosing when placing the new card
+
+            // subtracting the resource we are loosing when placing the new card
             if(upLeft!=null){
                 numResources.put(upLeft, numResources.get(upLeft)-1);
                 coveredAngles++;
@@ -175,11 +206,12 @@ public class Board implements Serializable  {
                 numResources.put(downRight, numResources.get(downRight)-1);
                 coveredAngles++;
             }
-            //setting the index the Player played the card
+
+            // setting the index the Player played the card
             card.setPlayOrder(playOrder);
             playOrder++;
 
-            //updating the extreme positions
+            // updating the extreme positions
             if((position.getY()>upperLimit.getY())||((position.getY()==upperLimit.getY())&&position.getX()<upperLimit.getX())){
                 upperLimit=position;
             }
@@ -193,7 +225,7 @@ public class Board implements Serializable  {
                 rightLimit=position;
             }
 
-            //updating the playable and unplayable positions
+            // updating the playable and unplayable positions
             updateUnplayablePositions(card);
             updatePlayablePositions(card);
             if(card.getOrientation()) { //only if played on the front side
@@ -207,7 +239,6 @@ public class Board implements Serializable  {
 
 
 
-
     /**
      * When passed a resourceCard, the method gives the points scored by that specific card
      * When passed a goldCard, the method checks the "scoring condition" (angles coverage/number of objects)
@@ -216,7 +247,10 @@ public class Board implements Serializable  {
      * @return points are the points actually scored thanks to card
      */
     public int cardPoints (PlayableCard card, int coveredAngles){
-        int points = card.getPoints(); // if the card gives you points in any case
+        // if the card gives you points in any case
+        int points = card.getPoints();
+
+        // checking
         if(card.isCoverAngleToReceivePoints()) {
             points = coveredAngles * points;
         } else if (card.isJarToReceivePoints()){
@@ -231,15 +265,14 @@ public class Board implements Serializable  {
 
 
 
-
-
     /**
      * This method checks if the Player has enough resources to place the card
      * @param card is the card the Player has just placed
      * @return boolean that indicates if the Player has enough resources to play the specific card
      */
     public boolean enoughResources (PlayableCard card) {
-        if(card.getOrientation()) { //if played on the front
+        if(card.getOrientation()) {
+            // if played on the front
             if ((card.getNeededResources() != null)) {
                 for (AngleType t : card.getNeededResources().keySet()) {
                     if (!numResources.containsKey(t) || (numResources.get(t) < card.getNeededResources().get(t))) {
@@ -250,18 +283,17 @@ public class Board implements Serializable  {
             } else {
                 return true;
             }
-        }else{ //if played on the back no need of resources
+        }else{
+            // if played on the back no need to check for resources
             return true;
         }
     }
 
 
 
-
     /**
      * Adding all the positions where the angle is ABSENT (players can't use that angle)
      * @param card is the card for which we are updating the unplayable positions
-     *
      */
     public void updateUnplayablePositions(PlayableCard card) {
         if (card.getOrientation()) {
@@ -300,12 +332,15 @@ public class Board implements Serializable  {
             }
         }
     }
+
+
+
     /**
      * Adding all the positions where the player can place a card in the future
      * @param card is the card for which we are updating the playable positions
      */
     public void updatePlayablePositions(PlayableCard card) {
-        //if it is not present in a unplayable position, it adds all the corners!= ABSENT
+        // if it is not present an unplayable position, it adds all the corners != ABSENT
         if (card.getOrientation()) {
             if (card.get_front_up_right() != AngleType.ABSENT &&
                     !unPlayablePositions.contains(card.getPosition().findUpRight())) {
@@ -324,7 +359,7 @@ public class Board implements Serializable  {
                 playablePositions.add(card.getPosition().findDownLeft());
             }
         } else {
-            //If played on the back side, all the angles are present
+            // if played on the back side, all the angles are present
             if (!unPlayablePositions.contains(card.getPosition().findUpRight())) {
                 playablePositions.add(card.getPosition().findUpRight());
             }
@@ -339,6 +374,9 @@ public class Board implements Serializable  {
             }
         }
     }
+
+
+    
     /**
      * Getter method
      * @return a Set containing the positions where it's possible to play a card
@@ -346,6 +384,9 @@ public class Board implements Serializable  {
     public Set<Coordinates> getPlayablePositions() {
         return playablePositions;
     }
+
+
+
     /**
      * Getter method
      * @return a Set containing the positions where it's impossible to play a card
@@ -353,6 +394,9 @@ public class Board implements Serializable  {
     public Set<Coordinates> getUnPlayablePositions() {
         return unPlayablePositions;
     }
+
+
+
     /**
      * Getter method
      * @return the board dimension (calculated by the number of players)
@@ -360,20 +404,29 @@ public class Board implements Serializable  {
     public int getBoardDimensions() {
         return boardDimensions;
     }
+
+
+
     /**
      * Getter method
-     * @return
+     * @return the num of resources
      */
     public Map<AngleType, Integer> getNumResources() {
         return numResources;
     }
+
+
+
     /**
      * Getter method
-     * @return
+     * @return the table with the cards played
      */
     public PlayableCard[][] getTable() {
         return table;
     }
+
+
+
     /**
      * Getter method
      * @return a Map containing all the cards played by the Player with their Coordinates
@@ -382,18 +435,42 @@ public class Board implements Serializable  {
         return playedCards;
     }
 
+
+
+    /**
+     * Getter method
+     * @return the upper limit of the board
+     */
     public Coordinates getUpperLimit() {
         return upperLimit;
     }
 
+
+
+    /**
+     * Getter method
+     * @return the bottom limit of the board
+     */
     public Coordinates getBottomLimit() {
         return bottomLimit;
     }
 
+
+
+    /**
+     * Getter method
+     * @return the left limit of the board
+     */
     public Coordinates getLeftLimit() {
         return leftLimit;
     }
 
+
+
+    /**
+     * Getter method
+     * @return the right limit of the board
+     */
     public Coordinates getRightLimit() {
         return rightLimit;
     }

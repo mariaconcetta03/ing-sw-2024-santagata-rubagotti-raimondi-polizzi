@@ -2,12 +2,14 @@ package CODEX.org.model;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * This class represent a deck which contains a stack of objective cards
+ */
 public class ObjectiveDeck extends Deck implements Serializable {
     private Stack<ObjectiveCard> cards; // contains all the cards in this deck
 
@@ -16,9 +18,28 @@ public class ObjectiveDeck extends Deck implements Serializable {
     /**
      * Class constructor
      * creates a new deck, allocating space for a stack
+     * @param stack of cards
      */
     public ObjectiveDeck(Stack<ObjectiveCard> stack) {
         cards = stack;
+    }
+
+
+
+    /**
+     * This method creates the objective deck
+     * @return objective deck created
+     */
+    public static ObjectiveDeck objectiveDeck(){
+        Stack<ObjectiveCard> objectiveDeck = new Stack<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        File file= new File("PROGETTO/src/main/java/CODEX/org/model/jsons/objectiveCards.json");
+        try{
+            objectiveDeck=objectMapper.readValue(file, new TypeReference<Stack<ObjectiveCard>>() {});
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return new ObjectiveDeck(objectiveDeck);
     }
 
 
@@ -30,6 +51,7 @@ public class ObjectiveDeck extends Deck implements Serializable {
     public void shuffleDeck() {
         Collections.shuffle(cards);
     }
+
 
 
     /**
@@ -44,26 +66,7 @@ public class ObjectiveDeck extends Deck implements Serializable {
 
 
     /**
-     * Class constructor
-     * creates a new deck, with a null stack
-     */
-    public ObjectiveDeck() {
-        cards = null;
-    }
-
-
-
-    /**
-     * This method adds a card to the deck
-     * @param card you want to add to the deck
-     */
-    public void addCard (ObjectiveCard card) {
-        cards.add(card);
-    }
-
-
-
-    /**
+     * Getter method
      * This method returns the first card in the deck
      * @return the first card in the deck
      */
@@ -71,23 +74,14 @@ public class ObjectiveDeck extends Deck implements Serializable {
         return cards.pop();
     }
 
+
+
+    /**
+     * Getter method
+     * @return the whole stack
+     */
     public Stack<ObjectiveCard> getCards(){
         return cards;
-    }
-    /**
-     * This method creates a goldDeck with all his 40 cards
-     * @return goldDeck
-     */
-    public static ObjectiveDeck objectiveDeck(){
-        Stack<ObjectiveCard> objectiveDeck = new Stack<>();
-        ObjectMapper objectMapper = new ObjectMapper();
-        File file= new File("PROGETTO/src/main/java/CODEX/org/model/jsons/objectiveCards.json");
-        try{
-            objectiveDeck=objectMapper.readValue(file, new TypeReference<Stack<ObjectiveCard>>() {});
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-        return new ObjectiveDeck(objectiveDeck);
     }
 
 }

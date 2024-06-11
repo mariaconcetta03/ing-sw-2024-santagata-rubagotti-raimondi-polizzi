@@ -1,7 +1,5 @@
 package CODEX.org.model;
 
-import org.json.simple.parser.JSONParser;
-
 import java.io.Serializable;
 
 /**
@@ -12,6 +10,7 @@ public abstract class Card implements Serializable {
     private int id; // each card has a different ID
 
 
+
     /**
      * Getter method
      * @return the id of a card
@@ -20,6 +19,12 @@ public abstract class Card implements Serializable {
         return id;
     }
 
+
+
+    /**
+     * Setter method
+     * @param id of the card
+     */
     public void setId (int id) {
         this.id = id;
     }

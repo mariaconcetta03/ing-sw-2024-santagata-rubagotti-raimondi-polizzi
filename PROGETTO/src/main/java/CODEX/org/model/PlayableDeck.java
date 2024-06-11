@@ -2,7 +2,6 @@ package CODEX.org.model;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -12,8 +11,6 @@ import java.util.*;
 /**
  *  This class represents a deck: a group of cards of the same type
  */
-
-
 public class PlayableDeck extends Deck implements Serializable {
     private Stack<PlayableCard> cards; // contains all the cards in this deck
 
@@ -21,10 +18,20 @@ public class PlayableDeck extends Deck implements Serializable {
 
     /**
      * Class constructor
-     * creates a new deck, allocating space for a stack
+     * It creates a new deck, allocating space for a stack
      */
     public PlayableDeck(Stack<PlayableCard> stack) {
         cards = stack;
+    }
+
+
+
+   /**
+     * Class constructor
+     * creates a new deck, with a null stack
+     */
+    public PlayableDeck() {
+        cards = null;
     }
 
 
@@ -38,9 +45,10 @@ public class PlayableDeck extends Deck implements Serializable {
     }
 
 
+
     /**
-     * Check if the deck is finished (contains no more cards)
-     * @return true if the deck is finished, false if it's not
+     * This method check if the deck is finished (contains no more cards)
+     * @return a boolean: true if the deck is finished, false if it's not
      */
     @Override
     public boolean isFinished() {
@@ -48,33 +56,6 @@ public class PlayableDeck extends Deck implements Serializable {
     }
 
 
-    /**
-     * Class constructor
-     * creates a new deck, with a null stack
-     */
-    public PlayableDeck() {
-        cards = null;
-    }
-
-    /**
-     * This method return all the card in the deck as a Stack
-     * @return a Stack of PlayableCard
-     */
-    public Stack<PlayableCard> getCards() {
-        return cards;
-    }
-
-    /**
-     * This method returns the first card in the deck
-     * @return the first card in the deck
-     */
-    public PlayableCard getFirstCard() throws EmptyStackException{// returns the first card on the deck, for example when the player needs to pick it up
-        if(!cards.isEmpty()) {
-            return cards.pop();
-        }else{
-            throw new EmptyStackException();
-        }
-    }
 
     /**
      * This method checks which is the first card in the deck
@@ -88,9 +69,11 @@ public class PlayableDeck extends Deck implements Serializable {
         }
     }
 
+
+
     /**
      * This method creates a goldDeck with all his 40 cards
-     * @return goldDeck
+     * @return goldDeck of the market
      */
     public static PlayableDeck goldDeck(){
         Stack<PlayableCard> goldDeck = new Stack<>();
@@ -105,9 +88,10 @@ public class PlayableDeck extends Deck implements Serializable {
     }
 
 
+
     /**
      * This method creates a resourceDeck with all his 40 cards
-     * @return resourceDeck
+     * @return resourceDeck of the market
      */
     public static PlayableDeck resourceDeck(){
         Stack<PlayableCard> resourceDeck = new Stack<>();
@@ -120,6 +104,7 @@ public class PlayableDeck extends Deck implements Serializable {
         }
         return new PlayableDeck(resourceDeck);
     }
+
 
 
     /**
@@ -138,4 +123,27 @@ public class PlayableDeck extends Deck implements Serializable {
         return new PlayableDeck(baseDeck);
     }
 
+
+
+ /**
+     * This method return all the card in the deck as a Stack
+     * @return cards which is a stack of PlayableCard
+     */
+    public Stack<PlayableCard> getCards() {
+        return cards;
+    }
+
+
+
+    /**
+     * This method returns the first card in the deck
+     * @return the first card in the deck
+     */
+    public PlayableCard getFirstCard() throws EmptyStackException{
+        if(!cards.isEmpty()) {
+            return cards.pop();
+        }else{
+            throw new EmptyStackException();
+        }
+    }
 }

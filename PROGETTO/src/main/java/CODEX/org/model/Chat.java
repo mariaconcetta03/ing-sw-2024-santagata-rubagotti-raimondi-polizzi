@@ -1,9 +1,7 @@
 package CODEX.org.model;
+
 import CODEX.utils.Observable;
 import CODEX.utils.executableMessages.events.updateChatEvent;
-import CODEX.utils.executableMessages.events.updateChatMessageEvent;
-//import CODEX.utils.executableMessages.events.updateChatEvent;
-
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -12,8 +10,6 @@ import java.util.List;
 /**
  * This class represents a chat instance of the Game
  */
-
-
 public class Chat extends Observable implements Serializable {
     private List<String> usersNickname; //these are the players which can communicate in the chat
     private List<ChatMessage> messages; // all the messages which have been sent in this chat
@@ -43,8 +39,6 @@ public class Chat extends Observable implements Serializable {
             notifyObservers(new updateChatEvent(this));
         }
         this.messages.add(mess);
-        //notifyObservers(new updateChatMessageEvent(mess)); //inviamo il solo nuovo messaggio, se la chat diventa enorme è uno
-        //spreco assurdo inviarla tutta tramite la rete ogni volta
     }
 
 
@@ -54,7 +48,7 @@ public class Chat extends Observable implements Serializable {
      * @param playerNickname is the player we're interested in
      * @return an ArrayList containing all the messages received from p
      */
-    public List<ChatMessage> messagesReceivedByPlayer(String playerNickname){ //@TODO non mi serve
+    public List<ChatMessage> messagesReceivedByPlayer(String playerNickname){
         List<ChatMessage> messageReceived= new ArrayList<>();
         for(ChatMessage m : this.messages){
             if(m.getReceiver().contains(playerNickname)){

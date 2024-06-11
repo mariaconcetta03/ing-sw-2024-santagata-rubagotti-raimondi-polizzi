@@ -3,8 +3,13 @@ package CODEX.org.model;
 import java.io.Serializable;
 import java.util.*;
 
+/**
+ * This abstract class represents a deck of cards of the same type
+ */
 public abstract class Deck implements Serializable {
     private Stack<? extends Card> cards; // all the cards into deck
+
+
 
     /**
      * This method shuffles the deck: all the cards will have a random order after this function has been called
@@ -12,6 +17,8 @@ public abstract class Deck implements Serializable {
     public void shuffleDeck() {
         Collections.shuffle(cards);
     }
+
+
 
     /**
      * Check if the deck is finished (contains no more cards)
