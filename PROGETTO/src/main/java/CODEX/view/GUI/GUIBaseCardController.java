@@ -237,6 +237,7 @@ public class GUIBaseCardController {
             // (0,0) because our base card is always in the center of the table!
 
         } else if (network == 2) {
+            /*
             Object guiLock=clientSCK.getGuiLock();
             synchronized (guiLock) {
                 if(!clientSCK.getADisconnectionHappened()) {
@@ -254,6 +255,8 @@ public class GUIBaseCardController {
                     }
                 }
             }
+
+             */
             if(!clientSCK.getADisconnectionHappened()) {
                 ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", now choose your");
                 ctr.setCard1(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId());

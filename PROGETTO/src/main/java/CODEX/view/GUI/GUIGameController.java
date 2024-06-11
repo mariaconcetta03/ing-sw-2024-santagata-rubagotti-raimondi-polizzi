@@ -1901,7 +1901,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                      if (network == 2) {
                          PlayableCard[] playerDeck = clientSCK.getPersonalPlayer().getPlayerDeck();
                          if (selectedCard == 1) {
-                             cardPlaced = true;
+                             //cardPlaced = true;
                              System.out.println("PLAYED CARD 1");
                              try {
                                  clientSCK.setErrorState(false);
@@ -1913,7 +1913,8 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                                  updateLabel(selectedCardLabel, "You don't have enough resources!");
                                  cardPlaced = false;
                                  clientSCK.setErrorState(false);
-                             } else {
+                             } else if(!clientSCK.getADisconnectionHappened()){
+                                 cardPlaced = true;
                                  p1Counter++;
                                  PlayableCard playableCard = playerDeck[0];
                                  playableCard.setPosition(new Coordinates(col, row));
@@ -1929,9 +1930,11 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                                  }
                                  player1Card1.setImage(null);
                                  emptySpace = 1;
+                             }else if(clientSCK.getADisconnectionHappened()){
+                                 updateLabel(selectedCardLabel, "Sorry, a disconnection happened");
                              }
                          } else if (selectedCard == 2) {
-                             cardPlaced = true;
+                             //cardPlaced = true;
                              System.out.println("PLAYED CARD 2");
                              try {
                                  clientSCK.setErrorState(false);
@@ -1943,7 +1946,8 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                                  updateLabel(selectedCardLabel, "You don't have enough resources!");
                                  cardPlaced = false;
                                  clientSCK.setErrorState(false);
-                             } else {
+                             } else if(!clientSCK.getADisconnectionHappened()){
+                                 cardPlaced = true;
                                  p1Counter++;
                                  PlayableCard playableCard = playerDeck[1];
                                  playableCard.setPosition(new Coordinates(col, row));
@@ -1956,9 +1960,11 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                                  }
                                  player1Card2.setImage(null);
                                  emptySpace = 2;
+                             }else if(clientSCK.getADisconnectionHappened()){
+                             updateLabel(selectedCardLabel, "Sorry, a disconnection happened");
                              }
                          } else if (selectedCard == 3) {
-                             cardPlaced = true;
+                             //cardPlaced = true;
                              System.out.println("PLAYED CARD 3");
                              try {
                                  clientSCK.setErrorState(false);
@@ -1970,7 +1976,8 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                                  updateLabel(selectedCardLabel, "You don't have enough resources!");
                                  cardPlaced = false;
                                  clientSCK.setErrorState(false);
-                             } else {
+                             } else if(!clientSCK.getADisconnectionHappened()){
+                                 cardPlaced = true;
                                  p1Counter++;
                                  PlayableCard playableCard = playerDeck[2];
                                  playableCard.setPosition(new Coordinates(col, row));
@@ -1983,6 +1990,8 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                                  }
                                  player1Card3.setImage(null);
                                  emptySpace = 3;
+                             }else if(clientSCK.getADisconnectionHappened()){
+                                 updateLabel(selectedCardLabel, "Sorry, a disconnection happened");
                              }
                          }
                      }

@@ -253,8 +253,14 @@ public class ClientSCK implements ClientGeneralInterface {
     public boolean setNickname(String nickname) {
         this.personalPlayer.setNickname(nickname);
         this.nicknameSet = true;
-        if (errorState){
+        if (errorState&&!aDisconnectionHappened){
             this.nicknameSet = false;
+        }else if(aDisconnectionHappened){
+            try {
+                handleDisconnection();
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
         }
         //} catch (NicknameAlreadyTakenException e) {  //DA RISOLVERE!! ALTRIMENTI NON POSSIAMO COMUNICARE QUANDO IL NCKNM è SBAGLIATO
         //this.nicknameSet = false;
@@ -279,6 +285,8 @@ public class ClientSCK implements ClientGeneralInterface {
                     outputStream.flush();
                     outputStream.reset();
                 } catch (IOException e) {
+                    aDisconnectionHappened=true;
+                    responseReceived = true; //per non fare iniziare la wait di qualche risposta
                     handleDisconnection();
                     /*
                     System.out.println("lost connection....Bye, bye");
@@ -360,10 +368,12 @@ public class ClientSCK implements ClientGeneralInterface {
                     errorCounter++;
                     System.out.println();
                 }
-                if(errorState){
+                if(errorState&&!aDisconnectionHappened){
                     System.out.println("Nickname is already taken! Please try again.");
                     errorState=false;
                     ok=false;
+                }else if(aDisconnectionHappened){
+                    handleDisconnection();
                 }
             }
             personalPlayer.setNickname(nickname);
@@ -417,9 +427,11 @@ public class ClientSCK implements ClientGeneralInterface {
                     } else if (lobbyId.contains(gameSelection)) {
                         try {
                             addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
-                            if (errorState) {
+                            if (errorState&&!aDisconnectionHappened) {
                                 System.out.println(ANSIFormatter.ANSI_RED + "The game you want to join is inaccessible, try again" + ANSIFormatter.ANSI_RESET);
                                 errorState = false;
+                            }else if(aDisconnectionHappened){
+                                handleDisconnection();
                             } else {
                                 System.out.println("Successfully joined the lobby with id: " + this.gameID);
                                 checkNPlayers(); //this method in the server side makes the game start
@@ -611,6 +623,7 @@ public class ClientSCK implements ClientGeneralInterface {
                     throw new RuntimeException(e);
                 }
             }
+            System.out.println("usciti dalla wait di playCard");
         }
     }
 
@@ -1114,10 +1127,13 @@ public class ClientSCK implements ClientGeneralInterface {
                             Pawn selection = tuiView.askPawnSelection(getAvailableColors(),sc);
                             if (selection != null) {
                                 this.choosePawnColor(personalPlayer.getNickname(), selection);
-                                if(errorState){
+                                if(errorState&&!aDisconnectionHappened){
                                     System.out.println("This color is already taken! Please try again.");
                                     errorState=false;
-                                }else {
+                                }else if(aDisconnectionHappened){
+                                    handleDisconnection();
+                                }
+                                else {
                                     ok = true;
                                     System.out.println("Pawn color correctly selected!");
                                     checkChosenPawnColor();
@@ -1505,7 +1521,7 @@ public class ClientSCK implements ClientGeneralInterface {
                                 coordinates = tuiView.askCoordinates(sc, card, personalPlayer.getBoard());
                                 if (coordinates != null) {
                                     this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
-                                    if((!errorState)&&(lastMoves>playersInTheGame.size())) {
+                                    if((!errorState)&&(lastMoves>playersInTheGame.size())&&!aDisconnectionHappened) {
                                         tmp = new ArrayList<>();
                                         tmp.add(resourceCard1);
                                         tmp.add(resourceCard2);
@@ -1513,7 +1529,10 @@ public class ClientSCK implements ClientGeneralInterface {
                                         tmp.add(goldCard2);
                                         card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
                                         this.drawCard(personalPlayer.getNickname(), card);
-                                    }else{
+                                    }else if(aDisconnectionHappened){
+                                        handleDisconnection();
+                                    }
+                                    else{
                                         System.out.println("You can't play this card! Returning to menu..."); //@TODO differenziare eccezioni per non giocabilità e non abbastanza risorse?
                                         errorState=false; //to be used the next time
                                     }
