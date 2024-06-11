@@ -940,8 +940,8 @@ public void updateLabel(Label label, String text){
 
          */
 
-        boardPane.setHvalue((75.0*(dimension/2))/(75.0*83));
-        boardPane.setVvalue((44.775*(81-dimension/2))/(44.775*81));
+        boardPane.setHvalue((75.0*(dimension/2.0))/(75.0*83));
+        boardPane.setVvalue((44.775*(81.0-dimension/2.0))/(44.775*81));
 
 
         for(Integer integer:cardsOnP1Board.keySet()){

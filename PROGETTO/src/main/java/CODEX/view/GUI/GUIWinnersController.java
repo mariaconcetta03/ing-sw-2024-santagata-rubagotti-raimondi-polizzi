@@ -1,11 +1,13 @@
 package CODEX.view.GUI;
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
+import CODEX.org.model.Pawn;
 import CODEX.org.model.Player;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import javafx.scene.image.*;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -57,9 +59,14 @@ public class GUIWinnersController {
     private Label obj3;
     @FXML
     private Label obj4;
-
-
-
+    @FXML
+    private ImageView pawn1;
+    @FXML
+    private ImageView pawn2;
+    @FXML
+    private ImageView pawn3;
+    @FXML
+    private ImageView pawn4;
 
 
 
@@ -87,7 +94,7 @@ public class GUIWinnersController {
 
 
     private void setGridPaneLabels() {
-        // SETTING THE CORRECT OPACITY FOR THE LABELS AND THEIR TEXTS FOR POINTS AND NICKNAMES
+        // SETTING THE CORRECT OPACITY FOR THE LABELS AND THEIR TEXTS FOR POINTS AND NICKNAMES + SETTING THE PAWNS
         // ---------------------------------------  W A R N I N G !  ------------------------------------------
         // The boards of the table will remain the same with empty fields, even if there will be 2 or 3 players
         if (allPlayers.size() == 2) {
@@ -113,6 +120,27 @@ public class GUIWinnersController {
             points2.setText(String.valueOf(allPlayers.get(1).getPoints()) + " pt");
             obj1.setText(String.valueOf(allPlayers.get(0).getNumObjectivesReached()));
             obj2.setText(String.valueOf(allPlayers.get(1).getNumObjectivesReached()));
+            String path = null;
+
+            for(int i = 0; i< 2; i++){
+                if (allPlayers.get(i).getChosenColor().equals(Pawn.YELLOW)) {
+                    path = "/images/pawns/Yellow_Pawn.png";
+                } else if (allPlayers.get(i).getChosenColor().equals(Pawn.RED)) {
+                    path = "/images/pawns/Red_Pawn.png";
+                } else if (allPlayers.get(i).getChosenColor().equals(Pawn.BLUE)) {
+                    path = "/images/pawns/Blue_Pawn.png";
+                } else if (allPlayers.get(i).getChosenColor().equals(Pawn.GREEN)) {
+                    path = "/images/pawns/Green_Pawn.png";
+                }
+
+                Image image = new Image(getClass().getResourceAsStream(path));
+
+                if(i == 0){
+                    pawn1.setImage(image);
+                }else if (i == 2){
+                    pawn2.setImage(image);
+                }
+            }
 
         } else if (allPlayers.size() == 3) {
             position1.setOpacity(1);
