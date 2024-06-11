@@ -1,30 +1,19 @@
 package CODEX.view.GUI;
+
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
 import CODEX.org.model.Pawn;
 import CODEX.org.model.Player;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import javafx.scene.image.*;
-
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * This class controls the window during the winner scene
+ */
 public class GUIWinnersController {
-
-    private RMIClient rmiClient;
-    private ClientSCK clientSCK;
-    private Stage stage;
-    private int network;
-    private List<Player> allPlayers; // IN ORDER OF POINTS, FROM HIGHEST TO LOWEST [setAllFeatures()]
-    private Player personalPlayer;
-    private List<Player> winners;
-
-
     @FXML
     private Label titleLabel;
     @FXML
@@ -68,8 +57,18 @@ public class GUIWinnersController {
     @FXML
     private ImageView pawn4;
 
+    private RMIClient rmiClient;
+    private ClientSCK clientSCK;
+    private int network;
+    private List<Player> allPlayers; // IN ORDER OF POINTS, FROM HIGHEST TO LOWEST
+    private Player personalPlayer;
+    private List<Player> winners;
 
 
+
+    /**
+     * This method sets the label on "YOU WON" or "YOU LOST"
+     */
     private void setTitleLabel(){
         // CHECKING IF I WON THE MATCH OR NOT
         boolean iWon = false;
@@ -90,13 +89,12 @@ public class GUIWinnersController {
 
 
 
-
-
-
+    /**
+     * This method fills the table in the window with all the labels and the images
+     */
     private void setGridPaneLabels() {
         // SETTING THE CORRECT OPACITY FOR THE LABELS AND THEIR TEXTS FOR POINTS AND NICKNAMES + SETTING THE PAWNS
-        // ---------------------------------------  W A R N I N G !  ------------------------------------------
-        // The boards of the table will remain the same with empty fields, even if there will be 2 or 3 players
+        // !! The boards of the table will remain the same with empty fields, even if there will be 2 or 3 players !!
         if (allPlayers.size() == 2) {
             position1.setOpacity(1);
             position2.setOpacity(1);
@@ -305,16 +303,9 @@ public class GUIWinnersController {
 
 
 
-
-
-    private void startTimerToClose() {
-
-    }
-
-
-
-    
-
+    /**
+     * This method sets all the features in the winner scene
+     */
     public void setAllFeatures() {
         // GETTING THE PERSONAL PLAYER AND ALL THE PLAYERS
         if (network == 1) {
@@ -324,7 +315,6 @@ public class GUIWinnersController {
             this.personalPlayer = clientSCK.getPersonalPlayer();
             this.allPlayers = clientSCK.getPlayersInTheGame();
         }
-
 
         // ORDERING THE allPlayers LIST FROM HIGHEST POINTS TO THE LOWEST
         List<Player> orderedList = new ArrayList<>();
@@ -341,39 +331,49 @@ public class GUIWinnersController {
         }
         allPlayers = orderedList;
 
-
         // CALLING OTHER METHODS TO SET ALL THE GRAPHIC CONTENT
         setTitleLabel();
         setGridPaneLabels();
-        startTimerToClose();
     }
 
 
 
-
-
-
+    /**
+     * Setter method
+     * @param winners is a list of players
+     */
     public void setWinners(List<Player> winners) {
         this.winners = winners;
     }
 
 
+
+    /**
+     * Setter method
+     * @param rmiClient client RMI
+     */
     public void setRmiClient(RMIClient rmiClient) {
         this.rmiClient = rmiClient;
     }
 
 
+
+    /**
+     * Setter method
+     * @param clientSCK client SCK
+     */
     public void setClientSCK(ClientSCK clientSCK) {
         this.clientSCK = clientSCK;
     }
 
 
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
 
-
+    /**
+     * Setter method
+     * @param network 1 or 2 (rmi or tcp)
+     */
     public void setNetwork(int network) {
         this.network = network;
     }
+
 }

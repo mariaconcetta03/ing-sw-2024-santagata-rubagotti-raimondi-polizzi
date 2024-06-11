@@ -1,38 +1,23 @@
 package CODEX.distributed.Socket;
 
-
 import CODEX.Exceptions.*;
 import CODEX.distributed.ClientGeneralInterface;
-import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.messages.SCKMessage;
 import CODEX.org.model.*;
-
 import CODEX.utils.executableMessages.clientMessages.*;
 import CODEX.view.GUI.*;
 import CODEX.view.TUI.ANSIFormatter;
 import CODEX.view.TUI.InterfaceTUI;
-
-import javafx.animation.PauseTransition;
-import javafx.util.Duration;
-
 import java.io.*;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.nio.Buffer;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-//PER LA PROSSIMA SETTIMANA: CHIEDIAMO SE DOBBIAMO GESTIRE CASI DI PERDITA DI MESSAGGI IN RETE
-//se vogliamo gestire il caso di perdita di messaggi nella trasmissione in rete li numeriamo (anche i messaggi di ping)
-//e quando leggiamo un messaggio andiamo a controllare che abbiamo il numero successivo all'ultimo messaggio arrivato,
-//se si tratta del secondo ping (perchè per sicurezza ne mandiamo due) non richiediamo il ping precedente se invece si
-//tratta di update: richiediamo l'update precedente. Questo implica di tenere lato client e lato server una lista di
-//ultimi messaggi inviati da cui pescare il messaggio mancante quando viene richiesto
 
 /**
  * This class represents the Client who chose TCP as network protocol.
@@ -42,11 +27,11 @@ import java.util.concurrent.Executors;
  */
 public class ClientSCK implements ClientGeneralInterface {
     List<Pawn> availableColors;
-    private boolean guiClosed=false;
+
     private boolean aDisconnectionHappened=false;
     private final Object disconnectionLock=new Object();
     private boolean errorState = false;
-    private boolean finishedSetup=false;
+
     private HashSet<Integer> lobbyId;
     private final Socket socket;
     private GUIGameController guiGameController=null;
@@ -68,22 +53,16 @@ public class ClientSCK implements ClientGeneralInterface {
     private Player personalPlayer;
     private int selectedView;
     private InterfaceTUI tuiView;
-    //private InterfaceGUI guiView;
     private final ObjectOutputStream outputStream;
     private final ObjectInputStream inputStream;
-    //private final Thread threadCheckConnection;
-    private Player player; //the nickname is saved somewhere
+
     private List<Player> playersInTheGame;
-    public boolean getDone(){
-        return this.done;
-    }
+
 
     public void setDone(boolean done) {
         this.done = done;
     }
-    public boolean getSecondUpdateRoundArrived() {
-        return secondUpdateRoundArrived;
-    }
+
     public ObjectiveCard getCommonObjective1() {
         return commonObjective1;
     }
@@ -179,16 +158,17 @@ public class ClientSCK implements ClientGeneralInterface {
         new Thread(() -> {
             while (running) {
                 synchronized (inputLock) {
-                    if (!aDisconnectionHappened) { //(l'evento di disconnessione viene notificato tramite update e gli update vengono fatti in ordine)
+                    if (!aDisconnectionHappened) {
                         try {
                             SCKMessage sckMessage = (SCKMessage) this.inputStream.readObject(); //così non abbiamo più bisogno della funzione receiveMessage
                             if (sckMessage != null) {
-                                //System.out.println("messaggio ricevuto da ClienSCK non nullo");
+
                                 //il fatto che sia BLOCCANTE è POSITIVO: gli update vengono fatti in ordine di arrivo e quindi quando riceviamo SETUP_PHASE_2 siamo sicuri di aver veramente ricevuto già tutto
 
                                 modifyClientSide(sckMessage); //questo è bloccante-> meglio utilizzare un thread...a meno che non vogliamo fare una modifica alla volta
 
                             }
+
                         } catch (Exception e) { //se il server si disconnette
                             if(running) {
                                 try {
@@ -196,25 +176,11 @@ public class ClientSCK implements ClientGeneralInterface {
                                 } catch (RemoteException ex) {
                                     throw new RuntimeException(ex);
                                 }
-                                /*
-                                System.out.println("lost connection...Bye, bye");
-                                try { //devo fermare i thread lanciati all'interno di questo thread
-                                    inputStream.close();
-                                    outputStream.close();
-                                    socket.close();
-                                    running = false;
-                                    inGame = false;
-                                } catch (IOException ex) { //this catch is needed for the close statements
-                                    //throw new RuntimeException(ex);
-                                }
-                                if (this.timer != null) { //this is null if the game is not already started
-                                    this.timer.cancel(); //we don't need to check the connection anymore
-                                }
-                                break; //se per esempio il flusso viene interrotto (dovrebbe venire lanciata un eccezione di Input/Output)
 
-                                 */
                             }
                         }
+
+
                     }
 
                 }
@@ -237,11 +203,6 @@ public class ClientSCK implements ClientGeneralInterface {
 
     }
 
-    //we have to read this stream every time there is a server update to the client (->in the Thread local to server we modify this stream)
-    //public SCKMessage receivedMessage () throws IOException, ClassNotFoundException {
-    //    //the socket stream has been changed in the Thread (locally to the server)
-    //    return (SCKMessage) inputStream.readObject(); //we are reading the object written in the inputStream
-    //}
 
 
     public HashSet<Integer> getAvailableLobbies() throws RemoteException {
@@ -262,8 +223,7 @@ public class ClientSCK implements ClientGeneralInterface {
                 throw new RuntimeException(e);
             }
         }
-        //} catch (NicknameAlreadyTakenException e) {  //DA RISOLVERE!! ALTRIMENTI NON POSSIAMO COMUNICARE QUANDO IL NCKNM è SBAGLIATO
-        //this.nicknameSet = false;
+
         System.out.println("il nickname è stato settato a: " + this.personalPlayer.getNickname());
         return this.nicknameSet;
     }
@@ -288,18 +248,7 @@ public class ClientSCK implements ClientGeneralInterface {
                     aDisconnectionHappened=true;
                     responseReceived = true; //per non fare iniziare la wait di qualche risposta
                     handleDisconnection();
-                    /*
-                    System.out.println("lost connection....Bye, bye");
-                    try { //devo fermare i thread lanciati all'interno di questo thread
-                        inputStream.close();
-                        outputStream.close();
-                        socket.close(); //the ClientSCK will receive an exception
-                        running = false;
-                    } catch (IOException ex) { //this catch is needed for the close statements
-                        //throw new RuntimeException(ex);
-                    }
 
-                     */
                 }
             }
         }
@@ -314,7 +263,7 @@ public class ClientSCK implements ClientGeneralInterface {
     //non è l'update dei listeners (quello è in ClientHandlerThread: scriverà sull'input della socket)
     //con questo update andiamo a modificare le cose locali al client
     public void modifyClientSide(SCKMessage sckMessage) throws IOException {
-        //al posto dello switch se l'attributo Event del sckMessage è diverso da null si tratta di un update, altrimenti è un ServerMessage (attributo ServerMessage del sckMessage)
+        // se l'attributo Event del sckMessage è diverso da null si tratta di un update, altrimenti è un ServerMessage (attributo ServerMessage del sckMessage)
 
         if (sckMessage.getEvent() != null) { //we have an update
             sckMessage.getEvent().executeSCK(this);
@@ -322,21 +271,7 @@ public class ClientSCK implements ClientGeneralInterface {
             sckMessage.getServerMessage().execute(this);
         }
 
-       /*
-        switch (sckMessage.getMessageEvent()) { //lasciati commentati gli update per cui non è stato creato un evento del package events
 
-            case UPDATED_CHAT->{  //non è stato creato un nuovo Event del package events per questo
-                //we have to change the view and the local model
-                updateChat((Chat) sckMessage.getObj().get(0));
-            }
-
-            case UPDATED_NICKNAME->{ //non è stato creato un nuovo Event del package events per questo
-                //we have to change the view and the local model
-                updateNickname((Player) sckMessage.getObj().get(0), (String) sckMessage.getObj().get(1));
-            }
-
-
-        */
     }
 
 
@@ -453,17 +388,13 @@ public class ClientSCK implements ClientGeneralInterface {
                     }
 
 
-                } catch (RemoteException |
-                         NotBoundException e) { //queste sono eccezioni da togliere dalla signature dei metodi in comune tra rmi e tcp
+                } catch (RemoteException | NotBoundException e) { //queste sono eccezioni da togliere dalla signature dei metodi in comune tra rmi e tcp
                     System.out.println("Unable to communicate with the server! Shutting down.");
                     System.exit(-1);
                 }
             }
-        } else {
-            // NOTHING
-//            String[] network = new String[1];
-//            network[0] = "TCP";
-//            InterfaceGUI.main(network);
+        } else { //GUI
+
         }
 
     }
@@ -479,9 +410,7 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
     //GETTER & SETTER
-    public int getSelectedView() {
-        return selectedView;
-    }
+
 
     public void setSelectedView(int selectedView) {
         this.selectedView = selectedView;
@@ -667,16 +596,7 @@ public class ClientSCK implements ClientGeneralInterface {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            /*
-            while (!responseReceived) {
-                try {
-                    actionLock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
 
-             */
         }
     }
 
@@ -762,21 +682,22 @@ public class ClientSCK implements ClientGeneralInterface {
             t.printTable(board);
         }
 
-        if (playersInTheGame != null) {
-            for (Player p : playersInTheGame) {
-                if (boardOwner.equals(p.getNickname())) {
-                    p.setBoard(board);
-                }
+
+        for (Player p : playersInTheGame) {
+            if (boardOwner.equals(p.getNickname())) {
+                p.setBoard(board);
+                System.out.println("I received " + p.getNickname() + "'s board.");
             }
         }
 
+
         if (selectedView == 1) {
-            System.out.println("I received the board di un altro.");
+
         } else if (selectedView == 2) {
-        if (guiGameController != null) {
-            System.out.println("AAAAAAAAAAAAA!!! I received the board di un altro!!! AAAAAAAAAAAAAAA");
-            guiGameController.updateBoard(boardOwner, newCard);
-        }
+            if (guiGameController != null) {
+
+                guiGameController.updateBoard(boardOwner, newCard);
+            }
         }
     }
 
@@ -787,7 +708,7 @@ public class ClientSCK implements ClientGeneralInterface {
         if (selectedView == 1) {
             System.out.println("I received the updateResourceDeck.");
         } else if (selectedView == 2) {
-            //guiView.showUpdatedResourceDeck(this.resourceDeck)
+
             if(guiGameController!=null){
                 guiGameController.updateResourceDeck();
             }
@@ -801,7 +722,7 @@ public class ClientSCK implements ClientGeneralInterface {
         if (selectedView == 1) {
             System.out.println("I received the updateGoldDeck.");
         } else if (selectedView == 2) {
-            //guiView.updateGoldDeck(goldDeck)
+
             if(guiGameController!=null){
                 guiGameController.updateGoldDeck();
             }
@@ -815,19 +736,17 @@ public class ClientSCK implements ClientGeneralInterface {
         if(playerNickname.equals(personalPlayer.getNickname())){
             personalPlayer.setPlayerDeck(playerDeck);
         }
-        if (playersInTheGame!=null) {
-            for (Player p : playersInTheGame) {
-                if (playerNickname.equals(p.getNickname())) {
-                    p.setPlayerDeck(playerDeck);
-                }
+
+        for (Player p : playersInTheGame) {
+            if (playerNickname.equals(p.getNickname())) {
+                p.setPlayerDeck(playerDeck);
             }
-        }else {
-            System.out.println("null in updatePlayerDeck");
         }
+
         if (selectedView == 1) {
 
         } else if (selectedView == 2) {
-            //guiView.updatePlayerDeck(player, playerDeck)
+
             if(!(playerNickname.equals(personalPlayer.getNickname()))){
                 if(guiGameController!=null){
                     guiGameController.updatePlayerDeck(playerNickname,playerDeck);
@@ -867,13 +786,7 @@ public class ClientSCK implements ClientGeneralInterface {
                         }).start();;
 
                     } else if (selectedView == 2) {
-                        //gui
-                        /*
-                        synchronized (guiLock){
-                            guiLock.notify();
-                        }
 
-                         */
                         //se ho due objective card sicuramente ho anche guiBaseCardController
                         guiBaseCardController.updateGameState();
                     }
@@ -954,7 +867,7 @@ public class ClientSCK implements ClientGeneralInterface {
         if (selectedView == 1) {
             System.out.println("I received the updateResourceCard1.");
         } else if (selectedView == 2) {
-            //guiView.updateResourceCard1(card)
+
             if(guiGameController!=null){
                 guiGameController.updateResourceCard1(card);
             }
@@ -968,7 +881,7 @@ public class ClientSCK implements ClientGeneralInterface {
         if (selectedView == 1) {
             System.out.println("I received the updateResourceCard2.");
         } else if (selectedView == 2) {
-            //guiView.updateResourceCard2(card)
+
             if(guiGameController!=null){
                 guiGameController.updateResourceCard2(card);
             }
@@ -982,7 +895,7 @@ public class ClientSCK implements ClientGeneralInterface {
         if (selectedView == 1) {
             System.out.println("I received the updateGoldCard1.");
         } else if (selectedView == 2) {
-            //guiView.updateGoldCard1(card)
+
             if(guiGameController!=null){
                 guiGameController.updateGoldCard1(card);
             }
@@ -996,7 +909,7 @@ public class ClientSCK implements ClientGeneralInterface {
         if (selectedView == 1) {
             System.out.println("I received the updateGoldCard2.");
         } else if (selectedView == 2) {
-            //guiView.updateGoldCard2(card)
+
             if(guiGameController!=null){
                 guiGameController.updateGoldCard2(card);
             }
@@ -1010,7 +923,7 @@ public class ClientSCK implements ClientGeneralInterface {
         if (selectedView == 1) {
             System.out.println("You received a message (updateGoldCard2).");
         } else if (selectedView == 2) {
-            //guiView.updateChat(chat)
+
         }
     }
 
@@ -1037,12 +950,12 @@ public class ClientSCK implements ClientGeneralInterface {
         if (selectedView == 1) {
             System.out.println("I received the updatePawns.");
         } else if (selectedView == 2) {
-            //guiView.updatePawns(player, pawn)
-            System.out.println("RMI: sto per entrare nel syn");
+
+
             synchronized (guiPawnsControllerLock) {
-                System.out.println("RMI: nel syn");
+
                 while (GUIPawnsController == null) {
-                    System.out.println("RMI: adesso faccio la wait()");
+
                     try {
                         guiPawnsControllerLock.wait();
                     } catch (InterruptedException e) {
@@ -1050,7 +963,7 @@ public class ClientSCK implements ClientGeneralInterface {
                     }
                 }
             }
-            System.out.println("RMI: uscito dal syn");
+
             GUIPawnsController.updatePawns(pawn);
         }
     }
@@ -1156,15 +1069,9 @@ public class ClientSCK implements ClientGeneralInterface {
             }
             if (this.turnCounter == 0){
                 //chiamo playBaseCard : se uso un thread per farlo posso continuare a ricevere e a rispondere a ping
-                /*
-                synchronized (guiPawnsControllerLock){
-                    System.out.println("RMI: sto per fare la notify");
-                    secondUpdateRoundArrived=true;
-                    done=true;
-                    guiPawnsControllerLock.notify();
-                }
 
-                 */
+
+
                 //se arriva il secondo updateRound: ho già fatto la scelta della pawn e quindi ho il GUIPawnsController
                 GUIPawnsController.updateGameState();
             }
@@ -1192,13 +1099,7 @@ public class ClientSCK implements ClientGeneralInterface {
                 }
                 if (this.turnCounter == 1){ //questo è il terzo turno
                     //dal terzo turno è possibile vedere il menù e selezionarne i punti del menù, la TUI qui lancia un thread che va per tutta la partita
-                    /*
-                    synchronized (guiLock){
-                        finishedSetup=true;
-                        guiLock.notify();
-                    }
 
-                     */
                     guiObjectiveController.updateGameState();
                 }
             }
@@ -1243,20 +1144,7 @@ public class ClientSCK implements ClientGeneralInterface {
                                 } catch (RemoteException ignored) {
 
                                 }
-                                /*
-                                System.out.println("the connection has been interrupted....Bye bye");
-                                try { //we close all we have to close
-                                    running=false;
-                                    inGame=false;
-                                    inputStream.close();
-                                    outputStream.close();
-                                    socket.close();
-                                } catch (IOException ex) { //needed for the close clause
-                                    throw new RuntimeException(ex);
-                                }
-                                timer.cancel(); // Ferma il timer
 
-                                 */
                             }
                         }else{ //there are no pongs received
 
@@ -1265,20 +1153,7 @@ public class ClientSCK implements ClientGeneralInterface {
                             } catch (RemoteException ignored) {
 
                             }
-                            /*
-                            System.out.println("the connection has been interrupted...Bye bye");
-                            try {
-                                running=false;
-                                inGame=false;
-                                inputStream.close();
-                                outputStream.close();
-                                socket.close();
-                            } catch (IOException e) { //needed for the close clause
-                                throw new RuntimeException(e);
-                            }
-                            timer.cancel(); // Ferma il timer
 
-                             */
                         }
                     }
                 }, 0, 10000); // Esegui ogni 10 secondi
@@ -1288,21 +1163,7 @@ public class ClientSCK implements ClientGeneralInterface {
             } else if (gameState.equals(Game.GameState.ENDING)) {
 
             }else if(gameState.equals(Game.GameState.ENDED)){ //we do not return to the lobby -> we have to close the connection and stop the threads
-                /*
-                System.out.println("game state: ENDED");
-                running=false;
-                inGame=false;
-                try {
-                    inputStream.close();
-                    outputStream.close();
-                    socket.close();
-                } catch (IOException e) { //needed for the close clause
-                    throw new RuntimeException(e);
-                }
-                //the TimerTask that checks the connection should end by itself when the application ends
-                this.timer.cancel(); //to be sure
 
-                 */
 
             }
         } else if (selectedView == 2) {
@@ -1310,19 +1171,7 @@ public class ClientSCK implements ClientGeneralInterface {
             if(gameState.equals(Game.GameState.STARTED)) {
                 inGame = true;
                 System.out.println("The game has started!");
-                /*
-                synchronized (guiGamestateLock) {
-                    while (guiLobbyController == null) {
-                        try {
-                            guiGamestateLock.wait();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
-                guiLobbyController.updateGameState();
 
-                 */
             }
         }
     }
@@ -1338,7 +1187,7 @@ public class ClientSCK implements ClientGeneralInterface {
             //chiudere stream, socket, timer e thread
             if (selectedView == 1) { //TUI
                 handleDisconnectionFunction();
-            } else if (selectedView == 2) { //GUI -> da migliorare perchè blocca la scelta della carta
+            } else if (selectedView == 2) {
                 synchronized (guiLock) {
                     aDisconnectionHappened = true;
                     guiLock.notify(); //nel caso in cui la gui sta facendo la wait di un evento (che dopo questa discconnessione non si verificherà mai)
@@ -1362,33 +1211,7 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-    //taken from RMIClient
-    //caso in cui qualcuno lascia il gioco e la partita deve finire
-    public void gameLeft() throws RemoteException{
-        System.out.println("I received the update gameLeft.");
-        if(inGame){ //solo se il gioco è iniziato qualcuno se ne può andare volontariamente....verrà prima settato lo stato del gioco ad ENDED oppre chiamato questo update??
-            inGame=false;
-            System.out.println(ANSIFormatter.ANSI_RED+"Someone left the game."+ANSIFormatter.ANSI_RESET);
-            System.out.println("the game has to end...Bye bye");
-            /*
-            this.resetAttributes();
-            System.out.println("Returning to lobby.\n\n\n\n\n\n\n");
-            this.waitingRoom();
 
-             */
-        }
-        //we do not return to the lobby -> we have to terminate everything
-        try {
-            inputStream.close();
-            outputStream.close();
-            socket.close();
-        } catch (IOException e) { //needed for the close clause
-            throw new RuntimeException(e);
-        }
-        //the TimerTask that checks the connection should end by itself when the application ends
-        this.timer.cancel(); //to be sure
-
-    }
 
 
 
@@ -1396,15 +1219,15 @@ public class ClientSCK implements ClientGeneralInterface {
 
     //end of implementation of ClientGeneralInterface
 
-    private void showMenuAndWaitForSelection(){ //syn perchè così legge il valore corrente di isPlaying
-        Integer choice;
+    private void showMenuAndWaitForSelection(){
+
         if(selectedView==1) {
             int intChoice=tuiView.showMenuAndWaitForSelection(this.getIsPlaying(),this.console);
             boolean ok;
             if(intChoice!=-1) { //dopo ogni azione della tui si può ristampare il menù (possiamo farlo da qui o direttamente nella tui)
                 try {
                     switch (intChoice) {
-                        case 0:  // if (!aDisconnectionHappened)
+                        case 0:
                             inGame = false;
                             leaveGame(personalPlayer.getNickname());
                         case 1:
@@ -1523,11 +1346,9 @@ public class ClientSCK implements ClientGeneralInterface {
         }else{
             //gui
         }
-    } //usciti da qui restituiamo il lock della syn e quindi se c'è stato un update su isPlaying la prossima chiamata ne terrà conto
-
-    public boolean getInGame() {
-        return this.inGame;
     }
+
+
 
 
     public boolean getADisconnectionHappened() {
@@ -1561,22 +1382,15 @@ public class ClientSCK implements ClientGeneralInterface {
 
     }
 
-    @Override
-    public Object getActionLock() {
-        return this.actionLock;
-    }
 
-    public void setGuiClosed(boolean guiClosed) {
-        this.guiClosed = guiClosed;
-    }
+
+
 
     public void setGuiGameController(GUIGameController guiGameController) {
         this.guiGameController=guiGameController;
     }
 
-    public GUILobbyController getGuiLobbyController() {
-        return guiLobbyController;
-    }
+
 
     public void setGuiLobbyController(GUILobbyController guiLobbyController) {
         this.guiLobbyController = guiLobbyController;
@@ -1636,16 +1450,7 @@ public class ClientSCK implements ClientGeneralInterface {
         this.gameID=gameID;
     }
 
-    public Game.GameState getGameState () {
-        return player.getGame().getState();
-    }
 
-    public Object getGuiLock(){
-        return this.guiLock;
-    }
-    public boolean getFinishedSetup(){
-        return this.finishedSetup;
-    }
     public boolean getErrorState(){
         return this.errorState;
     }
@@ -1677,7 +1482,3 @@ public class ClientSCK implements ClientGeneralInterface {
 
     }
 }
-
-
-
-

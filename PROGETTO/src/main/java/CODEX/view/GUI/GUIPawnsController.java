@@ -4,30 +4,24 @@ import CODEX.Exceptions.ColorAlreadyTakenException;
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
 import CODEX.org.model.Pawn;
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.Scene;
-import javafx.util.Duration;
-
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * This class controls the window during the pawns scene
+ */
 public class GUIPawnsController {
     private GUIBaseCardController ctr;
     private Stage stage;
@@ -46,23 +40,18 @@ public class GUIPawnsController {
     private ImageView greenPawn;
     @FXML
     private ImageView bluePawn;
-//    @FXML
-//    private Pane yellowPawn;
-//    @FXML
-//    private Pane greenPawn;
-//    @FXML
-//    private Pane bluePawn;
-//    @FXML
-//    private Pane redPawn;
     @FXML
     private Label labelWithPlayerName;
     @FXML
     private Label retryLabel;
 
 
-    public void changeScene(){
 
-        // let's show the new window!
+    /**
+     * This method is used to change the scene
+     */
+    public void changeScene(){
+        // let's show the new window
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/baseCard.fxml"));
         Parent root = null;
         try {
@@ -89,6 +78,7 @@ public class GUIPawnsController {
                 }
             }
         });
+
         // setting the parameters in the new controller, also the BASE CARD (front and back)
         ctr.setStage(stage);
         ctr.setNetwork(network);
@@ -97,13 +87,13 @@ public class GUIPawnsController {
         if (network == 1) {
             while (rmiClient.getPersonalPlayer().getPlayerDeck()[0] == null) {
             }
-            ctr.setBaseCard1(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId()); // OK
+            ctr.setBaseCard1(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId());
             ctr.setBaseCard2(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId());
             ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", which side do you");
         } else if (network == 2) {
             while (clientSCK.getPersonalPlayer().getPlayerDeck()[0] == null) {
             }
-            ctr.setBaseCard1(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId()); // OK
+            ctr.setBaseCard1(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId());
             ctr.setBaseCard2(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId());
             ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", which side do you");
         }
@@ -130,11 +120,9 @@ public class GUIPawnsController {
                 clientSCK.getGuiBaseCardControllerLock().notify();
 
             }
-
-
         }
 
-        stage.setScene(scene); //questo è il momento in cui la nuova scena viene mostrata
+        stage.setScene(scene);
 
         // setting the od values of position and dimension
         stage.setWidth(width);
@@ -142,20 +130,15 @@ public class GUIPawnsController {
         stage.setX(x);
         stage.setY(y);
 
-
         ctr.startPeriodicDisconnectionCheck();
 
-
-        //stage.show(); //si fa solo se cambia lo stage
-
     }
 
 
-    public void setLabelWithPlayerName(String s) {
-        this.labelWithPlayerName.setText(s);
-    }
 
-
+    /**
+     * This method is invoked when the player chooses the yellow pawn
+     */
     synchronized public void selectedYellow() {
         if (yellowPawn.getOpacity() != 0 && !pawnSelected) {
             pawnSelected = true;
@@ -178,29 +161,9 @@ public class GUIPawnsController {
                         });
 
                         rmiClient.getGameController().checkChosenPawnColor();
-                        /*
-                        System.out.println("sto per entrare nella syn");
-                        synchronized (rmiClient.getGuiPawnsControllerLock()) {
-                            System.out.println("sono entrato nella syn");
-                            if(!rmiClient.getDone()) {
-                                System.out.println("non ho ancora ricevuto l'update [done = false], quindi sto per prendere il lock");
-                                while (!rmiClient.getSecondUpdateRoundArrived()) {
-                                    System.out.println("ho preso lock e sono in wait");
-                                    try {
-                                        rmiClient.getGuiPawnsControllerLock().wait();
-                                    } catch (InterruptedException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                }
-                                System.out.println("sono uscito dal lock");
-                            }
-                        }
-                        System.out.println("usciti dal syn");
 
-                         */
+                    } catch (RemoteException | NotBoundException alreadyCaught) {
 
-                    } catch (RemoteException | NotBoundException e) {
-                        throw new RuntimeException(e);
                     } catch (ColorAlreadyTakenException e) {
                         pawnSelected = false;
                         Platform.runLater(() -> {
@@ -211,14 +174,7 @@ public class GUIPawnsController {
 
                 });
 
-                /* PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
-                pause.setOnFinished(event -> {
-                    changeScene();
-                });
-                pause.play();*/
-
-                // Platform.runLater(this::changeScene);
-            } else if (network == 2) { //TCP
+            } else if (network == 2) { // TCP
                 executor.execute(() -> {
                     try {
                         clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.YELLOW);
@@ -243,43 +199,20 @@ public class GUIPawnsController {
                                 retryLabel.setOpacity(1);
                             });
                             clientSCK.checkChosenPawnColor();
-                            /*
-                            System.out.println("sto per entrare nella syn");
-                            synchronized (clientSCK.getGuiPawnsControllerLock()) {
-                                System.out.println("sono entrato nella syn");
-                                if (!clientSCK.getDone()) {
-                                    System.out.println("non ho ancora ricevuto l'update [done = false], quindi sto per prendere il lock");
-                                    while (!clientSCK.getSecondUpdateRoundArrived()) {
-                                        System.out.println("ho preso lock e sono in wait");
-                                        try {
-                                            clientSCK.getGuiPawnsControllerLock().wait();
-                                        } catch (InterruptedException e) {
-                                            throw new RuntimeException(e);
-                                        }
-                                    }
-                                    System.out.println("sono uscito dal lock");
-                                }
-                            }
-                            System.out.println("usciti dal syn");
 
-                             */
                         }
-                    } catch (Exception ignored) {
-                    }
+                    } catch (Exception ignored) {}
 
                 });
-
-
-                /* PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
-                pause.setOnFinished(event -> {
-                    changeScene();
-                });
-                pause.play();*/
-
             }
         }
     }
 
+
+
+    /**
+     * This method is invoked when the player chooses the blue pawn
+     */
     synchronized public void selectedBlue() {
         if (bluePawn.getOpacity() != 0 && !pawnSelected) {
             pawnSelected = true;
@@ -301,29 +234,8 @@ public class GUIPawnsController {
                             retryLabel.setOpacity(1);
                         });
                         rmiClient.getGameController().checkChosenPawnColor();
-                        /*
-                        System.out.println("sto per entrare nella syn");
-                        synchronized (rmiClient.getGuiPawnsControllerLock()) {
-                            System.out.println("sono entrato nella syn");
-                            if(!rmiClient.getDone()) {
-                                System.out.println("non ho ancora ricevuto l'update [done = false], quindi sto per prendere il lock");
-                                while (!rmiClient.getSecondUpdateRoundArrived()) {
-                                    System.out.println("ho preso lock e sono in wait");
-                                    try {
-                                        rmiClient.getGuiPawnsControllerLock().wait();
-                                    } catch (InterruptedException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                }
-                                System.out.println("sono uscito dal lock");
-                            }
-                        }
-                        System.out.println("usciti dal syn");
 
-                         */
-
-                    } catch (RemoteException | NotBoundException e) {
-                        throw new RuntimeException(e);
+                    } catch (RemoteException | NotBoundException alreadyCaught) {
                     } catch (ColorAlreadyTakenException e) {
                         pawnSelected = false;
                         Platform.runLater(() -> {
@@ -333,12 +245,6 @@ public class GUIPawnsController {
                     }
                 });
 
-                /* PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
-                pause.setOnFinished(event -> {
-                    changeScene();
-                });
-                pause.play();*/
-                //Platform.runLater(this::changeScene);
             } else if (network == 2) { //TCP
                 executor.execute(() -> {
                     try {
@@ -363,44 +269,21 @@ public class GUIPawnsController {
                                 retryLabel.setText("You have chosen. Now wait the others.");
                                 retryLabel.setOpacity(1);
                             });
-                            clientSCK.checkChosenPawnColor(); //to be implemented
-                            /*
-                            System.out.println("sto per entrare nella syn");
-                            synchronized (clientSCK.getGuiPawnsControllerLock()) {
-                                System.out.println("sono entrato nella syn");
-                                if (!clientSCK.getDone()) {
-                                    System.out.println("non ho ancora ricevuto l'update [done = false], quindi sto per prendere il lock");
-                                    while (!clientSCK.getSecondUpdateRoundArrived()) {
-                                        System.out.println("ho preso lock e sono in wait");
-                                        try {
-                                            clientSCK.getGuiPawnsControllerLock().wait();
-                                        } catch (InterruptedException e) {
-                                            throw new RuntimeException(e);
-                                        }
-                                    }
-                                    System.out.println("sono uscito dal lock");
-                                }
-                            }
-                            System.out.println("usciti dal syn");
+                            clientSCK.checkChosenPawnColor();
 
-                             */
                         }
-                    } catch (Exception ignored) {
-                    }
+                    } catch (Exception ignored) {}
 
                 });
-
-
-                /* PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
-                pause.setOnFinished(event -> {
-                    changeScene();
-                });
-                pause.play();*/
-
             }
         }
     }
 
+
+
+    /**
+     * This method is invoked when the player chooses the green pawn
+     */
     synchronized public void selectedGreen() {
         if (greenPawn.getOpacity() != 0 && !pawnSelected) {
             pawnSelected = true;
@@ -421,29 +304,9 @@ public class GUIPawnsController {
                             retryLabel.setOpacity(1);
                         });
                         rmiClient.getGameController().checkChosenPawnColor();
-                        /*
-                        System.out.println("sto per entrare nella syn");
-                        synchronized (rmiClient.getGuiPawnsControllerLock()) {
-                            System.out.println("sono entrato nella syn");
-                            if(!rmiClient.getDone()) {
-                                System.out.println("non ho ancora ricevuto l'update [done = false], quindi sto per prendere il lock");
-                                while (!rmiClient.getSecondUpdateRoundArrived()) {
-                                    System.out.println("ho preso lock e sono in wait");
-                                    try {
-                                        rmiClient.getGuiPawnsControllerLock().wait();
-                                    } catch (InterruptedException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                }
-                                System.out.println("sono uscito dal lock");
-                            }
-                        }
-                        System.out.println("usciti dal syn");
 
-                         */
 
-                    } catch (RemoteException | NotBoundException e) {
-                        throw new RuntimeException(e);
+                    } catch (RemoteException | NotBoundException alreadyCaught) {
                     } catch (ColorAlreadyTakenException e) {
                         pawnSelected = false;
                         Platform.runLater(() -> {
@@ -453,13 +316,6 @@ public class GUIPawnsController {
                     }
                 });
 
-                /* PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
-                pause.setOnFinished(event -> {
-                    changeScene();
-                });
-                pause.play();*/
-
-                //   Platform.runLater(this::changeScene);
             } else if (network == 2) {
                 executor.execute(() -> {
                     try {
@@ -484,44 +340,21 @@ public class GUIPawnsController {
                                 retryLabel.setText("You have chosen. Now wait the others.");
                                 retryLabel.setOpacity(1);
                             });
-                            clientSCK.checkChosenPawnColor(); //to be implemented
-                            /*
-                            System.out.println("sto per entrare nella syn");
-                            synchronized (clientSCK.getGuiPawnsControllerLock()) {
-                                System.out.println("sono entrato nella syn");
-                                if (!clientSCK.getDone()) {
-                                    System.out.println("non ho ancora ricevuto l'update [done = false], quindi sto per prendere il lock");
-                                    while (!clientSCK.getSecondUpdateRoundArrived()) {
-                                        System.out.println("ho preso lock e sono in wait");
-                                        try {
-                                            clientSCK.getGuiPawnsControllerLock().wait();
-                                        } catch (InterruptedException e) {
-                                            throw new RuntimeException(e);
-                                        }
-                                    }
-                                    System.out.println("sono uscito dal lock");
-                                }
-                            }
-                            System.out.println("usciti dal syn");
+                            clientSCK.checkChosenPawnColor();
 
-                             */
                         }
-                    } catch (Exception ignored) {
-                    }
+                    } catch (Exception ignored) {}
 
                 });
-
-
-                /* PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
-                pause.setOnFinished(event -> {
-                    changeScene();
-                });
-                pause.play();*/
-
             }
         }
     }
 
+
+
+    /**
+     * This method is invoked when the player chooses the red pawn
+     */
     synchronized public void selectedRed() {
         if (redPawn.getOpacity() != 0 && !pawnSelected) {
             pawnSelected = true;
@@ -542,29 +375,8 @@ public class GUIPawnsController {
                             retryLabel.setOpacity(1);
                         });
                         rmiClient.getGameController().checkChosenPawnColor();
-                        /*
-                        System.out.println("sto per entrare nella syn");
-                        synchronized (rmiClient.getGuiPawnsControllerLock()) {
-                            System.out.println("sono entrato nella syn");
-                            if(!rmiClient.getDone()) {
-                                System.out.println("non ho ancora ricevuto l'update [done = false], quindi sto per prendere il lock");
-                                while (!rmiClient.getSecondUpdateRoundArrived()) {
-                                    System.out.println("ho preso lock e sono in wait");
-                                    try {
-                                        rmiClient.getGuiPawnsControllerLock().wait();
-                                    } catch (InterruptedException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                }
-                                System.out.println("sono uscito dal lock");
-                            }
-                        }
-                        System.out.println("usciti dal syn");
 
-                         */
-
-                    } catch (RemoteException | NotBoundException e) {
-                        throw new RuntimeException(e);
+                    } catch (RemoteException | NotBoundException alreadyCaught) {
                     } catch (ColorAlreadyTakenException e) {
                         pawnSelected = false;
                         Platform.runLater(() -> {
@@ -574,14 +386,6 @@ public class GUIPawnsController {
                     }
                 });
 
-                
-                /* PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
-                pause.setOnFinished(event -> {
-                    changeScene();
-                });
-                pause.play();*/
-
-                //  Platform.runLater(this::changeScene);
             } else if (network == 2) { //TCP
                 executor.execute(() -> {
                     try {
@@ -606,46 +410,52 @@ public class GUIPawnsController {
                                 retryLabel.setText("You have chosen. Now wait the others.");
                                 retryLabel.setOpacity(1);
                             });
-                            clientSCK.checkChosenPawnColor(); //to be implemented
-                            /*
-                            System.out.println("sto per entrare nella syn");
-                            synchronized (clientSCK.getGuiPawnsControllerLock()) {
-                                System.out.println("sono entrato nella syn");
-                                if (!clientSCK.getDone()) {
-                                    System.out.println("non ho ancora ricevuto l'update [done = false], quindi sto per prendere il lock");
-                                    while (!clientSCK.getSecondUpdateRoundArrived()) {
-                                        System.out.println("ho preso lock e sono in wait");
-                                        try {
-                                            clientSCK.getGuiPawnsControllerLock().wait();
-                                        } catch (InterruptedException e) {
-                                            throw new RuntimeException(e);
-                                        }
-                                    }
-                                    System.out.println("sono uscito dal lock");
-                                }
-                            }
-                            System.out.println("usciti dal syn");
-
-                             */
+                            clientSCK.checkChosenPawnColor();
                         }
-                    } catch (Exception ignored) {
-                    }
-
-
+                    } catch (Exception ignored) {}
                 });
-
-
-                /* PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 2 secondi di ritardo
-                pause.setOnFinished(event -> {
-                    changeScene();
-                });
-                pause.play();*/
-
             }
         }
     }
 
 
+
+    /**
+     * This method is used to update the available pawns
+     * @param pawn pawn to remove
+     */
+    synchronized public void updatePawns(Pawn pawn) {
+        if(!choosen) {
+            Platform.runLater(()-> {
+                if (pawn == Pawn.BLUE) {
+
+                    bluePawn.setOpacity(0);
+
+                } else if (pawn == Pawn.YELLOW) {
+                    yellowPawn.setOpacity(0);
+                } else if (pawn == Pawn.GREEN) {
+                    greenPawn.setOpacity(0);
+                } else if (pawn == Pawn.RED) {
+                    redPawn.setOpacity(0);
+                }
+            });
+        }
+    }
+
+
+
+    /**
+     * This method changes the scene when an update arrives
+     */
+    public void updateGameState() {
+        Platform.runLater(this::changeScene);
+    }
+
+
+
+    /**
+     * This method is used to show the images of the colored pawns in the beginning
+     */
     public void setColoredPawns() {
         retryLabel.setOpacity(0);
         String path;
@@ -670,51 +480,55 @@ public class GUIPawnsController {
         Image g = new Image(getClass().getResourceAsStream(path));
         greenPawn.setImage(g);
 
-//        yellowPawn.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, null)));
-//        greenPawn.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, null)));
-//        redPawn.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, null)));
-//        bluePawn.setBackground(new Background(new BackgroundFill(Color.BLUE, CornerRadii.EMPTY, null)));
     }
 
 
+
+    /**
+     * Setter method
+     * @param rmiClient client RMI
+     */
     public void setRmiClient(RMIClient rmiClient) {
         this.rmiClient = rmiClient;
     }
 
 
+
+    /**
+     * Setter method
+     * @param clientSCK client SCK
+     */
     public void setClientSCK(ClientSCK clientSCK) {
         this.clientSCK = clientSCK;
     }
 
 
+
+    /**
+     * Setter method
+     * @param stage where it will be shown the next window
+     */
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
 
+
+    /**
+     * Setter method
+     * @param network 1 or 2 (rmi or tcp)
+     */
     public void setNetwork(int network) {
         this.network = network;
     }
 
-    synchronized public void updatePawns(Pawn pawn) {//se il giocatore ha già scelto non vede gli update degli altri
-        if(!choosen) {//non mostro più il pawn arrivato
-            Platform.runLater(()-> {
-                if (pawn == Pawn.BLUE) {
 
-                    bluePawn.setOpacity(0);
 
-                } else if (pawn == Pawn.YELLOW) {
-                    yellowPawn.setOpacity(0);
-                } else if (pawn == Pawn.GREEN) {
-                    greenPawn.setOpacity(0);
-                } else if (pawn == Pawn.RED) {
-                    redPawn.setOpacity(0);
-                }
-            });
-        }
-    }
-
-    public void updateGameState() {
-        Platform.runLater(this::changeScene);
+    /**
+     * Setter method
+     * @param s the string to put in the label
+     */
+    public void setLabelWithPlayerName(String s) {
+        this.labelWithPlayerName.setText(s);
     }
 }

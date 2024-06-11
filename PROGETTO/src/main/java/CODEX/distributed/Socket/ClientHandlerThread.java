@@ -13,14 +13,12 @@ import CODEX.utils.executableMessages.serverMessages.ServerError;
 import CODEX.utils.executableMessages.serverMessages.ServerMessage;
 import CODEX.utils.executableMessages.serverMessages.ServerOk;
 import CODEX.utils.executableMessages.serverMessages.ServerPing;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -37,7 +35,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     private final Socket socket;
     private String nickname = null;
     private final ServerController serverController; //to be passed as parameter in the constructor method
-    //private final Thread threadCheckConnection;
+
     private final Object inputLock;
     private final ObjectInputStream input;
     private final ObjectOutputStream output;
@@ -87,7 +85,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                             output.close();
                             socket.close();
                         } catch (IOException ex) { //needed for the close clause
-                            //throw new RuntimeException(ex);
+
                         }
                         timer.cancel(); // Ferma il timer
                          //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
@@ -114,7 +112,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         return this.gameController;
     }
     private void react(SCKMessage sckMessage) { //qui in base al messaggio letto chiamiamo il giusto metodo della ClientActionsInterface
-        //al posto dello switch qui userò sempre l'attributo ClientMessage della classe SCKMessage
+        //qui userò sempre l'attributo ClientMessage della classe SCKMessage
 
         sckMessage.getClientMessage().execute(this);
 
@@ -155,8 +153,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                         }
                         timer.cancel(); // Ferma il timer
 
-                         //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
-                        gameController.disconnection();; //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
+                         gameController.disconnection();
                     }
                 }
             }, 0, 10000); // Esegui ogni 10 secondi
@@ -203,11 +200,11 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                     output.close();
                     socket.close();
                 } catch (IOException ex) { //needed for the close clause
-                    //throw new RuntimeException(ex);
+
                 }
                 timer.cancel(); // Ferma il timer
-                //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
-                gameController.disconnection(); //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
+
+                gameController.disconnection();
 
                 Thread.currentThread().interrupt();
             }
@@ -218,11 +215,6 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
 
     //methods to be implemented to have a class that implements ClientActionsInterface
 
-    //these methods should be private because they will never be called from the outside
-
-    //ATTENZIONE: vanno riviste le RemoteException perchè vengono chiamate solo nell'update
-    // del WrappedObserver però al posto di mettere un try/catch sono state messe nella
-    // signature e quindi qui mi da errore se non le inserisco anche se l'update TCP non ne ha bisogno
 
     /**
      * This method, will be used to call the ServerController method
@@ -237,14 +229,14 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     @Override
     public void addPlayerToLobby(String playerNickname, int gameId)  {
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        //probabilmente questo messaggio ci serve per rendere TCP sincrono come RMI (il client aspetta che gli venga detto è andato tutto a buon fine)
+        //questo messaggio ci serve per rendere TCP sincrono come RMI (il client aspetta che gli venga detto è andato tutto a buon fine)
         try {
             this.gameController=serverController.addPlayerToLobby(playerNickname, gameId);
             setNickname(playerNickname); //we have an attribute nickname in this class (we are implementing Observer)
-            //mi serve per i test che il ClientSCK abbia il gameid
 
             //IMPORTANTE per ricevere le notify e gli update
             this.gameController.addClient(this.nickname, this);
+
             ServerMessage serverMessage=new ServerOk(this.gameController.getId());
             writeTheStream(new SCKMessage(serverMessage)); //ci serve il messaggio per dire al ClientSCK il server ha fatto quello che hai chiesto (lo blocchiamo fino a quel momento)
         }catch (RemoteException ignored){//non verrà mai lanciata
@@ -308,7 +300,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     @Override
     public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) {
         //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        try { //possiamo prendere nickname dagli attributi della classe al posto che dai parametri
+        try {
             this.gameController.playCard(nickname, selectedCard, position, orientation);
             ServerMessage serverMessage=new ServerOk();
             writeTheStream(new SCKMessage(serverMessage));
@@ -380,30 +372,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
 
     @Override
     public void leaveGame(String nickname){
-        //abbiamo deciso che quando un giocatore vuole lasciare il gioco il server riceve una disconnessione
+        //quando un giocatore vuole lasciare il gioco il server riceve una disconnessione
         //quindi questa funzione non verrà mai chiamata
 
-        /*
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        try {
-            this.gameController.leaveGame(nickname);  //questo metodo prima di aggiornare gli altri giocatori dovrebbe togliere dalla lista di listeners quello che l'ha chiamato
-            ServerMessage serverMessage=new ServerOk();
-            writeTheStream(new SCKMessage(serverMessage));
-            running=false; //così mi si fermano i thread interni
-            try { //we close all we have to close
-                running=false;
-                input.close();
-                output.close();
-                socket.close();
-            } catch (IOException ex) { //needed for the close clause
-                throw new RuntimeException(ex);
-            }
-            timer.cancel(); // Ferma il timer
-        }catch (RemoteException | IllegalArgumentException e){
-            System.err.println(e.getMessage()); //cosa ci faccio con questa eccezione? (viene lanciata nell'update di WrappedObserver->va gestita in modo diverso)
-        }
-
-         */
 
     }
 

@@ -2,7 +2,6 @@ package CODEX.view.GUI;
 
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
-import CODEX.org.model.Coordinates;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -10,24 +9,21 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import java.awt.image.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
-import java.awt.*;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import javafx.scene.control.Label;
 import javafx.util.Duration;
 
+
+/**
+ * This class represents the controller of the scene when choosing the base card
+ */
 public class GUIBaseCardController {
 
     @FXML
@@ -42,14 +38,18 @@ public class GUIBaseCardController {
     private RMIClient rmiClient;
     private ClientSCK clientSCK;
     private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private Object disconnectionLock=new Object();
-
+    private Object disconnectionLock = new Object();
     private Stage stage;
     private boolean baseCardPlayed = false;
     private GUIObjectiveController ctr;
     private int network = 0; //1 = rmi  2 = sck
 
 
+
+    /**
+     * This method sets the image of the left base card
+     * @param cardID of the left card showned on the screen
+     */
     public void setBaseCard1(int cardID) {
         String path;
         path = "/images/cards/front/  (" + cardID + ").png";
@@ -57,6 +57,12 @@ public class GUIBaseCardController {
         baseCard1.setImage(image);
     }
 
+
+
+    /**
+     * This method sets the image of the right base card
+     * @param cardID of the right card showned on the screen
+     */
     public void setBaseCard2(int cardID) {
         String path;
         path = "/images/cards/back/  (" + cardID + ").png";
@@ -64,132 +70,85 @@ public class GUIBaseCardController {
         baseCard2.setImage(image);
     }
 
+
+
+    /**
+     * This method selects the front of the base card
+     */
     public synchronized void selectedFront() {
         baseCard1.disabledProperty();
         baseCard2.disabledProperty();
-// third thread to change the scene always in JAVA FX thread
+
         Platform.runLater(() -> {
             stateLabel.setText("Front side selected! Now wait for everyone to choose.");
             System.out.println("selezionato fronte");
             baseCardPlayed = true;
-            //changeScene();
-         /* PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
-            pause.setOnFinished(event -> changeScene());
-            pause.play();*/
         });
 
-        // second general thread (executed after the first one)
         if (network == 1 && !baseCardPlayed) {
             try {
                 rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], true);
                 rmiClient.getGameController().checkBaseCardPlayed();
-            } catch (RemoteException | NotBoundException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (RemoteException | NotBoundException alreadyCaught) {}
         } else if (network == 2 && !baseCardPlayed) {
             try {
                 clientSCK.playBaseCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], true);
-                clientSCK.checkBaseCardPlayed(); //to be implemented
-            } catch (RemoteException | NotBoundException e) {
-                throw new RuntimeException(e);
-            }
+                clientSCK.checkBaseCardPlayed();
+            } catch (RemoteException | NotBoundException alreadyCaught) {}
         }
-
-
-        /*PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
-        pause.setOnFinished(event -> {
-            changeScene();
-        });
-        pause.play();*/
-
-        // Platform.runLater(()->{changeScene();});
 
     }
 
 
+
+    /**
+     * This method selects the back of the base card
+     */
     public synchronized void selectedBack() {
         baseCard1.disabledProperty();
         baseCard2.disabledProperty();
-    // third thread to change the scene always in JAVA FX thread
+
         if (!baseCardPlayed) {
             baseCardPlayed = true;
 
             Platform.runLater(() -> {
                 stateLabel.setText("Back side selected! Now wait for everyone to choose.");
                 System.out.println("Selezionato retro");
-                //changeScene();
-              /* PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
-                pause.setOnFinished(event -> changeScene());
-                pause.play(); */
             });
-
-            // second general thread (executed after the first one)
 
             if (network == 1) {
                 try {
                     rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], false);
                     rmiClient.getGameController().checkBaseCardPlayed();
-                } catch (RemoteException | NotBoundException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch (RemoteException | NotBoundException alreadyCaught) {}
             } else if (network == 2) {
                 try {
                     clientSCK.playBaseCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], false);
-                    clientSCK.checkBaseCardPlayed(); //to be implemented
-                } catch (RemoteException | NotBoundException e) {
-                    throw new RuntimeException(e);
-                }
+                    clientSCK.checkBaseCardPlayed();
+                } catch (RemoteException | NotBoundException alreadyCaught) {}
             }
-
-           /*  PauseTransition pause = new PauseTransition(Duration.seconds(2)); // 2 secondi di ritardo
-            pause.setOnFinished(event -> {
-                changeScene();
-            });
-            pause.play();*/
-
-//        Platform.runLater(()->{changeScene();});
         }
     }
 
 
 
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
-
-
-    void setRmiClient(RMIClient client) {
-        this.rmiClient = client;
-    }
-
-
-    void setClientSCK(ClientSCK client) {
-        this.clientSCK = client;
-    }
-
-    void setNetwork(int network) {
-        this.network = network;
-    }
-
-    @FXML
-    public void setLabelWithPlayerName(String text) {
-        this.labelWithPlayerName.setText(text);
-    }
-
-
+    /**
+     * This method will change the scene to the next one, where the player has to choose the objective cards
+     */
     public void changeScene() {
         // let's show the new window!
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/objective.fxml"));
         Parent root = null;
+
         try {
             root = fxmlLoader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ignored) {
         }
 
         while (ctr == null) {
             ctr = fxmlLoader.getController();
         }
+
         stage.setOnCloseRequest(event -> {
             if (network == 1) {
                 try {
@@ -205,7 +164,8 @@ public class GUIBaseCardController {
                 }
             }
         });
-        // setting the parameters in the new controller, also the BASE CARD (front and back)
+
+        // setting the parameters and the base card in the new controller
         ctr.setScheduler(scheduler);
         ctr.setDisconnectionLock(disconnectionLock);
         ctr.setStage(stage);
@@ -214,19 +174,7 @@ public class GUIBaseCardController {
         ctr.setRmiClient(rmiClient);
 
         if (network == 1) {
-            /*
-            Object guiLock=rmiClient.getGuiLock();
-            synchronized (guiLock) {
-                while (rmiClient.getPersonalPlayer().getPersonalObjectives().size() < 2) { //arriva l'update delle due objective card tra cui scegliere dopo l'update del player deck
-                    try {
-                        guiLock.wait();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
 
-             */
             ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", now choose your");
             ctr.setCard1(rmiClient.getPersonalPlayer().getPlayerDeck()[0].getId());
             ctr.setCard2(rmiClient.getPersonalPlayer().getPlayerDeck()[1].getId());
@@ -234,29 +182,10 @@ public class GUIBaseCardController {
             ctr.setObjCard1(rmiClient.getPersonalPlayer().getPersonalObjectives().get(0).getId()); // 1 --> 0
             ctr.setObjCard2(rmiClient.getPersonalPlayer().getPersonalObjectives().get(1).getId()); // 2 --> 1
             ctr.setBaseCard(rmiClient.getPersonalPlayer().getBoard().getTable()[rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2][rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2].getId(), rmiClient.getPersonalPlayer().getBoard().getTable()[rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2][rmiClient.getPersonalPlayer().getBoard().getBoardDimensions()/2].getOrientation());
-            // (0,0) because our base card is always in the center of the table!
+            // the base card is always in the center of the table!
 
         } else if (network == 2) {
-            /*
-            Object guiLock=clientSCK.getGuiLock();
-            synchronized (guiLock) {
-                if(!clientSCK.getADisconnectionHappened()) {
-                    while (clientSCK.getPersonalPlayer().getPersonalObjectives().size() < 2) { //arriva l'update delle due objective card tra cui scegliere dopo l'update del player deck
 
-                        try {
-                            guiLock.wait(); //la notify viene messa sia nell'evento atteso sia nell' handleDisconnection in SCK
-                            if(clientSCK.getADisconnectionHappened()){
-                                break; //usciamo dal ciclo while
-                            }
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                    }
-                }
-            }
-
-             */
             if(!clientSCK.getADisconnectionHappened()) {
                 ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", now choose your");
                 ctr.setCard1(clientSCK.getPersonalPlayer().getPlayerDeck()[0].getId());
@@ -267,9 +196,10 @@ public class GUIBaseCardController {
                 ctr.setBaseCard(clientSCK.getPersonalPlayer().getBoard().getTable()[clientSCK.getPersonalPlayer().getBoard().getBoardDimensions() / 2][clientSCK.getPersonalPlayer().getBoard().getBoardDimensions() / 2].getId(), clientSCK.getPersonalPlayer().getBoard().getTable()[clientSCK.getPersonalPlayer().getBoard().getBoardDimensions() / 2][clientSCK.getPersonalPlayer().getBoard().getBoardDimensions() / 2].getOrientation());
             }
         }
+
         if ((network == 1)||(network == 2&&!clientSCK.getADisconnectionHappened())) {
 
-            // old dimensions and position
+            // setting old dimensions and position
             double width = stage.getWidth();
             double height = stage.getHeight();
             double x = stage.getX();
@@ -285,18 +215,15 @@ public class GUIBaseCardController {
 
                 }
             }if(network==2){
+                synchronized (clientSCK.getGuiObjectiveControllerLock()) {
+                    clientSCK.setGuiObjectiveController(ctr);
+                    clientSCK.getGuiObjectiveControllerLock().notify();
 
-            synchronized (clientSCK.getGuiObjectiveControllerLock()) {
-                clientSCK.setGuiObjectiveController(ctr);
-                clientSCK.getGuiObjectiveControllerLock().notify();
-
+                }
             }
 
 
-            }
-
-
-            stage.setScene(scene); //viene già qui mostrata la scena : nel caso in in cui arrivi prima un evento di disconnessione questa scena non verrà mai mostrata
+            stage.setScene(scene);
 
             // setting the od values of position and dimension
             stage.setWidth(width);
@@ -310,66 +237,20 @@ public class GUIBaseCardController {
     }
 
 
-    public void checkDisconnection() {  //da migliorare: blocca la scelta della carta
-        /*
 
-        synchronized (clientSCK.getDisconnectionLock()) {
-            if(!clientSCK.getADisconnectionHappened()) {
-                while (!clientSCK.getADisconnectionHappened()) {
-                    try {
-                        clientSCK.getDisconnectionLock().wait();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        }
-
-        System.out.println("rilevata disconnessione");
-        //changeScene():
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/handleDisconnection.fxml"));
-        Parent root = null;
-        try {
-            root = fxmlLoader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        double width = stage.getWidth();
-        double height = stage.getHeight();
-        double x = stage.getX();
-        double y = stage.getY();
-
-        // new scene
-        Scene scene;
-        scene = new Scene(root);
-
-        stage.setScene(scene);
-
-        // setting the od values of position and dimension
-        stage.setWidth(width);
-        stage.setHeight(height);
-        stage.setX(x);
-        stage.setY(y);
-
-        PauseTransition pause = new PauseTransition(Duration.seconds(9)); // 2 secondi di ritardo
-        pause.setOnFinished(event -> stageClose());
-        pause.play();
-
-         */
-    }
-
+    /**
+     * This method checks if there is a disconnection
+     */
     public void startPeriodicDisconnectionCheck() {
         scheduler.scheduleAtFixedRate(() -> {
             synchronized (disconnectionLock) {
-                if ( ((network==1)&&(rmiClient.getADisconnectionHappened())) || ((network==2)&&(clientSCK.getADisconnectionHappened())) ){
+                if ( ((network==1) && (rmiClient.getADisconnectionHappened())) || ((network==2) && (clientSCK.getADisconnectionHappened())) ){
                     Platform.runLater(() -> {
                         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/handleDisconnection.fxml"));
                         Parent root = null;
                         try {
                             root = fxmlLoader.load();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
+                        } catch (IOException ignored) {
                         }
 
                         double width = stage.getWidth();
@@ -383,17 +264,17 @@ public class GUIBaseCardController {
 
                         stage.setScene(scene);
 
-                        // setting the od values of position and dimension
+                        // setting the old values of position and dimension
                         stage.setWidth(width);
                         stage.setHeight(height);
                         stage.setX(x);
                         stage.setY(y);
 
-                        PauseTransition pause = new PauseTransition(Duration.seconds(3)); // 3 secondi di ritardo
+                        PauseTransition pause = new PauseTransition(Duration.seconds(3));
                         pause.setOnFinished(event -> stageClose());
                         pause.play();
                     });
-                    scheduler.shutdown(); // Stop the scheduler if the condition is met
+                    scheduler.shutdown(); // Stop the scheduler if there's the disconnection
                 }
             }
         }, 0, 1, TimeUnit.SECONDS); // Check every second
@@ -401,26 +282,81 @@ public class GUIBaseCardController {
 
 
 
+    /**
+     * This method closes the scene when there is a disconnection
+     */
     private void stageClose(){
         stage.close();
         if(network==1){
             try {
                 rmiClient.handleDisconnectionFunction();
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (RemoteException alreadyCaught) {}
         }
         if(network==2) {
             try {
                 clientSCK.handleDisconnectionFunction();
-            } catch (RemoteException ignored) {
-
-            }
+            } catch (RemoteException ignored) {}
         }
     }
 
 
+
+    /**
+     * This method updates the state of the game
+     */
     public void updateGameState() {
         Platform.runLater(this::changeScene);
     }
+
+
+
+    /**
+     * Setter method
+     * @param stage of the scene which will be changed here
+     */
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param client which is the client of the player
+     */
+    void setRmiClient(RMIClient client) {
+        this.rmiClient = client;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param client which is the client of the player
+     */
+    void setClientSCK(ClientSCK client) {
+        this.clientSCK = client;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param network which is the type of client of the player
+     */
+    void setNetwork(int network) {
+        this.network = network;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param text which is the name of the player
+     */
+    @FXML
+    public void setLabelWithPlayerName(String text) {
+        this.labelWithPlayerName.setText(text);
+    }
+
 }

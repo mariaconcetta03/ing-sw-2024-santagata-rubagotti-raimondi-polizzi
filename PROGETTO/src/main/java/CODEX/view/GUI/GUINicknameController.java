@@ -1,47 +1,42 @@
 package CODEX.view.GUI;
+
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
 import javafx.fxml.FXML;
-
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuButton;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
+/**
+ * This class is uses to manage the nickname scene
+ */
 public class GUINicknameController {
 
-    public Button sendNicknameButton;
+    @FXML
+    private Button sendNicknameButton;
     @FXML
     private TextField nickname;
     @FXML
     private Label nicknameUsed;
 
-
-    private int network = 0; // it means that user hasn't chosen (1 = rmi  2 = sck)
+    private int network = 0; //1 = rmi  2 = sck
     private RMIClient rmiClient;
     private ClientSCK clientSCK;
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
     private Stage stage;
     boolean correctNickname = false;
 
 
-
-    public GUINicknameController() throws RemoteException {
-    }
-
-
-
+    /**
+     * This method makes possible choosing a nickname before evry action
+     * @throws IOException
+     */
     public synchronized void sendNickname() throws IOException {
         String input = nickname.getText();
         if(!input.isBlank()) {
@@ -62,9 +57,9 @@ public class GUINicknameController {
             if (!correctNickname) {
                 nicknameUsed.setText("WARNING! The nickname you have selected is already in use, please retry ");
                 nicknameUsed.setOpacity(1); // shows the message error
-                nickname.clear(); // se il nick è sbagliato, allora cancello il field in modo che l'utente inserisca daccapo
+                nickname.clear();
             } else {
-                nicknameUsed.setOpacity(0); // not necessary because we will change our window!
+                nicknameUsed.setOpacity(0);
                 nickname.disabledProperty();
                 sendNicknameButton.disabledProperty();
                 // let's show the new window!
@@ -86,17 +81,14 @@ public class GUINicknameController {
                     if (network == 1) {
                         try {
                             rmiClient.handleDisconnectionFunction();
-                        } catch (RemoteException ignored) {
-
-                        }
+                        } catch (RemoteException alreadyCaught) {}
                     } else if (network == 2) {
                         try {
                             clientSCK.handleDisconnectionFunction();
-                        } catch (RemoteException ignored) {
-
-                        }
+                        } catch (RemoteException ignored) {}
                     }
                 });
+
                 ctr.setStage(stage);
 
                 // old dimensions and position
@@ -132,7 +124,7 @@ public class GUINicknameController {
                     ctr.setNetwork(2);
                 }
             }
-        }else {
+        } else {
             nicknameUsed.setText("INVALID NICKNAME");
             nicknameUsed.setOpacity(1);
             nickname.clear();
@@ -141,26 +133,55 @@ public class GUINicknameController {
 
 
 
+    /**
+     * Setter method
+     * @param stage of the scene which will be changed here
+     */
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param rmiClient which is the client of the player
+     */
     public void setRmiClient(RMIClient rmiClient) {
         this.rmiClient = rmiClient;
     }
 
+
+
+    /**
+     * Setter method
+     * @param clientSCK which is the client of the player
+     */
     public void setClientSCK(ClientSCK clientSCK) {
         this.clientSCK = clientSCK;
     }
 
+
+
+    /**
+     * Setter method
+     * @param network which is the type of client of the player
+     */
     public void setNetwork(int network) {
         this.network = network;
     }
 
+
+
+    /**
+     * This method makes possible using enter when choosing nickname and setting it
+     */
     public void setNicknameOnKeyPressed() {
         nickname.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                // Chiamata alla tua funzione qui
                 try {
                     sendNickname();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                } catch (IOException ignored) {
                 }
             }else {
                 nicknameUsed.setOpacity(0);

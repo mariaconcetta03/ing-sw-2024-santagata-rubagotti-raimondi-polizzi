@@ -42,7 +42,7 @@ public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
 
     void handleDisconnectionFunction()throws RemoteException;
 
-    Object getActionLock()throws RemoteException;
+
 
     void setResponseReceived(boolean b)throws RemoteException;
 

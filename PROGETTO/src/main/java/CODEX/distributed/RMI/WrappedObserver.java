@@ -20,7 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
  * This class represents a CLIENT as an OBSERVER
  */
 public class WrappedObserver implements Observer {
-    private final Timer timer;
+
     public ScheduledExecutorService scheduler;
     private static final int HEARTBEAT_INTERVAL = 2; // seconds
     private ClientGeneralInterface remoteClient;
@@ -29,17 +29,9 @@ public class WrappedObserver implements Observer {
     private ExecutorService executor;
     private ConcurrentLinkedQueue<Event> eventQueue=new ConcurrentLinkedQueue<>();
 
-    private final LinkedList<Event> queue=new LinkedList<>();
-    synchronized public void push(Event item) {
-        queue.addFirst(item);
-    }
-    synchronized public Event pull() {
-        if (!queue.isEmpty()) {
-            return queue.removeLast();
-        } else {
-            return null;
-        }
-    }
+
+
+
 
     // ----------------- C O M E   A V V I E N E   L' U P D A T E ? --------------------
     // OBSERVABLE SI ACCORGE DEL CAMBIAMENTO (CHE PASSA DALLA VIEW, AL CONTROLLER, AL
@@ -58,7 +50,7 @@ public class WrappedObserver implements Observer {
 
         remoteClient = ro;
 
-        this.timer = new Timer(true);
+
         WrappedObserver wrappedObserver=this;
         executor= Executors.newSingleThreadExecutor();
         executor.execute(()-> {
@@ -73,9 +65,9 @@ public class WrappedObserver implements Observer {
                             System.out.println("ho fatto la pull dell'evento");
 
                         } catch (RemoteException e) {
-                            aDisconnectionHappened = true; //bisogna notificarlo al server
-                            //gameController.disconnect(); //lo rileva l'heartbeat
-                            //timer.cancel();
+                            aDisconnectionHappened = true; //lo rileverà l'heartbeat
+                            e.printStackTrace();
+
                         }
                     }
 
@@ -93,14 +85,8 @@ public class WrappedObserver implements Observer {
      */
     public void update(Observable obs, Event event) throws RemoteException {
         System.out.println("ho fatto la push dell'evento");
-        eventQueue.add(event);
-       // push(e);
+        eventQueue.add(event); //push
 
-
-    /*
-        e.execute(remoteClient,this);
-
-    */
 
 
     }
@@ -126,9 +112,7 @@ public class WrappedObserver implements Observer {
     public String getNickname() throws RemoteException {
         return this.nickname;
     }
-    public ScheduledExecutorService getScheduler(){
-        return this.scheduler;
-    }
+
     public void setScheduler(ScheduledExecutorService scheduledExecutorService){
         this.scheduler=scheduledExecutorService;
     }

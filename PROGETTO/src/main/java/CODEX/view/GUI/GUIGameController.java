@@ -5,12 +5,9 @@ import CODEX.distributed.Socket.ClientSCK;
 import CODEX.org.model.*;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -18,72 +15,21 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import javafx.scene.control.*;
 import javafx.util.Duration;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.sql.SQLOutput;
 import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 
+/**
+ * This class controls the window during the game scene
+ */
 public class GUIGameController {
-
-
-    private RMIClient rmiClient;
-    private ClientSCK clientSCK;
-    private Stage stage;
-    private int network;
-    private List<Player> playersInOrder;
-    private ScheduledExecutorService scheduler;
-    private Object disconnectionLock;
-    private boolean finishedGD = false;
-    private boolean finishedRD = false;
-    private boolean orientationCard1;
-    private boolean orientationCard2;
-    private boolean orientationCard3;
-    private int selectedCard = 0; // 1 = card1  2 = card 2  3 = card
-    private int selectedBoard = 0; // n = player n
-    private Integer dimension;
-    private String currentBoard=null;
-    private PlayableCard[][] tableP1;
-    private PlayableCard[][] tableP2;
-    private PlayableCard[][] tableP3;
-    private PlayableCard[][] tableP4;
-    private int nPlayers;
-    private boolean cardDrawn = false;
-    private boolean cardPlaced = false;
-    private Coordinates coordinatesToPlay;
-    private Set<Coordinates> playablePositions=null; //null quando non è il proprio turno (devono tornare a null quando la carta viene buttata)
-    private Map<Integer,PlayableCard> cardsOnP1Board; // Map <turn number, card id>
-    private Map<Integer,PlayableCard> cardsOnP2Board;
-    private Map<Integer,PlayableCard> cardsOnP3Board;
-    private Map<Integer,PlayableCard> cardsOnP4Board;
-    private Integer currentPlayerCounter=1;
-
-    // Counters for cards for each player
-    private Integer p1Counter=1;
-    private Integer p2Counter=1;
-    private Integer p3Counter=1;
-    private Integer p4Counter=1;
-    private Integer emptySpace=0;
-    private ObjectiveCard objectiveCardselected=null;
-
-    //IDEA: confrontiamo le playable position precedenti con quelle nuove: controlliamo le posizioni della matrice dove è stata tolta una playable position per vedere se è stata aggiunta una carta
-    //OPPURE: MOLTO MEGLIO -> ci facciamo arrivare assieme alla board la carta che è stata aggiunta (che ha già dentro di sè le coordinate giuste)
-    private Set<Coordinates> p2PlayablePositions; //quelle di py le prendiamo direttamente dal personale player (perche non abbiamo bisogno di capire quale carta è stata aggiunta)
-    private Set<Coordinates> p3PlayablePositions;
-    private Set<Coordinates> p4PlayablePositions;
-    private boolean lastRound=false;
-    private MediaPlayer mediaPlayer;
-    private boolean playingMusic = true;
-
-
 
     @FXML
     private Label turnLabel;
@@ -162,8 +108,49 @@ public class GUIGameController {
     @FXML
     private Label boardLabel;
 
+    private RMIClient rmiClient;
+    private ClientSCK clientSCK;
+    private Stage stage;
+    private int network;
+    private List<Player> playersInOrder;
+    private ScheduledExecutorService scheduler;
+    private Object disconnectionLock;
+    private boolean orientationCard1;
+    private boolean orientationCard2;
+    private boolean orientationCard3;
+    private int selectedCard = 0; // 1 = card1  2 = card 2  3 = card
+    private Integer dimension;
+    private String currentBoard=null;
+    private PlayableCard[][] tableP1;
+    private PlayableCard[][] tableP2;
+    private PlayableCard[][] tableP3;
+    private PlayableCard[][] tableP4;
+    private int nPlayers;
+    private boolean cardPlaced = false;
+    private Set<Coordinates> playablePositions=null;
+    private Map<Integer,PlayableCard> cardsOnP1Board; // Map <turn number, card id>
+    private Map<Integer,PlayableCard> cardsOnP2Board;
+    private Map<Integer,PlayableCard> cardsOnP3Board;
+    private Map<Integer,PlayableCard> cardsOnP4Board;
+
+    // Counters for cards for each player
+    private Integer p1Counter=1;
+    private Integer p2Counter=1;
+    private Integer p3Counter=1;
+    private Integer p4Counter=1;
+
+    private Integer emptySpace=0;
+    private ObjectiveCard objectiveCardselected=null;
+    private boolean lastRound=false;
+    private MediaPlayer mediaPlayer;
+    private boolean playingMusic = true;
 
 
+
+    /**
+     * This method sets the label of the turn
+     * @param lastRound true if it's the last round, false otherwise
+     */
     public void setTurnLabel(boolean lastRound) {
         cardPlaced=false;
         this.lastRound=lastRound;
@@ -176,83 +163,33 @@ public class GUIGameController {
                 showP1Board();
             } else {
                 this.turnLabel.setText("It's " + rmiClient.getPlayersInTheGame().get(0).getNickname() + "'s turn!");
-
-
-
             }
         } else if (network == 2) {
             clientSCK.setGuiGameController(this);
             if (clientSCK.getPlayersInTheGame().get(0).getNickname().equals(clientSCK.getPersonalPlayer().getNickname())) {
                 this.turnLabel.setText("It's your turn!");
-
-//                int i=1;
-//                for (Player p: playersInOrder) { //tolgo l'illuminazione da tutti i bottoni
-//                    System.out.println("nickname: " + p.getNickname());
-//                    if(i==1){
-//                        buttonP1Board.setStyle("");}
-//                    if(i==2){
-//                        buttonP2Board.setStyle("");}
-//                    if(i==3){
-//                        buttonP3Board.setStyle("");}
-//                    if(i==4){
-//                        buttonP4Board.setStyle("");}
-//                    i++;
-//                }
-                //mostriamo subito la board del giocatore in turno, se il giocatore in turno è p1 (quello a cui appartiene la view)
                 showP1Board();
 
             } else {
                 this.turnLabel.setText("It's " + clientSCK.getPlayersInTheGame().get(0).getNickname() + "'s turn!");
-                /*
-                if(currentBoard != null && currentBoard.equals(clientSCK.getPlayersInTheGame().get(0).getNickname())){
-                    int i=1;
-                    for(Player player:playersInOrder){
-                        if(i==1){
-                            if(player.getNickname().equals(currentBoard)){
-                                showP1Board();
-                                break;
-                            }
-
-                        }if(i==2){
-                            if(player.getNickname().equals(currentBoard)){
-                                showP2Board();
-                                break;
-                            }
-
-                        }if(i==3){
-                            if(player.getNickname().equals(currentBoard)){
-                                showP3Board();
-                                break;
-                            }
-
-                        }if(i==4){
-                            if(player.getNickname().equals(currentBoard)){
-                                showP4Board();
-                                break;
-                            }
-                        }
-                        i++;
-                    }
-                }
-
-                 */
             }
         }
     }
 
 
 
+    /**
+     * This method is invoked when a player clicks on the button "LEAVE GAME"
+     */
     public void leaveGame() {
-        synchronized (disconnectionLock) { //o sono in leaveGame() o in startPeriodicDisconnectionCheck()
-            if ( ((network==1)&&(!rmiClient.getADisconnectionHappened())) || ((network==2)&&(!clientSCK.getADisconnectionHappened())) ){ //se è avvenuta una disconnessione leaveGame non esegue niente
-                scheduler.shutdown(); //così nel caso avvenga una disconnessione mentre siamo in questa syn poi lo scheduler non va a toccare il client che ha già fatto la exit
-                //changeScene():
+        synchronized (disconnectionLock) {
+            if ( ((network==1)&&(!rmiClient.getADisconnectionHappened())) || ((network==2)&&(!clientSCK.getADisconnectionHappened())) ){
+                scheduler.shutdown();
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gameLeft.fxml"));
                 Parent root = null;
                 try {
                     root = fxmlLoader.load();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                } catch (IOException ignored) {
                 }
 
                 double width = stage.getWidth();
@@ -272,20 +209,18 @@ public class GUIGameController {
                 stage.setX(x);
                 stage.setY(y);
 
-                PauseTransition pause = new PauseTransition(Duration.seconds(4)); // 4 secondi di ritardo
+                PauseTransition pause = new PauseTransition(Duration.seconds(4)); // 4 seconds of wait
                 pause.setOnFinished(event -> stage.close());
                 pause.play();
                 if (network == 1) {
                     try {
-                        this.rmiClient.leaveGame(this.rmiClient.getPersonalPlayer().getNickname()); //lato server verrà mandato agli altri player evento disconnessione
-                    } catch (RemoteException | NotBoundException e) { //nel caso in cui la disconnessione abbia già chiuso tutto
-                        //throw new RuntimeException(e);
+                        this.rmiClient.leaveGame(this.rmiClient.getPersonalPlayer().getNickname());
+                    } catch (RemoteException | NotBoundException ignored) {
                     }
                 } else if (network == 2) {
-                    try { //in clientSCK viene fatta la exit
-                        this.clientSCK.leaveGame(this.clientSCK.getPersonalPlayer().getNickname()); //lato server verrà mandato agli altri player evento disconnessione
-                    } catch (RemoteException | NotBoundException e) { //nel caso in cui la disconnessione abbia già chiuso tutto
-                        //throw new RuntimeException(e);
+                    try {
+                        this.clientSCK.leaveGame(this.clientSCK.getPersonalPlayer().getNickname());
+                    } catch (RemoteException | NotBoundException ignored) {
                     }
                 }
             }
@@ -293,12 +228,24 @@ public class GUIGameController {
 
     }
 
-public void updateLabel(Label label, String text){
-    Platform.runLater(() -> {
-        label.setText(text);
-    });
-}
 
+
+    /**
+     * This method is used to update any label in JavaFX application thread
+     * @param label to modify
+     * @param text to insert
+     */
+    public void updateLabel(Label label, String text){
+        Platform.runLater(() -> {
+            label.setText(text);
+        });
+    }
+
+
+
+    /**
+     * This method is invoked to update every player's points in the main window
+     */
     public void updatePoints() {
         Map<String,Integer> playersWithPoints=new HashMap<>();
         if(network==1){
@@ -311,11 +258,11 @@ public void updateLabel(Label label, String text){
             }
         }
         int i=1;
-        for (Player p : playersInOrder){ //va in ordine: p1, p2, p3, p4
-            if(i==1) { //primo giocatore di playersInOrder
+        for (Player p : playersInOrder){ //p1, p2, p3, p4
+            if(i==1) {
                 updateLabel(points1, p.getNickname() + ": " + playersWithPoints.get(p.getNickname()) + " pt");
             }
-            if(i==2) { //secondo giocatore di playersInOrder
+            if(i==2) {
                 updateLabel(points2, p.getNickname() + ": " + playersWithPoints.get(p.getNickname()) + " pt");
             }
             if(i==3) {
@@ -326,88 +273,13 @@ public void updateLabel(Label label, String text){
             }
             i++;
         }
-
-        System.out.println("A T T E N Z I O N E");
-            System.out.println("STO SETTANDO I PUNTI DI TUTTI I PLAYER");
-//            int rmiPlayer = 0;
-//            int order = 0;
-//            int sckPlayer = 0;
-//
-//            if (network == 1) {
-//                for (Player p : playersInOrder) { //nella mia lista
-//                    rmiPlayer = 0;
-//                    for (Player p2 : rmiClient.getPlayersInTheGame()) { //lista dinamica
-//                        if (p.getNickname().equals(p2.getNickname())) {
-//                            // devo aggiornare i punti di quel player
-//                            if (order == 0 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) { // p1
-//                                System.out.println("I PUNTI DEL PLAYER 1 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
-//                                updateLabel(this.points1, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
-//                            } else if (order == 1 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) { // p2
-//                                System.out.println("I PUNTI DEL PLAYER 2 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
-//                                updateLabel(this.points2, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
-//                            } else if (order == 2 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) { // p3
-//                                System.out.println("I PUNTI DEL PLAYER 3 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
-//                                updateLabel(this.points3, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
-//                            } else if (order == 3 && rmiPlayer < rmiClient.getPlayersInTheGame().size()) { // p4
-//                                System.out.println("I PUNTI DEL PLAYER 4 SONO: " + rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints());
-//                                updateLabel(this.points4, p.getNickname() + ": " + (rmiClient.getPlayersInTheGame().get(rmiPlayer).getPoints()) + " pt");
-//                            }
-//                        }
-//                        rmiPlayer++;
-//                    }
-//                    order++;
-//                }
-//
-//            } else if (network == 2) {
-//                for (Player p : playersInOrder) {
-//                    sckPlayer = 0;
-//                    for (Player p2 : clientSCK.getPlayersInTheGame()) {
-//                        if (p.getNickname().equals(p2.getNickname())) {
-//                            // devo aggiornare i punti di quel player
-//                            if (order == 0 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
-//                                System.out.println("I PUNTI DEL PLAYER 1 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
-//                                updateLabel(this.points1, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
-//                            } else if (order == 1 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
-//                                System.out.println("I PUNTI DEL PLAYER 2 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
-//                                updateLabel(this.points2, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
-//                            } else if (order == 2 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
-//                                System.out.println("I PUNTI DEL PLAYER 3 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
-//                                updateLabel(this.points3, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
-//                            } else if (order == 3 && sckPlayer < clientSCK.getPlayersInTheGame().size()) {
-//                                System.out.println("I PUNTI DEL PLAYER 4 SONO: " + clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints());
-//                                updateLabel(this.points4, p.getNickname() + ": " + (clientSCK.getPlayersInTheGame().get(sckPlayer).getPoints()) + " pt");
-//                            }
-//                        }
-//                        sckPlayer++;
-//                    }
-//                    order++;
-//                }
-//            }
-    }
-
-
-    public void setPlayersInOrder(List<Player> playersInOrder) {
-        this.playersInOrder = playersInOrder;
-    }
-
-    public void setStage(Stage stage) {
-        this.stage=stage;
-    }
-
-    public void setNetwork(int network) {
-        this.network=network;
-    }
-
-    public void setClientSCK(ClientSCK clientSCK) {
-        this.clientSCK=clientSCK;
-    }
-
-    public void setRmiClient(RMIClient rmiClient) {
-        this.rmiClient = rmiClient;
     }
 
 
 
+    /**
+     * This method sets the cards of the first player
+     */
     private void setPlayer1Cards() {
         String path;
         path = "/images/cards/front/  (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
@@ -425,6 +297,9 @@ public void updateLabel(Label label, String text){
 
 
 
+    /**
+     * This method sets the cards of the second player
+     */
     private void setPlayer2Cards() {
             String path;
 
@@ -443,6 +318,9 @@ public void updateLabel(Label label, String text){
 
 
 
+    /**
+     * This method sets the cards of the third player
+     */
     private void setPlayer3Cards() {
         String path;
         path = "/images/cards/back/  (" + playersInOrder.get(2).getPlayerDeck()[0].getId() + ").png";
@@ -460,6 +338,9 @@ public void updateLabel(Label label, String text){
 
 
 
+    /**
+     * This method sets the cards of the fourth player
+     */
     private void setPlayer4Cards() {
         String path;
         path = "/images/cards/back/  (" + playersInOrder.get(3).getPlayerDeck()[0].getId() + ").png";
@@ -481,7 +362,7 @@ public void updateLabel(Label label, String text){
      * Sets all the parameters when the game begins.
      * This method is called by the previous GUI Objective Controller
      */
-    public void setAllFeatures() throws RemoteException {
+    public void setAllFeatures() {
         System.out.println("STO SETTANDO TUTTE LE FEATURES");
 
         if (this.network == 1) {
@@ -506,7 +387,6 @@ public void updateLabel(Label label, String text){
             System.out.println("ECCO I NUOVI PLAYERS IN ORDER CON ME COME PRIMA POSIZIONE!");
 
 
-
             // SETTING THE PERSONAL OBJECTIVE
             String path;
             path = "/images/cards/front/  (" + objectiveCardselected.getId() + ").png";
@@ -528,7 +408,6 @@ public void updateLabel(Label label, String text){
             path = "/images/cards/back/  (" + rmiClient.getGoldDeck().checkFirstCard().getId() + ").png";
             Image gd = new Image(getClass().getResourceAsStream(path));
             goldDeck.setImage(gd);
-
 
             path = "/images/cards/back/  (" + rmiClient.getResourceDeck().checkFirstCard().getId() + ").png";
             Image rd = new Image(getClass().getResourceAsStream(path));
@@ -558,7 +437,7 @@ public void updateLabel(Label label, String text){
 
 
         } else if (this.network == 2) {
-            this.dimension=clientSCK.getPersonalPlayer().getBoard().getBoardDimensions(); //le dimensioni sono uguali per tutti i giocatori
+            this.dimension=clientSCK.getPersonalPlayer().getBoard().getBoardDimensions();
             System.out.println("dimension/2 " + dimension/2);
 
             // PRINTING THE PLAYERS IN THE GAME
@@ -575,7 +454,7 @@ public void updateLabel(Label label, String text){
                     newList.add(p);
                 }
             }
-            playersInOrder = newList; // aggiungo in prima posizione il PERSONAL PLAYER
+            playersInOrder = newList;
             System.out.println("ECCO I NUOVI PLAYERS IN ORDER CON ME COME PRIMA POSIZIONE!");
 
 
@@ -597,7 +476,6 @@ public void updateLabel(Label label, String text){
 
 
             // SETTING THE 2 DECKS AND THE 4 MARKET'S CARDS
-
             path = "/images/cards/back/  (" + clientSCK.getGoldDeck().checkFirstCard().getId() + ").png";
             Image gd = new Image(getClass().getResourceAsStream(path));
             goldDeck.setImage(gd);
@@ -670,8 +548,6 @@ public void updateLabel(Label label, String text){
             buttonP2Board.setText(playersInOrder.get(1).getNickname());
             buttonP3Board.setOpacity(0);
             buttonP4Board.setOpacity(0);
-            // SETTING THE FIRST POSITION OF THE SCROLL IN THE SCROLLPANE
-            // THANKS TO THIS THE PLAYER CAN IMMEDIATELY SEE HIS BASE CARD IN THE CENTER OF HIS PANE
         }
 
         // 3 players
@@ -725,8 +601,6 @@ public void updateLabel(Label label, String text){
             buttonP3Board.setOpacity(1);
             buttonP3Board.setText(playersInOrder.get(2).getNickname());
             buttonP4Board.setOpacity(0);
-            // SETTING THE FIRST POSITION OF THE SCROLL IN THE SCROLLPANE
-            // THANKS TO THIS THE PLAYER CAN IMMEDIATELY SEE HIS BASE CARD IN THE CENTER OF HIS PANE
         }
 
         // 4 players
@@ -792,8 +666,6 @@ public void updateLabel(Label label, String text){
             buttonP3Board.setText(playersInOrder.get(2).getNickname());
             buttonP4Board.setOpacity(1);
             buttonP4Board.setText(playersInOrder.get(3).getNickname());
-            // SETTING THE FIRST POSITION OF THE SCROLL IN THE SCROLLPANE
-            // THANKS TO THIS THE PLAYER CAN IMMEDIATELY SEE HIS BASE CARD IN THE CENTER OF HI
         }
 
         // SETTING THE TABLE AND ITS DIMENSIONS
@@ -835,20 +707,15 @@ public void updateLabel(Label label, String text){
         // SHOWING MY OWN BOARD
         showP1Board();
 
-        // INITIALIZING THE CELLS IN THE SCROLLPANE
-        //initializeGridPaneCells();
-
-
-        // dimensioni scrollpane: prefHeight="377.0" prefWidth="1028.0
-        // SETTING THE CURRENT PLAYER (is the first in the list)
-        // SETTING THE PAWNS
     }
 
 
 
-
+    /**
+     * This method is used to turn the first card in the player's deck
+     */
     public synchronized void turnCard1() {
-        if(player1Card1.getImage()!=null) { //se non c'è la carta non la giro
+        if(player1Card1.getImage()!=null) {
             selectedCard = 1;
             selectedCardLabel.setText("Selected Card: LEFT");
             if (orientationCard1) {
@@ -869,8 +736,11 @@ public void updateLabel(Label label, String text){
 
 
 
+    /**
+     * This method is used to turn the second card in the player's deck
+     */
     public synchronized void turnCard2() {
-        if(player1Card2.getImage()!=null) { //se non c'è la carta non la giro
+        if(player1Card2.getImage()!=null) {
             selectedCard = 2;
             selectedCardLabel.setText("Selected Card: CENTER");
             if (orientationCard2) {
@@ -891,8 +761,11 @@ public void updateLabel(Label label, String text){
 
 
 
+    /**
+     * This method is used to turn the third card in the player's deck
+     */
     public synchronized void turnCard3() {
-        if(player1Card3.getImage()!=null) { //se non c'è la carta non la giro
+        if(player1Card3.getImage()!=null) {
             selectedCard = 3;
             selectedCardLabel.setText("Selected Card: RIGHT");
             if (orientationCard3) {
@@ -913,36 +786,23 @@ public void updateLabel(Label label, String text){
 
 
 
-    public void showP1Board() { // togliamo la board precedente e stampiamo in ordine le carte della board del player 1
+    /**
+     * This method shows the board of the first player
+     */
+    public void showP1Board() {
         currentBoard=new String(playersInOrder.get(0).getNickname());
         updateLabel(boardLabel, playersInOrder.get(0).getNickname() + "'s board");
-        grid.getChildren().clear();// toglie pure i bottoni che vanno rimessi solo se è il turno di quel giocatore
-        initializeGridPaneCells(true); //mette i bottoni solo se è il proprio turno e solo nelle nuove plyable positions
+        grid.getChildren().clear();
+        initializeGridPaneCells(true);
 
-        selectedBoard = 1;
         // PRINTING THE CURRENT POSITIONS OF THE SCROLL PANE TO SET THEM!
         System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
         System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
 
         // SETTING THE CORRECT POSITION: IT DEPENDS ON THE NUMBER OF THE PLAYERS IN THE GAME
 
-        /*
-        if (nPlayers == 2) {
-            boardPane.setHvalue(0.485);
-            boardPane.setVvalue(0.535);
-        } else if (nPlayers == 3) {
-            boardPane.setHvalue(0.3132);
-           boardPane.setVvalue(0.32);
-        } else if (nPlayers == 4) {
-            boardPane.setHvalue(0.2099841521394612);
-            boardPane.setVvalue(0.23585350854073317);
-        }
-
-         */
-
         boardPane.setHvalue((75.0*(dimension/2.0))/(75.0*83));
         boardPane.setVvalue((44.775*(81.0-dimension/2.0))/(44.775*81));
-
 
         for(Integer integer:cardsOnP1Board.keySet()){
             System.out.println(integer);
@@ -954,120 +814,33 @@ public void updateLabel(Label label, String text){
             }
             Image card1 = new Image(getClass().getResourceAsStream(path));
             ImageView imageView = new ImageView(card1);
-            imageView.setFitWidth(100.0);  // larghezza desiderata
-            imageView.setFitHeight(68.25); // altezza desiderata
+            imageView.setFitWidth(100.0);
+            imageView.setFitHeight(68.25);
             imageView.setPreserveRatio(true);
             imageView.setSmooth(true);
             imageView.toFront();
-            Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
-            GridPane.setMargin(imageView, insets); // in qualunque griglia lo vado a piazzare, questo avrà i suddetti margini all'incirca
+            Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // margin regulations
+            GridPane.setMargin(imageView, insets);
             this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), 81-cardsOnP1Board.get(integer).getPosition().getY());
         }
-
-/*
-        // SETTING ALL THE CARDS IN THE TABLE
-        boolean placed = false;
-        for (int count = -1; count < dimension; count++) {
-            placed = false;
-             for (int i = 0; i < dimension && !placed; i++) {
-                 for (int j = 0; j < dimension && !placed; j++) {
-                     if (tableP1[i][j] != null && count == tableP1[i][j].getPlayOrder()) {
-                         String path = "/images/cards/front/ (" + (tableP1[i][j]).getId() + ").png";
-                         Image card1 = new Image(getClass().getResourceAsStream(path));
-                         ImageView imageView = new ImageView(card1);
-                         imageView.setFitWidth(100.0);  // larghezza desiderata
-                         imageView.setFitHeight(68.25); // altezza desiderata
-                         imageView.setPreserveRatio(true);
-                         imageView.setSmooth(true);
-                         imageView.toFront();
-                         Insets insets = new Insets(-8.7375, -15, -8.7375, -15); // Regola i margini come desiderato
-                         GridPane.setMargin(imageView, insets);
-                         this.grid.add(imageView, i, j);
-                         placed = true;
-                     }
-                 }
-             }
-        }
-
- */
 
     }
 
 
 
-    public void showP2Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 2
-        // UPDATING THE CARDS ON THE BOARD
-//        boolean present = false;
-//        if (network == 1) {
-//            for(int playerIndex = 0; playerIndex < rmiClient.getPlayersInTheGame().size(); playerIndex++){
-//                if(playersInOrder.get(1).getNickname().equals(rmiClient.getPlayersInTheGame().get(playerIndex).getNickname())){
-//                    PlayableCard [][] table = rmiClient.getPlayersInTheGame().get(playerIndex).getBoard().getTable();
-//                    for (int i=0; i<dimension; i++) {
-//                        for (int j=0; j<dimension; j++) {
-//                            present = false;
-//                            if (table[i][j] != null) {
-//                                // vedo se c'è nella map
-//                                for (int k = 0; k < cardsOnP2Board.size() && !present; k++) {
-//                                    if (cardsOnP2Board.get(k).equals(table[i][j])){
-//                                        present = true;
-//                                    } else {
-//                                        // add the card to the MAP <Integer, PlayableCard>
-//                                        cardsOnP2Board.put(cardsOnP2Board.size(),table[i][j]);
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        } else if (network == 2) {
-//            for(int playerIndex = 0; playerIndex < clientSCK.getPlayersInTheGame().size(); playerIndex++){
-//                if(playersInOrder.get(1).getNickname().equals(clientSCK.getPlayersInTheGame().get(playerIndex).getNickname())){
-//                    PlayableCard [][] table = clientSCK.getPlayersInTheGame().get(playerIndex).getBoard().getTable();
-//                    for (int i=0; i<dimension; i++) {
-//                        for (int j=0; j<dimension; j++) {
-//                            present = false;
-//                            if (table[i][j] != null) {
-//                                // vedo se c'è nella map
-//                                for (int k = 0; k < cardsOnP2Board.size() && !present; k++) {
-//                                    if (cardsOnP2Board.get(k).equals(table[i][j])){
-//                                        present = true;
-//                                    } else {
-//                                        // add the card to the MAP <Integer, PlayableCard>
-//                                        cardsOnP2Board.put(cardsOnP2Board.size(),table[i][j]);
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
+    /**
+     * This method shows the board of the second player
+     */
+    public void showP2Board(){
+
         currentBoard=new String(playersInOrder.get(1).getNickname());
         updateLabel(boardLabel, playersInOrder.get(1).getNickname() + "'s board");
-        grid.getChildren().clear();//toglie pure i bottoni che vanno rimessi solo se è il turno di quel giocatore
+        grid.getChildren().clear();
         initializeGridPaneCells(false);
 
-        selectedBoard = 2;
         // PRINTING THE CURRENT POSITIONS OF THE SCROLL PANE TO SET THEM!
         System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
         System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
-
-
-        /*
-        // SETTING THE CORRECT POSITION: IT DEPENDS FROM THE NUMBER OF THE PLAYERS IN THE GAME
-        if (nPlayers == 2) {
-            boardPane.setHvalue(0.485);
-            boardPane.setVvalue(0.535);
-        } else if (nPlayers == 3) {
-            boardPane.setHvalue(0.28447504302925986);
-            boardPane.setVvalue(0.30693257359924053);
-        } else if (nPlayers == 4) {
-            boardPane.setHvalue(0.2099841521394612);
-            boardPane.setVvalue(0.23585350854073317);
-        }
-
-         */
 
         boardPane.setHvalue((75.0*(dimension /2))/(75.0*83));
         boardPane.setVvalue((44.775*(81-dimension /2))/(44.775*81));
@@ -1081,72 +854,31 @@ public void updateLabel(Label label, String text){
                 path = "/images/cards/back/  (" + cardsOnP2Board.get(integer).getId() + ").png";
             }Image card1 = new Image(getClass().getResourceAsStream(path));
             ImageView imageView = new ImageView(card1);
-            imageView.setFitWidth(100.0);  // larghezza desiderata
-            imageView.setFitHeight(68.25); // altezza desiderata
+            imageView.setFitWidth(100.0);
+            imageView.setFitHeight(68.25);
             imageView.setPreserveRatio(true);
             imageView.setSmooth(true);
             imageView.toFront();
-            Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
+            Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5);
             GridPane.setMargin(imageView, insets);
             this.grid.add(imageView, cardsOnP2Board.get(integer).getPosition().getX(), 81-cardsOnP2Board.get(integer).getPosition().getY());
         }
-/*
-
-        // SETTING ALL THE CARDS IN THE TABLE
-        boolean placed = false;
-        for (int count = -1; count < dimension; count++) {
-            placed = false;
-            for (int i = 0; i < dimension && !placed; i++) {
-                for (int j = 0; j < dimension && !placed; j++) {
-                    if (tableP2[i][j] != null && count == tableP2[i][j].getPlayOrder()) {
-                        String path = "/images/cards/front/ (" + (tableP2[i][j]).getId() + ").png";
-                        Image card1 = new Image(getClass().getResourceAsStream(path));
-                        ImageView imageView = new ImageView(card1);
-                        imageView.setFitWidth(100.0);  // larghezza desiderata
-                        imageView.setFitHeight(68.25); // altezza desiderataimageView.setPreserveRatio(true);
-                        imageView.setSmooth(true);
-                        imageView.toFront();
-                        Insets insets = new Insets(-8.7375, -15, -8.7375, -15); // Regola i margini come desiderato
-                        GridPane.setMargin(imageView, insets);
-                        this.grid.add(imageView, i, j);
-                        placed = true;
-                    }
-                }
-            }
-        }
-
- */
-
     }
 
 
 
-    public void showP3Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 3
+    /**
+     * This method shows the board of the third player
+     */
+    public void showP3Board(){
         currentBoard=new String(playersInOrder.get(2).getNickname());
         updateLabel(boardLabel, playersInOrder.get(2).getNickname() + "'s board");
-        grid.getChildren().clear();//toglie pure i bottoni che vanno rimessi solo se è il turno di quel giocatore
+        grid.getChildren().clear();
         initializeGridPaneCells(false);
 
-        selectedBoard = 3;
         // PRINTING THE CURRENT POSITIONS OF THE SCROLL PANE TO SET THEM!
         System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
         System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
-
-        /*
-        // SETTING THE CORRECT POSITION: IT DEPENDS FROM THE NUMBER OF THE PLAYERS IN THE GAME
-        if (nPlayers == 2) {
-            boardPane.setHvalue(0.485);
-            boardPane.setVvalue(0.535);
-        } else if (nPlayers == 3) {
-            boardPane.setHvalue(0.28447504302925986);
-            boardPane.setVvalue(0.30693257359924053);
-        } else if (nPlayers == 4) {
-            boardPane.setHvalue(0.2099841521394612);
-            boardPane.setVvalue(0.23585350854073317);
-        }
-
-
-         */
 
         boardPane.setHvalue((75.0*(dimension /2))/(75.0*83));
         boardPane.setVvalue((44.775*(81-dimension /2))/(44.775*81));
@@ -1160,71 +892,33 @@ public void updateLabel(Label label, String text){
             }
             Image card1 = new Image(getClass().getResourceAsStream(path));
             ImageView imageView = new ImageView(card1);
-            imageView.setFitWidth(100.0);  // larghezza desiderata
-            imageView.setFitHeight(68.25); // altezza desiderata
+            imageView.setFitWidth(100.0);
+            imageView.setFitHeight(68.25);
             imageView.setPreserveRatio(true);
             imageView.setSmooth(true);
             imageView.toFront();
-           Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
+           Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5);
             GridPane.setMargin(imageView, insets);
             this.grid.add(imageView, cardsOnP3Board.get(integer).getPosition().getX(), 81-cardsOnP3Board.get(integer).getPosition().getY());
         }
 
-/*
-        // SETTING ALL THE CARDS IN THE TABLE
-        boolean placed = false;
-        for (int count = -1; count < dimension; count++) {
-            placed = false;
-            for (int i = 0; i < dimension && !placed; i++) {
-                for (int j = 0; j < dimension && !placed; j++) {
-                    if (tableP3[i][j] != null && count == tableP3[i][j].getPlayOrder()) {
-                        String path = "/images/cards/front/ (" + (tableP3[i][j]).getId() + ").png";
-                        Image card1 = new Image(getClass().getResourceAsStream(path));
-                        ImageView imageView = new ImageView(card1);
-                        imageView.setFitWidth(100.0);  // larghezza desiderata
-                        imageView.setFitHeight(68.25); // altezza desiderataimageView.setPreserveRatio(true);
-                        imageView.setSmooth(true);
-                        imageView.toFront();
-                        Insets insets = new Insets(-8.7375, -15, -8.7375, -15); // Regola i margini come desiderato
-                        GridPane.setMargin(imageView, insets);
-                        this.grid.add(imageView, i, j);
-                        placed = true;
-                    }
-                }
-            }
-        }
-
- */
     }
 
 
 
-
-    public void showP4Board(){ //togliamo la board precedente e stampiamo in ordine le carte della board del player 4
+    /**
+     * This method shows the board of the fourth player
+     */
+    public void showP4Board(){
         currentBoard=new String(playersInOrder.get(3).getNickname());
         updateLabel(boardLabel, playersInOrder.get(3).getNickname() + "'s board");
-        grid.getChildren().clear();//toglie pure i bottoni che vanno rimessi solo se è il turno di quel giocatore
+        grid.getChildren().clear();
         initializeGridPaneCells(false);
 
-        selectedBoard = 4;
         // PRINTING THE CURRENT POSITIONS OF THE SCROLL PANE TO SET THEM!
         System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
         System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
 
-        /*
-        // SETTING THE CORRECT POSITION: IT DEPENDS FROM THE NUMBER OF THE PLAYERS IN THE GAME
-        if (nPlayers == 2) {
-            boardPane.setHvalue(0.485);
-            boardPane.setVvalue(0.535);
-        } else if (nPlayers == 3) {
-            boardPane.setHvalue(0.28447504302925986);
-            boardPane.setVvalue(0.30693257359924053);
-        } else if (nPlayers == 4) {
-            boardPane.setHvalue(0.2099841521394612);
-            boardPane.setVvalue(0.23585350854073317);
-        }
-
-         */
         boardPane.setHvalue((75.0*(dimension /2))/(75.0*83));
         boardPane.setVvalue((44.775*(81-dimension /2))/(44.775*81));
 
@@ -1237,44 +931,23 @@ public void updateLabel(Label label, String text){
             }
             Image card1 = new Image(getClass().getResourceAsStream(path));
             ImageView imageView = new ImageView(card1);
-            imageView.setFitWidth(100.0);  // larghezza desiderata
-            imageView.setFitHeight(68.25); // altezza desiderata
+            imageView.setFitWidth(100.0);
+            imageView.setFitHeight(68.25);
             imageView.setPreserveRatio(true);
             imageView.setSmooth(true);
             imageView.toFront();
-           Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
+           Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5);
             GridPane.setMargin(imageView, insets);
             this.grid.add(imageView, cardsOnP4Board.get(integer).getPosition().getX(), 81-cardsOnP4Board.get(integer).getPosition().getY());
         }
 
-/*
-        // SETTING ALL THE CARDS IN THE TABLE
-        boolean placed = false;
-        for (int count = -1; count < dimension; count++) {
-            placed = false;
-            for (int i = 0; i < dimension && !placed; i++) {
-                for (int j = 0; j < dimension && !placed; j++) {
-                    if (tableP4[i][j] != null && count == tableP4[i][j].getPlayOrder()) {
-                        String path = "/images/cards/front/ (" + (tableP4[i][j]).getId() + ").png";
-                        Image card1 = new Image(getClass().getResourceAsStream(path));
-                        ImageView imageView = new ImageView(card1);
-                        imageView.setFitWidth(100.0);  // larghezza desiderata
-                        imageView.setFitHeight(68.25); // altezza desiderataimageView.setPreserveRatio(true);
-                        imageView.setSmooth(true);
-                        imageView.toFront();
-                        Insets insets = new Insets(-8.7375, -15, -8.7375, -15); // Regola i margini come desiderato
-                        GridPane.setMargin(imageView, insets);
-                        this.grid.add(imageView, i, j);
-                        placed = true;
-                    }
-                }
-            }
-        }
-
- */
     }
 
 
+
+    /**
+     * This method draws a card from resource deck
+     */
     public synchronized void drawCardFromRD() {
         if(resourceDeck.getImage()!=null) {
             if (emptySpace != 0 && !lastRound) {
@@ -1300,28 +973,26 @@ public void updateLabel(Label label, String text){
                 if (network == 2) {
                     try {
                         clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getResourceDeck().checkFirstCard());
-                    } catch (RemoteException e) {
+                    } catch (RemoteException | NotBoundException ignored) {
                         System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
-                    } catch (NotBoundException e) {
-                        System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
                     }
                 } else if (network == 1) {
                     try {
                         rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getResourceDeck().checkFirstCard());
-                    } catch (RemoteException|NotBoundException e) {
+                    } catch (RemoteException|NotBoundException ignored) {
                         System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
                     }
                 }
-
-
             }
         }
 
     }
 
+
+
+    /**
+     * This method draws a card from gold deck
+     */
     public synchronized void drawCardFromGD() {
 
         if(goldDeck.getImage()!=null) {
@@ -1348,25 +1019,25 @@ public void updateLabel(Label label, String text){
                 if (network == 2) {
                     try {
                         clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getGoldDeck().checkFirstCard());
-                    } catch (RemoteException e) {
+                    } catch (RemoteException | NotBoundException ignored) {
                         System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
-                    } catch (NotBoundException e) {
-                        System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
                     }
                 } else if (network == 1) {
                     try {
                         rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getGoldDeck().checkFirstCard());
-                    } catch (RemoteException|NotBoundException e) {
+                    } catch (RemoteException|NotBoundException ignored) {
                         System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
                     }
                 }
             }
         }
     }
 
+
+
+    /**
+     * This method draws a card from resource card 1
+     */
     public synchronized void drawCardFromRC1(){
         if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
@@ -1385,19 +1056,14 @@ public void updateLabel(Label label, String text){
                 if (network == 2) {
                     try {
                         clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getResourceCard1());
-                    } catch (RemoteException e) {
+                    } catch (RemoteException | NotBoundException ignored) {
                         System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
-                    } catch (NotBoundException e) {
-                        System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
                     }
                 } else if (network == 1) {
                     try {
                         rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getResourceCard1());
-                    } catch (RemoteException|NotBoundException e) {
+                    } catch (RemoteException|NotBoundException ignored) {
                         System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
                     }
                 }
             }
@@ -1406,6 +1072,11 @@ public void updateLabel(Label label, String text){
 
     }
 
+
+
+    /**
+     * This method draws a card from resource card 2
+     */
     public synchronized void drawCardFromRC2(){
         if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
@@ -1424,19 +1095,14 @@ public void updateLabel(Label label, String text){
                 if (network == 2) {
                     try {
                         clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getResourceCard2());
-                    } catch (RemoteException e) {
+                    } catch (RemoteException | NotBoundException ignored) {
                         System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
-                    } catch (NotBoundException e) {
-                        System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
                     }
                 } else if (network == 1) {
                     try {
                         rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getResourceCard2());
-                    } catch (RemoteException|NotBoundException e) {
+                    } catch (RemoteException|NotBoundException ignored) {
                         System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
                     }
                 }
             }
@@ -1444,6 +1110,11 @@ public void updateLabel(Label label, String text){
 
     }
 
+
+
+    /**
+     * This method draws a card from gold card 1
+     */
     public synchronized void drawCardFromGC1(){
         if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
@@ -1462,19 +1133,14 @@ public void updateLabel(Label label, String text){
                 if (network == 2) {
                     try {
                         clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getGoldCard1());
-                    } catch (RemoteException e) {
+                    } catch (RemoteException | NotBoundException ignored) {
                         System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
-                    } catch (NotBoundException e) {
-                        System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
                     }
                 } else if (network == 1) {
                     try {
                         rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getGoldCard1());
-                    } catch (RemoteException|NotBoundException e) {
+                    } catch (RemoteException|NotBoundException ignored) {
                         System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
                     }
                 }
             }
@@ -1482,6 +1148,11 @@ public void updateLabel(Label label, String text){
 
     }
 
+
+
+    /**
+     * This method draws a card from gold card 2
+     */
     public synchronized void drawCardFromGC2(){
         if(emptySpace!=0&&!lastRound){
             Integer temp=emptySpace;
@@ -1500,19 +1171,14 @@ public void updateLabel(Label label, String text){
                 if (network == 2) {
                     try {
                         clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getGoldCard2());
-                    } catch (RemoteException e) {
+                    } catch (RemoteException | NotBoundException ignored) {
                         System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
-                    } catch (NotBoundException e) {
-                        System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
                     }
                 } else if (network == 1) {
                     try {
                         rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getGoldCard2());
-                    } catch (RemoteException|NotBoundException e) {
+                    } catch (RemoteException|NotBoundException ignored) {
                         System.out.println("errore nel pescaggio");
-                        throw new RuntimeException(e);
                     }
                 }
             }
@@ -1522,270 +1188,63 @@ public void updateLabel(Label label, String text){
     }
 
 
+
+    /**
+     * Setter method
+     * @param scheduler
+     */
     public void setScheduler(ScheduledExecutorService scheduler) {
         this.scheduler = scheduler;
     }
 
+
+
+    /**
+     * Setter method
+     * @param disconnectionLock
+     */
     public void setDisconnectionLock(Object disconnectionLock) {
         this.disconnectionLock = disconnectionLock;
     }
 
 
 
-    public void mousePressed (MouseEvent mouseEvent) {
-        System.out.println("SONO IN MOUSE PRESSED");
-
-        String path = "/images/cards/front/  (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
-        Image card1 = new Image(getClass().getResourceAsStream(path));
-        ImageView imageView = new ImageView(card1);
-        imageView.setFitWidth((card1.getWidth() / 5.8));  // larghezza desiderata
-        imageView.setFitHeight((card1.getHeight() / 5.8)); // altezza desiderata
-        imageView.setPreserveRatio(true);
-        imageView.setSmooth(true);
-        System.out.println("mouseEvent.getX() " +mouseEvent.getX()+" mouseEvent.getX()" + mouseEvent.getX());
-        System.out.println("colonna " +mouseEvent.getX()/70.0+" riga" + mouseEvent.getX()/38.25);
-        this.grid.add(imageView, (int) ((int) mouseEvent.getX()/70.0), (int) ((int) mouseEvent.getX()/38.25));
-
-        /*
-            int cellX;
-            int cellY;
-            double x = mouseEvent.getX();
-            double y = mouseEvent.getX();
-            System.out.println("DOUBLE X e Y: " + x + " " + y);
-            cellX = (int) (x / 70.0);
-            cellY = (int) (y / 38.25);
-
-            System.out.println("COORDINATE MODIFICATE -->  x : " + cellX + " y: " + cellY);
-            this.coordinatesToPlay = new Coordinates(cellX, cellY);
-            playCard();
-
-         */
-    }
-
-
-   /* public void playCard() {
-        System.out.println("SONO IN PLAYCARD");
-
-        if (network == 1 && rmiClient.getPersonalPlayer().getNickname().equals(rmiClient.getPlayersInTheGame().get(0).getNickname()) && !cardPlaced && selectedBoard == 1) { // RMI && player is in turn
-            // CHECKING IF IT'S A PLAYABLE POSITION OR NOT
+    /**
+     * This method initializes all the buttons in the gridpane
+     * @param myBoard
+     */
+    public void initializeGridPaneCells(boolean myBoard) { // true = your board [you may play]     false = other player's board [you can't play]
+        if (myBoard && network == 1 && rmiClient.getPersonalPlayer().getNickname().equals(rmiClient.getPlayersInTheGame().get(0).getNickname()) && !cardPlaced) { // RMI && player is in turn
             playablePositions = rmiClient.getPersonalPlayer().getBoard().getPlayablePositions();
-            for(Coordinates c : playablePositions) {
-                if (c.getX() == coordinatesToPlay.getX() && c.getY() == coordinatesToPlay.getY() && !cardPlaced) {
-                    if (playablePositions.contains(coordinatesToPlay)) {
-                        if (selectedCard == 1) {
-                            System.out.println("PLAYED CARD 1");
-                            cardPlaced = true;
-                            try {
-                                rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], coordinatesToPlay, orientationCard1);
-                            } catch (RemoteException | NotBoundException e) {
-                                System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                                updateLabel(selectedCardLabel, "You don't have enough resources!");
-                            }
-                            orientationCard1 = true;
-                        } else if (selectedCard == 2) {
-                            System.out.println("PLAYED CARD 2");
-                            cardPlaced = true;
-                            try {
-                                rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[1], coordinatesToPlay, orientationCard2);
-                            } catch (RemoteException | NotBoundException e) {
-                                System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                                updateLabel(selectedCardLabel, "You don't have enough resources!");
-                            }
-                            orientationCard2 = true;
-                        } else if (selectedCard == 3) {
-                            System.out.println("PLAYED CARD 3");
-                            cardPlaced = true;
-                            try {
-                                rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[2], coordinatesToPlay, orientationCard3);
-                            } catch (RemoteException | NotBoundException e) {
-                                System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                                updateLabel(selectedCardLabel, "You don't have enough resources!");
-                            }
-                            orientationCard3 = true;
-                        } else if (selectedCard == 0) {
-                            selectedCardLabel.setText("Please, select a card to play first!");
-                            System.out.println("select a card!");
-                        }
-                    }
-                }
-            }
-            if (!cardPlaced && selectedCard != 0) {
-                System.out.println("This isn't a playable position");
-            }
-
-        } else if (network == 2 && clientSCK.getPersonalPlayer().getNickname().equals(clientSCK.getPlayersInTheGame().get(0).getNickname()) && !cardPlaced && selectedBoard == 1) { // SCK && player is in turn
-            // CHECKING IF IT'S A PLAYABLE POSITION OR NOT
+        }
+        else if(myBoard&&network == 2 && clientSCK.getPersonalPlayer().getNickname().equals(clientSCK.getPlayersInTheGame().get(0).getNickname())&& !cardPlaced){
             playablePositions = clientSCK.getPersonalPlayer().getBoard().getPlayablePositions();
-            for(Coordinates c : playablePositions) {
-                if (c.getX() == coordinatesToPlay.getX() && c.getY() == coordinatesToPlay.getY() && !cardPlaced) {
-                    if (selectedCard == 1) {
-                        cardPlaced = true;
-                        System.out.println("PLAYED CARD 1");
-                        try {
-                            clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], coordinatesToPlay, orientationCard1);
-                        } catch (RemoteException | NotBoundException e) {
-                            System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updateLabel(selectedCardLabel, "You don't have enough resources!");
-                        }
-                        orientationCard1 = true ;
-                    } else if (selectedCard == 2) {
-                        cardPlaced = true;
-                        System.out.println("PLAYED CARD 2");
-                        try {
-                            clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[1], coordinatesToPlay, orientationCard2);
-                        } catch (RemoteException | NotBoundException e) {
-                            System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updateLabel(selectedCardLabel, "You don't have enough resources!");
-                        }
-                        orientationCard2 = true;
-                    } else if (selectedCard == 3) {
-                        cardPlaced = true;
-                        System.out.println("PLAYED CARD 3");
-                        try {
-                            clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[2], coordinatesToPlay, orientationCard3);
-                        } catch (RemoteException | NotBoundException e) {
-                            System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
-                            updateLabel(selectedCardLabel, "You don't have enough resources!");
-                        }
-                        orientationCard3 = true;
-                    } else if (selectedCard == 0) {
-                        selectedCardLabel.setText("Please, select a card to play first!");
-                        System.out.println("select a card!");
-                    }
-                }
-            }
-            if (!cardPlaced && selectedCard != 0) {
-                System.out.println("This isn't a playable position");
-                System.out.println("cardplaced = " + cardPlaced);
-                System.out.println("selected card = " + selectedCard);
-                System.out.println("selectedboard = " + selectedBoard);
-                System.out.println("network = " + network);
-                System.out.println("coordinates to play are (x, y) = " + coordinatesToPlay.getX() + " " + coordinatesToPlay.getY());
-                System.out.println("selectedboard = " + selectedBoard);
-                for(Coordinates c : playablePositions) {
-                    System.out.println("playable positions (x, y) = " + c.getX() + " " + c.getY());
-                }
-            }
-        } else if(selectedBoard != 1){
-            System.out.println("Select your board!");
-        } else if (network == 2 && !clientSCK.getPersonalPlayer().getNickname().equals(clientSCK.getPlayersInTheGame().get(0).getNickname())) {
-            System.out.println("It's not your turn");
-        } else if (network == 1 && !rmiClient.getPersonalPlayer().getNickname().equals(rmiClient.getPlayersInTheGame().get(0).getNickname())) {
-        System.out.println("It's not your turn");
-    }
-    }
-*/
+        }
+        else {
+            playablePositions = null;
+        }
 
-/*
-
-    public void initializeGridPaneCells() {
-       // int count = 0;
-        for (int row = 0; row < 81; row++) { //80
-            for (int col = 0; col < 83; col++) { //82
-                /*
-                count++;
-                Pane cell = new Pane();
-                cell.setPrefSize(70, 38.25);
-                cell.setAccessibleText(col+","+row);
-                cell.setId("cell" + count); // cell1, cell2, cell3, ...
-                cell.setOnMouseClicked(this::mousePressed);
-                cell.setStyle("-fx-border-color: grey; -fx-border-width: 0.05px;");
-                grid.add((Node)cell, col, row);
-
-                 */
-    /*
-                Button button=new Button();
+        if(playablePositions != null){
+            for(Coordinates coordinates:this.playablePositions) {
+                System.out.println("Playable position (x, y): " + coordinates.getX() + " " + coordinates.getY());
+                Button button = new Button();
+                button.setOpacity(0.5);
                 button.setPrefSize(70, 38.25);
-                button.setText(col+","+row);
-                button.setOnAction( buttonClicked(button));
-                grid.add(button,col, row);
-
+                button.setText(coordinates.getX() + "," + coordinates.getY());
+                button.setOnAction(event -> buttonClicked((Button) event.getSource()));
+                grid.add(button, coordinates.getX(), 81-coordinates.getY());
             }
         }
-        //grid.addEventFilter(MouseEvent.MOUSE_PRESSED, this::mousePressed);
+
     }
 
-    private EventHandler<ActionEvent> buttonClicked(Button button) {
-       String buttomText=button.getText();
-       char[] x = new char[2];
-        char[] y =new char[2];
-        int i=0;
-        while(buttomText.charAt(i)!=','){
-            x[i]=buttomText.charAt(i);
-            i++;
-        }
-        i++;//sorpasso la virgola
-        int j=0;
-        while(i<buttomText.length()){
-            y[j]=buttomText.charAt(i);
-            j++;
-        }
-
-        //di prova
-        String path = "/images/cards/front/ (" + playersInOrder.get(0).getPlayerDeck()[0].getId() + ").png";
-        Image card1 = new Image(getClass().getResourceAsStream(path));
-        ImageView imageView = new ImageView(card1);
-        imageView.setFitWidth((card1.getWidth() / 5.8));  // larghezza desiderata
-        imageView.setFitHeight((card1.getHeight() / 5.8)); // altezza desiderata
-        imageView.setPreserveRatio(true);
-        imageView.setSmooth(true);
-        int row=0;
-        for(int k=x.length;k<0;k--){
-            row=row+(10^(k))*x[k];
-        }
-        int colomn=0;
-        for(int k=y.length;k<0;k--){
-            colomn=colomn+(10^(k))*y[k];
-        }
-        grid.add(imageView,row,colomn);
 
 
-        return null;
-    }
-
+    /**
+     * This method is invoked when the player clicks a button to play a card on his board
+     * @param button clicked
      */
-public void initializeGridPaneCells(boolean myBoard) { // true = your board [you may play]     false = other player's board [you can't play]
-    if (myBoard&&network == 1 && rmiClient.getPersonalPlayer().getNickname().equals(rmiClient.getPlayersInTheGame().get(0).getNickname()) && !cardPlaced) { // RMI && player is in turn
-        playablePositions = rmiClient.getPersonalPlayer().getBoard().getPlayablePositions();
-    }
-    else if(myBoard&&network == 2 && clientSCK.getPersonalPlayer().getNickname().equals(clientSCK.getPlayersInTheGame().get(0).getNickname())&& !cardPlaced){
-        playablePositions = clientSCK.getPersonalPlayer().getBoard().getPlayablePositions();
-    }
-    else { // non è il mio turno
-        playablePositions = null;
-    }
-
-
-    if(playablePositions != null){ //se è il mio turno metto i bottoni
-        for(Coordinates coordinates:this.playablePositions) {
-            System.out.println("Playable position (x, y): " + coordinates.getX() + " " + coordinates.getY());
-            Button button = new Button();
-            button.setOpacity(0.5);
-            button.setPrefSize(70, 38.25);
-            button.setText(coordinates.getX() + "," + coordinates.getY());
-            button.setOnAction(event -> buttonClicked((Button) event.getSource()));
-            grid.add(button, coordinates.getX(), 81-coordinates.getY());
-        }
-    }
-
-    /*
-    for (int row = 0; row < 81; row++) {
-        for (int col = 0; col < 83; col++) {
-            Button button = new Button();
-            button.setPrefSize(70, 38.25);
-            button.setText(col + "," + row);
-            button.setOnAction(event -> buttonClicked((Button) event.getSource()));
-            grid.add(button, col, row);
-        }
-    }
-
-     */
-}
-
-
-
-
-    private synchronized void buttonClicked(Button button) { //se ho potuto vedere e cliccare un bottone allora è il mio turno (io sono sempre p1)
+    private synchronized void buttonClicked(Button button) {
          if(!cardPlaced) {
              String buttonText = button.getText();
              String[] coordinates = buttonText.split(",");
@@ -1793,10 +1252,8 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                  int col = Integer.parseInt(coordinates[0]);
                  int row = Integer.parseInt(coordinates[1]);
 
-                 // Esegui le operazioni desiderate con 'row' e 'col'
-                 // Esempio: aggiungi un'immagine
                  String path = null;
-                 if (selectedCard != 0) { //è stata selezionata una carta
+                 if (selectedCard != 0) {
                      if (network == 1) {
                          PlayableCard[] playerDeck = rmiClient.getPersonalPlayer().getPlayerDeck();
                          if (selectedCard == 1) {
@@ -1966,7 +1423,6 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                              updateLabel(selectedCardLabel, "Sorry, a disconnection happened");
                              }
                          } else if (selectedCard == 3) {
-                             //cardPlaced = true;
                              System.out.println("PLAYED CARD 3");
                              try {
                                  clientSCK.setErrorState(false);
@@ -2000,15 +1456,15 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                      if (cardPlaced) {
                          Image card1 = new Image(getClass().getResourceAsStream(path));
                          ImageView imageView = new ImageView(card1);
-                         imageView.setFitWidth(100.0);  // larghezza desiderata
-                         imageView.setFitHeight(68.25); // altezza desiderata
+                         imageView.setFitWidth(100.0);
+                         imageView.setFitHeight(68.25);
                          imageView.setPreserveRatio(true);
                          imageView.setSmooth(true);
-                         Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // Regola i margini come desiderato (top, left, bottom, right)
+                         Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5);
                          GridPane.setMargin(imageView, insets);
                          grid.add(imageView, col, 81 - row);
-                         showP1Board(); // RICARICO LA BOARD
-                         //se è l'ultimo turno diciamo al giocatore che non può pescare una nuova carta
+                         showP1Board();
+
                          if (lastRound) {
                              selectedCardLabel.setText("This was your last round: YOU CAN'T DRAW ANY CARDS");
                          }
@@ -2016,13 +1472,16 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
 
                  }
              } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-                 // Gestisci eventuali eccezioni durante la conversione delle coordinate
-                 e.printStackTrace();
              }
          }
     }
 
 
+
+    /**
+     * This method updates the first resource card
+     * @param card new card
+     */
     public void updateResourceCard1(PlayableCard card) {
         Platform.runLater(() -> {
             if (card != null) {
@@ -2035,6 +1494,12 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
         });
     }
 
+
+
+    /**
+     * This method updates the second resource card
+     * @param card new card
+     */
     public void updateResourceCard2(PlayableCard card) {
         Platform.runLater(() -> {
             if (card != null) {
@@ -2047,6 +1512,12 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
         });
     }
 
+
+
+    /**
+     * This method updates the first gold card
+     * @param card new card
+     */
     public void updateGoldCard1(PlayableCard card) {
         Platform.runLater(() -> {
             if (card != null) {
@@ -2059,6 +1530,12 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
         });
     }
 
+
+
+    /**
+     * This method updates the second gold card
+     * @param card new card
+     */
     public void updateGoldCard2(PlayableCard card) {
         Platform.runLater(() -> {
             if (card != null) {
@@ -2071,12 +1548,25 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
         });
     }
 
+
+
+    /**
+     * This method is invoked when it's last round
+     * @param lastRound true if it's the last turn
+     */
     public void updateRound(boolean lastRound) {
         Platform.runLater(()->{
                 setTurnLabel(lastRound);
         });
     }
 
+
+
+    /**
+     * This method is invoked to update a board of a player
+     * @param boardOwner player
+     * @param newCard added card
+     */
     public void updateBoard(String boardOwner, PlayableCard newCard) {
         if(boardOwner.equals(playersInOrder.get(1).getNickname())){
             System.out.println("sto aggiornando la board del player p2");
@@ -2109,6 +1599,10 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
     }
 
 
+
+    /**
+     * This method is invoked to update the resource deck
+     */
     public void updateResourceDeck() {
         Platform.runLater(() -> {
             String path=null;
@@ -2119,7 +1613,6 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                     resourceDeck.setImage(newCard);
                 } catch (EmptyStackException e) {
                     resourceDeck.setImage(null);
-                    finishedRD = true;
                 }
             }else if(network==2){
                 try {
@@ -2128,12 +1621,16 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                     resourceDeck.setImage(newCard);
                 } catch (EmptyStackException e) {
                     resourceDeck.setImage(null);
-                    finishedRD = true;
                 }
             }
         });
     }
 
+
+
+    /**
+     * This method is invoked to update the gold deck
+     */
     public void updateGoldDeck() {
         Platform.runLater(() -> {
             String path=null;
@@ -2144,7 +1641,6 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                     goldDeck.setImage(newCard);
                 } catch (EmptyStackException e) {
                     goldDeck.setImage(null);
-                    //finishedGD = true;
                 }
             }else if(network==2){
                 try {
@@ -2153,19 +1649,23 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                     goldDeck.setImage(newCard);
                 } catch (EmptyStackException e) {
                     goldDeck.setImage(null);
-                    //finishedGD = true;
                 }
             }
         });
     }
 
+
+
+    /**
+     * This method is invoked to update the player's deck
+     */
     public void updatePlayerDeck(String nickname,PlayableCard[] playerDeck) {
         Platform.runLater(() -> {
             String path=null;
             Image newCard=null;
             int i=1;
             for (Player p : playersInOrder) {
-                if(i==2){ //non serve l'update del giocatore a cui appartiene la view
+                if(i==2){
                     if(p.getNickname().equals(nickname)){
                         if(playerDeck[0]!=null) {
                             path = "/images/cards/back/  (" + playerDeck[0].getId() + ").png";
@@ -2247,14 +1747,17 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
 
 
 
+    /**
+     * This method changes the scene
+     * @param winners list of players who won the game or who tied
+     */
     public void changeScene(List<Player> winners) {
         // let's show the new window: winners and losers
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/winners.fxml"));
         Parent root = null;
         try {
             root = fxmlLoader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ignored) {
         }
 
         GUIWinnersController ctr = null;
@@ -2262,8 +1765,8 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
             ctr = fxmlLoader.getController();
         }
         stage.setOnCloseRequest(event -> this.leaveGame());
+
         // setting the parameters in the new controller
-        ctr.setStage(stage);
         ctr.setNetwork(network);
         ctr.setClientSCK(clientSCK);
         ctr.setRmiClient(rmiClient);
@@ -2296,16 +1799,14 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
             if (network==1){
                 try {
                     rmiClient.handleDisconnectionFunction();
-                } catch (RemoteException e) {
-                    throw new RuntimeException(e);
+                } catch (RemoteException ignored) {
                 }
                 ;
             }
             else if(network==2){
                 try {
                     clientSCK.handleDisconnectionFunction();
-                } catch (RemoteException e) {
-                    throw new RuntimeException(e);
+                } catch (RemoteException ignored) {
                 }
 
             }
@@ -2315,11 +1816,14 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
 
 
 
+    /**
+     * This method updates the list of winners
+     * @param winners of the game
+     */
     public void updateWinners(List<Player> winners) {
-        if (winners.size() == 1) { //un solo vincitore
+        if (winners.size() == 1) {
             System.out.println(winners.get(0).getNickname() + " WON!!!");
-            //platform.runLater
-        } else if (winners.size() > 1) { //pareggio
+        } else if (winners.size() > 1) {
             for (Player p : winners) {
                 System.out.print(p.getNickname() + ", ");
             }
@@ -2330,6 +1834,9 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
 
 
 
+    /**
+     * This method is used when a player clicks on the button "MUSIC ON/OFF" to play or stop the music
+     */
     public void musicONOFF() {
         if (playingMusic) {
             mediaPlayer.stop();
@@ -2342,11 +1849,72 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
 
 
 
+    /**
+     * Setter method
+     * @param mp media player
+     */
     public void setMediaPlayer(MediaPlayer mp) {
         this.mediaPlayer = mp;
     }
 
+
+
+    /**
+     * Setter method
+     * @param objectiveCardselected obj card
+     */
     public void setObjectiveCardselected(ObjectiveCard objectiveCardselected) {
         this.objectiveCardselected = objectiveCardselected;
     }
+
+
+
+    /**
+     * Setter method
+     * @param playersInOrder list of players
+     */
+    public void setPlayersInOrder(List<Player> playersInOrder) {
+        this.playersInOrder = playersInOrder;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param stage of the windows
+     */
+    public void setStage(Stage stage) {
+        this.stage=stage;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param network 1 for rmi and 2 for tcp
+     */
+    public void setNetwork(int network) {
+        this.network=network;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param clientSCK client sck
+     */
+    public void setClientSCK(ClientSCK clientSCK) {
+        this.clientSCK=clientSCK;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param rmiClient client rmi
+     */
+    public void setRmiClient(RMIClient rmiClient) {
+        this.rmiClient = rmiClient;
+    }
+
 }
