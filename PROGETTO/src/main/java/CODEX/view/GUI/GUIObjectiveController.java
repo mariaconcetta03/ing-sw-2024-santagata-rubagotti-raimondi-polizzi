@@ -3,7 +3,6 @@ package CODEX.view.GUI;
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
 import CODEX.org.model.ObjectiveCard;
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -278,7 +277,7 @@ public class GUIObjectiveController {
 
 
             stage.show();
-            String musicPath = getClass().getResource("/music.mp3").toString();
+            String musicPath = getClass().getResource("/music2.mp3").toString();
             Media sound = new Media(musicPath);
             MediaPlayer mediaPlayer = new MediaPlayer(sound);
             mediaPlayer.play();
