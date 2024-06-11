@@ -940,8 +940,8 @@ public void updateLabel(Label label, String text){
 
          */
 
-        boardPane.setHvalue((75.0*(dimension /2))/(75.0*83));
-        boardPane.setVvalue((44.775*(81-dimension /2))/(44.775*81));
+        boardPane.setHvalue((75.0*(dimension/2))/(75.0*83));
+        boardPane.setVvalue((44.775*(81-dimension/2))/(44.775*81));
 
 
         for(Integer integer:cardsOnP1Board.keySet()){
@@ -1288,11 +1288,13 @@ public void updateLabel(Label label, String text){
                 }
                 Image newCard = new Image(getClass().getResourceAsStream(path));
                 if (temp == 1) {
+                    orientationCard1 = true;
                     player1Card1.setImage(newCard);
-
                 } else if (temp == 2) {
+                    orientationCard2 = true;
                     player1Card2.setImage(newCard);
                 } else if (temp == 3) {
+                    orientationCard3 = true;
                     player1Card3.setImage(newCard);
                 }
                 if (network == 2) {
@@ -1337,11 +1339,13 @@ public void updateLabel(Label label, String text){
                 }
                 Image newCard = new Image(getClass().getResourceAsStream(path));
                 if (temp == 1) {
+                    orientationCard1 = true;
                     player1Card1.setImage(newCard);
                 } else if (temp == 2) {
+                    orientationCard2 = true;
                     player1Card2.setImage(newCard);
-
                 } else if (temp == 3) {
+                    orientationCard3 = true;
                     player1Card3.setImage(newCard);
                 }
                 if (network == 2) {
@@ -1375,11 +1379,13 @@ public void updateLabel(Label label, String text){
             emptySpace=0;
             if(resourceCard1.getImage()!=null) {
                 if (temp == 1) {
+                    orientationCard1 = true;
                     player1Card1.setImage(resourceCard1.getImage());
-
                 } else if (temp == 2) {
+                    orientationCard2 = true;
                     player1Card2.setImage(resourceCard1.getImage());
                 } else if (temp == 3) {
+                    orientationCard3 = true;
                     player1Card3.setImage(resourceCard1.getImage());
                 }
                 if (network == 2) {
@@ -1415,11 +1421,13 @@ public void updateLabel(Label label, String text){
             emptySpace=0;
             if(resourceCard2.getImage()!=null) {
                 if (temp == 1) {
+                    orientationCard1 = true;
                     player1Card1.setImage(resourceCard2.getImage());
-
                 } else if (temp == 2) {
+                    orientationCard2 = true;
                     player1Card2.setImage(resourceCard2.getImage());
                 } else if (temp == 3) {
+                    orientationCard3 = true;
                     player1Card3.setImage(resourceCard2.getImage());
                 }
                 if (network == 2) {
@@ -1454,10 +1462,13 @@ public void updateLabel(Label label, String text){
             emptySpace=0;
             if(goldCard1.getImage()!=null) {
                 if (temp == 1) {
+                    orientationCard1 = true;
                     player1Card1.setImage(goldCard1.getImage());
                 } else if (temp == 2) {
+                    orientationCard2 = true;
                     player1Card2.setImage(goldCard1.getImage());
                 } else if (temp == 3) {
+                    orientationCard3 = true;
                     player1Card3.setImage(goldCard1.getImage());
                 }
                 if (network == 2) {
@@ -1492,10 +1503,13 @@ public void updateLabel(Label label, String text){
             emptySpace=0;
             if(goldCard2.getImage()!=null) {
                 if (temp == 1) {
+                    orientationCard1 = true;
                     player1Card1.setImage(goldCard2.getImage());
                 } else if (temp == 2) {
+                    orientationCard2 = true;
                     player1Card2.setImage(goldCard2.getImage());
                 } else if (temp == 3) {
+                    orientationCard3 = true;
                     player1Card3.setImage(goldCard2.getImage());
                 }
                 if (network == 2) {
@@ -1567,7 +1581,7 @@ public void updateLabel(Label label, String text){
     }
 
 
-    public void playCard() {
+   /* public void playCard() {
         System.out.println("SONO IN PLAYCARD");
 
         if (network == 1 && rmiClient.getPersonalPlayer().getNickname().equals(rmiClient.getPlayersInTheGame().get(0).getNickname()) && !cardPlaced && selectedBoard == 1) { // RMI && player is in turn
@@ -1678,7 +1692,7 @@ public void updateLabel(Label label, String text){
         System.out.println("It's not your turn");
     }
     }
-
+*/
 
 /*
 
@@ -1786,6 +1800,9 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
      */
 }
 
+
+
+
     private synchronized void buttonClicked(Button button) { //se ho potuto vedere e cliccare un bottone allora è il mio turno (io sono sempre p1)
          if(!cardPlaced) {
              String buttonText = button.getText();
@@ -1880,7 +1897,6 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
                                  cardPlaced = false;
                              }
                          }
-
                      }
                      if (network == 2) {
                          PlayableCard[] playerDeck = clientSCK.getPersonalPlayer().getPlayerDeck();
@@ -2262,7 +2278,7 @@ public void initializeGridPaneCells(boolean myBoard) { // true = your board [you
         stage.setY(y);
 
         stage.show();
-        int seconds=6;
+        int seconds=40;
         PauseTransition delay = new PauseTransition(Duration.seconds(seconds));
         delay.setOnFinished(event -> {
             stage.close();
