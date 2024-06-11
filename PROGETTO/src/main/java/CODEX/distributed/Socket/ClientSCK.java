@@ -722,46 +722,32 @@ public class ClientSCK implements ClientGeneralInterface {
     public void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException {
         //abbiamo deciso che quando un giocatore vuole lasciare il gioco il server riceve una disconnessione
         //if (!aDisconnectionHappened) non lo controllo perchè se viene rilevata sulla gui la disconnessione non viene premuto il tasto che porta a questa funzione
-
-        System.out.println("game left.");
-        try { //we close all we have to close
-            running = false;
-            inGame = false;
-            inputStream.close();
-            outputStream.close();
-            socket.close();
-        } catch (IOException ex) { //needed for the close clause
-            throw new RuntimeException(ex);
-        }
-        if (timer != null) {
-            timer.cancel(); // Ferma il timer
-        }
-        System.exit(0); //status 0 -> no errors
-
-
-
-
-        /*
-        synchronized (actionLock) {
-            ClientMessage clientMessage=new LeaveGame(nickname);
-            try {
-                sendMessage(new SCKMessage(clientMessage));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            while (!responseReceived) {
-                try {
-                    actionLock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+        synchronized (disconnectionLock) {
+            if (!aDisconnectionHappened) { //per sicurezza lo controllo
+                System.out.println("game left.");
+                try { //we close all we have to close
+                    running = false;
+                    inGame = false;
+                    inputStream.close();
+                    outputStream.close();
+                    socket.close();
+                } catch (IOException ex) { //needed for the close clause
+                    throw new RuntimeException(ex);
                 }
+                if (timer != null) {
+                    timer.cancel(); // Ferma il timer
+                }
+                System.exit(0); //status 0 -> no errors
             }
-        }
 
-         */
+        }
     }
 
- //update
+
+
+
+
+    //update
 
 
 
@@ -1348,37 +1334,19 @@ public class ClientSCK implements ClientGeneralInterface {
     public void handleDisconnection() throws RemoteException { //arriva prima l'update che mette inGame=true
         System.out.println("evento disconnessione arrivato");
 
-        //chiudere stream, socket, timer e thread
-        if(selectedView==1){ //TUI
-            handleDisconnectionFunction();
-        }
-        else if(selectedView==2) { //GUI -> da migliorare perchè blocca la scelta della carta
-            synchronized (guiLock){
-                aDisconnectionHappened=true;
-                guiLock.notify(); //nel caso in cui la gui sta facendo la wait di un evento (che dopo questa discconnessione non si verificherà mai)
-            }
-
-
-            /*
-            synchronized (disconnectionLock) {
-                aDisconnectionHappened=true;
-                disconnectionLock.notify();
-            }
-            synchronized (disconnectionLock){
-                while(!guiClosed){
-                    try {
-                        disconnectionLock.wait();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+        synchronized (disconnectionLock) {
+            //chiudere stream, socket, timer e thread
+            if (selectedView == 1) { //TUI
+                handleDisconnectionFunction();
+            } else if (selectedView == 2) { //GUI -> da migliorare perchè blocca la scelta della carta
+                synchronized (guiLock) {
+                    aDisconnectionHappened = true;
+                    guiLock.notify(); //nel caso in cui la gui sta facendo la wait di un evento (che dopo questa discconnessione non si verificherà mai)
                 }
+
+                //handleDisconnectionFunction(); viene chiamata direttamente dalla gui
+
             }
-
-             */
-
-
-            //handleDisconnectionFunction(); viene chiamata direttamente dalla gui
-
         }
 
     }
@@ -1561,9 +1529,6 @@ public class ClientSCK implements ClientGeneralInterface {
         return this.inGame;
     }
 
-    public Object getDisconnectionLock() {
-        return disconnectionLock;
-    }
 
     public boolean getADisconnectionHappened() {
         return aDisconnectionHappened;

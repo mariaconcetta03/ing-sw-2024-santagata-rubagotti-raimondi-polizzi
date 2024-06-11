@@ -75,6 +75,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private GUIBaseCardController guiBaseCardController=null;
     private final Object guiObjectiveControllerLock=new Object();
     private GUIObjectiveController guiObjectiveController=null;
+    private final Object disconnectionLock=new Object();
 
     public Player getPersonalPlayer() {
         return personalPlayer;
@@ -331,32 +332,48 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
-    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, NotBoundException, IllegalArgumentException {
-        if(selectedView==1) { //TUI
-            if (!aDisconnectionHappened) {
-                synchronized (actionLock) {
-                    System.out.println("entrati nel lock di playCard");
-                    responseReceived = false;
-                    System.out.println("chiamo this.gameController.playCard");
-                    this.gameController.playCard(nickname, selectedCard, position, orientation);
-                    while (!responseReceived) {
-                        try {
-                            actionLock.wait();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, IllegalArgumentException,NotBoundException {
+        try {
+
+
+            if (selectedView == 1) { //TUI
+                if (!aDisconnectionHappened) {
+                    synchronized (actionLock) {
+                        System.out.println("entrati nel lock di playCard");
+                        responseReceived = false;
+                        System.out.println("chiamo this.gameController.playCard");
+                        this.gameController.playCard(nickname, selectedCard, position, orientation);
+                        while (!responseReceived) {
+                            try {
+                                actionLock.wait();
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
+                    System.out.println("usciti dal lock di playCard");
                 }
-                System.out.println("usciti dal lock di playCard");
-            }
-        }else if(selectedView==2){ //GUI
-            try {
-                this.gameController.playCard(nickname, selectedCard, position, orientation);
-            }catch (IllegalArgumentException e){
-                System.out.println("RMICLIENT: ho catchato un'illegal argument exp");
-                throw e;
-            }
+            } else if (selectedView == 2) { //GUI
+                try {
+                    this.gameController.playCard(nickname, selectedCard, position, orientation);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("RMICLIENT: ho catchato un'illegal argument exp");
+                    throw e;
+                }
 
+            }
+        }catch (RemoteException e){
+            synchronized (disconnectionLock) {
+                if (selectedView == 1) {
+                    handleDisconnectionFunction();
+                }
+                if (selectedView == 2) {
+                    synchronized (guiLock) {
+                        aDisconnectionHappened = true; //serve per bloccare altre cose appena arriva una disconnessione
+                        guiLock.notify(); //nel caso in cui la gui sta facendo la wait di un evento (che dopo questa discconnessione non si verificherà mai)
+                    }
+                }
+            }
         }
     }
 
@@ -373,24 +390,28 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
-    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException, NotBoundException {
-        if(!aDisconnectionHappened) {
-            synchronized (actionLock) {
-                System.out.println("entrati nel lock di playBaseCard");
-                this.gameController.playBaseCard(nickname, baseCard, orientation);
+    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException,NotBoundException {
+        try {
+            if (!aDisconnectionHappened) {
+                synchronized (actionLock) {
+                    System.out.println("entrati nel lock di playBaseCard");
+                    this.gameController.playBaseCard(nickname, baseCard, orientation);
+                }
+                System.out.println("usciti dal lock di playBaseCard");
             }
-            System.out.println("usciti dal lock di playBaseCard");
-        }
-        //preso da tcp
-        /*
-        while (!responseReceived){
-                try {
-                    actionLock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+        }catch (RemoteException e){
+            synchronized (disconnectionLock) {
+                if (selectedView == 1) {
+                    handleDisconnectionFunction();
+                }
+                if (selectedView == 2) {
+                    synchronized (guiLock) {
+                        aDisconnectionHappened = true; //serve per bloccare altre cose appena arriva una disconnessione
+                        guiLock.notify(); //nel caso in cui la gui sta facendo la wait di un evento (che dopo questa discconnessione non si verificherà mai)
+                    }
                 }
             }
-         */
+        }
     }
 
 
@@ -404,21 +425,35 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
-    public void drawCard(String nickname, PlayableCard selectedCard) throws RemoteException, NotBoundException {
-        if(!aDisconnectionHappened) {
-            synchronized (actionLock) {
-                System.out.println("entrati nel lock di drawCard");
-                responseReceived=false;
-                this.gameController.drawCard(nickname, selectedCard);
-                while (!responseReceived) {
-                    try {
-                        actionLock.wait();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+    public void drawCard(String nickname, PlayableCard selectedCard) throws RemoteException,NotBoundException {
+        try {
+            if (!aDisconnectionHappened) {
+                synchronized (actionLock) {
+                    System.out.println("entrati nel lock di drawCard");
+                    responseReceived = false;
+                    this.gameController.drawCard(nickname, selectedCard);
+                    while (!responseReceived) {
+                        try {
+                            actionLock.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+                System.out.println("usciti dal lock di drawCard");
+            }
+        }catch (RemoteException e){
+            synchronized (disconnectionLock) {
+                if (selectedView == 1) {
+                    handleDisconnectionFunction();
+                }
+                if (selectedView == 2) {
+                    synchronized (guiLock) {
+                        aDisconnectionHappened = true; //serve per bloccare altre cose appena arriva una disconnessione
+                        guiLock.notify(); //nel caso in cui la gui sta facendo la wait di un evento (che dopo questa discconnessione non si verificherà mai)
                     }
                 }
             }
-            System.out.println("usciti dal lock di drawCard");
         }
     }
 
@@ -433,13 +468,27 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
-    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) throws RemoteException, NotBoundException {
-        if(!aDisconnectionHappened) {
-            synchronized (actionLock) {
-                System.out.println("entrati nel lock di chooseObjectiveCard");
-                this.gameController.chooseObjectiveCard(chooserNickname, selectedCard);
+    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) throws RemoteException,NotBoundException {
+        try {
+            if (!aDisconnectionHappened) {
+                synchronized (actionLock) {
+                    System.out.println("entrati nel lock di chooseObjectiveCard");
+                    this.gameController.chooseObjectiveCard(chooserNickname, selectedCard);
+                }
+                System.out.println("usciti dal lock di chooseObjectiveCard");
             }
-            System.out.println("usciti dal lock di chooseObjectiveCard");
+        }catch (RemoteException e){
+            synchronized (disconnectionLock) {
+                if (selectedView == 1) {
+                    handleDisconnectionFunction();
+                }
+                if (selectedView == 2) {
+                    synchronized (guiLock) {
+                        aDisconnectionHappened = true; //serve per bloccare altre cose appena arriva una disconnessione
+                        guiLock.notify(); //nel caso in cui la gui sta facendo la wait di un evento (che dopo questa discconnessione non si verificherà mai)
+                    }
+                }
+            }
         }
     }
 
@@ -454,24 +503,38 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
-    public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, NotBoundException, ColorAlreadyTakenException{
-        if(!aDisconnectionHappened) {
-            System.out.println("prima del lock di choosepawncolor");
-            synchronized (actionLock) {
-                System.out.println("dentro il lock di choosepawncolor");
-                System.out.println("entrati nel lock di choosepawncolor");
-                responseReceived=false;
-                this.gameController.choosePawnColor(chooserNickname, selectedColor);
-                while (!responseReceived) {
-                    try {
-                        actionLock.wait();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+    public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, ColorAlreadyTakenException,NotBoundException {
+        try {
+            if (!aDisconnectionHappened) {
+                System.out.println("prima del lock di choosepawncolor");
+                synchronized (actionLock) {
+                    System.out.println("dentro il lock di choosepawncolor");
+                    System.out.println("entrati nel lock di choosepawncolor");
+                    responseReceived = false;
+                    this.gameController.choosePawnColor(chooserNickname, selectedColor);
+                    while (!responseReceived) {
+                        try {
+                            actionLock.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    System.out.println("usciti dal while di choosePawnColor");
+                }
+                System.out.println("usciti dal lock di choosepawncolor");
+            }
+        }catch (RemoteException e){
+            synchronized (disconnectionLock) {
+                if (selectedView == 1) {
+                    handleDisconnectionFunction();
+                }
+                if (selectedView == 2) {
+                    synchronized (guiLock) {
+                        aDisconnectionHappened = true; //serve per bloccare altre cose appena arriva una disconnessione
+                        guiLock.notify(); //nel caso in cui la gui sta facendo la wait di un evento (che dopo questa discconnessione non si verificherà mai)
                     }
                 }
-                System.out.println("usciti dal while di choosePawnColor");
             }
-            System.out.println("usciti dal lock di choosepawncolor");
         }
     }
 
@@ -487,20 +550,36 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     @Override
     public void sendMessage(String senderNickname, List<String> receiversNicknames, String message) throws RemoteException, NotBoundException {
-        if(!aDisconnectionHappened) {
-            synchronized (actionLock) {
-                System.out.println("entrati nel lock di sendMessage");
-                responseReceived=false;
-                this.gameController.sendMessage(senderNickname, receiversNicknames, message);
-                while (!responseReceived) {
-                    try {
-                        actionLock.wait();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+        try {
+
+
+            if (!aDisconnectionHappened) {
+                synchronized (actionLock) {
+                    System.out.println("entrati nel lock di sendMessage");
+                    responseReceived = false;
+                    this.gameController.sendMessage(senderNickname, receiversNicknames, message);
+                    while (!responseReceived) {
+                        try {
+                            actionLock.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+                System.out.println("usciti dal lock di sendMessage");
+            }
+        }catch (RemoteException e){
+            synchronized (disconnectionLock) {
+                if (selectedView == 1) {
+                    handleDisconnectionFunction();
+                }
+                if (selectedView == 2) {
+                    synchronized (guiLock) {
+                        aDisconnectionHappened = true; //serve per bloccare altre cose appena arriva una disconnessione
+                        guiLock.notify(); //nel caso in cui la gui sta facendo la wait di un evento (che dopo questa discconnessione non si verificherà mai)
                     }
                 }
             }
-            System.out.println("usciti dal lock di sendMessage");
         }
     }
 
@@ -521,13 +600,17 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
          */
         //if (!aDisconnectionHappened) non lo controllo perchè se viene rilevata sulla gui la disconnessione non viene premuto il tasto che porta a questa funzione
 
-        if(this.executor!=null) {
-            this.executor.shutdown();
+        synchronized (disconnectionLock) {
+            if (!aDisconnectionHappened) { //per sicurezza lo controllo
+                if (this.executor != null) {
+                    this.executor.shutdown();
+                }
+                this.schedulerToCheckReceivedHeartBeat.shutdown();
+                this.schedulerToSendHeartbeat.shutdown(); //l'heartbeat receiver lato server rileverà la disconnessione
+                System.out.println("You left the game.");
+                System.exit(0); //status 0 -> no errors
+            }
         }
-        this.schedulerToCheckReceivedHeartBeat.shutdown();
-        this.schedulerToSendHeartbeat.shutdown(); //l'heartbeat receiver lato server rileverà la disconnessione
-        System.out.println("You left the game.");
-        System.exit(0); //status 0 -> no errors
 
     }
 
@@ -915,7 +998,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                                 personalPlayer.setPersonalObjective(tmp);
                                 System.out.println("You've correctly chosen your objective card!");
                                 gameController.checkObjectiveCardChosen(); //just added
-                            }catch (RemoteException |NotBoundException e){
+                            }catch (RemoteException|NotBoundException e){
                                 System.out.println("Unable to communicate with the server! Shutting down.");
                                 System.exit(-1);
                             }catch (CardNotOwnedException e){
@@ -1132,7 +1215,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         try {
                             playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0], tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]));
                             gameController.checkBaseCardPlayed();
-                        } catch (NotBoundException | RemoteException ignored) {}
+                        } catch (RemoteException|NotBoundException ignored) {}
                     });
                 }
             }else { //ask Pawn selection
@@ -1154,7 +1237,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                                 System.out.println("Please insert one of the possible colors!");
                             }
                         }
-                    } catch (NotBoundException |RemoteException e) {
+                    } catch (RemoteException|NotBoundException e) {
                         System.out.println("Unable to communicate with the Server. Shutting down.");
                         e.printStackTrace();
                         System.exit(-1);
@@ -1374,13 +1457,15 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     @Override
     public void handleDisconnection() throws RemoteException {
         System.out.println("A disconnection happened. Closing the game.");
-        if(selectedView==1) {
-            handleDisconnectionFunction();
-        }
-        if(selectedView==2) {
-            synchronized (guiLock){
-                aDisconnectionHappened = true; //serve per bloccare altre cose appena arriva una disconnessione
-                guiLock.notify(); //nel caso in cui la gui sta facendo la wait di un evento (che dopo questa discconnessione non si verificherà mai)
+        synchronized (disconnectionLock) {
+            if (selectedView == 1) {
+                handleDisconnectionFunction();
+            }
+            if (selectedView == 2) {
+                synchronized (guiLock) {
+                    aDisconnectionHappened = true; //serve per bloccare altre cose appena arriva una disconnessione
+                    guiLock.notify(); //nel caso in cui la gui sta facendo la wait di un evento (che dopo questa discconnessione non si verificherà mai)
+                }
             }
         }
     }
