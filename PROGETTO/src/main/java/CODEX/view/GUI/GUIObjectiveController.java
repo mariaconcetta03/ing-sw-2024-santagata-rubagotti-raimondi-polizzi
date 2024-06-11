@@ -277,7 +277,7 @@ public class GUIObjectiveController {
 
 
             stage.show();
-            String musicPath = getClass().getResource("/music2.mp3").toString();
+            String musicPath = getClass().getResource("/gameMusic.mp3").toString();
             Media sound = new Media(musicPath);
             MediaPlayer mediaPlayer = new MediaPlayer(sound);
             mediaPlayer.play();
