@@ -1001,7 +1001,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
                         } else {
                             isPlaying = false;
-                            System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
+                            System.out.println(ANSIFormatter.ANSI_BLUE+playersInTheGame.get(0).getNickname() + " is playing!"+ANSIFormatter.ANSI_RESET);
                         }
                     } else {
                         inGame = false;

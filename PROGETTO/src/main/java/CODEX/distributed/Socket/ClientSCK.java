@@ -1112,7 +1112,7 @@ public class ClientSCK implements ClientGeneralInterface {
                         }
                     } else {
                         setIsPlaying(false);
-                        System.out.println(playersInTheGame.get(0).getNickname() + " is playing!");
+                        System.out.println(ANSIFormatter.ANSI_BLUE+playersInTheGame.get(0).getNickname() + " is playing!"+ANSIFormatter.ANSI_RESET);
                     }
                 }else{
                     inGame=false;
@@ -1361,7 +1361,7 @@ public class ClientSCK implements ClientGeneralInterface {
                         case 4:
                             ok = false;
                             System.out.println("Which player's board do you want to see?");
-                            String nickname = sc.nextLine();
+                            String nickname = sc.next();
                             for (Player player : playersInTheGame) {
                                 if (player.getNickname().equals(nickname)) {
                                     ok = true;
@@ -1381,7 +1381,7 @@ public class ClientSCK implements ClientGeneralInterface {
                             break;
                         case 8:
                             System.out.println("Do you want to send a message to everybody (type 1) or a private message (type the single nickname)?");
-                            String answer = sc.nextLine();
+                            String answer = sc.next();
                             if (answer.equals("1")) {
                                 List<String> receivers = new ArrayList<>();
                                 for (Player p : playersInTheGame) {
