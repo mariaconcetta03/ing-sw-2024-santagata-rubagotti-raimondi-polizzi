@@ -212,7 +212,6 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             // we write the return value of the GameController method to unlock the client that is waiting it
             writeTheStream(new SCKMessage(serverMessage));
 
-        }catch (RemoteException ignored){ // never thrown
         } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException ex) {
             ServerMessage serverMessage= new ServerError(ex.getAssociatedEvent());
             writeTheStream(new SCKMessage(serverMessage));
@@ -233,7 +232,6 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             ServerMessage serverMessage=new ServerOk();
             // we write the return value of the serverController method to unlock the client that is waiting it
             writeTheStream(new SCKMessage(serverMessage));
-        }catch (RemoteException ignored){
         } catch (NicknameAlreadyTakenException ex) {
             ServerMessage serverMessage= new ServerError(ex.getAssociatedEvent());
             writeTheStream(new SCKMessage(serverMessage));

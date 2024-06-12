@@ -71,7 +71,7 @@ public class ServerController implements Serializable {
      * @throws RemoteException
      * @return allGameControllers.get(gameId) is the game controller of this match, we need to pass this to the client
      */
-    public synchronized GameController addPlayerToLobby(String playerNickname, int gameId) throws GameNotExistsException, GameAlreadyStartedException, FullLobbyException, RemoteException {
+    public synchronized GameController addPlayerToLobby(String playerNickname, int gameId) throws GameNotExistsException, GameAlreadyStartedException, FullLobbyException {
         if (!allGameControllers.containsKey(gameId)) { // if the game doesn't exist
             throw new GameNotExistsException("The game doesn't exist");
         } else if((allGameControllers.get(gameId).getGame() != null) && (!allGameControllers.get(gameId).getGame().getState().equals(Game.GameState.WAITING_FOR_START))) {//if the game is already started
@@ -98,7 +98,7 @@ public class ServerController implements Serializable {
      * @throws NicknameAlreadyTakenException if the nickname is already in use
      * @throws RemoteException
      */
-    public synchronized void chooseNickname(String nickname) throws NicknameAlreadyTakenException, RemoteException {
+    public synchronized void chooseNickname(String nickname) throws NicknameAlreadyTakenException {
         if(isNicknameAvailable(nickname)){
             allNicknames.add(nickname);
         }else{
