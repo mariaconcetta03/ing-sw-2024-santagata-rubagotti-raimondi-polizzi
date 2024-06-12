@@ -3,6 +3,7 @@ package org.model;
 import CODEX.Exceptions.CardNotDrawableException;
 import CODEX.org.model.*;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PlayerTest extends TestCase {
 
+    @Test
     public void testDrawCard() throws RemoteException  {
         // creating the player
         Player p1 = new Player();
@@ -72,7 +74,7 @@ public class PlayerTest extends TestCase {
 
 
 
-
+    @Test
     public void testPlayCard() throws RemoteException {
         // creating the structures
         Player p1 = new Player();
@@ -87,11 +89,25 @@ public class PlayerTest extends TestCase {
         p1.setBoard(board);
         board.setBoard(2);
 
-        // this is the card already placed on the board
         List<AngleType> centralResources = new ArrayList<>();
+        centralResources.add(AngleType.INSECT);
+        centralResources.add(AngleType.ANIMAL);
+
+        PlayableCard baseCard = new PlayableCard(1, 2, AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
+                AngleType.FUNGI, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE, centralResources, false,
+                false, false, false, null);
+
+        // placing the card on the BACK side
+        baseCard.setPosition(new Coordinates(40, 40));
+        baseCard.setOrientation(false);
+        board.placeBaseCard(baseCard);
+
+
+        // this is the card already placed on the board
+        List<AngleType> centralResources1 = new ArrayList<>();
         centralResources.add (AngleType.INSECT);
         PlayableCard card = new PlayableCard(1, 2, AngleType.FEATHER, AngleType.SCROLL, AngleType.FEATHER, AngleType.NATURE,
-                AngleType.FUNGI, AngleType.SCROLL, AngleType.ABSENT, AngleType.NO_RESOURCE, centralResources, false,
+                AngleType.FUNGI, AngleType.SCROLL, AngleType.ABSENT, AngleType.NO_RESOURCE, centralResources1, false,
                 true, false, false, null);
 
         // checking playable and unplayable positions of the card which is already existing
@@ -113,6 +129,7 @@ public class PlayerTest extends TestCase {
 
         // the player plays the card an then we check playable and unplayable positions of that
         p1.playCard(cardToPlay, new Coordinates(3, 3), true);
+        System.out.println("Playorder: "+cardToPlay.getPlayOrder());
         board.updatePlayablePositions(cardToPlay);
         board.updateUnplayablePositions(cardToPlay);
 
@@ -124,7 +141,7 @@ public class PlayerTest extends TestCase {
 
 
 
-
+    @Test
     public void testPlayBaseCard() throws RemoteException {
 
         // creating the structures
@@ -159,7 +176,7 @@ public class PlayerTest extends TestCase {
 
 
 
-
+    @Test
     public void testAddPoints() {
         Player p1 = new Player();
 
@@ -172,7 +189,7 @@ public class PlayerTest extends TestCase {
 
 
 
-
+    @Test
     public void testAddNumObjectivesReached() {
         Player p1 = new Player();
 

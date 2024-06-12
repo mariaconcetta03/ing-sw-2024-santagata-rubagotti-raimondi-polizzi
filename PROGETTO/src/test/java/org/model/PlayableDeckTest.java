@@ -4,18 +4,31 @@ import CODEX.org.model.AngleType;
 import CODEX.org.model.PlayableCard;
 import CODEX.org.model.PlayableDeck;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
+
+import java.util.EmptyStackException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PlayableDeckTest extends TestCase {
 
-    public void testAddCard() {
-    }
-
+    @Test
     public void testGetFirstCard() {
+        PlayableDeck pdeck= PlayableDeck.goldDeck();
+        System.out.println("First card id: "+pdeck.getFirstCard().getId());
+        for (int i=0; i<39;i++){
+            pdeck.getFirstCard();
+        }
+        assertThrows(EmptyStackException.class, ()->{pdeck.getFirstCard();});
+        assertThrows(EmptyStackException.class, ()->{pdeck.checkFirstCard();});
     }
 
+    @Test
     public void testGoldDeck() {
-        PlayableDeck pdeck= PlayableDeck.goldDeck();
+        PlayableDeck pdeck=new PlayableDeck();
+        pdeck= PlayableDeck.goldDeck();
         PlayableCard card1= pdeck.getFirstCard();
+        System.out.println(card1.hashCode());
         pdeck.shuffleDeck();
         System.out.println("Id: "+card1.getId());
         System.out.println("Front down left corner: "+card1.get_front_down_left());
@@ -60,10 +73,17 @@ public class PlayableDeckTest extends TestCase {
         System.out.println("Needed FUNGI to place the card: "+card2.getNeededResources().get(AngleType.FUNGI));
         System.out.println("Needed ANIMAL to place the card: "+card2.getNeededResources().get(AngleType.ANIMAL));
     }
-
+    @Test
     public void testResourceDeck() {
+        PlayableDeck resourceDeck=PlayableDeck.resourceDeck();
+        System.out.println(resourceDeck.checkFirstCard().getId());
+        resourceDeck.shuffleDeck();
+        System.out.println(resourceDeck.checkFirstCard().getId());
     }
 
+    @Test
     public void testBaseDeck() {
+        PlayableDeck baseDeck=PlayableDeck.baseDeck();
+        baseDeck.shuffleDeck();
     }
 }

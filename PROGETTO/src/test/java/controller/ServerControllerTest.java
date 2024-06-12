@@ -27,8 +27,8 @@ public class ServerControllerTest extends TestCase {
         assertThrows(IllegalArgumentException.class, ()->{s1.startLobby("Orango", 1);});
         assertThrows(IllegalArgumentException.class, ()->{s1.startLobby("MacchiaNera", -50);});
         assertThrows(IllegalArgumentException.class, ()->{s1.startLobby("Ciccio", 7);});
-        for(GameController gc: s1.getAllGameControllers().values()){
-            System.out.println("Available games are the ones with id: "+gc.getId());
+        for(Integer i: s1.getAvailableGameControllersId()){
+            System.out.println("Available games are the ones with id: "+i);
         }
     }
     //Bisogna impedire ad un giocatore gia in una partita di entrare in un'altra?
@@ -59,7 +59,7 @@ public class ServerControllerTest extends TestCase {
             s1.addPlayerToLobby(p5.getNickname(), 0);
             s1.addPlayerToLobby(p6.getNickname(), 1);
         }catch (GameNotExistsException | GameAlreadyStartedException | FullLobbyException ignored){}
-        assertThrows(GameAlreadyStartedException.class, ()->{s1.addPlayerToLobby(p6.getNickname(), 0);}); //when we launch all the test together it might produce GameNotExistsException
+        assertThrows(FullLobbyException.class, ()->{s1.addPlayerToLobby(p6.getNickname(), 0);}); //when we launch all the test together it might produce GameNotExistsException
         assertThrows(GameNotExistsException.class, ()->{s1.addPlayerToLobby(p6.getNickname(), 2);});
 
 

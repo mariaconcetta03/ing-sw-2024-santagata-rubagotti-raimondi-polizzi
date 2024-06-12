@@ -2,6 +2,7 @@ package org.model;
 
 import CODEX.org.model.ChatMessage;
 import CODEX.org.model.Game;
+import CODEX.org.model.Pawn;
 import CODEX.org.model.Player;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.Test;
@@ -16,33 +17,35 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GameTest extends TestCase {
 
+    @Test
     public void testAddPlayer() {
         Player p1 = new Player();
-        p1.setNickname("Topino");
-        Game game = new Game(p1, 1);
+        p1.setNickname("Topolino");
         Player p = new Player();
-        p.setNickname("Papero");
+        p.setNickname("Paperino");
         List<Player> players = new ArrayList<>();
-        players = game.getPlayers();
+        players.add(p1);
+        players.add(p);
+        Game game = new Game(players, 1);
         game.setnPlayers(2);
 
-        for (int i = 0; i< players.size(); i++) {
+        for (int i = 0; i< game.getPlayers().size(); i++) {
             System.out.println("Player number " + i + " with nickname " + players.get(i).getNickname());
         }
     }
 
 
-
+    @Test
     public void testAddPlayerWithException() {
         Player p1 = new Player();
-        p1.setNickname("Topino");
-        Game game = new Game(p1, 1);
+        p1.setNickname("Topolino");
         Player p = new Player();
-        p.setNickname("Papero");
+        p.setNickname("Paperino");
         List<Player> players = new ArrayList<>();
-        players = game.getPlayers();
+        players.add(p1);
+        players.add(p);
+        Game game = new Game(players, 1);
         game.setnPlayers(2);
-        game.addPlayer(p);
         Player p3 = new Player();
         p3.setNickname("Minnie");
         assertThrows(ArrayIndexOutOfBoundsException.class, ()->{
@@ -55,7 +58,7 @@ public class GameTest extends TestCase {
 
 
 
-
+    @Test
     public void testStartGame() throws RemoteException  {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
@@ -74,7 +77,7 @@ public class GameTest extends TestCase {
         int numPlayers = game.getnPlayers();
         p1.setGame(game);
 
-        p1.setNickname("Papero");
+        p1.setNickname("Paperino");
         p2.setNickname("Topolino");
         p3.setNickname("Minnie");
         p4.setNickname("Pluto");
@@ -85,6 +88,11 @@ public class GameTest extends TestCase {
         if (game.getState().equals(Game.GameState.STARTED)) {
             System.out.println("The game is set to STARTED!");
         }
+
+        p1.setColor(Pawn.BLUE);
+        p2.setColor(Pawn.RED);
+        p3.setColor(Pawn.YELLOW);
+        p4.setColor(Pawn.GREEN);
 
         // printing the colours of the pawns
         for (int i = 0; i<numPlayers; i++) {
@@ -100,7 +108,7 @@ public class GameTest extends TestCase {
     }
 
 
-
+    @Test
     public void testStartGameWithException() {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
@@ -110,7 +118,7 @@ public class GameTest extends TestCase {
         int numPlayers = game.getnPlayers();
         p1.setGame(game);
 
-        p1.setNickname("Papero");
+        p1.setNickname("Paperino");
 
         assertThrows(IllegalArgumentException.class, () -> {
             game.startGame();
@@ -121,7 +129,7 @@ public class GameTest extends TestCase {
             System.out.println("The game is set to STARTED!");
         }
     }
-
+    @Test
     public void testGiveInitialCards() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1,1);
@@ -150,7 +158,7 @@ public class GameTest extends TestCase {
 
 
 
-
+    @Test
     public void testWinner() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
@@ -165,28 +173,28 @@ public class GameTest extends TestCase {
         // adding points to the player
         p1.addPoints(5);
         p.addPoints(3);
-        p1.setNickname("Papero");
+        p1.setNickname("Paperino");
         p.setNickname("Topolino");
 
 
 
         // printing the points
-        System.out.println("The player Papero has 5 points");
+        System.out.println("The player Paperino has 5 points");
         System.out.println("The player Topolino has 3 points");
 
-        /*
 
-        List <Player> winners;
-        winners = game.winner();
 
-        for (int i = 0; i < winners.size(); i++) {
-            System.out.println("The winner is/are: " + winners.get(i).getNickname());
+
+        Map<Integer, List<String>> scoreBoard=game.winner();
+        for(Integer i: scoreBoard.keySet()) {
+            for (String s : scoreBoard.get(i)) {
+                System.out.println(i + "_ " + s);
+            }
         }
-
-         */
 
     }
 
+    @Test
     public void testWinner4() throws RemoteException {
         Player p1=new Player();
         Player p2=new Player();
@@ -221,8 +229,7 @@ public class GameTest extends TestCase {
     }
 
 
-
-
+    @Test
     public void testWinner2() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
@@ -237,7 +244,7 @@ public class GameTest extends TestCase {
         // adding points to the player
         p1.addPoints(5);
         p.addPoints(5);
-        p1.setNickname("Papero");
+        p1.setNickname("Paperino");
         p.setNickname("Topolino");
         p.addNumObjectivesReached();
         p1.addNumObjectivesReached();
@@ -245,25 +252,22 @@ public class GameTest extends TestCase {
 
 
         // printing the points
-        System.out.println("The player Papero has 5 points");
+        System.out.println("The player Paperino has 5 points");
         System.out.println("The player Topolino has 5 points");
 
 
-        /*
-        List <Player> winners;
-        winners = game.winner();
-
-        for (int i = 0; i < winners.size(); i++) {
-            System.out.println("The winner is/are: " + winners.get(i).getNickname());
+        Map<Integer, List<String>> scoreBoard=game.winner();
+        for(Integer i: scoreBoard.keySet()) {
+            for (String s : scoreBoard.get(i)) {
+                System.out.println(i + "_ " + s);
+            }
         }
-
-         */
 
     }
 
 
 
-
+    @Test
     public void testWinner3() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
@@ -278,31 +282,29 @@ public class GameTest extends TestCase {
         // adding points to the player
         p1.addPoints(5);
         p.addPoints(5);
-        p1.setNickname("Papero");
+        p1.setNickname("Paperino");
         p.setNickname("Topolino");
         p.addNumObjectivesReached();
 
 
         // printing the points
-        System.out.println("The player Papero has 5 points");
+        System.out.println("The player Paperino has 5 points");
         System.out.println("The player Topolino has 5 points");
 
 
-        /*
-        List <Player> winners;
-        winners = game.winner();
 
-        for (int i = 0; i < winners.size(); i++) {
-            System.out.println("The winner is/are: " + winners.get(i).getNickname());
+        Map<Integer, List<String>> scoreBoard=game.winner();
+        for(Integer i: scoreBoard.keySet()) {
+            for (String s : scoreBoard.get(i)) {
+                System.out.println(i + "_ " + s);
+            }
         }
-
-         */
 
     }
 
 
 
-
+    @Test
     public void testStartChat() {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
@@ -324,22 +326,12 @@ public class GameTest extends TestCase {
 
 
 
-
+    @Test
     public void testStartGeneralChat() {
-        /*Player p1 = new Player();
-        Game game = new Game(p1, 1);
-        Player p = new Player(game);
-        game.setnPlayers(2);
-        game.addPlayer(p);
-
-        int nPlayers = game.getnPlayers();
-        p1.setGame(game);
-        p.setGame(game);
-         */
         Player p1=new Player();
         Player p2= new Player();
-        p1.setNickname("pippo");
-        p2.setNickname("pluto");
+        p1.setNickname("Pippo");
+        p2.setNickname("Pluto");
         List<Player> players=new ArrayList<>();
         players.add(p1);
         players.add(p2);
@@ -353,11 +345,12 @@ public class GameTest extends TestCase {
         }
     }
 
+    @Test
     public void testGetChatByUsers() throws RemoteException {
-        String s1= "pippo";
-        String s2= "pluto";
-        String s3= "topolino";
-        String s4= "paperino";
+        String s1= "Pippo";
+        String s2= "Pluto";
+        String s3= "Topolino";
+        String s4= "Paperino";
         Player p1=new Player();
         Player p2= new Player();
         Player p3= new Player();
@@ -393,8 +386,7 @@ public class GameTest extends TestCase {
     }
 
 
-
-
+    @Test
     public void testNextRound() {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
@@ -413,7 +405,7 @@ public class GameTest extends TestCase {
         int nPlayers = game.getnPlayers();
         p1.setGame(game);
 
-        p1.setNickname("Papero");
+        p1.setNickname("Paperino");
         p2.setNickname("Topolino");
         p3.setNickname("Minnie");
         p4.setNickname("Pluto");
@@ -434,7 +426,7 @@ public class GameTest extends TestCase {
 
 
 
-
+    @Test
     public void testResetGoldCard1() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
@@ -453,7 +445,7 @@ public class GameTest extends TestCase {
         int nPlayers = game.getnPlayers();
         p1.setGame(game);
 
-        p1.setNickname("Papero");
+        p1.setNickname("Paperino");
         p2.setNickname("Topolino");
         p3.setNickname("Minnie");
         p4.setNickname("Pluto");
@@ -463,11 +455,11 @@ public class GameTest extends TestCase {
 
         System.out.println("The previous gold card (1) had the ID: " + game.getGoldCard1().getId());
             game.resetGoldCard1();
-        System.out.println("the new gold card (1) has the ID " +  game.getGoldCard1().getId());
+        System.out.println("The new gold card (1) has the ID " +  game.getGoldCard1().getId());
     }
 
 
-
+    @Test
     public void testResetGoldCard2() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
@@ -486,7 +478,7 @@ public class GameTest extends TestCase {
         int nPlayers = game.getnPlayers();
         p1.setGame(game);
 
-        p1.setNickname("Papero");
+        p1.setNickname("Paperino");
         p2.setNickname("Topolino");
         p3.setNickname("Minnie");
         p4.setNickname("Pluto");
@@ -496,11 +488,11 @@ public class GameTest extends TestCase {
         System.out.println("The previous gold card (2) had the ID: " + game.getGoldCard2().getId());
             game.resetGoldCard2();
 
-        System.out.println("the new gold card (2) has the ID " +  game.getGoldCard2().getId());
+        System.out.println("The new gold card (2) has the ID " +  game.getGoldCard2().getId());
     }
 
 
-
+    @Test
     public void testResetResourceCard1() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
@@ -519,7 +511,7 @@ public class GameTest extends TestCase {
         int nPlayers = game.getnPlayers();
         p1.setGame(game);
 
-        p1.setNickname("Papero");
+        p1.setNickname("Paperino");
         p2.setNickname("Topolino");
         p3.setNickname("Minnie");
         p4.setNickname("Pluto");
@@ -529,11 +521,11 @@ public class GameTest extends TestCase {
         System.out.println("The previous resource card (1) had the ID: " + game.getResourceCard1().getId());
 
             game.resetResourceCard1();
-        System.out.println("the new resource card (1) has the ID " +  game.getResourceCard1().getId());
+        System.out.println("The new resource card (1) has the ID " +  game.getResourceCard1().getId());
     }
 
 
-
+    @Test
     public void testResetResourceCard2() throws RemoteException {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
@@ -552,7 +544,7 @@ public class GameTest extends TestCase {
         int nPlayers = game.getnPlayers();
         p1.setGame(game);
 
-        p1.setNickname("Papero");
+        p1.setNickname("Paperino");
         p2.setNickname("Topolino");
         p3.setNickname("Minnie");
         p4.setNickname("Pluto");
@@ -562,7 +554,7 @@ public class GameTest extends TestCase {
         System.out.println("The previous resource card (2) had the ID: " + game.getResourceCard2().getId());
 
             game.resetResourceCard2();
-        System.out.println("the new resource card (2) has the ID " +  game.getResourceCard2().getId());
+        System.out.println("The new resource card (2) has the ID " +  game.getResourceCard2().getId());
     }
 
 }

@@ -2,10 +2,11 @@ package org.model;
 
 import CODEX.org.model.*;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 public class BoardTest extends TestCase {
-
+    @Test
     public void testSetBoard() {
         Player p1 = new Player();
         Board board = new Board(p1);
@@ -17,7 +18,7 @@ public class BoardTest extends TestCase {
     }
 
 
-
+    @Test
     public void testEnoughResources() {
         Player p1 = new Player();
         Board board = new Board(p1);
@@ -53,7 +54,7 @@ public class BoardTest extends TestCase {
     }
 
 
-
+    @Test
     public void testEnoughResources2() {
         Player p1 = new Player();
         Board board = new Board(p1);
@@ -91,7 +92,7 @@ public class BoardTest extends TestCase {
 
 
 
-
+    @Test
     public void testPlaceBaseCardBack() {
         Player p1 = new Player();
         Board board = new Board(p1);
@@ -114,7 +115,7 @@ public class BoardTest extends TestCase {
 
     }
 
-
+    @Test
     public void testPlaceBaseCardFront() {
         Player p1 = new Player();
         Board board = new Board(p1);
@@ -138,6 +139,7 @@ public class BoardTest extends TestCase {
     }
 
     //Test created by FRA to solve the problem related to contains
+    @Test
     public void testContainsCard(){
         PlayableDeck baseDeck=PlayableDeck.baseDeck();
         Player p1 = new Player();
@@ -162,6 +164,7 @@ public class BoardTest extends TestCase {
     }
 
     //Test created by FRA to solve the problem related to contains
+    @Test
     public void testContainsCoordinates(){
         Set<Coordinates> testSet= new HashSet<>();
         Coordinates p1= new Coordinates(0,0);
@@ -170,6 +173,7 @@ public class BoardTest extends TestCase {
         System.out.println("Does the set already contains the position? "+testSet.contains(p2));
 
     }
+    @Test
     public void testPlaceCardFront() {
         Player p1 = new Player();
         Board board = new Board(p1);
@@ -211,9 +215,7 @@ public class BoardTest extends TestCase {
 
     }
 
-
-
-
+    @Test
     public void testPlaceCardBack() {
         Player p1 = new Player();
         Board board = new Board(p1);
@@ -255,7 +257,7 @@ public class BoardTest extends TestCase {
     }
 
 
-
+    @Test
     public void testPlaceCardInTheMiddleFront() {
         Player p1 = new Player();
         Board board = new Board(p1);
@@ -346,7 +348,7 @@ public class BoardTest extends TestCase {
     }
 
 
-
+    @Test
     public void testPlaceCardInTheMiddleBack() {
         Player p1 = new Player();
         Board board = new Board(p1);
@@ -437,7 +439,7 @@ public class BoardTest extends TestCase {
     }
 
 
-
+    @Test
     public void testCardPoints() {
         Player p1 = new Player();
         Board board = new Board(p1);
@@ -456,7 +458,7 @@ public class BoardTest extends TestCase {
     }
 
 
-
+    @Test
     public void testCardPoints2() {
         Player p1 = new Player();
         Board board = new Board(p1);
@@ -475,7 +477,7 @@ public class BoardTest extends TestCase {
     }
 
 
-
+    @Test
     public void testCardPoints3() {
         Player p1 = new Player();
         Board board = new Board(p1);
@@ -494,7 +496,7 @@ public class BoardTest extends TestCase {
     }
 
 
-
+    @Test
     public void testCardPoints4() {
         Player p1 = new Player();
         Board board = new Board(p1);
@@ -512,7 +514,7 @@ public class BoardTest extends TestCase {
     }
 
 
-
+    @Test
     public void testUpdateUnplayablePositionsBack() {
         Player p1 = new Player();
         Board board = new Board(p1);
@@ -544,7 +546,7 @@ public class BoardTest extends TestCase {
     }
 
 
-
+    @Test
     public void testUpdateUnplayablePositionsFront() {
         Player p1 = new Player();
         Board board = new Board(p1);
@@ -577,7 +579,7 @@ public class BoardTest extends TestCase {
 
 
 
-
+    @Test
     public void testUpdatePlayablePositions() {
         Player p1 = new Player();
         Board board = new Board(p1);

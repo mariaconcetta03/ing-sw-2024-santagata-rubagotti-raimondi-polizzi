@@ -2,6 +2,7 @@ package org.model;
 
 import CODEX.org.model.*;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ObjectiveCardTest extends TestCase {
-
+    @Test
     public void testAddPointsToPlayerPattern() {
         //let's use for example the blue diagonal pattern (down to up, left to right)
         //the id of the card is to be chosen among the ids of the objective cards of type pattern
@@ -48,7 +49,7 @@ public class ObjectiveCardTest extends TestCase {
 
 
 
-
+    @Test
     public void testAddPointsToPlayerNumber(){
         Player player = new Player(); //this constructor set the points to zero
         Board board = new Board(player);
@@ -79,7 +80,7 @@ public class ObjectiveCardTest extends TestCase {
         assertEquals(3,player.getPoints()); //three points because we have only one set of: jar, feather, scroll
         }
 
-
+    @Test
     public void testAddPointsToPlayerNumber2(){
         Player player = new Player(); //this constructor set the points to zero
         Board board = new Board(player);
@@ -107,6 +108,7 @@ public class ObjectiveCardTest extends TestCase {
         usedCard.addPointsToPlayer(player); //this method should add 3 points to the player (which currently should have 0 points)
         assertEquals(0,player.getPoints()); //three points because we have only one set of: jar, feather, scroll
     }
+    @Test
     public void testObjectiveCard87(){
         Player player = new Player(); //this constructor set the points to zero
         Board board = new Board(player);
@@ -162,9 +164,10 @@ public class ObjectiveCardTest extends TestCase {
         System.out.println("I punti sono: "+player.getPoints());
     }
 
-
+    @Test
     public void testObjectiveCard91(){
         ObjectiveDeck objDeck= ObjectiveDeck.objectiveDeck();
+        assertFalse(objDeck.isFinished());
         ObjectiveCard objCard=null;
         for(ObjectiveCard obj: objDeck.getCards()){
             if(obj.getId()==91){
@@ -223,6 +226,7 @@ public class ObjectiveCardTest extends TestCase {
         System.out.println(player.getPoints());
     }
 
+    @Test
     public void testEquals(){
         ObjectiveCard obj1= new ObjectiveCard();
         ObjectiveCard obj2= new ObjectiveCard();
@@ -255,6 +259,37 @@ public class ObjectiveCardTest extends TestCase {
         obj2.setCardPoints(2);
         assertFalse(obj1.equals(obj2));
 
-        assertFalse(obj1.hashCode()==obj2.hashCode());
+        assertTrue(obj1.hashCode()==obj2.hashCode());
+
+        obj1= new ObjectiveCard();
+        obj2= new ObjectiveCard();
+        obj1.setId(1);
+        obj2.setId(1);
+        obj2.setCard0Type(AngleType.FUNGI);
+        obj1.setCard0Type(AngleType.INSECT);
+        assertFalse(obj1.equals(obj2));
+
+        obj1= new ObjectiveCard();
+        obj2= new ObjectiveCard();
+        obj1.setId(1);
+        obj2.setId(1);
+        obj2.setCard1Type(AngleType.FUNGI);
+        obj1.setCard1Type(AngleType.INSECT);
+        assertFalse(obj1.equals(obj2));
+
+        obj1= new ObjectiveCard();
+        obj2= new ObjectiveCard();
+        obj1.setId(1);
+        obj2.setId(1);
+        obj2.setCard2Type(AngleType.FUNGI);
+        obj1.setCard2Type(AngleType.INSECT);
+        assertFalse(obj1.equals(obj2));
+
+        obj1= new ObjectiveCard();
+        obj2= new ObjectiveCard();
+        obj1.setPositionCard2(new Coordinates(2, 1));
+        obj2.setPositionCard2(new Coordinates(1, 1));
+        assertFalse(obj1.equals(obj2));
+
     }
     }

@@ -67,17 +67,19 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * @throws RemoteException
      */
     public void createGame (List<Player> gamePlayers) throws RemoteException  {
-        game = new Game(gamePlayers, id);
-        // adding Observers to Game and Player classes
-        for(Observer obs: clientsConnected.values()){
-            game.addObserver(obs);
-        }
-        for(Player p: gamePlayers){
-            for(Observer obs: clientsConnected.values()){
-                p.addObserver(obs);
+        if(this.game==null) {
+            game = new Game(gamePlayers, id);
+            // adding Observers to Game and Player classes
+            for (Observer obs : clientsConnected.values()) {
+                game.addObserver(obs);
             }
+            for (Player p : gamePlayers) {
+                for (Observer obs : clientsConnected.values()) {
+                    p.addObserver(obs);
+                }
+            }
+            game.setLastEvent(ErrorsAssociatedWithExceptions.OK);
         }
-        game.setLastEvent(ErrorsAssociatedWithExceptions.OK);
     }
 
 

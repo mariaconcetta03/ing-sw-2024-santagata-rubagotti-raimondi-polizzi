@@ -72,23 +72,27 @@ public class ObjectiveCard extends Card implements Serializable {
             }
         }
         if ((this.getCard1Type() != null) && (other.getCard1Type() != null)) {
-            if (this.getCard0Type() != other.getCard0Type()) {
+            if (this.getCard1Type() != other.getCard1Type()) {
                 return false;
             }
         }
         if ((this.getCard2Type() != null) && (other.getCard2Type() != null)) {
-            if (this.getCard0Type() != other.getCard0Type()) {
+            if (this.getCard2Type() != other.getCard2Type()) {
                 return false;
             }
         }
         if (this.getCardPoints() != other.getCardPoints()) {
             return false;
         }
-        if (!this.getPositionCard1().equals(other.getPositionCard1())) {
-            return false;
+        if((this.getPositionCard1()!=null)&&(other.getPositionCard1()!=null)) {
+            if (!this.getPositionCard1().equals(other.getPositionCard1())) {
+                return false;
+            }
         }
-        if (!this.getPositionCard2().equals(other.getPositionCard2())) {
-            return false;
+        if((this.getPositionCard2()!=null)&&(other.getPositionCard2()!=null)) {
+            if (!this.getPositionCard2().equals(other.getPositionCard2())) {
+                return false;
+            }
         }
         return true;
     }

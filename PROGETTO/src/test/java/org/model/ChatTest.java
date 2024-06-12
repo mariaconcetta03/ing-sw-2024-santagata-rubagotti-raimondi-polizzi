@@ -4,6 +4,7 @@ import CODEX.org.model.Chat;
 import CODEX.org.model.ChatMessage;
 import CODEX.org.model.Player;
 import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ChatTest extends TestCase {
     List<String> users=new ArrayList<>();
+    @Test
     public void testSendMessage() throws RemoteException {
         String s1="Pippo";
         String s2= "Pluto";
@@ -29,7 +31,7 @@ public class ChatTest extends TestCase {
         c1.sendMessage(m);
         System.out.println("Chat "+c1.getId()+", users "+c1.getUsers().get(0)+", "+c1.getUsers().get(1)+": "+c1.getMessages().get(0).getMessage()+" sent by "+c1.getMessages().get(0).getSender()+" at "+c1.getMessages().get(0).getTimestamp());
     }
-
+    @Test
     public void testMessagesReceivedByPlayer() throws RemoteException {
         String s1="Pippo";
         String s2= "Pluto";
