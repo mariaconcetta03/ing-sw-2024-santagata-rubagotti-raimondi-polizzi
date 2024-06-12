@@ -1,4 +1,5 @@
 package CODEX.utils;
+
 import CODEX.utils.executableMessages.events.Event;
 
 import java.rmi.RemoteException;
@@ -12,17 +13,11 @@ import java.rmi.RemoteException;
 public interface Observer {
     String nickname = null;
 
-//    ---------------------------- QUESTI SONO PARAMETRI CHE VERRANNO MESSI NELLA VIEW -------------------------------
-//    Board b1, b2, b3, b4; // the boards of the 4 players
-//    PlayableDeck resourceDeck, goldDeck; // the two decks on the table
-//    PlayableDeck p1Deck, p2Deck, p3Deck, p4Deck; // the decks of every player
-//    PlayableCard resourceCard1, resourceCard2, goldCard1, goldCard2; // the cards on the market
-//    int points1, points2, points3, points4; // the points of each player in the game
-//    ----------------------------------------------------------------------------------------------------------------
-
-
     void update(Observable obs, Event e) throws RemoteException;
+
     void setNickname(String nick) throws RemoteException;
+
     String getNickname() throws RemoteException;
+
     void setADisconnectionHappened(boolean aDisconnectionHappened);
 }

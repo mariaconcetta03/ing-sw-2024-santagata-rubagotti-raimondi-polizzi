@@ -21,5 +21,6 @@ public interface ServerRMIInterface extends Remote {
     void chooseNickname(String nickname) throws RemoteException, NicknameAlreadyTakenException;
 
     Map<Integer, GameController> getAllGameControllers() throws RemoteException;
+
     Set<Integer> getAvailableGameControllersId() throws RemoteException;
 }

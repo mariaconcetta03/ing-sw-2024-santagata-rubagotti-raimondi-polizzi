@@ -927,10 +927,8 @@ public class ClientSCK implements ClientGeneralInterface {
         }
     }
 
-    @Override
-    public void updateChatMessage(ChatMessage message) throws RemoteException {
 
-    }
+
     /**
      * This is an update method
      * @param nickname is the nickname of the player who selected a new pawn color

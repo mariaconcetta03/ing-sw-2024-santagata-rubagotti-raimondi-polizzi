@@ -889,54 +889,7 @@ public void testStartGame() throws RemoteException {
         g1.playBaseCard("Pluto", p2.getPlayerDeck(1), true);
     }
 
-    @Test
-    public void testLeaveGame() throws RemoteException{
-        GameController g1= new GameController();
-        ServerController s1= new ServerController();
-        s1.getAllGameControllers().put(0, g1);
-        g1.setServerController(s1);
-        Player p1=new Player();
-        p1.setNickname("Pippo");
-        Player p2=new Player();
-        p2.setNickname("Pluto");
-        Player p3=new Player();
-        p3.setNickname("Paperino");
-        Player p4= new Player();
-        p4.setNickname("Topolino");
 
-        //adding the players to GameController
-        List<Player> players=new ArrayList<>();
-        players.add(p1);
-        players.add(p2);
-        players.add(p3);
-        players.add(p4);
-
-       /*
-    //adding players to ServerController
-    s1.getAllPlayers().add(p1);
-    s1.getAllPlayers().add(p2);
-    s1.getAllPlayers().add(p3);
-    s1.getAllPlayers().add(p4);
-     */
-        //adding players to GameController (action performed by ServerController usually)
-        g1.getGamePlayers().add(p1);
-        g1.getGamePlayers().add(p2);
-        g1.getGamePlayers().add(p3);
-        g1.getGamePlayers().add(p4);
-
-        //creating and starting the game
-        g1.createGame(players);
-        g1.startGame();
-
-        //all the players need to play the baseCard first
-        g1.playBaseCard("Pippo", p1.getPlayerDeck(1), true);
-        g1.playBaseCard("Topolino", p4.getPlayerDeck(1), true);
-        g1.playBaseCard("Paperino", p3.getPlayerDeck(1), true);
-        g1.playBaseCard("Pluto", p2.getPlayerDeck(1), true);
-
-        p1.addPoints(10);
-        g1.leaveGame("Topolino");
-    }
 
     @Test
     public void testEndGame() throws RemoteException, ColorAlreadyTakenException {
