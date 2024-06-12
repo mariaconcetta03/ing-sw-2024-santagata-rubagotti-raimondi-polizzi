@@ -198,12 +198,15 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * If the Event attribute of the sckMessage is not null it is an update,
      * otherwise it is a ServerMessage (ServerMessage attribute of the sckMessage)
+     * If the Event attribute of the sckMessage is not null the execute method will modify the local
+     * attributes of the client.
      * @param sckMessage
      */
     public void modifyClientSide(SCKMessage sckMessage) {
         if (sckMessage.getEvent() != null) { // we have an update
             sckMessage.getEvent().executeSCK(this);
         }else{ // we have a ServerMessage
+            // here we unlock the client that has been waiting for a server response
             sckMessage.getServerMessage().execute(this);
         }
 
