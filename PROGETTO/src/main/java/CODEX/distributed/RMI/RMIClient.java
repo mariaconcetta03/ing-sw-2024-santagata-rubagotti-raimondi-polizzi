@@ -1030,12 +1030,12 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     }
 
 
+
     /**
      * This is an update method
      * @param message which needs to be updated MEGLIO AGGIUNGERE UN SOLO MESSAGGIO MAGARI
      * @throws RemoteException if an exception happens while communicating with the remote
      */
-    @Override
     public void updateChatMessage(ChatMessage message) throws RemoteException {
         //messages.add(message);
         if (selectedView == 1) {
