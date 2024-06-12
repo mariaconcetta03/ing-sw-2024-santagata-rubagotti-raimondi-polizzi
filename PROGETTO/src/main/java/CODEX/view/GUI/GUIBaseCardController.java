@@ -78,25 +78,28 @@ public class GUIBaseCardController {
     public synchronized void selectedFront() {
         baseCard1.disabledProperty();
         baseCard2.disabledProperty();
-
-        Platform.runLater(() -> {
-            stateLabel.setText("Front side selected! Now wait for everyone to choose.");
-            System.out.println("selezionato fronte");
+        if (!baseCardPlayed) {
             baseCardPlayed = true;
-        });
+            Platform.runLater(() -> {
+                stateLabel.setText("Front side selected! Now wait for everyone to choose.");
+                System.out.println("selezionato fronte");
 
-        if (network == 1 && !baseCardPlayed) {
-            try {
-                rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], true);
-                rmiClient.getGameController().checkBaseCardPlayed();
-            } catch (RemoteException | NotBoundException alreadyCaught) {}
-        } else if (network == 2 && !baseCardPlayed) {
-            try {
-                clientSCK.playBaseCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], true);
-                clientSCK.checkBaseCardPlayed();
-            } catch (RemoteException | NotBoundException alreadyCaught) {}
+            });
+
+            if (network == 1) {
+                try {
+                    rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], true);
+                    rmiClient.getGameController().checkBaseCardPlayed();
+                } catch (RemoteException | NotBoundException alreadyCaught) {
+                }
+            } else if (network == 2) {
+                try {
+                    clientSCK.playBaseCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], true);
+                    clientSCK.checkBaseCardPlayed();
+                } catch (RemoteException | NotBoundException alreadyCaught) {
+                }
+            }
         }
-
     }
 
 
