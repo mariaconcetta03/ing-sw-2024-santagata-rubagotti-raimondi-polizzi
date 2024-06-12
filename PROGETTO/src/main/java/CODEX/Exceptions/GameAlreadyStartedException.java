@@ -2,6 +2,9 @@ package CODEX.Exceptions;
 
 import CODEX.utils.ErrorsAssociatedWithExceptions;
 
+/**
+ * This exception is thrown when a game is already started.
+ */
 public class GameAlreadyStartedException extends Exception implements ExceptionAssociatedWithAnEvent {
     /**
      * Constructor with the specified error message

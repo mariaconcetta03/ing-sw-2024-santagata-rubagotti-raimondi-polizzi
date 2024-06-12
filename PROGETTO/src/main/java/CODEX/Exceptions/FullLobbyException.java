@@ -2,10 +2,12 @@ package CODEX.Exceptions;
 
 import CODEX.utils.ErrorsAssociatedWithExceptions;
 
-
+/**
+ * This exception is thrown when a lobby is full and a player can't enjoy it.
+ */
 public class FullLobbyException extends Exception implements ExceptionAssociatedWithAnEvent {
     /**
-     * Constructor with the specified error message
+     * Class constructor
      * @param errormessage is the message we want to give
      */
     public FullLobbyException (String errormessage){

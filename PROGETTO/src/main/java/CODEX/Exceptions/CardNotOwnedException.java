@@ -2,12 +2,12 @@ package CODEX.Exceptions;
 
 import CODEX.utils.ErrorsAssociatedWithExceptions;
 
-public class CardNotOwnedException extends Exception implements ExceptionAssociatedWithAnEvent{
+public class CardNotOwnedException extends Exception implements ExceptionAssociatedWithAnEvent {
     /**
-     * Constructor with the specified error message
+     * Class constructor
      * @param errormessage is the message we want to give
      */
-    public CardNotOwnedException(String errormessage){
+    public CardNotOwnedException(String errormessage) {
         super(errormessage);
     }
 

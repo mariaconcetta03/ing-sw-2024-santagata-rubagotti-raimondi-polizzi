@@ -2,8 +2,15 @@ package CODEX.Exceptions;
 
 import CODEX.utils.ErrorsAssociatedWithExceptions;
 
-public class CardNotDrawableException extends Exception implements ExceptionAssociatedWithAnEvent{
-    public CardNotDrawableException(String errormessage){
+/**
+ * This exception is used when the card is not drawable
+ */
+public class CardNotDrawableException extends Exception implements ExceptionAssociatedWithAnEvent {
+    /**
+     * Class constructor
+     * @param errormessage is the message we want to give
+     */
+    public CardNotDrawableException(String errormessage) {
         super(errormessage);
     }
 
