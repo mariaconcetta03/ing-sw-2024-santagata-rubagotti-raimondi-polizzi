@@ -552,7 +552,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         synchronized (disconnectionLock) {
             if(firstDisconnection) {
                 System.out.println("the server has detected a disconnection");
-                game.notifYDisconnectionEvent();
+                game.notifyDisconnectionEvent();
                 for (Player p : gamePlayers) {
                     serverController.getAllNicknames().remove(p.getNickname());
                 }
