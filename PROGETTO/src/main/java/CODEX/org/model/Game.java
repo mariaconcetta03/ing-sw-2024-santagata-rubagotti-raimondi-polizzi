@@ -5,7 +5,6 @@ import CODEX.utils.ErrorsAssociatedWithExceptions;
 import CODEX.utils.Observable;
 import CODEX.utils.executableMessages.events.*;
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.*;
 
 
@@ -44,7 +43,7 @@ public class Game extends Observable implements Serializable {
 
     private Map<Integer, Chat> chats; // contains all the chats started during the game. String is the crasi of the nickname
     private int chatId=0;
-    private List<Pawn> alreadySelectedColors;
+    private final List<Pawn> alreadySelectedColors;
     private ErrorsAssociatedWithExceptions lastEvent; // this flag gives some essential information about the last event which occurred in this Game
     private int lastMoves;
 
@@ -83,7 +82,7 @@ public class Game extends Observable implements Serializable {
 
 
     /**
-     * Class constructor (used for testing purposes)
+     * Class constructor (used for testing purposes) @TODO rimuovere
      * @param player creator
      * @param id game ID
      */
@@ -104,6 +103,8 @@ public class Game extends Observable implements Serializable {
         this.goldCard2 = null;
         this.objectiveCard1 = null;
         this.objectiveCard2 = null;
+        this.alreadySelectedColors= new ArrayList<>();
+        this.lastMoves=-1;
     }
 
 
@@ -130,9 +131,8 @@ public class Game extends Observable implements Serializable {
      * it gives each player 2 objective cards, he will decide which one to choose
      * it sets the game-order of the players
      * @throws IllegalArgumentException if players are less than 2 or more than 4
-     * @throws RemoteException if there is a problem in notifying observers
      */
-    public void startGame () throws IllegalArgumentException, RemoteException {
+    public void startGame () throws IllegalArgumentException{
         if((players.size()<2)||(players.size()>4)){
             throw new IllegalArgumentException("Incorrect number of players");} //will never be called
 
@@ -206,9 +206,8 @@ public class Game extends Observable implements Serializable {
 
     /**
      * This method is called by the GameController when all the players have chosen their Pawn's color
-     * @throws RemoteException if there is a problem in notifying observers
      */
-    public void chosenPawns() throws RemoteException {
+    public void chosenPawns(){
         notifyObservers(new updatePlayersOrderEvent(players));
     }
 
@@ -218,9 +217,8 @@ public class Game extends Observable implements Serializable {
      * After the player has played on the board the baseCard, this function is invoked.
      * It gives to each Player (2 resourceCards + 1 goldCard). It also reveals the common ObjectiveCards
      * and gives 2 ObjectiveCards per Player to be selected later
-     * @throws RemoteException if the player failed to draw the card
      */
-    public void giveInitialCards () throws RemoteException {
+    public void giveInitialCards (){
         for (int i=0; i<nPlayers; i++) {
             try {
                 players.get(i).drawCard(resourceDeck.checkFirstCard()); // resource card #1
@@ -253,9 +251,8 @@ public class Game extends Observable implements Serializable {
 
     /**
      * This method ends the game
-     * @throws RemoteException if it failed to sed game state
      */
-    public void endGame () throws RemoteException {
+    public void endGame (){
         setState(GameState.ENDED);
     }
 
@@ -266,9 +263,8 @@ public class Game extends Observable implements Serializable {
      * If there are 2 or more winners, it returns a List with the players
      * with the same "Points & Objectives completed" situation.
      * @return winner is the List containing the winner or the players who tied
-     * @throws RemoteException if there is a problem in notifying observers
      */
-    public Map<Integer, List<String>> winner () throws RemoteException {
+    public Map<Integer, List<String>> winner (){
 
         Map<String, Player> playersNicknames=new HashMap<>();
         for(Player p: players){
@@ -386,9 +382,8 @@ public class Game extends Observable implements Serializable {
     /**
      *  The first player of the list, after this method is invoked, is the one who will need to play soon, at the next round.
      *  The order of the whole list is modified
-     * @throws RemoteException if there is a problem in notifying observers
      */
-    public void nextRound() throws RemoteException{
+    public void nextRound(){
         this.players.get(0).setState(Player.PlayerState.IS_WAITING);
         this.players.add(this.players.get(0));
         this.players.remove(0);
@@ -402,9 +397,8 @@ public class Game extends Observable implements Serializable {
     /**
      * These 4 methods are useful to replace a card in the market.
      * The market is formed by 2 gold cards and 2 resource cards, which the player can pick up during the game
-     * @throws RemoteException if there is a problem in notifying observers
      */
-    public void resetGoldCard1 ()  throws RemoteException {
+    public void resetGoldCard1 () {
         if(!this.goldDeck.isFinished()){
             this.goldCard1=this.goldDeck.getFirstCard();
         }else if(!this.resourceDeck.isFinished()){
@@ -417,7 +411,7 @@ public class Game extends Observable implements Serializable {
         notifyObservers(new updateResourceDeckEvent(resourceDeck));
     }
 
-    public void resetGoldCard2 () throws RemoteException {
+    public void resetGoldCard2 () {
         if(!this.goldDeck.isFinished()){
             this.goldCard2=this.goldDeck.getFirstCard();
         }else if(!this.resourceDeck.isFinished()){
@@ -430,7 +424,7 @@ public class Game extends Observable implements Serializable {
         notifyObservers(new updateResourceDeckEvent(resourceDeck));
     }
 
-    public void resetResourceCard1 () throws RemoteException {
+    public void resetResourceCard1 () {
         if(!this.resourceDeck.isFinished()){
             this.resourceCard1=this.resourceDeck.getFirstCard();
         }else if(!this.goldDeck.isFinished()){
@@ -443,7 +437,7 @@ public class Game extends Observable implements Serializable {
         notifyObservers(new updateGoldDeckEvent(goldDeck));
     }
 
-    public void resetResourceCard2 () throws RemoteException {
+    public void resetResourceCard2 () {
         if(!this.resourceDeck.isFinished()){
             this.resourceCard2=this.resourceDeck.getFirstCard();
         }else if(!this.goldDeck.isFinished()){
@@ -650,7 +644,7 @@ public class Game extends Observable implements Serializable {
      * Setter method
      * @param state of the game
      */
-    public void setState (GameState state) throws RemoteException {
+    public void setState (GameState state) {
         this.state = state;
         boolean theGameHasJustStarted;
         if(this.state.equals(GameState.STARTED)){
@@ -669,12 +663,7 @@ public class Game extends Observable implements Serializable {
      */
     public void setLastEvent(ErrorsAssociatedWithExceptions lastEvent) {
         this.lastEvent = lastEvent;
-        if(lastEvent.equals(ErrorsAssociatedWithExceptions.SETUP_PHASE_2)) {
-            try {
-                notifyObservers(new setUpPhaseFinishedEvent());
-            } catch (RemoteException ignored) {
-            }
-        }
+        System.out.println("ERROR: "+lastEvent.toString());
     }
 
 
@@ -684,10 +673,7 @@ public class Game extends Observable implements Serializable {
      * @param event which occurred in this game
      */
     public void setLastEvent(Event event){
-        try {
-            notifyObservers(event); // disconnectionEvent
-        } catch (RemoteException ignored) { // connection lost
-        }
+        notifyObservers(event);
     }
 
 
@@ -695,9 +681,8 @@ public class Game extends Observable implements Serializable {
     /**
      * Setter method
      * @param lastMoves moves left in this game
-     * @throws RemoteException if there was a problem in notifying observers
      */
-    public void setLastMoves(int lastMoves) throws RemoteException {
+    public void setLastMoves(int lastMoves) {
         this.lastMoves = lastMoves;
         notifyObservers(new updateLastMovesEvent(this.lastMoves));
     }

@@ -21,7 +21,7 @@ public class ServerController implements Serializable {
     private List<String> allNicknames;
     private List<Observer> lobbyClients; // This is the List that will contain the Clients not yet connected to a specific Game (GC)
 
-
+    boolean addPlayerToLobbyCalled=false;
 
     /**
      * Class constructor
@@ -42,7 +42,7 @@ public class ServerController implements Serializable {
      * @throws IllegalArgumentException when the number of players is wrong
      * @throws RemoteException
      */
-    public GameController startLobby(String creatorNickname, int numOfPlayers) throws IllegalArgumentException, RemoteException {
+    public synchronized GameController startLobby(String creatorNickname, int numOfPlayers) throws IllegalArgumentException, RemoteException {
         // Creating the specific GameController
         GameController gameController = new GameController();
         gameController.setServerController(this);
@@ -71,7 +71,7 @@ public class ServerController implements Serializable {
      * @throws RemoteException
      * @return allGameControllers.get(gameId) is the game controller of this match, we need to pass this to the client
      */
-    public GameController addPlayerToLobby(String playerNickname, int gameId) throws GameNotExistsException, GameAlreadyStartedException, FullLobbyException, RemoteException {
+    public synchronized GameController addPlayerToLobby(String playerNickname, int gameId) throws GameNotExistsException, GameAlreadyStartedException, FullLobbyException, RemoteException {
         if (!allGameControllers.containsKey(gameId)) { // if the game doesn't exist
             throw new GameNotExistsException("The game doesn't exist");
         } else if((allGameControllers.get(gameId).getGame() != null) && (!allGameControllers.get(gameId).getGame().getState().equals(Game.GameState.WAITING_FOR_START))) {//if the game is already started
@@ -98,7 +98,7 @@ public class ServerController implements Serializable {
      * @throws NicknameAlreadyTakenException if the nickname is already in use
      * @throws RemoteException
      */
-    public void chooseNickname(String nickname) throws NicknameAlreadyTakenException, RemoteException {
+    public synchronized void chooseNickname(String nickname) throws NicknameAlreadyTakenException, RemoteException {
         if(isNicknameAvailable(nickname)){
             allNicknames.add(nickname);
         }else{

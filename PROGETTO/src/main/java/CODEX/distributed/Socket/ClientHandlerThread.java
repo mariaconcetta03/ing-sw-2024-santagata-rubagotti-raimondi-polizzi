@@ -122,7 +122,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
      * @throws RemoteException
      */
     @Override
-    public void update(Observable obs, CODEX.utils.executableMessages.events.Event e) throws RemoteException {
+    public void update(Observable obs, CODEX.utils.executableMessages.events.Event e) {
         boolean check=e.executeSCKServerSide();
         if(check){ // true if the gameState has changed to 'STARTED'
             this.pongReceived=true; // initialization

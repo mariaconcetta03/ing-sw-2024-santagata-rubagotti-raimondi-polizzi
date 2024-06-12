@@ -10,6 +10,7 @@ import CODEX.org.model.*;
 import CODEX.utils.Observer;
 import CODEX.utils.ErrorsAssociatedWithExceptions;
 import CODEX.utils.executableMessages.events.OK;
+import CODEX.utils.executableMessages.events.setUpPhaseFinishedEvent;
 import CODEX.utils.executableMessages.events.updatePlayersOrderEvent;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -40,7 +41,10 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     private Map<String, Observer> clientsConnected;
     private final Object disconnectionLock=new Object();
 
-
+    private boolean alreadyCheckedNPlayers;
+    private boolean alreadyCheckedBaseCards;
+    private boolean alreadyCheckedColors;
+    private boolean alreadyCheckedObjectiveCards;
 
     /**
      * Class constructor, initialises lastRounds and lastDrawingRounds to 10 (improbable value)
@@ -57,6 +61,10 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         numberOfPlayers = 0;
         id = 0;
         lastHeartbeatTimesOfEachPlayer = new HashMap<>();
+        alreadyCheckedNPlayers=false;
+        alreadyCheckedColors=false;
+        alreadyCheckedBaseCards=false;
+        alreadyCheckedObjectiveCards=false;
     }
 
 
@@ -78,7 +86,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                     p.addObserver(obs);
                 }
             }
-            game.setLastEvent(ErrorsAssociatedWithExceptions.OK);
         }
     }
 
@@ -105,14 +112,11 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * If the number of players inside is correct, then it starts the game
      * @throws RemoteException
      */
-    public void checkNPlayers() throws RemoteException{
-        if (gamePlayers.size() == numberOfPlayers) {
+    public synchronized void checkNPlayers() throws RemoteException{
+        if ((!alreadyCheckedNPlayers)&&(gamePlayers.size() == numberOfPlayers)) {
+            alreadyCheckedNPlayers=true;
             createGame(gamePlayers);
-            try {
-                startGame();
-            } catch (IllegalStateException e) {
-                System.out.println("The game is already started!");
-            }
+            startGame(); //removed illegalstate
         }
     }
 
@@ -123,16 +127,11 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * player, and he will need to choose one of these. Then the market is completed and each player receives
      * 3 cards (2 resource cards and 1 gold card).
      * INTERNAL USE METHOD
-     * @throws IllegalArgumentException if there's an invalid game status
      * @throws RemoteException
      */
-    public void startGame() throws IllegalStateException, RemoteException {
+    public void startGame() throws RemoteException {
         if(game.getState() == Game.GameState.WAITING_FOR_START) {
             game.startGame();
-            game.setLastEvent(ErrorsAssociatedWithExceptions.OK);
-        } else {
-            game.setLastEvent(ErrorsAssociatedWithExceptions.INVALID_GAME_STATUS);
-            throw new IllegalStateException();
         }
     }
 
@@ -145,7 +144,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * @param baseCard the base card played
      * @param orientation of the played card
      */
-    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) {
+    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) { //TODO no remote?
         Player player= getPlayerByNickname(nickname);
         player.playBaseCard(orientation, baseCard);
         player.getPlayerDeck()[0]=null; // baseCard deleted from player deck
@@ -158,19 +157,20 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * If they all did, then it gives the initial cards for the starting of the match.
      * @throws RemoteException
      */
-    public void checkBaseCardPlayed() throws RemoteException {
+    public synchronized void checkBaseCardPlayed() throws RemoteException {
         PlayableCard[][] tmp;
         //for all players in the game
-        for(Player p1: game.getPlayers()){
-            tmp=p1.getBoard().getTable();
+        for (Player p1 : game.getPlayers()) {
+            tmp = p1.getBoard().getTable();
             //if all players haven't played their baseCard
-            if(tmp[p1.getBoard().getBoardDimensions()/2][p1.getBoard().getBoardDimensions()/2]==null){
-                game.setLastEvent(ErrorsAssociatedWithExceptions.OK);
+            if (tmp[p1.getBoard().getBoardDimensions() / 2][p1.getBoard().getBoardDimensions() / 2] == null) {
                 return;
             }
         }
-        game.giveInitialCards();
-        game.setLastEvent(ErrorsAssociatedWithExceptions.OK);
+        if (!alreadyCheckedBaseCards){
+            alreadyCheckedBaseCards=true;
+            game.giveInitialCards();
+        }
     }
 
 
@@ -187,22 +187,15 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, IllegalArgumentException {
         Player currentPlayer = game.getPlayers().get(0);
         if (!getPlayerByNickname(nickname).equals(currentPlayer)) {
-            System.out.println("NON E IL TUO TURNO, NON PUOI GIOCARE LA CARTA");
             game.setLastEvent(ErrorsAssociatedWithExceptions.NOT_YOUR_TURN);
         }else{
-            try {
-                currentPlayer.playCard(selectedCard, position, orientation);
-                if ((game.getState() != Game.GameState.ENDING) && (currentPlayer.getPoints() >= 20) && (lastRounds==10)) {
-                    game.setState(Game.GameState.ENDING);
-                    calculateLastMoves();
-                }
-                if(lastDrawingRounds<=0){
-                    nextPhase();
-                }
-                game.setLastEvent(ErrorsAssociatedWithExceptions.OK);
-            } catch (IllegalArgumentException e) {
-                game.setLastEvent(ErrorsAssociatedWithExceptions.UNABLE_TO_PLAY_CARD);
-                throw e;
+            currentPlayer.playCard(selectedCard, position, orientation);
+            if ((game.getState() != Game.GameState.ENDING) && (currentPlayer.getPoints() >= 20) && (lastRounds==10)) {
+                game.setState(Game.GameState.ENDING);
+                calculateLastMoves();
+            }
+            if(lastDrawingRounds<=0){
+                nextPhase();
             }
         }
         game.setLastEvent(new OK(nickname));
@@ -220,7 +213,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         // we can draw a card from one of the decks or from the uncovered cards
         Player currentPlayer = game.getPlayers().get(0);
         if (!getPlayerByNickname(nickname).equals(currentPlayer)) {
-            System.out.println("Not your turn, you can't draw!");
             game.setLastEvent(ErrorsAssociatedWithExceptions.NOT_YOUR_TURN);
         } else {
             boolean draw = false;
@@ -236,17 +228,12 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                     System.out.println("This card can't be drawn!");
                     game.setLastEvent(ErrorsAssociatedWithExceptions.CARD_NOT_DRAWN);
                     return;
-                }catch(EmptyStackException e){
-                    System.out.println(e.getMessage());
-                    game.setLastEvent(ErrorsAssociatedWithExceptions.CARD_NOT_DRAWN);
-                    return;
                 }
                 if ((game.getState() != Game.GameState.ENDING) && ((game.getResourceDeck().isFinished()) && (game.getGoldDeck().isFinished()))) {
                     game.setState(Game.GameState.ENDING);
                     calculateLastMoves();
                 } // if the score becomes higher than 20 there would be only one another turn to be played
                 nextPhase();
-                game.setLastEvent(ErrorsAssociatedWithExceptions.OK);
             }else{
                 // you can't draw if you still haven't played a card
                 game.setLastEvent(ErrorsAssociatedWithExceptions.CARD_NOT_DRAWN);
@@ -267,7 +254,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         Player chooser= getPlayerByNickname(chooserNickname);
         try {
             chooser.setPersonalObjective(selectedCard);
-            game.setLastEvent (ErrorsAssociatedWithExceptions.OK);
         }catch(CardNotOwnedException e) {
             // only if the player is able to partially hack the game
             game.setLastEvent (ErrorsAssociatedWithExceptions.OBJECTIVE_CARD_NOT_OWNED);
@@ -280,14 +266,17 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * This method is invoked to check if all the players have chosen their objective card
      * @throws RemoteException
      */
-    public void checkObjectiveCardChosen() throws RemoteException{
+    public synchronized void checkObjectiveCardChosen() throws RemoteException{
         for(Player p: game.getPlayers()){
             if(p.getPersonalObjectives().size()==2){
                 return;
             }
         }
         // finished choosing the objective card: need to start the real Game
-        game.setLastEvent(ErrorsAssociatedWithExceptions.SETUP_PHASE_2);
+        if(!alreadyCheckedObjectiveCards){
+            alreadyCheckedObjectiveCards=true;
+            game.setLastEvent(new setUpPhaseFinishedEvent());
+        }
     }
 
 
@@ -318,13 +307,16 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * This method is invoked to check if all the players have chosen their pawn color
      * @throws RemoteException
      */
-    public void checkChosenPawnColor() throws RemoteException {
+    public synchronized void checkChosenPawnColor() throws RemoteException {
         for(Player p1: game.getPlayers()){
             if(p1.getChosenColor()==null){
                 return;
             }
         }
-        game.chosenPawns();
+        if(!alreadyCheckedColors) {
+            alreadyCheckedColors=true;
+            game.chosenPawns();
+        }
     }
 
 
@@ -344,7 +336,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                if(tmp!=null){
                    receiversNicknames.remove(senderNickname);
                    tmp.sendMessage(new ChatMessage(message, senderNickname, receiversNicknames, new Timestamp(System.currentTimeMillis())));
-                   game.setLastEvent(ErrorsAssociatedWithExceptions.OK);
                    return;
                }
            }
@@ -367,7 +358,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                }
                tmp.sendMessage(new ChatMessage(message, senderNickname, receiversNicknames, new Timestamp(System.currentTimeMillis())));
            }
-        game.setLastEvent(ErrorsAssociatedWithExceptions.OK);
         game.setLastEvent(new OK(senderNickname));
     }
 
@@ -395,7 +385,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
             // the order of the players in the list will be changed
             game.nextRound();
         }
-        game.setLastEvent(ErrorsAssociatedWithExceptions.OK);
     }
 
 
@@ -450,7 +439,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         }
         game.setLastEvent(new updatePlayersOrderEvent(game.getPlayers())); //lista aggiornata con i punti
         game.winner();
-        game.setLastEvent (ErrorsAssociatedWithExceptions.OK);
 
         //removing all the observers since the game will not continue
         for(Player p: game.getPlayers()){
@@ -467,7 +455,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         for(Player p: gamePlayers) {
             serverController.getAllNicknames().remove(p.getNickname());
         }
-        System.out.println("Ho fatto tutte le rimozioni");
     }
 
 

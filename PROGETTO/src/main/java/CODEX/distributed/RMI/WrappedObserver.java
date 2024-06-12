@@ -49,24 +49,20 @@ public class WrappedObserver implements Observer {
         WrappedObserver wrappedObserver=this;
         executor= Executors.newSingleThreadExecutor();
         executor.execute(()-> {
+            Event event;
+            boolean lastEvent;
             while (!aDisconnectionHappened&&!Thread.currentThread().isInterrupted()) {
-                Event event = null;
-                boolean lastEvent = false;
-                while (!lastEvent||event!=null) {
-                    event = eventQueue.poll();
-                    if (event != null) {
-                        try {
-
-                            lastEvent = event.execute(remoteClient, wrappedObserver);
-                            System.out.println("ho fatto la pull dell'evento");
-
-                        } catch (RemoteException e) {
-                            aDisconnectionHappened = true;
-                            e.printStackTrace();
-
-                        }
+                lastEvent = false;
+                event = eventQueue.poll();
+                while (!lastEvent && event!=null) {
+                    try {
+                        lastEvent = event.execute(remoteClient, wrappedObserver);
+                        System.out.println("ho fatto la pull dell'evento");
+                    } catch (RemoteException e) {
+                        aDisconnectionHappened = true;
+                        e.printStackTrace();
                     }
-
+                    event = eventQueue.poll();
                 }
             }
         });
@@ -78,7 +74,7 @@ public class WrappedObserver implements Observer {
      * This is an update method
      * @param obs is the observable who called the notify
      */
-    public void update(Observable obs, Event event) throws RemoteException {
+    public void update(Observable obs, Event event) {
         System.out.println("ho fatto la push dell'evento");
         eventQueue.add(event); //push
     }

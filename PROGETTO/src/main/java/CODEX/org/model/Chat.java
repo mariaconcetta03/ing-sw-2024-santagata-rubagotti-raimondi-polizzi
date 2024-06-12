@@ -34,7 +34,7 @@ public class Chat extends Observable implements Serializable {
      * This method add a new message to the chat ("sending" it)
      * @param mess It's the message sent by the player
      */
-    public void sendMessage (ChatMessage mess) throws RemoteException {
+    public void sendMessage (ChatMessage mess) {
         if(messages.isEmpty()){
             notifyObservers(new updateChatEvent(this));
         }

@@ -28,9 +28,8 @@ public class Observable {
      * This method will be called at the end of the model's methods that "modify" something.
      * It will inform the Observers to perform an update action contacting the Client related to them.
      * @param e has caused the modification
-     * @throws RemoteException
      */
-    public void notifyObservers(Event e) throws RemoteException {
+    public void notifyObservers(Event e) {
         for (Observer obs : observers) {
             obs.update(this, e);
         }

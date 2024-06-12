@@ -10,7 +10,7 @@ import java.rmi.RemoteException;
  */
 public interface Observer {
     String nickname = null;
-    void update(Observable obs, Event e) throws RemoteException;
+    void update(Observable obs, Event e);
 
     public void setNickname(String nickname);
 

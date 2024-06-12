@@ -56,7 +56,7 @@ public class Player extends Observable implements Serializable {
      * introduces another card in the player's deck
      * @param card is the card that the player has taken from a deck or from the market
      */
-    public void drawCard(PlayableCard card) throws CardNotDrawableException, RemoteException {
+    public void drawCard(PlayableCard card) throws CardNotDrawableException {
         boolean drawn = false;
 
         PlayableDeck baseDeck = PlayableDeck.baseDeck();
@@ -87,7 +87,7 @@ public class Player extends Observable implements Serializable {
             card = game.getGoldDeck().getFirstCard();
             notifyObservers(new updateGoldDeckEvent(game.getGoldDeck()));
         }else if(!baseDeck.getCards().contains(card)){
-            throw new CardNotDrawableException("You can't throw this card!");
+            throw new CardNotDrawableException("You can't draw this card!");
         }
 
         // where card is null, the new card is placed
@@ -130,10 +130,9 @@ public class Player extends Observable implements Serializable {
         tmp2.add(this.nickname);
         tmp2.add(this.board);
 
-        try {
-            notifyObservers(new updatePlayerDeckEvent(this.nickname, this.playerDeck));
-            notifyObservers(new updateBoardEvent(this.nickname, this.board, card)); // add the last added card
-        } catch (RemoteException ignored){}
+
+        notifyObservers(new updatePlayerDeckEvent(this.nickname, this.playerDeck));
+        notifyObservers(new updateBoardEvent(this.nickname, this.board, card)); // add the last added card
     }
 
 
@@ -154,10 +153,8 @@ public class Player extends Observable implements Serializable {
         tmp2.add(this.nickname);
         tmp2.add(this.board);
 
-        try {
-            notifyObservers(new updatePlayerDeckEvent(this.nickname, this.playerDeck));
-            notifyObservers(new updateBoardEvent(this.nickname, this.board, card));
-        } catch (RemoteException ignored){}
+        notifyObservers(new updatePlayerDeckEvent(this.nickname, this.playerDeck));
+        notifyObservers(new updateBoardEvent(this.nickname, this.board, card));
     }
 
 
@@ -185,7 +182,7 @@ public class Player extends Observable implements Serializable {
      * This method adds an objective card to the list. The list will contain 2 random objective cards and the player will need to select only one of them
      * @param card is the objective card you need to add to the list
      */
-    public void addPersonalObjective(ObjectiveCard card) throws RemoteException{
+    public void addPersonalObjective(ObjectiveCard card){
         this.personalObjective.add(card);
         notifyObservers(new UpdatePersonalObjectiveEvent(card, this.nickname));
     }
@@ -196,7 +193,7 @@ public class Player extends Observable implements Serializable {
      * Setter method
      * @param color is the one chosen by player
      */
-    public void setColor(Pawn color) throws RemoteException {
+    public void setColor(Pawn color) {
         this.color = color;
         notifyObservers(new updatePlayerPawnEvent(this.nickname, this.color));
     }
@@ -238,7 +235,7 @@ public class Player extends Observable implements Serializable {
      * Setter method
      * @param card is the personal objective chosen by the player
      */
-    public void setPersonalObjective (ObjectiveCard card) throws CardNotOwnedException, RemoteException {
+    public void setPersonalObjective (ObjectiveCard card) throws CardNotOwnedException {
         if (this.personalObjective.contains(card)) {
             if (card.equals(this.personalObjective.get(0))) {
                 this.personalObjective.remove(1);
