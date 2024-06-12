@@ -5,10 +5,13 @@ import CODEX.distributed.messages.SCKMessage;
 import CODEX.utils.executableMessages.serverMessages.ServerMessage;
 import CODEX.utils.executableMessages.serverMessages.ServerPong;
 
-public class ClientPing implements ClientMessage{ //sent by the client to ask 'are you still connected?'
+/**
+ * This class is used to represent a ping, a message useful for detecting disconnections
+ */
+public class ClientPing implements ClientMessage {
     @Override
     public void execute(ClientHandlerThread clientHandlerThread) {
-        ServerMessage serverMessage=new ServerPong();
-        clientHandlerThread.writeTheStream(new SCKMessage(serverMessage)); //to tell the client 'yes, I'm still connected'
+        ServerMessage serverMessage = new ServerPong();
+        clientHandlerThread.writeTheStream(new SCKMessage(serverMessage)); // to tell the client 'yes, I'm still connected'
     }
 }

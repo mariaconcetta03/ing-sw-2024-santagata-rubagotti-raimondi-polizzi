@@ -4,6 +4,9 @@ import CODEX.distributed.Socket.ClientHandlerThread;
 
 import java.rmi.RemoteException;
 
+/**
+ * This class is used to represent a message which is sent when checking the objective cards chosen by the players
+ */
 public class CheckObjectiveCardChosen implements ClientMessage{
     @Override
     public void execute(ClientHandlerThread clientHandlerThread) {
@@ -12,7 +15,5 @@ public class CheckObjectiveCardChosen implements ClientMessage{
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
-        //non abbiamo bisogno dell'evento di ok perche la funzione checkObjectiveCardChosen() del
-        //game controller non fa altro che generare update se si è conclusa la scelta delle objective cards
     }
 }

@@ -7,16 +7,16 @@ import CODEX.utils.executableMessages.serverMessages.ServerOk;
 
 import java.rmi.RemoteException;
 
+/**
+ * This class is used to represent a message which is sent when checking the number of players that have to join a game
+ */
 public class CheckNPlayers implements ClientMessage{
     @Override
     public void execute(ClientHandlerThread clientHandlerThread) {
-        try {//bisogna aggiungere qui dentro un'eccezione per dire 'game already started'
-            clientHandlerThread.getGameController().checkNPlayers(); //farà partire gli update che dicono che il gioco è iniziato
-        } catch (RemoteException ignored) {
-        }
+        try {
+            clientHandlerThread.getGameController().checkNPlayers();
+        } catch (RemoteException ignored) {}
         ServerMessage serverMessage=new ServerOk();
         clientHandlerThread.writeTheStream(new SCKMessage(serverMessage));
-
-
     }
 }
