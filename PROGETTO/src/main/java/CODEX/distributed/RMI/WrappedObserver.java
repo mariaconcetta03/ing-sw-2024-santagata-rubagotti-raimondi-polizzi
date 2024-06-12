@@ -94,23 +94,13 @@ public class WrappedObserver implements Observer {
     }
 
 
+
     /**
      * Getter method
      * @return aDisconnectionHappened true if there's been a disconnection, false otherwise
      */
     public boolean getADisconnectionHappened() {
         return aDisconnectionHappened;
-    }
-
-
-
-    /**
-     * Getter method
-     * @return nickname of the WrappedObserver
-     */
-    @Override
-    public String getNickname() throws RemoteException {
-        return this.nickname;
     }
 
 
@@ -127,10 +117,9 @@ public class WrappedObserver implements Observer {
 
     /**
      * Setter method
-     * @param nickname of the WrappedObserver
+     * @param nickname of the player
      */
-    @Override
-    public void setNickname(String nickname) throws RemoteException  {
+    public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 

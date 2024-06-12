@@ -202,7 +202,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     /**
      * Once connected the player get to choose his nickname that must be different from all the other presents
-     *
      * @param nickname is the String he wants to put as his nickname
      * @throws RemoteException   if an exception happens while communicating with the remote
      * @throws NotBoundException if an exception happens while communicating with the remote
@@ -1156,6 +1155,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
 
     /**
+     * This method prints the winners of the game in the TUI
      * @param finalScoreBoard is a Map containing all the players' nicknames as values and as keys their positions
      * @throws RemoteException if an exception happens while communicating with the remote
      */

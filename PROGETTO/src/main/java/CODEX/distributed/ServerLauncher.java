@@ -26,6 +26,11 @@ public class ServerLauncher extends UnicastRemoteObject {
 
 
 
+    /**
+     * Main method
+     * @param args unused
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
         ServerController serverController = new ServerController();
 
@@ -40,7 +45,6 @@ public class ServerLauncher extends UnicastRemoteObject {
             System.setProperty("java.rmi.server.hostname", serverAddress); // choosing right address
             System.out.println("Server address: " + serverAddress);
         }
-
 
         RMIServer rmiServer= new RMIServer(serverController);
         rmiServer.startServer();

@@ -12,9 +12,8 @@ public interface Observer {
     String nickname = null;
     void update(Observable obs, Event e) throws RemoteException;
 
-    void setNickname(String nick) throws RemoteException;
-
-    String getNickname() throws RemoteException;
+    public void setNickname(String nickname);
 
     void setADisconnectionHappened(boolean aDisconnectionHappened);
 }
+

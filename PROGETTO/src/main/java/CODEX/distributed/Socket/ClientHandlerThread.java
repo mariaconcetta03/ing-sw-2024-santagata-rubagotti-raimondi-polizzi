@@ -23,76 +23,81 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-//the server communicates with the clients calling their method update, the clients communicate with the server (better->the model) using
-//first the attribute serverController and then the attribute gameController (when the game is created)
+
 
 /**
- * This class represents the Client (server-side) who chose TCP as network protocol
+ * This class represents the Client (server-side) who chooses TCP as network protocol
  * It is notified of all the changes in the model and forwards them, using its socket attribute,
  * to ClientSCK. It is a thread, so we will not have problems related to congestion (as we could have had in RMI).
+ * ---------------------------------------------------------------------------------------------------------------
+ * The server communicates with the clients calling this class' methods of update, the clients communicate
+ * with the server using first the attribute serverController and then the attribute gameController (when the game is created)
  */
-public class ClientHandlerThread implements Runnable, Observer, ClientActionsInterface { //this is a Thread
+public class ClientHandlerThread implements Runnable, Observer, ClientActionsInterface {
     private final Socket socket;
     private String nickname = null;
-    private final ServerController serverController; //to be passed as parameter in the constructor method
-
+    private final ServerController serverController; // to be passed as parameter in the constructor method
     private final Object inputLock;
     private final ObjectInputStream input;
     private final ObjectOutputStream output;
     private GameController gameController;
-    private Boolean running; //it is initialized true, when becomes false the while in run and threadCheckConnection terminate.
+    private Boolean running;
     private boolean pongReceived;
     private Timer timer;
     private boolean aDisconnectionHappened=false;
 
 
+
     /**
-     * Constructor method
+     * Class constructor
      * @param client
      * @param serverController
      * @throws IOException
      */
     public ClientHandlerThread(Socket client,ServerController serverController) throws IOException {
         this.serverController = serverController;
-        this.socket = client; //the client can communicate with the server by this thread using this socket
+        this.socket = client; // the client can communicate with the server by this thread using this socket
 
         this.output = new ObjectOutputStream(client.getOutputStream());
         this.input = new ObjectInputStream(client.getInputStream());
-
 
         this.inputLock = new Object();
 
         this.running = true;
 
-
     }
 
 
 
-    //when a Thread starts, run is automatically called
-    public void run() { //questo metodo viene chiamato in automatico quando si fa submit alla thread pool. Lo uso per fare start dei thread interni a questo ClientHandlerThread
-            while (!Thread.currentThread().isInterrupted()&&running) { //questo while dovrebbe servere nel caso in cui non vogliamo che il Thread venga interrotto mentre fa quello dentro il while
-                synchronized (inputLock) { //we use the inputLock to write the stream not simultaneously
-                    SCKMessage sckMessage = null; //messaggi scritti dal Client vero
+
+
+
+    // METHOD OVERRIDDEN FROM RUNNABLE
+
+    /**
+     * Run method of the Runnable interface [thread]
+     */
+    @Override
+    public void run() {
+            while (!Thread.currentThread().isInterrupted()&&running) {
+                synchronized (inputLock) { // we use the inputLock to write the stream not simultaneously
+                    SCKMessage sckMessage = null; // messages written by ClientSCK
                     try {
                         sckMessage = (SCKMessage) this.input.readObject();
                     } catch (IOException | ClassNotFoundException e) {
                         System.out.println("lost the connection...Bye, bye");
-                        //System.err.println(e.getMessage());
                         running=false;
                         try {
                             input.close();
                             output.close();
                             socket.close();
-                        } catch (IOException ex) { //needed for the close clause
-
+                        } catch (IOException ignored) { // needed for the close clauses
                         }
-                        timer.cancel(); // Ferma il timer
-                         //chiamo solo una volta disconnection() anche se sono più client a disconnettersi
-                        gameController.disconnection();; //bisogna settare qualche parametro in caso di più disconnection() in contemporanea per non mandare troppi disconnectionEvent
+                        timer.cancel(); // stops the timer
 
-                        //interrompo questo ClientHandlerThread
-                        Thread.currentThread().interrupt();
+                        gameController.disconnection();
+
+                        Thread.currentThread().interrupt(); // stopping the ClientHandlerThread
                         System.out.println("appena chiamato interrupt");
                     }
                     if(sckMessage!=null&&running) {
@@ -100,40 +105,38 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                     }
                 }
             }
-
-    }
-    public void setPongReceived(Boolean received){ //to be used in ClientPong
-        this.pongReceived=received;
-    }
-    public ServerController getServerController(){ //to be used in ClientAvailableLobbies
-        return this.serverController;
-    }
-    public GameController getGameController(){ //to be used in ClientAvailableLobbies
-        return this.gameController;
-    }
-    private void react(SCKMessage sckMessage) { //qui in base al messaggio letto chiamiamo il giusto metodo della ClientActionsInterface
-        //qui userò sempre l'attributo ClientMessage della classe SCKMessage
-
-        sckMessage.getClientMessage().execute(this);
-
     }
 
 
 
-    //methods to be implemented to have a class that implements Observer: (invece in RMI avremo una classe intermedia la WrappedObserver che implementerà Observer)
 
 
 
+    // METHODS OVERRIDDEN FROM OBSERVER
+
+    /**
+     * This method is called by the classes that extend observable and forwards the update received
+     * to ClientSCK through the socket attributes of this class (the function writeTheStream does the forwarding)
+     * @param obs observable
+     * @param e event
+     * @throws RemoteException
+     */
     @Override
     public void update(Observable obs, CODEX.utils.executableMessages.events.Event e) throws RemoteException {
         boolean check=e.executeSCKServerSide();
-        if(check){ //true if the game state has changed to 'STARTED'
-
-
-            this.pongReceived=true; //initialization
-            this.timer = new Timer(true); //isDaemon==true -> maintenance activities performed as long as the application is running
-            //we need to use ping-pong messages because sometimes the connection seems to be open (we do not receive any I/O exception) but it is not.
+        if(check){ // true if the gameState has changed to 'STARTED'
+            this.pongReceived=true; // initialization
+            // isDaemon==true -> maintenance activities performed as long as the application is running
+            this.timer = new Timer(true);
+            // we need to use ping-pong messages because sometimes the connection seems
+            // to be open (we do not receive any I/O exception) but it is not.
             timer.scheduleAtFixedRate(new TimerTask() {
+
+                /**
+                 * Run method of the Runnable interface [thread]
+                 * When we receive an updateGameStateEvent and the GameState has changed to STARTED, we
+                 * start the thread that checks the connection
+                 */
                 @Override
                 public void run() {
                     if(pongReceived&& !aDisconnectionHappened) {
@@ -141,106 +144,75 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                         CODEX.utils.executableMessages.serverMessages.ServerMessage serverMessage= new ServerPing();
                         writeTheStream(new SCKMessage(serverMessage));
 
-                    }else{ //there are no pongs received
+                    }else{ // there are no pongs received
                         System.out.println("the connection has been interrupted...Bye bye");
                         try {
                             running=false;
                             input.close();
                             output.close();
                             socket.close();
-                        } catch (IOException e) { //needed for the close clause
-                            //throw new RuntimeException(e);
+                        } catch (IOException e) { // needed for the close clause
                         }
-                        timer.cancel(); // Ferma il timer
+                        timer.cancel(); // stops the timer
 
                          gameController.disconnection();
                     }
                 }
-            }, 0, 10000); // Esegui ogni 10 secondi
-
-
+            }, 0, 10000); // every 10 seconds
         }
-
         writeTheStream(new SCKMessage(e));
-
     }
 
+
+
+    /**
+     * Setter method
+     * @param nickname of the player
+     */
     @Override
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 
-    @Override
-    public String getNickname() {
-        return this.nickname;
-    }
 
+
+    /**
+     * Setter method
+     * @param aDisconnectionHappened true if a disconnection happened, false otherwise
+     */
     @Override
     public void setADisconnectionHappened(boolean aDisconnectionHappened) {
         this.aDisconnectionHappened=aDisconnectionHappened;
     }
 
-//end of methods to be implemented taken from Observer interface
 
-    //writeTheStream will be called in the method react (maybe inside the methods of the ClientActionsInterface) to tell the client what the controller has effectively done
-    //writeTheStream will also be called in the method update (we have it because ClientHandlerThread is a listener) to tell the client what is changed in the model
-    synchronized public void writeTheStream(SCKMessage sckMessage){ //this is the stream the real client can read
-        if(running) {
 
-            try {
-                output.writeObject(sckMessage);
-                output.flush();
-                output.reset();
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-                System.out.println("the connection has been interrupted....Bye bye");
-                try { //we close all we have to close
-                    running = false;
-                    input.close();
-                    output.close();
-                    socket.close();
-                } catch (IOException ex) { //needed for the close clause
 
-                }
-                timer.cancel(); // Ferma il timer
 
-                gameController.disconnection();
 
-                Thread.currentThread().interrupt();
-            }
-        }else {
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    //methods to be implemented to have a class that implements ClientActionsInterface
-
+// METHODS OVERRIDDEN FROM ClientActionsInterface
 
     /**
      * This method, will be used to call the ServerController method
-     * @param playerNickname
-     * @param gameId
-     * @throws RemoteException
-     * @throws NotBoundException
-     * @throws GameAlreadyStartedException
-     * @throws FullLobbyException
-     * @throws GameNotExistsException
+     * @param playerNickname to add to the lobby
+     * @param gameId game where we need to add the player
      */
     @Override
-    public void addPlayerToLobby(String playerNickname, int gameId)  {
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
-        //questo messaggio ci serve per rendere TCP sincrono come RMI (il client aspetta che gli venga detto è andato tutto a buon fine)
+    public void addPlayerToLobby(String playerNickname, int gameId) {
+        // here we call the serverController and we save the response in a message (so that the
+        // real client ClientSCK can read it) we need this message to make TCP synchronous like RMI
         try {
             this.gameController=serverController.addPlayerToLobby(playerNickname, gameId);
-            setNickname(playerNickname); //we have an attribute nickname in this class (we are implementing Observer)
+            setNickname(playerNickname); // we have an attribute nickname in this class [because of Observer]
 
-            //IMPORTANTE per ricevere le notify e gli update
+            // we add the client to the GameController's list of observers to receive the updates
             this.gameController.addClient(this.nickname, this);
 
             ServerMessage serverMessage=new ServerOk(this.gameController.getId());
-            writeTheStream(new SCKMessage(serverMessage)); //ci serve il messaggio per dire al ClientSCK il server ha fatto quello che hai chiesto (lo blocchiamo fino a quel momento)
-        }catch (RemoteException ignored){//non verrà mai lanciata
+            // we write the return value of the GameController method to unlock the client that is waiting it
+            writeTheStream(new SCKMessage(serverMessage));
 
+        }catch (RemoteException ignored){ // never thrown
         } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException ex) {
             ServerMessage serverMessage= new ServerError(ex.getAssociatedEvent());
             writeTheStream(new SCKMessage(serverMessage));
@@ -248,23 +220,20 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     }
 
 
+
     /**
      * This method, will be used to call the ServerController method
-     * @param nickname
-     * @throws RemoteException
-     * @throws NotBoundException
-     * @throws NicknameAlreadyTakenException
+     * @param nickname of the player
      */
     @Override
     public void chooseNickname(String nickname) {
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
         try {
             serverController.chooseNickname(nickname);
-            setNickname(nickname); //we have an attribute nickname in this class (we are implementing Observer)
+            setNickname(nickname); // we have an attribute nickname in this class (we are implementing Observer)
             ServerMessage serverMessage=new ServerOk();
-            writeTheStream(new SCKMessage(serverMessage)); //ci serve il messaggio per dire al ClientSCK il server ha fatto quello che hai chiesto (lo blocchiamo fino a quel momento)
+            // we write the return value of the serverController method to unlock the client that is waiting it
+            writeTheStream(new SCKMessage(serverMessage));
         }catch (RemoteException ignored){
-
         } catch (NicknameAlreadyTakenException ex) {
             ServerMessage serverMessage= new ServerError(ex.getAssociatedEvent());
             writeTheStream(new SCKMessage(serverMessage));
@@ -272,21 +241,20 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     }
 
 
+
     /**
      * This method, will be used to call the ServerController method
-     * @param creatorNickname
-     * @param numOfPlayers
-     * @throws RemoteException
-     * @throws NotBoundException
+     * @param creatorNickname player who created the lobby
+     * @param numOfPlayers number of players
      */
     @Override
     public void createLobby(String creatorNickname, int numOfPlayers) {
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        // here we call the serverController and we save the gamaController returned
         try {
             this.gameController=serverController.startLobby(creatorNickname, numOfPlayers);
-            setNickname(creatorNickname); //we have an attribute nickname in this class (we are implementing Observer)
+            setNickname(creatorNickname); // we have an attribute nickname in this class (we are implementing Observer)
 
-            //IMPORTANTE per ricevere le notify e gli update
+            // we add the client to the GameController's list of observers to receive the updates
             this.gameController.addClient(this.nickname,this);
 
             ServerMessage serverMessage=new ServerOk(this.gameController.getId());
@@ -296,10 +264,16 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     }
 
 
-    //quando potrà venir chiamato questo metodo il nickname sarà già settato in questa classe (al posto di riceverlo possiamo prendere quello già salvato qui)
+    /**
+     * This method is invoked when a player wants to play a card
+     * @param nickname of the player who is playing
+     * @param selectedCard card played
+     * @param position of the card
+     * @param orientation of the card (true = front / false = back)
+     */
     @Override
     public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) {
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        // we write the return value of the gameController method to unlock the client that is waiting it
         try {
             this.gameController.playCard(nickname, selectedCard, position, orientation);
             ServerMessage serverMessage=new ServerOk();
@@ -308,21 +282,35 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             ServerMessage serverMessage= new ServerError(ErrorsAssociatedWithExceptions.UNABLE_TO_PLAY_CARD);
             writeTheStream(new SCKMessage(serverMessage));
         }catch (RemoteException ignored){
-
         }
     }
 
+
+
+    /**
+     * This method is invoked when a player wants to play a baseCard
+     * @param nickname of the player who is playing
+     * @param baseCard card played
+     * @param orientation of the card (true = front / false = back)
+     */
     @Override
     public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) {
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        // we write the return value of the GameController method to unlock the client that is waiting it
         this.gameController.playBaseCard(nickname, baseCard, orientation);
         ServerMessage serverMessage=new ServerOk();
         writeTheStream(new SCKMessage(serverMessage));
     }
 
+
+
+    /**
+     * This method allows a player to draw a card
+     * @param nickname player's nickname
+     * @param selectedCard card to draw
+     */
     @Override
     public void drawCard(String nickname, PlayableCard selectedCard) {
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        // we write the return value of the GameController method to unlock the client that is waiting it
         try {
             this.gameController.drawCard(nickname, selectedCard);
             ServerMessage serverMessage=new ServerOk();
@@ -331,9 +319,16 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         }
     }
 
+
+
+    /**
+     * This method allows a player to choose his personal objective
+     * @param chooserNickname player's nickname
+     * @param selectedCard selected objective
+     */
     @Override
     public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) {
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        // we write the return value of the GameController method to unlock the client that is waiting it
         try {
             this.gameController.chooseObjectiveCard(chooserNickname, selectedCard);
             ServerMessage serverMessage=new ServerOk();
@@ -342,9 +337,16 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         }
     }
 
+
+
+    /**
+     * This method allows a player to choose his pawn color
+     * @param chooserNickname player's nickname
+     * @param selectedColor selected pawn
+     */
     @Override
     public void choosePawnColor(String chooserNickname, Pawn selectedColor){
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+    // we write the return value of the GameController method to unlock the client that is waiting it
         try {
             this.gameController.choosePawnColor(chooserNickname, selectedColor);
             ServerMessage serverMessage=new ServerOk();
@@ -358,10 +360,16 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     }
 
 
-    //that's a method to be used to communicate between the players
+
+    /**
+     * This method is used to send a message between two or more players
+     * @param senderNickname nickname of the sender
+     * @param receiversNickname nicknames of the receivers
+     * @param message text message
+     */
     @Override
     public void sendMessage(String senderNickname, List<String> receiversNickname, String message){
-        //here we call the controller and we save the response in message (so that the real client ClientSCK can read it)
+        // we write the return value of the GameController method to unlock the client that is waiting it
         try {
             this.gameController.sendMessage(senderNickname, receiversNickname, message);
             ServerMessage serverMessage=new ServerOk();
@@ -370,17 +378,99 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         }
     }
 
+
+
+    /**
+     * When a player wants to leave the game the server detects a
+     * disconnection so this function will never be called
+     * @param nickname of the player who is leaving
+     */
     @Override
     public void leaveGame(String nickname){
-        //quando un giocatore vuole lasciare il gioco il server riceve una disconnessione
-        //quindi questa funzione non verrà mai chiamata
-
-
     }
 
 
 
 
-    //end of methods to be implemented taken from ClientActionsInterface
+    // STANDARD METHODS OF THE CLASS [NO OVERRIDING]
+
+    /**
+     * This method is called when the socket stream is read and calls the execute method of
+     * the client message received. The execute method would call the methods of the clientActionInterface
+     * @param sckMessage message
+     */
+    private void react(SCKMessage sckMessage) {
+        // here I will always use the ClientMessage attribute of the SCKMessage class
+        sckMessage.getClientMessage().execute(this);
+    }
+
+
+
+    /**
+     * This method will be called inside the method execute of the clientMessage received after a
+     * gameController/serverController methods invocation to tell the client what the controller has
+     * effectively done (in this case we write a serverMessage)
+     *
+     * WriteTheStream will also be called in the method update (we have it because ClientHandlerThread
+     * is an observer) to tell the ClientSCK what is changed in the model
+     */
+    synchronized public void writeTheStream(SCKMessage sckMessage){
+        if(running) {
+            try {
+                output.writeObject(sckMessage);
+                output.flush();
+                output.reset();
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+                System.out.println("the connection has been interrupted....Bye bye");
+                try { // we close all we have to close
+                    running = false;
+                    input.close();
+                    output.close();
+                    socket.close();
+                } catch (IOException ex) { // needed for the close clause
+
+                }
+                timer.cancel(); // stops the timer
+
+                gameController.disconnection();
+
+                Thread.currentThread().interrupt();
+            }
+        }else {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+
+
+    /**
+     * Getter method
+     * @return server controller
+     */
+    public ServerController getServerController(){
+        return this.serverController;
+    }
+
+
+
+    /**
+     * Getter method
+     * @return game controller
+     */
+    public GameController getGameController(){
+        return this.gameController;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param received pong received (true or false to check if the pong has arrived)
+     */
+    public void setPongReceived(Boolean received){
+        this.pongReceived=received;
+    }
+
 }
 
