@@ -2,6 +2,7 @@ package CODEX.utils.executableMessages.events;
 
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
+import CODEX.distributed.Socket.ClientSCK;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -22,12 +23,10 @@ public class winnerEvent implements Event {
     }
 
     @Override
-    public void executeSCK(ClientGeneralInterface client) {
-        try {
-            client.showWinner(finalScoreBoard);
-        } catch (RemoteException ignored) {
+    public void executeSCK(ClientSCK client) {
 
-        }
+            client.showWinner(finalScoreBoard);
+
     }
 
     @Override

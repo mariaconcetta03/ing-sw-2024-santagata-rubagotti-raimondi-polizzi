@@ -2,6 +2,7 @@ package CODEX.utils.executableMessages.events;
 
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
+import CODEX.distributed.Socket.ClientSCK;
 import CODEX.org.model.ObjectiveCard;
 import java.rmi.RemoteException;
 
@@ -24,11 +25,10 @@ public class updateCommonObjectivesEvent implements Event {
         return false;
     }
     @Override
-    public void executeSCK(ClientGeneralInterface client) {
-        try {
+    public void executeSCK(ClientSCK client) {
+
             client.updateCommonObjectives(objCard1, objCard2);
-        } catch (RemoteException ignored) {
-        }
+
     }
 
     @Override

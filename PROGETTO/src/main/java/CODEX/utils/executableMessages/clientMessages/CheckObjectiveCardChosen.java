@@ -10,10 +10,8 @@ import java.rmi.RemoteException;
 public class CheckObjectiveCardChosen implements ClientMessage{
     @Override
     public void execute(ClientHandlerThread clientHandlerThread) {
-        try {
+
             clientHandlerThread.getGameController().checkObjectiveCardChosen();
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+
     }
 }

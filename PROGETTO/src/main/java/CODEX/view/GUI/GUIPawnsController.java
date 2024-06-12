@@ -65,17 +65,13 @@ public class GUIPawnsController {
         }
         stage.setOnCloseRequest(event -> {
             if (network == 1) {
-                try {
+
                     rmiClient.handleDisconnectionFunction();
-                } catch (RemoteException ignored) {
 
-                }
             } else if (network == 2) {
-                try {
-                    clientSCK.handleDisconnectionFunction();
-                } catch (RemoteException ignored) {
 
-                }
+                    clientSCK.handleDisconnectionFunction();
+
             }
         });
 
@@ -145,7 +141,9 @@ public class GUIPawnsController {
             if (network == 1) {
                 executor.execute(() -> {
                     try {
-                        rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.YELLOW);
+
+                            rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.YELLOW);
+
                         choosen = true;
 
                         Platform.runLater(() -> {
@@ -162,7 +160,7 @@ public class GUIPawnsController {
 
                         rmiClient.getGameController().checkChosenPawnColor();
 
-                    } catch (RemoteException | NotBoundException alreadyCaught) {
+                    } catch (RemoteException  alreadyCaught) {
 
                     } catch (ColorAlreadyTakenException e) {
                         pawnSelected = false;
@@ -219,7 +217,9 @@ public class GUIPawnsController {
             if (network == 1) {
                 executor.execute(() -> {
                     try {
-                        rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.BLUE);
+
+                            rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.BLUE);
+
                         choosen = true;
 
                         Platform.runLater(() -> {
@@ -235,7 +235,7 @@ public class GUIPawnsController {
                         });
                         rmiClient.getGameController().checkChosenPawnColor();
 
-                    } catch (RemoteException | NotBoundException alreadyCaught) {
+                    } catch (RemoteException  alreadyCaught) {
                     } catch (ColorAlreadyTakenException e) {
                         pawnSelected = false;
                         Platform.runLater(() -> {
@@ -290,7 +290,9 @@ public class GUIPawnsController {
             if (network == 1) {
                 executor.execute(() -> {
                     try {
-                        rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.GREEN);
+
+                            rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.GREEN);
+
                         choosen = true;
                         Platform.runLater(() -> {
                             yellowPawn.setOpacity(0);
@@ -306,7 +308,7 @@ public class GUIPawnsController {
                         rmiClient.getGameController().checkChosenPawnColor();
 
 
-                    } catch (RemoteException | NotBoundException alreadyCaught) {
+                    } catch (RemoteException alreadyCaught) {
                     } catch (ColorAlreadyTakenException e) {
                         pawnSelected = false;
                         Platform.runLater(() -> {
@@ -361,7 +363,9 @@ public class GUIPawnsController {
             if (network == 1) {
                 executor.execute(() -> {
                     try {
-                        rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.RED);
+
+                            rmiClient.choosePawnColor(rmiClient.getPersonalPlayer().getNickname(), Pawn.RED);
+
                         choosen = true;
                         Platform.runLater(() -> {
                             greenPawn.setOpacity(0);
@@ -376,7 +380,7 @@ public class GUIPawnsController {
                         });
                         rmiClient.getGameController().checkChosenPawnColor();
 
-                    } catch (RemoteException | NotBoundException alreadyCaught) {
+                    } catch (RemoteException  alreadyCaught) {
                     } catch (ColorAlreadyTakenException e) {
                         pawnSelected = false;
                         Platform.runLater(() -> {

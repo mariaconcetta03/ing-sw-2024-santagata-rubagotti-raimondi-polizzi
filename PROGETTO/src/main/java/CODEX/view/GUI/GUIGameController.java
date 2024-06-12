@@ -213,15 +213,14 @@ public class GUIGameController {
                 pause.setOnFinished(event -> stage.close());
                 pause.play();
                 if (network == 1) {
-                    try {
+
                         this.rmiClient.leaveGame(this.rmiClient.getPersonalPlayer().getNickname());
-                    } catch (RemoteException | NotBoundException ignored) {
-                    }
+
+
                 } else if (network == 2) {
-                    try {
+
                         this.clientSCK.leaveGame(this.clientSCK.getPersonalPlayer().getNickname());
-                    } catch (RemoteException | NotBoundException ignored) {
-                    }
+
                 }
             }
         }
@@ -971,17 +970,15 @@ public class GUIGameController {
                     player1Card3.setImage(newCard);
                 }
                 if (network == 2) {
-                    try {
+
                         clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getResourceDeck().checkFirstCard());
-                    } catch (RemoteException | NotBoundException ignored) {
-                        System.out.println("errore nel pescaggio");
-                    }
+
                 } else if (network == 1) {
-                    try {
+
+
                         rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getResourceDeck().checkFirstCard());
-                    } catch (RemoteException|NotBoundException ignored) {
-                        System.out.println("errore nel pescaggio");
-                    }
+
+
                 }
             }
         }
@@ -1017,17 +1014,15 @@ public class GUIGameController {
                     player1Card3.setImage(newCard);
                 }
                 if (network == 2) {
-                    try {
+
                         clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getGoldDeck().checkFirstCard());
-                    } catch (RemoteException | NotBoundException ignored) {
-                        System.out.println("errore nel pescaggio");
-                    }
+
                 } else if (network == 1) {
-                    try {
+
+
                         rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getGoldDeck().checkFirstCard());
-                    } catch (RemoteException|NotBoundException ignored) {
-                        System.out.println("errore nel pescaggio");
-                    }
+
+
                 }
             }
         }
@@ -1054,17 +1049,15 @@ public class GUIGameController {
                     player1Card3.setImage(resourceCard1.getImage());
                 }
                 if (network == 2) {
-                    try {
+
                         clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getResourceCard1());
-                    } catch (RemoteException | NotBoundException ignored) {
-                        System.out.println("errore nel pescaggio");
-                    }
+
                 } else if (network == 1) {
-                    try {
+
+
                         rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getResourceCard1());
-                    } catch (RemoteException|NotBoundException ignored) {
-                        System.out.println("errore nel pescaggio");
-                    }
+
+
                 }
             }
 
@@ -1093,17 +1086,15 @@ public class GUIGameController {
                     player1Card3.setImage(resourceCard2.getImage());
                 }
                 if (network == 2) {
-                    try {
+
                         clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getResourceCard2());
-                    } catch (RemoteException | NotBoundException ignored) {
-                        System.out.println("errore nel pescaggio");
-                    }
+
                 } else if (network == 1) {
-                    try {
+
+
                         rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getResourceCard2());
-                    } catch (RemoteException|NotBoundException ignored) {
-                        System.out.println("errore nel pescaggio");
-                    }
+
+
                 }
             }
         }
@@ -1131,17 +1122,15 @@ public class GUIGameController {
                     player1Card3.setImage(goldCard1.getImage());
                 }
                 if (network == 2) {
-                    try {
+
                         clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getGoldCard1());
-                    } catch (RemoteException | NotBoundException ignored) {
-                        System.out.println("errore nel pescaggio");
-                    }
+
                 } else if (network == 1) {
-                    try {
+
+
                         rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getGoldCard1());
-                    } catch (RemoteException|NotBoundException ignored) {
-                        System.out.println("errore nel pescaggio");
-                    }
+
+
                 }
             }
         }
@@ -1169,17 +1158,15 @@ public class GUIGameController {
                     player1Card3.setImage(goldCard2.getImage());
                 }
                 if (network == 2) {
-                    try {
+
                         clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getGoldCard2());
-                    } catch (RemoteException | NotBoundException ignored) {
-                        System.out.println("errore nel pescaggio");
-                    }
+
                 } else if (network == 1) {
-                    try {
+
+
                         rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getGoldCard2());
-                    } catch (RemoteException|NotBoundException ignored) {
-                        System.out.println("errore nel pescaggio");
-                    }
+
+
                 }
             }
 
@@ -1260,7 +1247,9 @@ public class GUIGameController {
                              cardPlaced = true;
                              System.out.println("PLAYED CARD 1");
                              try {
-                                 rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[0], new Coordinates(col, row), orientationCard1);
+
+                                     rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[0], new Coordinates(col, row), orientationCard1);
+
                                  if(!rmiClient.getADisconnectionHappened()) {
                                      p1Counter++;
                                      PlayableCard playableCard = playerDeck[0];
@@ -1282,18 +1271,14 @@ public class GUIGameController {
                                  System.out.println("Qui non ho abbastanza risorse");
                                  updateLabel(selectedCardLabel, "You don't have enough resources!");
                                  cardPlaced = false;
-                             } catch (RemoteException alreadyCaught) {
-
-                             }catch (NotBoundException e){
-                                 cardPlaced = false;
-                                 updateLabel(selectedCardLabel, "Sorry, a disconnection happened");
-
                              }
                          } else if (selectedCard == 2) {
                              cardPlaced = true;
                              System.out.println("PLAYED CARD 2");
                              try {
-                                 rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[1], new Coordinates(col, row), orientationCard2);
+
+                                     rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[1], new Coordinates(col, row), orientationCard2);
+
                                  if(!rmiClient.getADisconnectionHappened()) {
                                      p1Counter++;
                                      PlayableCard playableCard = playerDeck[1];
@@ -1315,18 +1300,14 @@ public class GUIGameController {
                                  System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                                  updateLabel(selectedCardLabel, "You don't have enough resources!");
                                  cardPlaced = false;
-                             } catch (RemoteException alreadyCaught) {
-
-                             }catch (NotBoundException e){
-                                 cardPlaced = false;
-                                 updateLabel(selectedCardLabel, "Sorry, a disconnection happened");
-
                              }
                          } else if (selectedCard == 3) {
                              cardPlaced = true;
                              System.out.println("PLAYED CARD 3");
                              try {
-                                 rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[2], new Coordinates(col, row), orientationCard3);
+
+                                     rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[2], new Coordinates(col, row), orientationCard3);
+
                                  if(!rmiClient.getADisconnectionHappened()) {
                                      p1Counter++;
                                      PlayableCard playableCard = playerDeck[2];
@@ -1348,12 +1329,6 @@ public class GUIGameController {
                                  System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                                  updateLabel(selectedCardLabel, "You don't have enough resources!");
                                  cardPlaced = false;
-                             } catch (RemoteException alreadyCaught) {
-
-                             }catch (NotBoundException e){
-                                 cardPlaced = false;
-                                 updateLabel(selectedCardLabel, "Sorry, a disconnection happened");
-
                              }
                          }
                      }
@@ -1362,11 +1337,10 @@ public class GUIGameController {
                          if (selectedCard == 1) {
                              //cardPlaced = true;
                              System.out.println("PLAYED CARD 1");
-                             try {
+
                                  clientSCK.setErrorState(false);
                                  clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), playerDeck[0], new Coordinates(col, row), orientationCard1);
-                             } catch (RemoteException | NotBoundException ignored) {
-                             }
+
                              if (clientSCK.getErrorState()) {
                                  System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                                  updateLabel(selectedCardLabel, "You don't have enough resources!");
@@ -1395,11 +1369,10 @@ public class GUIGameController {
                          } else if (selectedCard == 2) {
                              //cardPlaced = true;
                              System.out.println("PLAYED CARD 2");
-                             try {
+
                                  clientSCK.setErrorState(false);
                                  clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), playerDeck[1], new Coordinates(col, row), orientationCard2);
-                             } catch (RemoteException | NotBoundException ignored) {
-                             }
+
                              if (clientSCK.getErrorState()) {
                                  System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                                  updateLabel(selectedCardLabel, "You don't have enough resources!");
@@ -1424,11 +1397,10 @@ public class GUIGameController {
                              }
                          } else if (selectedCard == 3) {
                              System.out.println("PLAYED CARD 3");
-                             try {
+
                                  clientSCK.setErrorState(false);
                                  clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), playerDeck[2], new Coordinates(col, row), orientationCard3);
-                             } catch (RemoteException | NotBoundException ignored) {
-                             }
+
                              if (clientSCK.getErrorState()) {
                                  System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                                  updateLabel(selectedCardLabel, "You don't have enough resources!");
@@ -1797,17 +1769,14 @@ public class GUIGameController {
         delay.setOnFinished(event -> {
             stage.close();
             if (network==1){
-                try {
+
                     rmiClient.handleDisconnectionFunction();
-                } catch (RemoteException ignored) {
-                }
-                ;
+
             }
             else if(network==2){
-                try {
+
                     clientSCK.handleDisconnectionFunction();
-                } catch (RemoteException ignored) {
-                }
+
 
             }
         });

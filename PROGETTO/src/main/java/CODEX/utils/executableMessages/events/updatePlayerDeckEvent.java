@@ -2,6 +2,7 @@ package CODEX.utils.executableMessages.events;
 
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
+import CODEX.distributed.Socket.ClientSCK;
 import CODEX.org.model.PlayableCard;
 
 import java.rmi.RemoteException;
@@ -27,12 +28,10 @@ public class updatePlayerDeckEvent implements Event {
         return false;
     }
     @Override
-    public void executeSCK(ClientGeneralInterface client) {
-        try {
-            client.updatePlayerDeck(playerNickname, playerDeck);
-        }catch (RemoteException ignored){
+    public void executeSCK(ClientSCK client) {
 
-        }
+            client.updatePlayerDeck(playerNickname, playerDeck);
+
     }
 
     @Override

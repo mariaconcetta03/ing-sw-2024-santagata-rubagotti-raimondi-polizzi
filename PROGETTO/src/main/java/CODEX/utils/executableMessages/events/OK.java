@@ -2,6 +2,8 @@ package CODEX.utils.executableMessages.events;
 
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
+import CODEX.distributed.Socket.ClientSCK;
+
 import java.rmi.RemoteException;
 
 /**
@@ -25,7 +27,7 @@ public class OK implements Event{
 
 
     @Override
-    public void executeSCK(ClientGeneralInterface client) {
+    public void executeSCK(ClientSCK client) {
     }
 
 

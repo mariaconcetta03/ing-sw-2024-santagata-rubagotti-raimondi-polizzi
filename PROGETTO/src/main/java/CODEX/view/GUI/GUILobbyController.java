@@ -101,7 +101,7 @@ public class GUILobbyController {
      */
     public void updateAvailableLobbies() {
         if (network == 1) { // RMI
-            try {
+
                 availableLobbies.getItems().clear();
                 setAvailableLobbies(rmiClient.getAvailableLobbies());
                 if (rmiClient.getAvailableLobbies().isEmpty()) {
@@ -109,7 +109,7 @@ public class GUILobbyController {
                 } else {
                     hideNoLobbyError();
                 }
-            } catch (RemoteException alreadyCaught) {}
+
         } else if (network == 2) { // TCP
              try {
                  availableLobbies.getItems().clear();
@@ -146,26 +146,26 @@ public class GUILobbyController {
         }
         stage.setOnCloseRequest(event -> {
             if (network == 1) {
-                try {
+
                     rmiClient.handleDisconnectionFunction();
-                } catch (RemoteException alreadyCaught) {}
+
             } else if (network == 2) {
-                try {
+
                     clientSCK.handleDisconnectionFunction();
-                } catch (RemoteException ignored) {}
+
             }
         });
 
         // setting the parameters in the new controller
         stage.setOnCloseRequest(event -> {
             if (network == 1) {
-                try {
+
                     rmiClient.handleDisconnectionFunction();
-                } catch (RemoteException alreadyCaught) {}
+
             } else if (network == 2) {
-                try {
+
                     clientSCK.handleDisconnectionFunction();
-                } catch (RemoteException ignored) {}
+
             }
         });
 
@@ -235,7 +235,7 @@ public class GUILobbyController {
                     createButton.disabledProperty();
                     joinButton.disabledProperty();
                     setWaitingPlayers();
-                } catch (RemoteException | GameNotExistsException | NotBoundException alreadyCaught) {
+                } catch (RemoteException | GameNotExistsException  alreadyCaught) {
                 } catch (GameAlreadyStartedException | FullLobbyException e) {
                     System.out.println("RMI: QUESTA LOBBY A CUI STAI CERCANDO DI AGGIUNGERTI è PIENA!");
                     fullLobby.setOpacity(1); // shows the message error "This lobby is full"
@@ -272,11 +272,13 @@ public class GUILobbyController {
             String input = createText.getText();
             if (!input.isBlank() && (input.equals("2") || input.equals("3") || input.equals("4"))) {
                 if (network == 1) {
-                    try {
+
+
                         rmiClient.createLobby(rmiClient.getPersonalPlayer().getNickname(), Integer.parseInt(input));
-                        createButton.disabledProperty();
+
+                    createButton.disabledProperty();
                         joinButton.disabledProperty();
-                    } catch (RemoteException | NotBoundException alreadyCaught) {}
+
                 } else if (network==2) {
                     try {
                         clientSCK.createLobby(clientSCK.getPersonalPlayer().getNickname(), Integer.parseInt(input));

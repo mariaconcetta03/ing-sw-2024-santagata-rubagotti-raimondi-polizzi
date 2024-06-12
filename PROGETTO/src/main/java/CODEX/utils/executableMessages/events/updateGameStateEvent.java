@@ -2,6 +2,7 @@ package CODEX.utils.executableMessages.events;
 
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
+import CODEX.distributed.Socket.ClientSCK;
 import CODEX.org.model.Game;
 import java.rmi.RemoteException;
 import java.util.concurrent.Executors;
@@ -46,11 +47,10 @@ public class updateGameStateEvent implements Event{
 
         }
         @Override
-        public void executeSCK(ClientGeneralInterface client) {
-            try {
+        public void executeSCK(ClientSCK client) {
+
                 client.updateGameState(gameState);
-            } catch (RemoteException ignored) {
-            }
+
         }
 
     @Override

@@ -88,16 +88,17 @@ public class GUIBaseCardController {
 
             if (network == 1) {
                 try {
-                    rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], true);
+
+                        rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], true);
+
                     rmiClient.getGameController().checkBaseCardPlayed();
-                } catch (RemoteException | NotBoundException alreadyCaught) {
+                } catch (RemoteException  alreadyCaught) {
                 }
             } else if (network == 2) {
-                try {
+
                     clientSCK.playBaseCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], true);
                     clientSCK.checkBaseCardPlayed();
-                } catch (RemoteException | NotBoundException alreadyCaught) {
-                }
+
             }
         }
     }
@@ -120,15 +121,21 @@ public class GUIBaseCardController {
             });
 
             if (network == 1) {
-                try {
+
+
                     rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], false);
-                    rmiClient.getGameController().checkBaseCardPlayed();
-                } catch (RemoteException | NotBoundException alreadyCaught) {}
-            } else if (network == 2) {
+
                 try {
+                    rmiClient.getGameController().checkBaseCardPlayed();
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+
+            } else if (network == 2) {
+
                     clientSCK.playBaseCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], false);
                     clientSCK.checkBaseCardPlayed();
-                } catch (RemoteException | NotBoundException alreadyCaught) {}
+
             }
         }
     }
@@ -154,17 +161,13 @@ public class GUIBaseCardController {
 
         stage.setOnCloseRequest(event -> {
             if (network == 1) {
-                try {
+
                     rmiClient.handleDisconnectionFunction();
-                } catch (RemoteException ignored) {
 
-                }
             } else if (network == 2) {
-                try {
-                    clientSCK.handleDisconnectionFunction();
-                } catch (RemoteException ignored) {
 
-                }
+                    clientSCK.handleDisconnectionFunction();
+
             }
         });
 
@@ -291,14 +294,14 @@ public class GUIBaseCardController {
     private void stageClose(){
         stage.close();
         if(network==1){
-            try {
+
                 rmiClient.handleDisconnectionFunction();
-            } catch (RemoteException alreadyCaught) {}
+
         }
         if(network==2) {
-            try {
+
                 clientSCK.handleDisconnectionFunction();
-            } catch (RemoteException ignored) {}
+
         }
     }
 

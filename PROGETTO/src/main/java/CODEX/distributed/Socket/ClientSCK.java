@@ -125,11 +125,9 @@ public class ClientSCK implements ClientGeneralInterface {
 
                         } catch (Exception e) { // if the server disconnects
                             if(running) {
-                                try {
+
                                     handleDisconnection();
-                                } catch (RemoteException ex) {
-                                    throw new RuntimeException(ex);
-                                }
+
                             }
                         }
                     }
@@ -234,13 +232,10 @@ public class ClientSCK implements ClientGeneralInterface {
                     System.exit(-1);
                 }
                 nickname = tuiView.askNickname(sc);
-                try {
+
                    this.chooseNickname(nickname);
                     ok=true;
-                } catch (RemoteException | NotBoundException e) { //queste sono eccezioni da togliere dalla signature dei metodi in comune tra rmi e tcp
-                    errorCounter++;
-                    System.out.println();
-                }
+
                 if(errorState&&!aDisconnectionHappened){
                     System.out.println("Nickname is already taken! Please try again.");
                     errorState=false;
@@ -280,7 +275,7 @@ public class ClientSCK implements ClientGeneralInterface {
                         System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
                     }
                 }
-                try {
+
 
                     boolean thirdOk=false;
                     if (gameSelection == -1) {
@@ -323,10 +318,7 @@ public class ClientSCK implements ClientGeneralInterface {
                     } else {
                         System.out.println("You wrote a wrong id, try again!");
                     }
-                } catch (RemoteException | NotBoundException e) {
-                    System.out.println("Unable to communicate with the server! Shutting down.");
-                    System.exit(-1);
-                }
+
             }
         }
     }
@@ -436,7 +428,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws GameNotExistsException if the game you're trying to access doesn't exist
      */
     @Override
-    public void addPlayerToLobby(String playerNickname, int gameId) throws RemoteException, NotBoundException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
+    public void addPlayerToLobby(String playerNickname, int gameId) throws GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
         synchronized (actionLock) {
             ClientMessage clientMessage=new AddPlayerToLobby(playerNickname,gameId);
             try {
@@ -463,7 +455,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws NicknameAlreadyTakenException if the nickname has already been chosen by another user
      */
     @Override
-    public void chooseNickname(String nickname) throws RemoteException, NotBoundException {
+    public void chooseNickname(String nickname)  {
         synchronized (actionLock) {
             ClientMessage clientMessage=new ChooseNickname(nickname);
             try {
@@ -491,7 +483,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
-    public void createLobby(String creatorNickname, int numOfPlayers) throws RemoteException, NotBoundException {
+    public void createLobby(String creatorNickname, int numOfPlayers)  {
         synchronized (actionLock) {
             ClientMessage clientMessage=new CreateLobby(creatorNickname,numOfPlayers);
             try {
@@ -520,7 +512,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
-    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, NotBoundException {
+    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation)  {
         synchronized (actionLock) {
             ClientMessage clientMessage=new PlayCard(nickname,selectedCard,position,orientation);
             try {
@@ -551,7 +543,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
-    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) throws RemoteException, NotBoundException {
+    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation)  {
         synchronized (actionLock) {
             ClientMessage clientMessage=new PlayBaseCard(nickname,baseCard,orientation);
             try {
@@ -572,7 +564,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
-    public void drawCard(String nickname, PlayableCard selectedCard) throws RemoteException, NotBoundException {
+    public void drawCard(String nickname, PlayableCard selectedCard)  {
         synchronized (actionLock) {
             ClientMessage clientMessage=new DrawCard(nickname,selectedCard);
             try {
@@ -600,7 +592,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
-    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) throws RemoteException, NotBoundException {
+    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard)  {
         synchronized (actionLock) {
             ClientMessage clientMessage=new ChooseObjectiveCard(chooserNickname,selectedCard);
             try {
@@ -623,7 +615,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws ColorAlreadyTakenException if someone chose the color before you
      */
     @Override
-    public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, NotBoundException {
+    public void choosePawnColor(String chooserNickname, Pawn selectedColor) {
         synchronized (actionLock) {
             ClientMessage clientMessage=new ChoosePawnColor(chooserNickname,selectedColor);
             try {
@@ -652,7 +644,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
-    public void sendMessage(String senderNickname, List<String> receiversNickname, String message) throws RemoteException, NotBoundException {
+    public void sendMessage(String senderNickname, List<String> receiversNickname, String message)  {
         synchronized (actionLock) {
             ClientMessage clientMessage=new SendMessage(senderNickname,receiversNickname,message);
             try {
@@ -680,7 +672,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws IllegalArgumentException
      */
     @Override
-    public void leaveGame(String nickname) throws RemoteException, NotBoundException, IllegalArgumentException {
+    public void leaveGame(String nickname) throws  IllegalArgumentException {
         //abbiamo deciso che quando un giocatore vuole lasciare il gioco il server riceve una disconnessione
         //if (!aDisconnectionHappened) non lo controllo perchè se viene rilevata sulla gui la disconnessione non viene premuto il tasto che porta a questa funzione
         synchronized (disconnectionLock) {
@@ -718,7 +710,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updateBoard(String boardOwner, Board board, PlayableCard newCard) throws RemoteException {
+    public void updateBoard(String boardOwner, Board board, PlayableCard newCard)  {
         // we have to change the view and the local model
         if (boardOwner.equals(personalPlayer.getNickname())) {
             System.out.println("I received the board.");
@@ -750,7 +742,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updateResourceDeck(PlayableDeck resourceDeck) throws RemoteException {
+    public void updateResourceDeck(PlayableDeck resourceDeck) {
         // we have to change the view and the local model
         this.resourceDeck=resourceDeck;
         if (selectedView == 1) {
@@ -771,7 +763,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updateGoldDeck(PlayableDeck goldDeck) throws RemoteException {
+    public void updateGoldDeck(PlayableDeck goldDeck)  {
         // we have to change the view and the local model
         this.goldDeck=goldDeck;
         if (selectedView == 1) {
@@ -792,7 +784,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updatePlayerDeck(String playerNickname, PlayableCard[] playerDeck) throws RemoteException {
+    public void updatePlayerDeck(String playerNickname, PlayableCard[] playerDeck)  {
         //we have to change the view and the local model
         System.out.println("I received the updated "+playerNickname+"'s deck.");
         if(playerNickname.equals(personalPlayer.getNickname())){
@@ -824,7 +816,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updatePersonalObjective(ObjectiveCard card, String nickname) throws RemoteException {
+    public void updatePersonalObjective(ObjectiveCard card, String nickname)  {
         if (personalPlayer.getNickname().equals(nickname)) {
             personalPlayer.addPersonalObjective(card);
             if (personalPlayer.getPersonalObjectives().size() == 2) {
@@ -842,9 +834,6 @@ public class ClientSCK implements ClientGeneralInterface {
                                     personalPlayer.setPersonalObjective(tmp);
                                     System.out.println("You've correctly chosen your objective card!");
                                     checkObjectiveCardChosen();
-                                }catch (RemoteException |NotBoundException e){
-                                    System.out.println("Unable to communicate with the server! Shutting down.");
-                                    System.exit(-1);
                                 }catch (CardNotOwnedException e){
                                     System.out.println("You don't own this card.");
                                 }
@@ -867,7 +856,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void finishedSetUpPhase() throws RemoteException {
+    public void finishedSetUpPhase() {
         updateRound(playersInTheGame);
     }
 
@@ -879,7 +868,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void showWinner(Map<Integer, List<String>> finalScoreBoard) throws RemoteException {
+    public void showWinner(Map<Integer, List<String>> finalScoreBoard)  {
         if(selectedView==1) { //TUI
             Map<String, Player> players=new HashMap<>();
             for(Player p: playersInTheGame){
@@ -932,7 +921,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updateLastMoves(int lastMoves) throws RemoteException {
+    public void updateLastMoves(int lastMoves)  {
         this.lastMoves=lastMoves;
         System.out.println("LAST MOVES "+this.lastMoves);
     }
@@ -945,7 +934,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updateResourceCard1(PlayableCard card) throws RemoteException {
+    public void updateResourceCard1(PlayableCard card)  {
         // we have to change the view and the local model
         this.resourceCard1=card;
         if (selectedView == 1) {
@@ -966,7 +955,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updateResourceCard2(PlayableCard card) throws RemoteException {
+    public void updateResourceCard2(PlayableCard card)  {
         // we have to change the view and the local model
         this.resourceCard2=card;
         if (selectedView == 1) {
@@ -987,7 +976,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updateGoldCard1(PlayableCard card) throws RemoteException {
+    public void updateGoldCard1(PlayableCard card)  {
         // we have to change the view and the local model
         this.goldCard1=card;
         if (selectedView == 1) {
@@ -1008,7 +997,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updateGoldCard2(PlayableCard card) throws RemoteException {
+    public void updateGoldCard2(PlayableCard card) {
         // we have to change the view and the local model
         this.goldCard2=card;
         if (selectedView == 1) {
@@ -1030,7 +1019,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updateChat(Integer chatIdentifier, Chat chat) throws RemoteException {
+    public void updateChat(Integer chatIdentifier, Chat chat) {
         // we have to change the view and the local model
         if (selectedView == 1) {
             System.out.println("You received a message (updateGoldCard2).");
@@ -1046,7 +1035,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updatePawns(String nickname, Pawn pawn) throws RemoteException {
+    public void updatePawns(String nickname, Pawn pawn) {
         if(nickname.equals(personalPlayer.getNickname())){
             personalPlayer.setColor(pawn);
         }
@@ -1084,7 +1073,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updateRound(List<Player> newPlayingOrder) throws RemoteException { //taken from RMIClient
+    public void updateRound(List<Player> newPlayingOrder)  { //taken from RMIClient
         System.out.println("I received the updateRound.");
         playersInTheGame = newPlayingOrder;
         if (selectedView == 1) { //TUI
@@ -1093,12 +1082,11 @@ public class ClientSCK implements ClientGeneralInterface {
                 // the second time that updateRound is called we have all that is need to
                 // call playBaseCard (see the model server side)
                 new Thread(() -> {
-                    try {
+
                         boolean choice = tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]);
                         playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0], choice);
                         checkBaseCardPlayed();
-                    } catch (NotBoundException|RemoteException ignored) {
-                    }
+
                 }).start();
             }
             if (this.turnCounter >= 1) { // we enter here from the third time included that updateRound is called
@@ -1130,7 +1118,7 @@ public class ClientSCK implements ClientGeneralInterface {
                 Executor executor= Executors.newSingleThreadExecutor();
                 executor.execute(() -> {
                     boolean ok=false;
-                    try {
+
                         while (!ok) {
                             Pawn selection = tuiView.askPawnSelection(getAvailableColors(),sc);
                             if (selection != null) {
@@ -1150,11 +1138,7 @@ public class ClientSCK implements ClientGeneralInterface {
                                 System.out.println("Please insert one of the possible colors!");
                             }
                         }
-                    } catch (NotBoundException |RemoteException e) { //ignored
-                        System.out.println("Unable to communicate with the Server. Shutting down.");
-                        e.printStackTrace();
-                        System.exit(-1);
-                    }
+
                 });
 
 
@@ -1216,7 +1200,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updateCommonObjectives(ObjectiveCard card1, ObjectiveCard card2) throws RemoteException{
+    public void updateCommonObjectives(ObjectiveCard card1, ObjectiveCard card2){
         System.out.println("I received the updateCommonObjectives.");
         this.commonObjective1=card1;
         this.commonObjective2=card2;
@@ -1230,7 +1214,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void updateGameState(Game.GameState gameState) throws RemoteException {
+    public void updateGameState(Game.GameState gameState)  {
         // we have to change the view and the local model
         System.out.println("I received the updateGameState.");
         if (selectedView == 1) {
@@ -1255,18 +1239,16 @@ public class ClientSCK implements ClientGeneralInterface {
                                 sendMessage(new SCKMessage(clientMessage));
                             } catch (IOException e) { //
                                 // the connection doesn't is open (and it doesn't seem to be open)
-                                try {
+
                                     handleDisconnection();
-                                } catch (RemoteException ignored) {
-                                }
+
                             }
                         }else{
                             //there are no pongs received
 
-                            try {
+
                                 handleDisconnection();
-                            } catch (RemoteException ignored) {
-                            }
+
                         }
                     }
                 }, 0, 10000);
@@ -1288,7 +1270,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
-    public void handleDisconnection() throws RemoteException {
+    public void handleDisconnection()  {
         System.out.println("evento disconnessione arrivato");
 
         synchronized (disconnectionLock) {
@@ -1335,7 +1317,7 @@ public class ClientSCK implements ClientGeneralInterface {
             int intChoice=tuiView.showMenuAndWaitForSelection(this.getIsPlaying(),this.console);
             boolean ok;
             if(intChoice!=-1) {
-                try {
+
                     switch (intChoice) {
                         case 0:
                             inGame = false;
@@ -1447,11 +1429,7 @@ public class ClientSCK implements ClientGeneralInterface {
                         default:
                             System.out.println("Functionality not yet implemented");
                     }
-                } catch (RemoteException | NotBoundException e) {
-                    System.out.println("Unable to communicate with the server! Shutting down.");
-                    e.printStackTrace();
-                    System.exit(-1);
-                }
+
             }
         }
     }
@@ -1462,7 +1440,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * This method manages disconnections
      * @throws RemoteException
      */
-    public void handleDisconnectionFunction() throws RemoteException{
+    public void handleDisconnectionFunction(){
         // TUI + GUI
         running=false;
         inGame=false;
@@ -1742,11 +1720,9 @@ public class ClientSCK implements ClientGeneralInterface {
         if (errorState&&!aDisconnectionHappened){
             this.nicknameSet = false;
         }else if(aDisconnectionHappened){
-            try {
+
                 handleDisconnection();
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
+
         }
 
         System.out.println("il nickname è stato settato a: " + this.personalPlayer.getNickname());

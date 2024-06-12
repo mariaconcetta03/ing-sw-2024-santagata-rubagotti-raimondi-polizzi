@@ -47,10 +47,9 @@ public class GUINicknameController {
                 correctNickname = rmiClient.setNickname(nickname.getCharacters().toString());
             } else if (network == 2) { //SCK
                 clientSCK.setErrorState(false);
-                try {
+
                     clientSCK.chooseNickname(nickname.getCharacters().toString());
-                } catch (RemoteException | NotBoundException ignored) {
-                }
+
                 correctNickname = clientSCK.setNickname(nickname.getCharacters().toString());
             }
 
@@ -79,13 +78,13 @@ public class GUINicknameController {
                 }
                 stage.setOnCloseRequest(event -> {
                     if (network == 1) {
-                        try {
+
                             rmiClient.handleDisconnectionFunction();
-                        } catch (RemoteException alreadyCaught) {}
+
                     } else if (network == 2) {
-                        try {
+
                             clientSCK.handleDisconnectionFunction();
-                        } catch (RemoteException ignored) {}
+
                     }
                 });
 

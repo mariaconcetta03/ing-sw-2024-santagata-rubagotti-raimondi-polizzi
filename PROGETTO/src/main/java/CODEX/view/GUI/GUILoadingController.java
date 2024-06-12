@@ -54,13 +54,13 @@ public class GUILoadingController {
         controller.setNetwork(network);
         stage.setOnCloseRequest(event -> {
             if (network == 1) {
-                try {
+
                     rmiClient.handleDisconnectionFunction();
-                } catch (RemoteException ignored) {}
+
             } else if (network == 2) {
-                try {
+
                     clientSCK.handleDisconnectionFunction();
-                } catch (RemoteException ignored) {}
+
             }
         });
 

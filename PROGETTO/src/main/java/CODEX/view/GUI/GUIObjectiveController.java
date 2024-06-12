@@ -73,10 +73,12 @@ public class GUIObjectiveController {
                 if (network == 1) {
 
                     try {
-                        rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(1));
+
+                            rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(1));
+
                         rmiClient.getGameController().checkObjectiveCardChosen();
                         objectiveCardselected = rmiClient.getPersonalPlayer().getPersonalObjectives().get(1);
-                    } catch (RemoteException | NotBoundException alreadyCaught) {}
+                    } catch (RemoteException  alreadyCaught) {}
                 } else if (network == 2) {
                     try {
                         clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(1));
@@ -110,10 +112,12 @@ public class GUIObjectiveController {
             new Thread(() -> {
                 if (network == 1) {
                     try {
-                        rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(0));
+
+                            rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(0));
+
                         rmiClient.getGameController().checkObjectiveCardChosen();
                         objectiveCardselected = rmiClient.getPersonalPlayer().getPersonalObjectives().get(0); // objectiveCard 1 --> get(0)
-                    } catch (RemoteException | NotBoundException alreadyCaught) {}
+                    } catch (RemoteException  alreadyCaught) {}
                 } else if (network == 2) {
                     try {
                         clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(0));

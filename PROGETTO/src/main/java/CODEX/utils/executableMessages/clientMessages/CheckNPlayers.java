@@ -13,9 +13,9 @@ import java.rmi.RemoteException;
 public class CheckNPlayers implements ClientMessage{
     @Override
     public void execute(ClientHandlerThread clientHandlerThread) {
-        try {
+
             clientHandlerThread.getGameController().checkNPlayers();
-        } catch (RemoteException ignored) {}
+
         ServerMessage serverMessage=new ServerOk();
         clientHandlerThread.writeTheStream(new SCKMessage(serverMessage));
     }

@@ -72,9 +72,8 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     /**
      * This method creates the Game that will be managed by GameController
      * @param gamePlayers is the List of players that will be in the Game
-     * @throws RemoteException
      */
-    public void createGame (List<Player> gamePlayers) throws RemoteException  {
+    public void createGame (List<Player> gamePlayers)   {
         if(this.game==null) {
             game = new Game(gamePlayers, id);
             // adding Observers to Game and Player classes
@@ -97,7 +96,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * @throws ArrayIndexOutOfBoundsException if the of players is exceeded
      * @throws RemoteException
      */
-    public void addPlayer(Player player) throws ArrayIndexOutOfBoundsException, RemoteException {
+    public void addPlayer(Player player) throws ArrayIndexOutOfBoundsException {
         if (gamePlayers.size() < numberOfPlayers) {
             gamePlayers.add(player);
         } else {
@@ -112,7 +111,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * If the number of players inside is correct, then it starts the game
      * @throws RemoteException
      */
-    public synchronized void checkNPlayers() throws RemoteException{
+    public synchronized void checkNPlayers() {
         if ((!alreadyCheckedNPlayers)&&(gamePlayers.size() == numberOfPlayers)) {
             alreadyCheckedNPlayers=true;
             createGame(gamePlayers);
@@ -127,9 +126,8 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * player, and he will need to choose one of these. Then the market is completed and each player receives
      * 3 cards (2 resource cards and 1 gold card).
      * INTERNAL USE METHOD
-     * @throws RemoteException
      */
-    public void startGame() throws RemoteException {
+    public void startGame()  {
         if(game.getState() == Game.GameState.WAITING_FOR_START) {
             game.startGame();
         }
@@ -144,7 +142,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * @param baseCard the base card played
      * @param orientation of the played card
      */
-    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) { //TODO no remote?
+    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) {
         Player player= getPlayerByNickname(nickname);
         player.playBaseCard(orientation, baseCard);
         player.getPlayerDeck()[0]=null; // baseCard deleted from player deck
@@ -155,9 +153,9 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     /**
      * This method checks if all the players have played their base card.
      * If they all did, then it gives the initial cards for the starting of the match.
-     * @throws RemoteException
+
      */
-    public synchronized void checkBaseCardPlayed() throws RemoteException {
+    public synchronized void checkBaseCardPlayed()  {
         PlayableCard[][] tmp;
         //for all players in the game
         for (Player p1 : game.getPlayers()) {
@@ -181,10 +179,9 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * @param selectedCard the Card the Player wants to play
      * @param position the position where the Player wants to play the Card
      * @param orientation the side on which the Player wants to play the Card
-     * @throws RemoteException
      * @throws IllegalArgumentException if there is an error in playing the card
      */
-    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, IllegalArgumentException {
+    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws  IllegalArgumentException {
         Player currentPlayer = game.getPlayers().get(0);
         if (!getPlayerByNickname(nickname).equals(currentPlayer)) {
             game.setLastEvent(ErrorsAssociatedWithExceptions.NOT_YOUR_TURN);
@@ -209,7 +206,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * @param selectedCard is the Card the Players wants to draw
      * @throws RemoteException
      */
-    public void drawCard(String nickname, PlayableCard selectedCard) throws RemoteException {
+    public void drawCard(String nickname, PlayableCard selectedCard) {
         // we can draw a card from one of the decks or from the uncovered cards
         Player currentPlayer = game.getPlayers().get(0);
         if (!getPlayerByNickname(nickname).equals(currentPlayer)) {
@@ -250,7 +247,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * @param selectedCard is the ObjectiveCard the player selected
      * @throws RemoteException
      */
-    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) throws RemoteException  {
+    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard)  {
         Player chooser= getPlayerByNickname(chooserNickname);
         try {
             chooser.setPersonalObjective(selectedCard);
@@ -264,9 +261,8 @@ public class GameController extends UnicastRemoteObject implements GameControlle
 
     /**
      * This method is invoked to check if all the players have chosen their objective card
-     * @throws RemoteException
      */
-    public synchronized void checkObjectiveCardChosen() throws RemoteException{
+    public synchronized void checkObjectiveCardChosen(){
         for(Player p: game.getPlayers()){
             if(p.getPersonalObjectives().size()==2){
                 return;
@@ -285,10 +281,9 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * This method allows a player to choose a Pawn color
      * @param chooserNickname is the nickname of the player who is going to select the Pawn
      * @param selectedColor the chosen colour
-     * @throws RemoteException
      * @throws ColorAlreadyTakenException if the pawn has been chosen by another user before
      */
-    public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, ColorAlreadyTakenException {
+    public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws  ColorAlreadyTakenException {
         Player chooser= getPlayerByNickname(chooserNickname);
         synchronized (game.getAlreadySelectedColors()) {
             if (!game.getAlreadySelectedColors().contains(selectedColor)) {
@@ -305,9 +300,8 @@ public class GameController extends UnicastRemoteObject implements GameControlle
 
     /**
      * This method is invoked to check if all the players have chosen their pawn color
-     * @throws RemoteException
      */
-    public synchronized void checkChosenPawnColor() throws RemoteException {
+    public synchronized void checkChosenPawnColor()  {
         for(Player p1: game.getPlayers()){
             if(p1.getChosenColor()==null){
                 return;
@@ -328,7 +322,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * @param message the string (message) sent
      * @throws RemoteException
      */
-    public void sendMessage(String senderNickname, List<String> receiversNicknames, String message) throws RemoteException {
+    public void sendMessage(String senderNickname, List<String> receiversNicknames, String message)  {
        receiversNicknames.add(senderNickname);
        Chat tmp;
        if(!game.getChats().isEmpty()) {
@@ -369,7 +363,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * INTERNAL USE METHOD
      * @throws RemoteException
      */
-    private void nextPhase() throws RemoteException {
+    private void nextPhase() {
         if (game.getState() == Game.GameState.ENDING && lastRounds > 0) {
             lastRounds --;
             game.setLastMoves(lastRounds);
@@ -395,7 +389,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * INTERNAL USE METHOD
      * @throws RemoteException
      */
-    private void calculateLastMoves() throws RemoteException {
+    private void calculateLastMoves()  {
             int firstPlayer = 0;
             lastRounds = game.getnPlayers();
 
@@ -423,7 +417,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * INTERNAL USE METHOD
      * @throws RemoteException
      */
-    private void endGame() throws RemoteException {
+    private void endGame()  {
         // setting the game state to ENDED
         game.endGame();
 
@@ -553,11 +547,9 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                 }
                 game.removeObservers();
 
-                try {
-                    serverController.getAllGameControllers().remove(id);
-                } catch (RemoteException e) {
-                    throw new RuntimeException(e);
-                }
+
+                serverController.getAllGameControllers().remove(id);
+
                 firstDisconnection=false;
             }
         }

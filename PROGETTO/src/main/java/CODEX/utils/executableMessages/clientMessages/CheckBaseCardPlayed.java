@@ -10,10 +10,8 @@ import java.rmi.RemoteException;
 public class CheckBaseCardPlayed implements ClientMessage{
     @Override
     public void execute(ClientHandlerThread clientHandlerThread) {
-        try {
+
             clientHandlerThread.getGameController().checkBaseCardPlayed();
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+
     }
 }

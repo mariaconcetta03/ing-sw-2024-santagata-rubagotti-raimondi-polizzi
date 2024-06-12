@@ -281,7 +281,6 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         }catch (IllegalArgumentException e){
             ServerMessage serverMessage= new ServerError(ErrorsAssociatedWithExceptions.UNABLE_TO_PLAY_CARD);
             writeTheStream(new SCKMessage(serverMessage));
-        }catch (RemoteException ignored){
         }
     }
 
@@ -311,12 +310,11 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     @Override
     public void drawCard(String nickname, PlayableCard selectedCard) {
         // we write the return value of the GameController method to unlock the client that is waiting it
-        try {
+
             this.gameController.drawCard(nickname, selectedCard);
             ServerMessage serverMessage=new ServerOk();
             writeTheStream(new SCKMessage(serverMessage));
-        }catch (RemoteException ignored){
-        }
+
     }
 
 
@@ -329,12 +327,11 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     @Override
     public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) {
         // we write the return value of the GameController method to unlock the client that is waiting it
-        try {
+
             this.gameController.chooseObjectiveCard(chooserNickname, selectedCard);
             ServerMessage serverMessage=new ServerOk();
             writeTheStream(new SCKMessage(serverMessage));
-        }catch (RemoteException ignored){
-        }
+
     }
 
 
@@ -351,8 +348,6 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             this.gameController.choosePawnColor(chooserNickname, selectedColor);
             ServerMessage serverMessage=new ServerOk();
             writeTheStream(new SCKMessage(serverMessage));
-        }catch (RemoteException ignored){
-
         }catch (ColorAlreadyTakenException e){
             ServerMessage serverMessage= new ServerError(ErrorsAssociatedWithExceptions.COLOR_ALREADY_TAKEN);
             writeTheStream(new SCKMessage(serverMessage));
@@ -370,12 +365,11 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     @Override
     public void sendMessage(String senderNickname, List<String> receiversNickname, String message){
         // we write the return value of the GameController method to unlock the client that is waiting it
-        try {
+
             this.gameController.sendMessage(senderNickname, receiversNickname, message);
             ServerMessage serverMessage=new ServerOk();
             writeTheStream(new SCKMessage(serverMessage));
-        }catch (RemoteException ignored) {
-        }
+
     }
 
 

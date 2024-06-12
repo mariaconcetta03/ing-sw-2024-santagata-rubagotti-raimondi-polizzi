@@ -2,6 +2,7 @@ package CODEX.utils.executableMessages.events;
 
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
+import CODEX.distributed.Socket.ClientSCK;
 import CODEX.org.model.Chat;
 import java.rmi.RemoteException;
 
@@ -23,7 +24,7 @@ public class updateChatEvent implements Event{
     }
 
     @Override
-    public void executeSCK(ClientGeneralInterface client) {
+    public void executeSCK(ClientSCK client) {
 
     }
 

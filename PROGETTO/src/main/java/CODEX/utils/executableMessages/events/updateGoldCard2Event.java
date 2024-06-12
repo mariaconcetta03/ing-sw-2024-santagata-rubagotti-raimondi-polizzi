@@ -2,6 +2,7 @@ package CODEX.utils.executableMessages.events;
 
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
+import CODEX.distributed.Socket.ClientSCK;
 import CODEX.org.model.PlayableCard;
 
 import java.rmi.RemoteException;
@@ -24,11 +25,10 @@ public class updateGoldCard2Event implements Event {
         return false;
     }
     @Override
-    public void executeSCK(ClientGeneralInterface client) {
-        try {
+    public void executeSCK(ClientSCK client) {
+
             client.updateGoldCard2(card);
-        } catch (RemoteException ignored) {
-        }
+
     }
 
     @Override

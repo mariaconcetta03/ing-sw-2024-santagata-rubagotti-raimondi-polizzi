@@ -141,7 +141,7 @@ public class ServerController implements Serializable {
      * Getter method
      * @return allGameControllers which is a map that associate the controller to a specific game
      */
-    public Map<Integer, GameController> getAllGameControllers() throws RemoteException {
+    public Map<Integer, GameController> getAllGameControllers() {
         return allGameControllers;
     }
 

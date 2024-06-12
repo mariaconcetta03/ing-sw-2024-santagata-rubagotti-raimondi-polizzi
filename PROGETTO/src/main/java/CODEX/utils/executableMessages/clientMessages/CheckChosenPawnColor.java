@@ -10,10 +10,8 @@ import java.rmi.RemoteException;
 public class CheckChosenPawnColor implements ClientMessage{
     @Override
     public void execute(ClientHandlerThread clientHandlerThread) {
-        try {
+
             clientHandlerThread.getGameController().checkChosenPawnColor();
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
+
     }
 }
