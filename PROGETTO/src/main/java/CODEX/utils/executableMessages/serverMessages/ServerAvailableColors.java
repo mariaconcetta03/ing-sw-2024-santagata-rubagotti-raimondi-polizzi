@@ -5,12 +5,25 @@ import CODEX.org.model.Pawn;
 
 import java.util.List;
 
+
+/**
+ * This class is used to represent a message sent by the server, when a client wants to choose pawn colors
+ */
 public class ServerAvailableColors implements ServerMessage{
     private final List<Pawn> availableColors;
-    public ServerAvailableColors(List<Pawn> availableColors){
 
+
+
+    /**
+     * Class constructor
+     * @param availableColors of the pawns
+     */
+    public ServerAvailableColors(List<Pawn> availableColors){
         this.availableColors=availableColors;
     }
+
+
+
     @Override
     public void execute(ClientSCK clientSCK) {
         synchronized(clientSCK.actionLock){
