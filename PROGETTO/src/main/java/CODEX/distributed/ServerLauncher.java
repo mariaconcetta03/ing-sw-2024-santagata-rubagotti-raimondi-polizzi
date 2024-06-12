@@ -12,31 +12,34 @@ import java.util.Scanner;
 
 
 /**
- * This is the server. It launches the RMI and TCP Servers.
+ * This is the server. It launches both RMI and TCP Servers.
  */
 public class ServerLauncher extends UnicastRemoteObject {
 
-    public ServerLauncher() throws RemoteException {
-    }
+
+
+    /**
+     * Class constructor
+     * @throws RemoteException
+     */
+    public ServerLauncher() throws RemoteException {}
+
+
+
     public static void main(String[] args) throws IOException {
-        ServerController serverController=new ServerController();
+        ServerController serverController = new ServerController();
 
-
-
-        // QUESTE COSE SONO MESSE FRATTANTO CHE SI USA ZEROTIER / SI PROVA IN LOCALE
         String serverAddress = "";
         System.out.println("Insert Server's IP address (leave blank for localHost): ");
         Scanner sc = new Scanner(System.in);
         serverAddress = sc.nextLine();
-        if (serverAddress.equals("")) { // se la stringa è vuota, allora metto il localhost
+        if (serverAddress.equals("")) { // if string is empty then it uses localhost
             System.setProperty("java.rmi.server.hostname", "127.0.0.1");
             System.out.println("Server address: 127.0.0.1");
         } else {
-            System.setProperty("java.rmi.server.hostname", serverAddress); // faccio scegliere la scheda di rete corretta
+            System.setProperty("java.rmi.server.hostname", serverAddress); // choosing right address
             System.out.println("Server address: " + serverAddress);
         }
-        // --------------------------------------------------------------------------------------------------------------
-
 
 
         RMIServer rmiServer= new RMIServer(serverController);

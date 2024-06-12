@@ -7,7 +7,6 @@ import CODEX.Exceptions.NicknameAlreadyTakenException;
 import CODEX.controller.GameController;
 import CODEX.controller.ServerController;
 
-
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -16,24 +15,22 @@ import java.util.Map;
 import java.util.Set;
 
 
+/**
+ * This class represents the rmi server, which is unique and sets the round of different games
+ */
 public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface {
-    // il server è unico e al suo interno ha un attributo Game Controller che mi
-    // permette di dare il turno ai giocatori di un Game (senza unire giocatori di
-    // più Game)
-
     private ServerController serverController;
+
 
 
     /**
      * Class constructor
-     * @param serverController
+     * @param serverController which manages all game controllers
      * @throws RemoteException if an exception happens while communicating with the remote
      */
     public RMIServer(ServerController serverController) throws RemoteException {
         this.serverController = serverController;
     }
-
-
 
 
     /**
@@ -53,7 +50,6 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
 
 
 
-
     /**
      * This method starts the server, so it can listen to the clients and receive
      * their requests (the clients will invoke functions on the server)
@@ -68,9 +64,8 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
         catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("RMI Server ready"); // OK
+        System.out.println("RMI Server ready");
     }
-
 
 
 
@@ -87,15 +82,14 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
 
 
 
-
     /**
      * This method calls the function into the ServerController
      * @param playerNickname is the nickname of the player who wants to join the lobby
      * @param gameId is the lobby the player wants to join
      * @throws RemoteException if an exception happens while communicating with the remote
-     * @throws GameAlreadyStartedException
-     * @throws FullLobbyException
-     * @throws GameNotExistsException
+     * @throws GameAlreadyStartedException thrown if a game is already started
+     * @throws FullLobbyException thrown if the lobby is full
+     * @throws GameNotExistsException thrown if there's no game
      * @return serverController.addPlayerToLobby(player, gameId) is the game controller of the match
      */
     public GameControllerInterface addPlayerToLobby (String playerNickname, int gameId) throws RemoteException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
@@ -104,34 +98,40 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
 
 
 
-
     /**
      * This method calls the function into the ServerController
      * @param nickname is the String he wants to put as his nickname
      * @throws RemoteException if an exception happens while communicating with the remote
-     * @throws NicknameAlreadyTakenException
+     * @throws NicknameAlreadyTakenException if a nickname is already used by others players
      */
     public void chooseNickname (String nickname) throws RemoteException, NicknameAlreadyTakenException {
         serverController.chooseNickname(nickname);
     }
 
+
+    /**
+     * Getter method
+     * @return serverController.getAllGameControllers() which are the available game controllers
+     * @throws RemoteException
+     */
     @Override
     public Map<Integer, GameController> getAllGameControllers() throws RemoteException {
         return serverController.getAllGameControllers();
     }
 
+
+
+    /**
+     * Getter method
+     * @return serverController.getAvailableGameControllersId() which are the id of available game controllers
+     * @throws RemoteException
+     */
     @Override
     public Set<Integer> getAvailableGameControllersId() throws RemoteException {
         return serverController.getAvailableGameControllersId();
     }
 
-    /**
-    @Override
-    public void addLobbyClient(RMIClient client) throws RemoteException {
-        WrappedObserver wrapObs= new WrappedObserver(client);
-        serverController.addLobbyClient((Observer) wrapObs);
-    }
-    */
+
 
     /**
      * Settings class

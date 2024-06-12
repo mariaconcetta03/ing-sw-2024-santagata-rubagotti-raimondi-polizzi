@@ -7,9 +7,6 @@ import CODEX.utils.Observer;
 import CODEX.utils.executableMessages.events.Event;
 
 import java.rmi.RemoteException;
-import java.util.LinkedList;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,39 +14,37 @@ import java.util.concurrent.ScheduledExecutorService;
 
 
 /**
- * This class represents a CLIENT as an OBSERVER
+ * This class represents an observer that contains a reference to a rmi client
+ *      ----------------- H O W  T H E  U P D A T E  H A P P E N S ? --------------------------------------------
+ *      OBSERVABLE NOTIFIES A CHANGE TO EVERY WRAPPED OBSERVER IN HIS LIST OF OBSERVERS.
+ *      WHEN A NOTIFY METHOD IS INVOKED, THE UPDATE METHOD IN THIS CLASS IS CALLED.
+ *      THEN THE UPDATE METHOD PUSH INTO A QUEUE AND AN INDIPENDENT THREAD PULLS THE EVENTS FROM THE QUEUE.
+ *      THE PUSH CONSISTS IN CALLING THE EXUCUTE METHOD OF THE CLASS EVENT (WHICH HAS A REMOTE INVOCATION INSIDE)
+ *      ----------------------------------------------------------------------------------------------------------
  */
 public class WrappedObserver implements Observer {
-
     public ScheduledExecutorService scheduler;
     private static final int HEARTBEAT_INTERVAL = 2; // seconds
     private ClientGeneralInterface remoteClient;
     private String nickname;
-    private boolean aDisconnectionHappened=false;
+    private boolean aDisconnectionHappened = false;
     private ExecutorService executor;
-    private ConcurrentLinkedQueue<Event> eventQueue=new ConcurrentLinkedQueue<>();
+    private ConcurrentLinkedQueue<Event> eventQueue = new ConcurrentLinkedQueue<>();
 
 
 
 
 
-    // ----------------- C O M E   A V V I E N E   L' U P D A T E ? --------------------
-    // OBSERVABLE SI ACCORGE DEL CAMBIAMENTO (CHE PASSA DALLA VIEW, AL CONTROLLER, AL
-    // MODEL, CHE è OBSERVABLE). A QUESTO PUNTO, INVOCA LE FUNZIONI DI UPDATE SUI VARI
-    // OBSERVERS. QUESTI IN RMI, GRAZIE ALLA CLASSE WRAPPED OBSERVER, VANNO AD INVOCARE
-    // DEI METODI DI CLIENTRMI CHE RICEVONO L'OGGETTO AGGIORNATO
-    // ---------------------------------------------------------------------------------
 
 
 
     /**
      * Class constructor
-     * @param ro the RMIClient
+     * @param ro the RMIClient which is an observer
      */
     public WrappedObserver(ClientGeneralInterface ro) {
 
         remoteClient = ro;
-
 
         WrappedObserver wrappedObserver=this;
         executor= Executors.newSingleThreadExecutor();
@@ -61,11 +56,12 @@ public class WrappedObserver implements Observer {
                     event = eventQueue.poll();
                     if (event != null) {
                         try {
+
                             lastEvent = event.execute(remoteClient, wrappedObserver);
                             System.out.println("ho fatto la pull dell'evento");
 
                         } catch (RemoteException e) {
-                            aDisconnectionHappened = true; //lo rileverà l'heartbeat
+                            aDisconnectionHappened = true;
                             e.printStackTrace();
 
                         }
@@ -78,7 +74,6 @@ public class WrappedObserver implements Observer {
 
 
 
-
     /**
      * This is an update method
      * @param obs is the observable who called the notify
@@ -86,20 +81,25 @@ public class WrappedObserver implements Observer {
     public void update(Observable obs, Event event) throws RemoteException {
         System.out.println("ho fatto la push dell'evento");
         eventQueue.add(event); //push
-
-
-
     }
 
 
 
     /**
-     * Setter method
-     * @param nickname of the WrappedObserver
+     * Getter method
+     * @return HEARTBEAT_INTERVAL is the frequency of heartbeat
      */
-    @Override
-    public void setNickname(String nickname) throws RemoteException  {
-       this.nickname = nickname;
+    public int getHeartbeatInterval(){
+        return this.HEARTBEAT_INTERVAL;
+    }
+
+
+    /**
+     * Getter method
+     * @return aDisconnectionHappened true if there's been a disconnection, false otherwise
+     */
+    public boolean getADisconnectionHappened() {
+        return aDisconnectionHappened;
     }
 
 
@@ -113,17 +113,33 @@ public class WrappedObserver implements Observer {
         return this.nickname;
     }
 
+
+
+    /**
+     * Setter method
+     * @param scheduledExecutorService sends heartbeats to the client
+     */
     public void setScheduler(ScheduledExecutorService scheduledExecutorService){
-        this.scheduler=scheduledExecutorService;
-    }
-    public int getHeartbeatInterval(){
-        return this.HEARTBEAT_INTERVAL;
+        this.scheduler = scheduledExecutorService;
     }
 
-    public boolean getADisconnectionHappened() {
-        return aDisconnectionHappened;
+
+
+    /**
+     * Setter method
+     * @param nickname of the WrappedObserver
+     */
+    @Override
+    public void setNickname(String nickname) throws RemoteException  {
+        this.nickname = nickname;
     }
 
+
+
+    /**
+     * Setter method
+     * @param aDisconnectionHappened if there's been a disconnection true, false otherwise
+     */
     public void setADisconnectionHappened(boolean aDisconnectionHappened) {
         this.aDisconnectionHappened = aDisconnectionHappened;
     }

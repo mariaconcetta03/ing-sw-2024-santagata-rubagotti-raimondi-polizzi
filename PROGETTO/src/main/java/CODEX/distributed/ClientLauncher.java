@@ -5,7 +5,6 @@ import CODEX.distributed.Socket.ClientSCK;
 import CODEX.view.GUI.InterfaceGUI;
 import CODEX.view.TUI.ANSIFormatter;
 import CODEX.view.TUI.InterfaceTUI;
-
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
@@ -14,13 +13,17 @@ import java.rmi.RemoteException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+
+/**
+ * This class is the launcher of both rmi and tcp clients.
+ */
 public class ClientLauncher {
     public static void main(String[] args) {
-        boolean selected=false;
-        int selection=0;
-        String serverAddress="";
+        boolean selected = false;
+        int selection = 0;
+        String serverAddress = "";
         String clientAddress = "";
-        Scanner sc=new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
 
         System.out.println("Insert the Server's Ip address (leave blank for LocalHost): ");
         serverAddress=sc.nextLine(); 
@@ -28,16 +31,16 @@ public class ClientLauncher {
         do{
             try {
                 selection = sc.nextInt();
-                sc=new Scanner(System.in);
+                sc = new Scanner(System.in);
             if(selection==1){
-                //Scanner sc2 =new Scanner(System.in);
+                //Scanner sc2 = new Scanner(System.in);
                 System.out.println("Insert your IP address (leave blank for localHost): ");
-                clientAddress=sc.nextLine();
-                selected=true;
+                clientAddress = sc.nextLine();
+                selected = true;
                 if (clientAddress.equals("")) {
-                    System.setProperty("java.rmi.server.hostname", Inet4Address.getLocalHost().getHostAddress()); //don't know if it works also for @mcs
+                    System.setProperty("java.rmi.server.hostname", Inet4Address.getLocalHost().getHostAddress());
                 } else {
-                    System.setProperty("java.rmi.server.hostname", clientAddress); //don't know if it works also for @mcs
+                    System.setProperty("java.rmi.server.hostname", clientAddress);
                 }
                 RMIClient rmiClient = new RMIClient();
                 rmiClient.getNetworkSettings().setSERVER_NAME(serverAddress); //setting the Server Address
@@ -46,38 +49,36 @@ public class ClientLauncher {
                 InterfaceTUI.clearScreen();
                 //connect the client
                 rmiClient.waitingRoom(); //selection of nicknames and lobby functionalities
-
-                //generate client RMI
             }else if(selection == 2){
-                RMIClient rmiClient;
+                RMIClient rmiClient; //generate RMI client
                 System.out.println("Insert your IP address (leave blank for localHost): ");
-                clientAddress=sc.nextLine();
-                selected=true;
+                clientAddress = sc.nextLine();
+                selected = true;
                     if (clientAddress.equals("")) {
-                        System.setProperty("java.rmi.server.hostname", Inet4Address.getLocalHost().getHostAddress()); //don't know if it works also for @mcs
+                        System.setProperty("java.rmi.server.hostname", Inet4Address.getLocalHost().getHostAddress());
                     } else {
-                        System.setProperty("java.rmi.server.hostname", clientAddress); //don't know if it works also for @mcs
+                        System.setProperty("java.rmi.server.hostname", clientAddress);
                     }
-                    rmiClient=new RMIClient(); //bisogna gestirlo con un'eccezione se dopo il try rimane null
+                    rmiClient = new RMIClient();
                     rmiClient.getNetworkSettings().setSERVER_NAME(serverAddress); //setting the Server Address
                     rmiClient.setSelectedView(2); //GUI
                     rmiClient.SRMIInterfaceFromRegistry();
 
-                selected=true;
+                selected = true;
                 String[] network = new String[1];
                 network[0] = "RMI";
                 InterfaceGUI.main(network, null, rmiClient);
             }else if(selection==3){
-                selected=true;
+                selected = true;
                 try {
                     ClientSCK clientSCK = null;
-                    if (serverAddress.equals("")) { // se la stringa è vuota, allora metto il localhost
-                        ClientSCK.Settings.setServerName("127.0.0.1"); // non so se serve
-                        clientSCK = new ClientSCK("127.0.0.1"); //per TCP dobbiamo solo chiedere porte disponibili lato client
+                    if (serverAddress.equals("")) { // if string is empty then it uses localhost
+                        ClientSCK.Settings.setServerName("127.0.0.1");
+                        clientSCK = new ClientSCK("127.0.0.1");
                         System.out.println("Set server address: 127.0.0.1");
                     } else {
-                        clientSCK = new ClientSCK(serverAddress); //per TCP dobbiamo solo chiedere porte disponibili lato client
-                        ClientSCK.Settings.setServerName(serverAddress); // non so se serve
+                        clientSCK = new ClientSCK(serverAddress);
+                        ClientSCK.Settings.setServerName(serverAddress);
                         System.out.println("Set server address: " + serverAddress);
                     }
                     clientSCK.setSelectedView(1); //TUI
@@ -87,17 +88,17 @@ public class ClientLauncher {
                     System.out.println("Cannot connect to Server. Shutting down. Try again.");
                     e.printStackTrace();
                     System.exit(-1);
-                } //non so se vadano gestite in altra maniera, potremmo chiudere tutto e riprovare
+                }
             } else if (selection==4) {
                 ClientSCK clientSCK = null;
                 try {
-                    if (serverAddress.equals("")) { // se la stringa è vuota, allora metto il localhost
-                        ClientSCK.Settings.setServerName("127.0.0.1"); // non so se serve
-                        clientSCK = new ClientSCK("127.0.0.1"); //per TCP dobbiamo solo chiedere porte disponibili lato client
+                    if (serverAddress.equals("")) { // if string is empty then it uses localhost
+                        ClientSCK.Settings.setServerName("127.0.0.1");
+                        clientSCK = new ClientSCK("127.0.0.1");
                         System.out.println("Set server address: 127.0.0.1");
                     } else {
-                        clientSCK = new ClientSCK(serverAddress); //per TCP dobbiamo solo chiedere porte disponibili lato client
-                        ClientSCK.Settings.setServerName(serverAddress); // non so se serve
+                        clientSCK = new ClientSCK(serverAddress);
+                        ClientSCK.Settings.setServerName(serverAddress);
                         System.out.println("Set server address: " + serverAddress);
                     }
                     clientSCK.setSelectedView(2); //GUI
@@ -120,7 +121,7 @@ public class ClientLauncher {
                 System.out.println("Please type 1 (RMI+TUI), 2 (RMI+GUI), 3 (TCP+TUI), 4 (TCP+GUI)");
             } catch (RemoteException| NotBoundException| UnknownHostException e) {
                 System.out.println("Cannot connect to Server. Shutting down. Try again.");
-                e.printStackTrace(); //forse poi va rimosso in consegna
+                e.printStackTrace();
                 System.exit(-1);
             }
         }while(!selected);

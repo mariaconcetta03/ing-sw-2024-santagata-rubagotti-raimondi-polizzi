@@ -45,7 +45,6 @@ public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
 
     void handleDisconnection() throws RemoteException;
 
-
     void heartbeat() throws RemoteException;
 
     void startHeartbeat() throws RemoteException;

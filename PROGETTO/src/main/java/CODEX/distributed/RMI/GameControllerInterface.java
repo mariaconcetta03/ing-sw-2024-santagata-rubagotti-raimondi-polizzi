@@ -3,7 +3,6 @@ package CODEX.distributed.RMI;
 import CODEX.Exceptions.ColorAlreadyTakenException;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.org.model.*;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;

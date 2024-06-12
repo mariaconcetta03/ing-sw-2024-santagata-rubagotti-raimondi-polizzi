@@ -11,6 +11,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 public interface ClientActionsInterface {
+
     void addPlayerToLobby(String playerNickname, int gameId) throws RemoteException, NotBoundException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException;
 
     void chooseNickname(String nickname) throws RemoteException, NotBoundException, NicknameAlreadyTakenException;

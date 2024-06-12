@@ -5,13 +5,12 @@ import CODEX.Exceptions.GameAlreadyStartedException;
 import CODEX.Exceptions.GameNotExistsException;
 import CODEX.Exceptions.NicknameAlreadyTakenException;
 import CODEX.controller.GameController;
-
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.*;
 
 public interface ServerRMIInterface extends Remote {
+
     void startServer() throws RemoteException;
 
     GameControllerInterface createLobby(String creatorNickname, int numOfPlayers) throws RemoteException;
