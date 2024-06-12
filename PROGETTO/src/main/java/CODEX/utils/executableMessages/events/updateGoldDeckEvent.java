@@ -6,6 +6,9 @@ import CODEX.org.model.PlayableDeck;
 
 import java.rmi.RemoteException;
 
+/**
+ * This event is useful to communicate that gold deck has changed
+ */
 public class updateGoldDeckEvent implements Event {
     /**
      * Constructor method
@@ -25,7 +28,7 @@ public class updateGoldDeckEvent implements Event {
     public void executeSCK(ClientGeneralInterface client) {
         try {
             client.updateGoldDeck(goldDeck);
-        } catch (RemoteException ignored) { //è il modo migliore di gestire la cosa?
+        } catch (RemoteException ignored) {
         }
     }
 

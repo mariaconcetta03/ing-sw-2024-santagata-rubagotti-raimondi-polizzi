@@ -6,6 +6,10 @@ import CODEX.org.model.PlayableCard;
 
 import java.rmi.RemoteException;
 
+
+/**
+ * This event is useful to communicate that the player deck has changed
+ */
 public class updatePlayerDeckEvent implements Event {
     private String playerNickname;
     private PlayableCard[] playerDeck;
@@ -26,7 +30,7 @@ public class updatePlayerDeckEvent implements Event {
     public void executeSCK(ClientGeneralInterface client) {
         try {
             client.updatePlayerDeck(playerNickname, playerDeck);
-        }catch (RemoteException ignored){ //è il modo migliore di gestire la cosa?
+        }catch (RemoteException ignored){
 
         }
     }

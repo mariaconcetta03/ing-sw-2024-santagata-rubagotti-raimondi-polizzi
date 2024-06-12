@@ -3,9 +3,11 @@ package CODEX.utils.executableMessages.events;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.PlayableDeck;
-
 import java.rmi.RemoteException;
 
+/**
+ * This event is useful to communicate that resource deck has changed
+ */
 public class updateResourceDeckEvent implements Event {
     private PlayableDeck resourceDeck;
     public updateResourceDeckEvent(PlayableDeck resourceDeck){
@@ -20,7 +22,7 @@ public class updateResourceDeckEvent implements Event {
     public void executeSCK(ClientGeneralInterface client) {
         try {
             client.updateResourceDeck(resourceDeck);
-        } catch (RemoteException ignored) { //è il modo migliore di gestire la cosa?
+        } catch (RemoteException ignored) {
         }
     }
 

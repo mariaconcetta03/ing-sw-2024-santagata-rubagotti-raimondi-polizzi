@@ -3,10 +3,11 @@ package CODEX.utils.executableMessages.events;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.Pawn;
-import CODEX.org.model.Player;
-
 import java.rmi.RemoteException;
 
+/**
+ * This event is useful to communicate that player pawn has changed
+ */
 public class updatePlayerPawnEvent implements Event {
     private String nickname;
     private Pawn pawn;
@@ -25,7 +26,7 @@ public class updatePlayerPawnEvent implements Event {
     public void executeSCK(ClientGeneralInterface client) {
         try {
             client.updatePawns(nickname, pawn);
-        } catch (RemoteException ignored) { //è il modo migliore di gestire la cosa?
+        } catch (RemoteException ignored) {
         }
     }
 

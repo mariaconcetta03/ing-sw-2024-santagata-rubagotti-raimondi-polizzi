@@ -5,6 +5,10 @@ import CODEX.distributed.RMI.WrappedObserver;
 
 import java.rmi.RemoteException;
 
+/**
+ * This event is useful to communicate that the number of
+ * last moves remained has changed
+ */
 public class updateLastMovesEvent implements Event{
     private int lastMoves;
     public updateLastMovesEvent(int lastMoves){

@@ -3,9 +3,12 @@ package CODEX.utils.executableMessages.events;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.PlayableCard;
-
 import java.rmi.RemoteException;
-//Inet4Address.getLocalHost().getHostAddress() @TODO da inserire nel Server
+
+
+/**
+ * This event is useful to communicate that resource card 2 has changed
+ */
 public class updateResourceCard2Event implements Event {
     private PlayableCard card;
 
@@ -22,7 +25,7 @@ public class updateResourceCard2Event implements Event {
     public void executeSCK(ClientGeneralInterface client) {
         try {
             client.updateResourceCard2(card);
-        } catch (RemoteException ignored) { //è il modo migliore di gestire la cosa?
+        } catch (RemoteException ignored) {
         }
     }
 

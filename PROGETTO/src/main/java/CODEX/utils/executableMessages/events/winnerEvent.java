@@ -7,6 +7,9 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This event is useful to communicate the winners of the game (and the ranking)
+ */
 public class winnerEvent implements Event {
     Map<Integer, List<String>> finalScoreBoard;
     public winnerEvent(Map<Integer, List<String>> finalScoreBoard){

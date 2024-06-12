@@ -3,12 +3,11 @@ package CODEX.utils.executableMessages.events;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.PlayableCard;
-
 import java.rmi.RemoteException;
 
-//Interfaccia EVENT con tante sottoclassi che re-implementano il metodo Event.execute(client).
-//In RMI lo farà il WRAPPEDOBSERVER nel metodo Update, in TCP lo farà il ClientSCK con i messaggi inviati dal
-//ClientHandlerThread.
+/**
+ * This event is useful to communicate that gold card 1 has changed
+ */
 public class updateGoldCard1Event implements Event {
     /**
      * Constructor method
@@ -28,7 +27,7 @@ public class updateGoldCard1Event implements Event {
     public void executeSCK(ClientGeneralInterface client) {
         try {
             client.updateGoldCard1(card);
-        } catch (RemoteException ignored) { //è il modo migliore di gestire la cosa?
+        } catch (RemoteException ignored) {
         }
     }
 

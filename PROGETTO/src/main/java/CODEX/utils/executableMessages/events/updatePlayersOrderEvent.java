@@ -3,11 +3,13 @@ package CODEX.utils.executableMessages.events;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.Player;
-
 import java.rmi.RemoteException;
 import java.util.List;
 
-public class updatePlayersOrderEvent implements Event { //questo era prima l'evento UPDATED_ROUND
+/**
+ * This event is useful to communicate that the playing order has changed
+ */
+public class updatePlayersOrderEvent implements Event {
     private List<Player> newPlayingOrder;
 
     public updatePlayersOrderEvent(List<Player> newPlayingOrder) {
@@ -22,7 +24,7 @@ public class updatePlayersOrderEvent implements Event { //questo era prima l'eve
     public void executeSCK(ClientGeneralInterface client) {
         try {
             client.updateRound(newPlayingOrder);
-        } catch (RemoteException ignored) { //è il modo migliore di gestire la cosa?
+        } catch (RemoteException ignored) {
         }
     }
 

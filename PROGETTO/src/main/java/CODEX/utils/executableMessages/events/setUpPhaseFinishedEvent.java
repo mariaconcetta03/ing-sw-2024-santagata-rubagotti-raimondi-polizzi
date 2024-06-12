@@ -2,9 +2,11 @@ package CODEX.utils.executableMessages.events;
 
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
-
 import java.rmi.RemoteException;
 
+/**
+ * This event is useful to communicate that the game can start because all the players have all that is need to start the game
+ */
 public class setUpPhaseFinishedEvent implements Event {
     @Override
     public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
@@ -15,7 +17,7 @@ public class setUpPhaseFinishedEvent implements Event {
     public void executeSCK(ClientGeneralInterface client) {
         try {
             client.finishedSetUpPhase();
-        } catch (RemoteException ignored) { //è il modo migliore di gestire la cosa?
+        } catch (RemoteException ignored) {
         }
     }
 

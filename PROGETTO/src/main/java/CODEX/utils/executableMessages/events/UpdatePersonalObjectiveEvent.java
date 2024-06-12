@@ -3,9 +3,11 @@ package CODEX.utils.executableMessages.events;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.ObjectiveCard;
-
 import java.rmi.RemoteException;
 
+/**
+ * This event is useful to communicate that personal objective has been set
+ */
 public class UpdatePersonalObjectiveEvent implements Event {
     ObjectiveCard personalObjCard;
     String nickname;
@@ -24,7 +26,7 @@ public class UpdatePersonalObjectiveEvent implements Event {
     public void executeSCK(ClientGeneralInterface client) {
         try {
             client.updatePersonalObjective(personalObjCard, nickname);
-        } catch (RemoteException ignored) { //è il modo migliore di gestire la cosa?
+        } catch (RemoteException ignored) {
         }
     }
 

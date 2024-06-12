@@ -3,10 +3,12 @@ package CODEX.utils.executableMessages.events;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.Chat;
-import CODEX.org.model.ChatMessage;
-
 import java.rmi.RemoteException;
 
+/**
+ * This event is useful to communicate that one chat has been changed, because of
+ * new messages, and so it needs to be updated
+ */
 public class updateChatEvent implements Event{
     Chat chatToBeAdded;
     public updateChatEvent(Chat chatToBeAdded){

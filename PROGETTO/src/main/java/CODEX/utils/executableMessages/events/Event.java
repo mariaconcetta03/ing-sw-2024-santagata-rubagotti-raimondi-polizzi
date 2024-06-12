@@ -2,19 +2,20 @@ package CODEX.utils.executableMessages.events;
 
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
-
 import java.io.Serializable;
 import java.rmi.RemoteException;
 
+/**
+ * This interface is useful for all the updates notified by the model
+ */
 public interface Event extends Serializable {
-
     boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException;
+    // the return value is needed to decide server side when to start checking rmi connection
 
-    void executeSCK(ClientGeneralInterface client); // TCP doesn't need to throw RemoteException + in updatePlayerDeckEvent we have an execute method different from RMI
+    void executeSCK(ClientGeneralInterface client);
+    // TCP doesn't need to throw RemoteException
 
-    // it checks Boolean startCheckConnection (returns true if this Boolean is true). It's true when we are in updateGameState and the new state is 'STARTED'
-    // in updatePlayerDeck writes the attribute convertedArray (an array can't be transmitted using a TCP stream)
-    boolean executeSCKServerSide(); // needed to convert an array into a list and to decide server side when to start checking the connection
-
+    boolean executeSCKServerSide();
+    // the return value is needed to decide server side when to start checking tcp connection
 
 }

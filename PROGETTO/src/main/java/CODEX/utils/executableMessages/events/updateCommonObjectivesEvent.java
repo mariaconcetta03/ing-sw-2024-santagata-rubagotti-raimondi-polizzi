@@ -3,9 +3,12 @@ package CODEX.utils.executableMessages.events;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.org.model.ObjectiveCard;
-
 import java.rmi.RemoteException;
 
+
+/**
+ * This event is useful to communicate that common objectives have been set
+ */
 public class updateCommonObjectivesEvent implements Event {
     private ObjectiveCard objCard1;
     private ObjectiveCard objCard2;
@@ -24,12 +27,12 @@ public class updateCommonObjectivesEvent implements Event {
     public void executeSCK(ClientGeneralInterface client) {
         try {
             client.updateCommonObjectives(objCard1, objCard2);
-        } catch (RemoteException ignored) { //è il modo migliore di gestire la cosa?
+        } catch (RemoteException ignored) {
         }
     }
 
     @Override
-    public boolean executeSCKServerSide() { //returns true when we are considering updateGameState and the new state is 'STARTED'
+    public boolean executeSCKServerSide() {
         return false;
 
     }

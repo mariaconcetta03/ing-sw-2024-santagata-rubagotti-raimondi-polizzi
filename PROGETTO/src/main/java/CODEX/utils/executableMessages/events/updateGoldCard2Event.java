@@ -6,12 +6,12 @@ import CODEX.org.model.PlayableCard;
 
 import java.rmi.RemoteException;
 
+
+/**
+ * This event is useful to communicate that gold card 2 has changed
+ */
 public class updateGoldCard2Event implements Event {
-    /**
-     * Constructor method
-     *
-     * @param card is the card to be updated.
-     */
+
     public updateGoldCard2Event(PlayableCard card) {
         this.card = card;
     }
@@ -27,7 +27,7 @@ public class updateGoldCard2Event implements Event {
     public void executeSCK(ClientGeneralInterface client) {
         try {
             client.updateGoldCard2(card);
-        } catch (RemoteException ignored) { //è il modo migliore di gestire la cosa?
+        } catch (RemoteException ignored) {
         }
     }
 

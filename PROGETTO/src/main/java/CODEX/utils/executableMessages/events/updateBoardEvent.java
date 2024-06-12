@@ -7,7 +7,11 @@ import CODEX.org.model.PlayableCard;
 
 import java.rmi.RemoteException;
 
-public class updateBoardEvent implements Event { //viene chiamato in playBaseCard per la prima volta
+/**
+ * This event is useful to communicate that the board of one player has
+ * been modified
+ */
+public class updateBoardEvent implements Event {
     private String boardOwner;
     private Board board;
     private PlayableCard newCard;
@@ -26,12 +30,12 @@ public class updateBoardEvent implements Event { //viene chiamato in playBaseCar
     public void executeSCK(ClientGeneralInterface client) {
         try {
             client.updateBoard(boardOwner, board, newCard);
-        } catch (RemoteException ignored) { //è il modo migliore di gestire la cosa?
+        } catch (RemoteException ignored) {
         }
     }
 
     @Override
-    public boolean executeSCKServerSide() { //returns true when we are considering updateGameState and the new state is 'STARTED'
+    public boolean executeSCKServerSide() { // returns true when we are considering updateGameState and the new state is 'STARTED'
         return false;
 
     }
