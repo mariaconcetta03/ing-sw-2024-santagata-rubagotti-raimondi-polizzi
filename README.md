@@ -28,10 +28,10 @@ Codex Naturalis is the final test of "Software Engineering", a course of "Bachel
 You can check up our JUnit test coverage [here](PROGETTO%2FDeliveries%2FtestCoverage.png).
 ### UML
 Here you can check our UML diagrams:
-- [First UML delivered](PROGETTO%2FDeliveries%2FUML_v3.jpg)
-- [Network UML](PROGETTO%2FDeliveries%2FFILES%20CONSEGNATI%2006-05%2022_45%2FRETE.png)
-- [Model UML](PROGETTO%2FDeliveries%2FFILES%20CONSEGNATI%2006-05%2022_45%2FMODEL.png)
-- [Controller UML](PROGETTO%2FDeliveries%2FFILES%20CONSEGNATI%2006-05%2022_45%2FCONTROLLER.png)
+- [First UML delivered](PROGETTO%2FDeliverables%2FFILES%20CONSEGNATI%2026-03%2FUML_v3.jpg)
+- [Network UML](PROGETTO%2FDeliverables%2FFILES%20CONSEGNATI%2006-05%2022_45%2FRETE.png)
+- [Model UML](PROGETTO%2FDeliverables%2FFILES%20CONSEGNATI%2006-05%2022_45%2FMODEL.png)
+- [Controller UML](PROGETTO%2FDeliverables%2FFILES%20CONSEGNATI%2006-05%2022_45%2FCONTROLLER.png)
 ### Jar
 You can download the Jar to launch the game [here]().
 ## How to run
