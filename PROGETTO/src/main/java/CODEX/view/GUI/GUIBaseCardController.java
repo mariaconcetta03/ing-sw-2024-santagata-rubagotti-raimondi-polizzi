@@ -12,7 +12,6 @@ import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.io.IOException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -87,13 +86,16 @@ public class GUIBaseCardController {
             });
 
             if (network == 1) {
-                try {
+
 
                         rmiClient.playBaseCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPlayerDeck()[0], true);
 
+                try {
                     rmiClient.getGameController().checkBaseCardPlayed();
-                } catch (RemoteException  alreadyCaught) {
+                } catch (RemoteException e) {
+                   rmiClient.setADisconnectionHappened(true);
                 }
+
             } else if (network == 2) {
 
                     clientSCK.playBaseCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPlayerDeck()[0], true);

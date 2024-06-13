@@ -14,10 +14,8 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import java.io.IOException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
 
 
 /**
@@ -111,7 +109,7 @@ public class GUILobbyController {
                 }
 
         } else if (network == 2) { // TCP
-             try {
+
                  availableLobbies.getItems().clear();
                  clientSCK.checkAvailableLobby();
                  setAvailableLobbies(clientSCK.getAvailableLobbies().stream().toList());
@@ -122,7 +120,7 @@ public class GUILobbyController {
                  } else {
                      hideNoLobbyError();
                  }
-             } catch (RemoteException ignored) {}
+
         }
     }
 
@@ -230,22 +228,25 @@ public class GUILobbyController {
                     System.out.println("sto per chiamare addplayertolobby");
                     rmiClient.addPlayerToLobby(rmiClient.getPersonalPlayer().getNickname(), availableLobbies.getValue());
                     System.out.println("ho chiamato addplayer to lobby e sto per chiamare checknplayers");
-                    rmiClient.getGameController().checkNPlayers(); // starts the game if the number of players is correct
+                    try {
+                        rmiClient.getGameController().checkNPlayers(); // starts the game if the number of players is correct
+                    } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+                        throw new RuntimeException(exceptionBeforeTheGameHasStarted);
+                    }
                     System.out.println("ho chiamato il checknplayers e chiamo SETWAITINGPLAYERS");
                     createButton.disabledProperty();
                     joinButton.disabledProperty();
                     setWaitingPlayers();
-                } catch (RemoteException | GameNotExistsException  alreadyCaught) {
-                } catch (GameAlreadyStartedException | FullLobbyException e) {
+
+                } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException e) {
                     System.out.println("RMI: QUESTA LOBBY A CUI STAI CERCANDO DI AGGIUNGERTI è PIENA!");
                     fullLobby.setOpacity(1); // shows the message error "This lobby is full"
                     updateAvailableLobbies(); // updates the available lobbies
                 }
             } else if (network == 2) {
-                try {
+
                     clientSCK.addPlayerToLobby(clientSCK.getPersonalPlayer().getNickname(), availableLobbies.getValue());
-                } catch (Exception ignored) {
-                }
+
                 if (clientSCK.getErrorState()) {
                     clientSCK.setErrorState(false);
                     System.out.println("TCP: QUESTA LOBBY A CUI STAI CERCANDO DI AGGIUNGERTI è PIENA!");
@@ -280,9 +281,9 @@ public class GUILobbyController {
                         joinButton.disabledProperty();
 
                 } else if (network==2) {
-                    try {
+
                         clientSCK.createLobby(clientSCK.getPersonalPlayer().getNickname(), Integer.parseInt(input));
-                    } catch (Exception ignored) {}
+
                     createButton.disabledProperty();
                     joinButton.disabledProperty();
                 }

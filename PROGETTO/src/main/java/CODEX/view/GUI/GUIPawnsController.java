@@ -14,7 +14,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.Scene;
 import java.io.IOException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -158,9 +157,12 @@ public class GUIPawnsController {
                             retryLabel.setOpacity(1);
                         });
 
-                        rmiClient.getGameController().checkChosenPawnColor();
+                        try {
+                            rmiClient.getGameController().checkChosenPawnColor();
+                        } catch (RemoteException e) {
+                            rmiClient.setADisconnectionHappened(true);
+                        }
 
-                    } catch (RemoteException  alreadyCaught) {
 
                     } catch (ColorAlreadyTakenException e) {
                         pawnSelected = false;
@@ -174,7 +176,7 @@ public class GUIPawnsController {
 
             } else if (network == 2) { // TCP
                 executor.execute(() -> {
-                    try {
+
                         clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.YELLOW);
                         if(clientSCK.getErrorState()){
                             pawnSelected = false;
@@ -199,7 +201,7 @@ public class GUIPawnsController {
                             clientSCK.checkChosenPawnColor();
 
                         }
-                    } catch (Exception ignored) {}
+
 
                 });
             }
@@ -233,9 +235,13 @@ public class GUIPawnsController {
                             retryLabel.setText("You have chosen. Now wait the others.");
                             retryLabel.setOpacity(1);
                         });
-                        rmiClient.getGameController().checkChosenPawnColor();
+                        try {
+                            rmiClient.getGameController().checkChosenPawnColor();
+                        } catch (RemoteException e) {
+                            rmiClient.setADisconnectionHappened(true);
+                        }
 
-                    } catch (RemoteException  alreadyCaught) {
+
                     } catch (ColorAlreadyTakenException e) {
                         pawnSelected = false;
                         Platform.runLater(() -> {
@@ -247,7 +253,7 @@ public class GUIPawnsController {
 
             } else if (network == 2) { //TCP
                 executor.execute(() -> {
-                    try {
+
                         clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.BLUE);
                         if(clientSCK.getErrorState()){
                             pawnSelected = false;
@@ -272,7 +278,7 @@ public class GUIPawnsController {
                             clientSCK.checkChosenPawnColor();
 
                         }
-                    } catch (Exception ignored) {}
+
 
                 });
             }
@@ -320,7 +326,7 @@ public class GUIPawnsController {
 
             } else if (network == 2) {
                 executor.execute(() -> {
-                    try {
+
                         clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.GREEN);
                         if(clientSCK.getErrorState()){
                             pawnSelected = false;
@@ -345,7 +351,7 @@ public class GUIPawnsController {
                             clientSCK.checkChosenPawnColor();
 
                         }
-                    } catch (Exception ignored) {}
+
 
                 });
             }
@@ -378,9 +384,13 @@ public class GUIPawnsController {
                             retryLabel.setText("You have chosen. Now wait the others.");
                             retryLabel.setOpacity(1);
                         });
-                        rmiClient.getGameController().checkChosenPawnColor();
+                        try {
+                            rmiClient.getGameController().checkChosenPawnColor();
+                        } catch (RemoteException  e) {
+                            rmiClient.setADisconnectionHappened(true);
+                        }
 
-                    } catch (RemoteException  alreadyCaught) {
+
                     } catch (ColorAlreadyTakenException e) {
                         pawnSelected = false;
                         Platform.runLater(() -> {
@@ -392,7 +402,7 @@ public class GUIPawnsController {
 
             } else if (network == 2) { //TCP
                 executor.execute(() -> {
-                    try {
+
                         clientSCK.choosePawnColor(clientSCK.getPersonalPlayer().getNickname(), Pawn.RED);
                         if(clientSCK.getErrorState()){
                             pawnSelected = false;
@@ -416,7 +426,7 @@ public class GUIPawnsController {
                             });
                             clientSCK.checkChosenPawnColor();
                         }
-                    } catch (Exception ignored) {}
+
                 });
             }
         }

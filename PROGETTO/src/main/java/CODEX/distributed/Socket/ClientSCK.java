@@ -421,14 +421,9 @@ public class ClientSCK implements ClientGeneralInterface {
      * This method is used to add a single player to an already created lobby
      * @param playerNickname is the nickname of the player who wants to join the lobby
      * @param gameId is the lobby the player wants to join
-     * @throws RemoteException if an exception happens while communicating with the remote
-     * @throws NotBoundException if an exception happens while communicating with the remote
-     * @throws GameAlreadyStartedException if the game has already started
-     * @throws FullLobbyException if the lobby is full
-     * @throws GameNotExistsException if the game you're trying to access doesn't exist
-     */
+    */
     @Override
-    public void addPlayerToLobby(String playerNickname, int gameId) throws GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
+    public void addPlayerToLobby(String playerNickname, int gameId)  {
         synchronized (actionLock) {
             ClientMessage clientMessage=new AddPlayerToLobby(playerNickname,gameId);
             try {
@@ -450,9 +445,6 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * Once connected the player get to choose his nickname that must be different from all the other presents
      * @param nickname is the String he wants to put as his nickname
-     * @throws RemoteException   if an exception happens while communicating with the remote
-     * @throws NotBoundException if an exception happens while communicating with the remote
-     * @throws NicknameAlreadyTakenException if the nickname has already been chosen by another user
      */
     @Override
     public void chooseNickname(String nickname)  {
@@ -479,8 +471,6 @@ public class ClientSCK implements ClientGeneralInterface {
      * This method calls the function into the ServerController
      * @param creatorNickname is the nickname of the player who wants to create a new lobby
      * @param numOfPlayers is the number of player the creator decided can play in the lobby
-     * @throws RemoteException if an exception happens while communicating with the remote
-     * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
     public void createLobby(String creatorNickname, int numOfPlayers)  {
@@ -508,8 +498,6 @@ public class ClientSCK implements ClientGeneralInterface {
      * @param selectedCard the Card the Player wants to play
      * @param position     the position where the Player wants to play the Card
      * @param orientation  the side on which the Player wants to play the Card
-     * @throws RemoteException   if an exception happens while communicating with the remote
-     * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
     public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation)  {
@@ -539,9 +527,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @param nickname    is the nickname of the Player that wants to play a card
      * @param baseCard    is the base card that is played
      * @param orientation the side on which the Player wants to play the Card
-     * @throws RemoteException   if an exception happens while communicating with the remote
-     * @throws NotBoundException if an exception happens while communicating with the remote
-     */
+      */
     @Override
     public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation)  {
         synchronized (actionLock) {
@@ -560,8 +546,6 @@ public class ClientSCK implements ClientGeneralInterface {
      * This method allows the currentPlayer to draw a card from the decks or from the unveiled ones
      * @param nickname     is the nickname of the player who wants to draw the card
      * @param selectedCard is the Card the Players wants to draw
-     * @throws RemoteException   if an exception happens while communicating with the remote
-     * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
     public void drawCard(String nickname, PlayableCard selectedCard)  {
@@ -588,8 +572,6 @@ public class ClientSCK implements ClientGeneralInterface {
      * This method allows the chooser Player to select his personal ObjectiveCard
      * @param chooserNickname is the nickname of the player selecting the ObjectiveCard
      * @param selectedCard    is the ObjectiveCard the player selected
-     * @throws RemoteException   if an exception happens while communicating with the remote
-     * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
     public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard)  {
@@ -610,10 +592,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * This method allows a player to choose the color of his pawn
      * @param chooserNickname is the nickname of the player who needs to choose the color
      * @param selectedColor   is the color chosen by the player
-     * @throws RemoteException   if an exception happens while communicating with the remote
-     * @throws NotBoundException if an exception happens while communicating with the remote
-     * @throws ColorAlreadyTakenException if someone chose the color before you
-     */
+      */
     @Override
     public void choosePawnColor(String chooserNickname, Pawn selectedColor) {
         synchronized (actionLock) {
@@ -640,9 +619,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @param senderNickname     is the nickname of the player sending the message
      * @param receiversNickname is the list of nicknames of the players who need to receive this message
      * @param message            is the string sent by the sender to the receivers
-     * @throws RemoteException   if an exception happens while communicating with the remote
-     * @throws NotBoundException if an exception happens while communicating with the remote
-     */
+      */
     @Override
     public void sendMessage(String senderNickname, List<String> receiversNickname, String message)  {
         synchronized (actionLock) {
@@ -667,9 +644,6 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * This method lets a player end the game (volontary action or involontary action - connection loss)
      * @param nickname of the player who is going leave the game
-     * @throws RemoteException if an exception happens while communicating with the remote
-     * @throws NotBoundException
-     * @throws IllegalArgumentException
      */
     @Override
     public void leaveGame(String nickname) throws  IllegalArgumentException {
@@ -707,7 +681,6 @@ public class ClientSCK implements ClientGeneralInterface {
      * @param board the new board we want to update
      * @param boardOwner is the player which possesses the board
      * @param newCard the last card placed
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void updateBoard(String boardOwner, Board board, PlayableCard newCard)  {
@@ -739,7 +712,6 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * This is an update method
      * @param resourceDeck the new deck we want to update
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void updateResourceDeck(PlayableDeck resourceDeck) {
@@ -760,7 +732,6 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * This is an update method
      * @param goldDeck the new deck we want to update
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void updateGoldDeck(PlayableDeck goldDeck)  {
@@ -781,7 +752,6 @@ public class ClientSCK implements ClientGeneralInterface {
      * This is an update method
      * @param playerNickname the player which deck is updated
      * @param playerDeck     the new deck we want to update
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void updatePlayerDeck(String playerNickname, PlayableCard[] playerDeck)  {
@@ -813,7 +783,6 @@ public class ClientSCK implements ClientGeneralInterface {
      * This is an update method
      * @param card     is the personal objective card
      * @param nickname is the owner of the personal objective card
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void updatePersonalObjective(ObjectiveCard card, String nickname)  {
@@ -853,7 +822,6 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * This method is called when all the player chose their personal objective card to let the
      * client know the set-up fase has finished.
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void finishedSetUpPhase() {
@@ -865,7 +833,6 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * This method prints the winners of the game in the TUI
      * @param finalScoreBoard is a Map containing all the players' nicknames as values and as keys their positions
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void showWinner(Map<Integer, List<String>> finalScoreBoard)  {
@@ -918,7 +885,6 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * This is an update method
      * @param lastMoves is the number of turns remaining before the game ends.
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void updateLastMoves(int lastMoves)  {
@@ -931,7 +897,6 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * This is an update method
      * @param card which needs to be updated
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void updateResourceCard1(PlayableCard card)  {
@@ -952,7 +917,6 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * This is an update method
      * @param card which needs to be updated
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void updateResourceCard2(PlayableCard card)  {
@@ -973,7 +937,6 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * This is an update method
      * @param card which needs to be updated
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void updateGoldCard1(PlayableCard card)  {
@@ -994,7 +957,6 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * This is an update method
      * @param card which needs to be updated
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void updateGoldCard2(PlayableCard card) {
@@ -1016,7 +978,6 @@ public class ClientSCK implements ClientGeneralInterface {
      * This is an update method
      * @param chatIdentifier ID
      * @param chat which needs to be updated
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void updateChat(Integer chatIdentifier, Chat chat) {
@@ -1032,7 +993,6 @@ public class ClientSCK implements ClientGeneralInterface {
      * This is an update method
      * @param nickname is the nickname of the player who selected a new pawn color
      * @param pawn is the selected color
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void updatePawns(String nickname, Pawn pawn) {
@@ -1070,7 +1030,6 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * This is an update method
      * @param newPlayingOrder are the players of the game ordered
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void updateRound(List<Player> newPlayingOrder)  { //taken from RMIClient
@@ -1197,7 +1156,6 @@ public class ClientSCK implements ClientGeneralInterface {
      * This is an update method
      * @param card1 is the first common Objective
      * @param card2 is the second common Objective
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void updateCommonObjectives(ObjectiveCard card1, ObjectiveCard card2){
@@ -1211,7 +1169,6 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * This is an update method
      * @param gameState is the new Game state (WAITING_FOR_START -> STARTED -> ENDING -> ENDED)
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void updateGameState(Game.GameState gameState)  {
@@ -1267,7 +1224,6 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * This method is called when a disconnection happens.
      * It closes the application.
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void handleDisconnection()  {
@@ -1438,7 +1394,6 @@ public class ClientSCK implements ClientGeneralInterface {
 
     /**
      * This method manages disconnections
-     * @throws RemoteException
      */
     public void handleDisconnectionFunction(){
         // TUI + GUI
@@ -1702,7 +1657,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * Getter method
      * @return the lobby ids of the available lobbies
      */
-    public HashSet<Integer> getAvailableLobbies() throws RemoteException {
+    public HashSet<Integer> getAvailableLobbies() {
         checkAvailableLobby(); // update in the clientsck
         return lobbyId;
     }

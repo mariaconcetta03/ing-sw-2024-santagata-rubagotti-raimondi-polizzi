@@ -16,7 +16,6 @@ import javafx.util.Duration;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import java.io.IOException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -72,17 +71,21 @@ public class GUIObjectiveController {
             new Thread(() -> {
                 if (network == 1) {
 
-                    try {
+
 
                             rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(1));
 
-                        rmiClient.getGameController().checkObjectiveCardChosen();
-                        objectiveCardselected = rmiClient.getPersonalPlayer().getPersonalObjectives().get(1);
-                    } catch (RemoteException  alreadyCaught) {}
-                } else if (network == 2) {
                     try {
+                        rmiClient.getGameController().checkObjectiveCardChosen();
+                    } catch (RemoteException e) {
+                        rmiClient.setADisconnectionHappened(true);
+                    }
+                    objectiveCardselected = rmiClient.getPersonalPlayer().getPersonalObjectives().get(1);
+
+                } else if (network == 2) {
+
                         clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(1));
-                    } catch (Exception ignored) {}
+
                     if(!clientSCK.getErrorState()){
                         clientSCK.checkObjectiveCardChosen();
                         objectiveCardselected = clientSCK.getPersonalPlayer().getPersonalObjectives().get(1);
@@ -111,17 +114,21 @@ public class GUIObjectiveController {
             objectiveSelected = true;
             new Thread(() -> {
                 if (network == 1) {
-                    try {
+
 
                             rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(0));
 
-                        rmiClient.getGameController().checkObjectiveCardChosen();
-                        objectiveCardselected = rmiClient.getPersonalPlayer().getPersonalObjectives().get(0); // objectiveCard 1 --> get(0)
-                    } catch (RemoteException  alreadyCaught) {}
-                } else if (network == 2) {
                     try {
+                        rmiClient.getGameController().checkObjectiveCardChosen();
+                    } catch (RemoteException e) {
+                        rmiClient.setADisconnectionHappened(true);
+                    }
+                    objectiveCardselected = rmiClient.getPersonalPlayer().getPersonalObjectives().get(0); // objectiveCard 1 --> get(0)
+
+                } else if (network == 2) {
+
                         clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(0));
-                    } catch (Exception ignored) {}
+
                     if(!clientSCK.getErrorState()){
                         clientSCK.checkObjectiveCardChosen();
                         objectiveCardselected = clientSCK.getPersonalPlayer().getPersonalObjectives().get(0);
@@ -141,7 +148,6 @@ public class GUIObjectiveController {
 
     /**
      * This method changes the scene to the next one
-     * @throws RemoteException
      */
     public void changeScene() {
         // let's show the new window!

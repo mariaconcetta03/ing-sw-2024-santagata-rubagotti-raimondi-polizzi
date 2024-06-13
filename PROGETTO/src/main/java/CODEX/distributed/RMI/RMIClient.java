@@ -115,6 +115,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
 
 
+
     /**
      * Settings class
      * It is about port and ip address of the server which the client needs to communicate with
@@ -168,22 +169,20 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This method calls the function into the ServerController
      * @param creatorNickname is the nickname of the player who wants to create a new lobby
      * @param numOfPlayers is the number of player the creator decided can play in the lobby
-     * @throws RemoteException if an exception happens while communicating with the remote
-     * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
     public void createLobby(String creatorNickname, int numOfPlayers)  {
         try {
             this.gameController = this.SRMIInterface.createLobby(creatorNickname, numOfPlayers);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
+        } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+            throw new RuntimeException(exceptionBeforeTheGameHasStarted);
         }
 
         ClientGeneralInterface client = this;
         try {
             gameController.addRMIClient(this.personalPlayer.getNickname(), client);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
+        } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+            throw new RuntimeException(exceptionBeforeTheGameHasStarted);
         }
     }
 
@@ -193,8 +192,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This method is used to add a single player to an already created lobby
      * @param playerNickname is the nickname of the player who wants to join the lobby
      * @param gameId is the lobby the player wants to join
-     * @throws RemoteException if an exception happens while communicating with the remote
-     * @throws NotBoundException if an exception happens while communicating with the remote
      * @throws GameAlreadyStartedException if the game has already started
      * @throws FullLobbyException if the lobby is full
      * @throws GameNotExistsException if the game you're trying to access doesn't exist
@@ -203,14 +200,14 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public void addPlayerToLobby(String playerNickname, int gameId) throws GameAlreadyStartedException, FullLobbyException, GameNotExistsException {
         try {
             this.gameController = this.SRMIInterface.addPlayerToLobby(playerNickname, gameId);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
+        } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+            throw new RuntimeException(exceptionBeforeTheGameHasStarted);
         }
         ClientGeneralInterface client = this;
         try {
             gameController.addRMIClient(this.personalPlayer.getNickname(), client);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
+        } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+            throw new RuntimeException(exceptionBeforeTheGameHasStarted);
         }
     }
 
@@ -219,16 +216,14 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     /**
      * Once connected the player get to choose his nickname that must be different from all the other presents
      * @param nickname is the String he wants to put as his nickname
-     * @throws RemoteException   if an exception happens while communicating with the remote
-     * @throws NotBoundException if an exception happens while communicating with the remote
-     * @throws NicknameAlreadyTakenException if the nickname has already been chosen by another user
+    * @throws NicknameAlreadyTakenException if the nickname has already been chosen by another user
      */
     @Override
     public void chooseNickname(String nickname) throws NicknameAlreadyTakenException {
         try {
             this.SRMIInterface.chooseNickname(nickname);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
+        } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+            throw new RuntimeException(exceptionBeforeTheGameHasStarted);
         }
     }
 
@@ -279,8 +274,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @param nickname    is the nickname of the Player that wants to play a card
      * @param baseCard    is the base card that is played
      * @param orientation the side on which the Player wants to play the Card
-     * @throws RemoteException   if an exception happens while communicating with the remote
-     * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
     public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation)  {
@@ -311,8 +304,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This method allows the currentPlayer to draw a card from the decks or from the unveiled ones
      * @param nickname     is the nickname of the player who wants to draw the card
      * @param selectedCard is the Card the Players wants to draw
-     * @throws RemoteException   if an exception happens while communicating with the remote
-     * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
     public void drawCard(String nickname, PlayableCard selectedCard)  {
@@ -351,8 +342,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This method allows the chooser Player to select his personal ObjectiveCard
      * @param chooserNickname is the nickname of the player selecting the ObjectiveCard
      * @param selectedCard    is the ObjectiveCard the player selected
-     * @throws RemoteException   if an exception happens while communicating with the remote
-     * @throws NotBoundException if an exception happens while communicating with the remote
      */
     @Override
     public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard)  {
@@ -383,9 +372,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This method allows a player to choose the color of his pawn
      * @param chooserNickname is the nickname of the player who needs to choose the color
      * @param selectedColor   is the color chosen by the player
-     * @throws RemoteException   if an exception happens while communicating with the remote
-     * @throws NotBoundException if an exception happens while communicating with the remote
-     * @throws ColorAlreadyTakenException if someone chose the color before you
+      * @throws ColorAlreadyTakenException if someone chose the color before you
      */
     @Override
     public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws  ColorAlreadyTakenException {
@@ -425,9 +412,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @param senderNickname     is the nickname of the player sending the message
      * @param receiversNicknames is the list of nicknames of the players who need to receive this message
      * @param message            is the string sent by the sender to the receivers
-     * @throws RemoteException   if an exception happens while communicating with the remote
-     * @throws NotBoundException if an exception happens while communicating with the remote
-     */
+    */
     @Override
     public void sendMessage(String senderNickname, List<String> receiversNicknames, String message)  {
         try {
@@ -466,9 +451,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     /**
      * This method lets a player end the game (volontary action or involontary action - connection loss)
      * @param nickname of the player who is going leave the game
-     * @throws RemoteException if an exception happens while communicating with the remote
-     * @throws NotBoundException
-     * @throws IllegalArgumentException
      */
     @Override
     public void leaveGame(String nickname)  {
@@ -491,14 +473,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     /**
      * This method is used to get the available lobbies.
      * @return a List containing the available lobbies
-     * @throws RemoteException if an exception happens while communicating with the remote server
      */
     public List<Integer> getAvailableLobbies()  {
         List<Integer> lobbies = new ArrayList<>();
         try {
             lobbies.addAll(SRMIInterface.getAvailableGameControllersId());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
+        } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+            throw new RuntimeException(exceptionBeforeTheGameHasStarted);
         }
         return lobbies;
     }
@@ -539,8 +520,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 } else {
                     System.out.println("There are no lobby available");
                 }
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
+            } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+                throw new RuntimeException(exceptionBeforeTheGameHasStarted);
             }
             ok = false;
                 int gameSelection = 0;
@@ -559,8 +540,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                                 } else {
                                     System.out.println("There are no lobby available");
                                 }
-                            } catch (RemoteException e) {
-                                throw new RuntimeException(e);
+                            } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+                                throw new RuntimeException(exceptionBeforeTheGameHasStarted);
                             }
                         } else {
                             try {
@@ -569,8 +550,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                                 } else {
                                     ok = true;
                                 }
-                            } catch (RemoteException e) {
-                                throw new RuntimeException(e);
+                            } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+                                throw new RuntimeException(exceptionBeforeTheGameHasStarted);
                             }
                         }
                     } catch (InputMismatchException e) {
@@ -592,11 +573,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                             }
                         }
                         createLobby(personalPlayer.getNickname(), gameSelection);
+
                         try {
                             System.out.println("Successfully created a new lobby with id: " + gameController.getId());
-                        } catch (RemoteException e) {
-                            throw new RuntimeException(e);
+                        } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+                            throw new RuntimeException(exceptionBeforeTheGameHasStarted);
                         }
+
                     } else {
                         try {
                             if (SRMIInterface.getAllGameControllers().containsKey(gameSelection)) {
@@ -610,8 +593,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                                     System.out.println(ANSIFormatter.ANSI_RED + "The lobby you want to join is inaccessible, try again" + ANSIFormatter.ANSI_RESET);
                                 } // counter
                             }
-                        } catch (RemoteException e) {
-                            throw new RuntimeException(e);
+                        } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+                            throw new RuntimeException(exceptionBeforeTheGameHasStarted);
                         }
                     }
                 }
@@ -1176,7 +1159,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 try {
                     gameController.heartbeat(this.personalPlayer.getNickname());
                 } catch (RemoteException e) {
-                    throw new RuntimeException(e);
+                    aDisconnectionHappened=true;
+                    if(selectedView==1){
+                        handleDisconnectionFunction();
+                    }
                 }
             }, 0, HEARTBEAT_INTERVAL, TimeUnit.SECONDS);
         }
@@ -1267,7 +1253,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     /**
      * This method is called when a disconnection happens.
      * It closes the application.
-     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public void handleDisconnection() {
@@ -1289,7 +1274,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     /**
      * This method manages disconnections
-     * @throws RemoteException
      */
     public void handleDisconnectionFunction() {
         inGame = false;
@@ -1529,6 +1513,16 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public void setSelectedView(int selectedView) {
         this.selectedView = selectedView;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param b (true if a disconnection happened, false otherwise)
+     */
+    public void setADisconnectionHappened(boolean b) {
+        this.aDisconnectionHappened=b;
     }
 
 
