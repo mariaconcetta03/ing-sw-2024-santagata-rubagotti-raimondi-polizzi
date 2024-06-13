@@ -329,9 +329,9 @@ public class InterfaceTUI implements Serializable {
                 System.out.println(ANSIFormatter.ANSI_RED + "You can't play a card here!" + ANSIFormatter.ANSI_RESET);
                 return null;
             }
-        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException e) {
             System.out.println("Not valid coordinates, returning to menu.");
-            return null;
+            return new Coordinates(-1, -1);
         }
     }
 
@@ -368,7 +368,7 @@ public class InterfaceTUI implements Serializable {
                     } catch (EmptyStackException e) {
                         System.out.println("The gold deck is finished! Draw another card.");
                     }
-                } else if ((cardIndex > 1) && (cardIndex < 1 + visibileCards.size())) {
+                } else if ((cardIndex > 1) && (cardIndex < 2 + visibileCards.size())) {
                     returnCard = visibileCards.get(cardIndex - 2);
                     if (returnCard == null) {
                         System.out.println("Not a valid index, try again.");

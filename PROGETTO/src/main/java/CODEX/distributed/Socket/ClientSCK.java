@@ -1359,21 +1359,22 @@ public class ClientSCK implements ClientGeneralInterface {
                                 orientation = tuiView.askCardOrientation(sc);
                                 coordinates = tuiView.askCoordinates(sc, card, personalPlayer.getBoard());
                                 if (coordinates != null) {
-                                    this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
-                                    if((!errorState)&&(lastMoves>playersInTheGame.size())&&!aDisconnectionHappened) {
-                                        tmp = new ArrayList<>();
-                                        tmp.add(resourceCard1);
-                                        tmp.add(resourceCard2);
-                                        tmp.add(goldCard1);
-                                        tmp.add(goldCard2);
-                                        card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
-                                        this.drawCard(personalPlayer.getNickname(), card);
-                                    }else if(aDisconnectionHappened){
-                                        handleDisconnection();
+                                    if(coordinates.getX()!=-1) {
+                                        this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
+                                        if ((!errorState) && (lastMoves > playersInTheGame.size()) && !aDisconnectionHappened) {
+                                            tmp = new ArrayList<>();
+                                            tmp.add(resourceCard1);
+                                            tmp.add(resourceCard2);
+                                            tmp.add(goldCard1);
+                                            tmp.add(goldCard2);
+                                            card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
+                                            this.drawCard(personalPlayer.getNickname(), card);
+                                        } else if (aDisconnectionHappened) {
+                                            handleDisconnection();
+                                        }else{
+                                            System.out.println("You can't play this card! Returning to menu...");
+                                            errorState=false; //to be used the next time
                                     }
-                                    else{
-                                        System.out.println("You can't play this card! Returning to menu...");
-                                        errorState=false; //to be used the next time
                                     }
                                 } else {
                                     System.out.println("The coordinates are null");

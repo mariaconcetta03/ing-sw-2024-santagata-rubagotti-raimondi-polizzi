@@ -713,20 +713,22 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                                 orientation = tuiView.askCardOrientation(sc);
                                 coordinates = tuiView.askCoordinates(sc, card, personalPlayer.getBoard());
                                 if (coordinates != null) {
-                                    try {
-                                        System.out.println("chiamo playCard");
-                                        this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
-                                        if (lastMoves > playersInTheGame.size()) {
-                                            tmp = new ArrayList<>();
-                                            tmp.add(resourceCard1);
-                                            tmp.add(resourceCard2);
-                                            tmp.add(goldCard1);
-                                            tmp.add(goldCard2);
-                                            card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
-                                            this.drawCard(personalPlayer.getNickname(), card);
+                                    if(coordinates.getX()!=-1) {
+                                        try {
+                                            System.out.println("chiamo playCard");
+                                            this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
+                                            if (lastMoves > playersInTheGame.size()) {
+                                                tmp = new ArrayList<>();
+                                                tmp.add(resourceCard1);
+                                                tmp.add(resourceCard2);
+                                                tmp.add(goldCard1);
+                                                tmp.add(goldCard2);
+                                                card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
+                                                this.drawCard(personalPlayer.getNickname(), card);
+                                            }
+                                        } catch (IllegalArgumentException e) {
+                                            System.out.println("You can't play this card! Returning to menu...");
                                         }
-                                    } catch (IllegalArgumentException e) {
-                                        System.out.println("You can't play this card! Returning to menu...");
                                     }
                                 } else {
                                     System.out.println("You can't play this card! Returning to menu...");
