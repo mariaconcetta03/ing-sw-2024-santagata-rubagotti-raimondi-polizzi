@@ -261,7 +261,7 @@ public class Game extends Observable implements Serializable {
     /**
      * This method returns a List with the player who won the match.
      * If there are 2 or more winners, it returns a List with the players
-     * with the same "Points & Objectives completed" situation.
+     * with the same "Points and Objectives completed" situation.
      * @return winner is the List containing the winner or the players who tied
      */
     public Map<Integer, List<String>> winner (){

@@ -68,7 +68,6 @@ public class ServerController implements Serializable {
      * @throws GameNotExistsException if the Game the player wants to join doesn't exist
      * @throws GameAlreadyStartedException if the Game is not in WAITING_FOR_START condition
      * @throws FullLobbyException if the lobby has already reached the maximum number of players
-     * @throws RemoteException
      * @return allGameControllers.get(gameId) is the game controller of this match, we need to pass this to the client
      */
     public synchronized GameController addPlayerToLobby(String playerNickname, int gameId) throws GameNotExistsException, GameAlreadyStartedException, FullLobbyException {
@@ -96,7 +95,6 @@ public class ServerController implements Serializable {
      * Once connected the player get to choose his nickname that must be different from all the other presents
      * @param nickname is the String he wants to put as his nickname
      * @throws NicknameAlreadyTakenException if the nickname is already in use
-     * @throws RemoteException
      */
     public synchronized void chooseNickname(String nickname) throws NicknameAlreadyTakenException {
         if(isNicknameAvailable(nickname)){

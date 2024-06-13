@@ -94,7 +94,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * This method adds a player to the waiting ones in the lobby (gamePlayers)
      * @param player is the one player added to the lobby
      * @throws ArrayIndexOutOfBoundsException if the of players is exceeded
-     * @throws RemoteException
      */
     public void addPlayer(Player player) throws ArrayIndexOutOfBoundsException {
         if (gamePlayers.size() < numberOfPlayers) {
@@ -109,7 +108,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     /**
      * This method is invoked when we need to check how many players there are in the game.
      * If the number of players inside is correct, then it starts the game
-     * @throws RemoteException
      */
     public synchronized void checkNPlayers() {
         if ((!alreadyCheckedNPlayers)&&(gamePlayers.size() == numberOfPlayers)) {
@@ -204,7 +202,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * This method allows the currentPlayer to draw a card from the decks or from the unveiled ones
      * @param nickname of the player who is going to draw the card
      * @param selectedCard is the Card the Players wants to draw
-     * @throws RemoteException
      */
     public void drawCard(String nickname, PlayableCard selectedCard) {
         // we can draw a card from one of the decks or from the uncovered cards
@@ -245,7 +242,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * This method allows the chooser Player to select his personal ObjectiveCard
      * @param chooserNickname is the nickname of the player selecting the ObjectiveCard
      * @param selectedCard is the ObjectiveCard the player selected
-     * @throws RemoteException
      */
     public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard)  {
         Player chooser= getPlayerByNickname(chooserNickname);
@@ -320,7 +316,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * @param senderNickname is the nickname of the player who sends the message
      * @param receiversNicknames are the nickname of the players who are going to receive the message
      * @param message the string (message) sent
-     * @throws RemoteException
      */
     public void sendMessage(String senderNickname, List<String> receiversNicknames, String message)  {
        receiversNicknames.add(senderNickname);

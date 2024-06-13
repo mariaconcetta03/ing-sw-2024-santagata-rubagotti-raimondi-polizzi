@@ -28,7 +28,7 @@ public class GUINicknameController {
     private RMIClient rmiClient;
     private ClientSCK clientSCK;
     private Stage stage;
-    boolean correctNickname = false;
+    private boolean correctNickname = false;
 
 
     /**

@@ -119,7 +119,6 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
      * to ClientSCK through the socket attributes of this class (the function writeTheStream does the forwarding)
      * @param obs observable
      * @param e event
-     * @throws RemoteException
      */
     @Override
     public void update(Observable obs, CODEX.utils.executableMessages.events.Event e) {
