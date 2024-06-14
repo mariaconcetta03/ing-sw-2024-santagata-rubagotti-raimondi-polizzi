@@ -37,7 +37,23 @@ Here you can check our UML diagrams:
 You can download the Jar to launch the game [here]().
 ## How to run
 ### Server
+1. Open the prompt as administrator.
+2. Set the registry of Windows to let it recognise colors and allow to show more characters in a single row, using the following commands:
+   - Colors:
+        reg add HKEY_CURRENT_USER\Console /v VirtualTerminalLevel /t REG_DWORD /d 1
+   - Row: Prompt -> (Right click) Properties -> Layout -> Deselect "Text output wraps when resizing" -> Setting "9000" as width -> Ok
+3. Launch jar file using the following command (pay attention to your directory): java -jar "C:\Directory\to\folder\ServerLauncher.jar"
+4. Insert Server Ip address or press enter for localhost.
 ### Client
+1. Open the prompt as administrator.
+2. Set the registry of Windows to let it recognise colors and allow to show more characters in a single row, using the following commands:
+   - Colors:
+        reg add HKEY_CURRENT_USER\Console /v VirtualTerminalLevel /t REG_DWORD /d 1
+   - Row: Prompt -> (Right click) Properties -> Layout -> Deselect "Text output wraps when resizing" -> Setting "9000" as width -> Ok
+3. Launch jar file using the following command (pay attention to your directory): java -jar "C:\Directory\to\folder\ClientLauncher.jar"
+4. Insert Server Ip address or press enter for localhost.
+5. Select the communication protocol and the UI preferred.
+6. Insert Client Ip address (only for RMI) or press enter for localhost.
 ## How to play
 1. When you launch the clientJar you will be able to choose your preferred network protocol (RMI/TCP) and user Interface (TUI/GUI).
 2. You will then proceed with the nickname selection.
