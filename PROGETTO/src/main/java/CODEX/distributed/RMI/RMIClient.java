@@ -168,18 +168,14 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @param numOfPlayers is the number of player the creator decided can play in the lobby
      */
     @Override
-    public void createLobby(String creatorNickname, int numOfPlayers)  {
+    public void createLobby(String creatorNickname, int numOfPlayers) throws IllegalArgumentException {
         try {
             this.gameController = this.SRMIInterface.createLobby(creatorNickname, numOfPlayers);
-        } catch (RemoteException exceptionBeforeTheGameHasStarted) {
-            throw new RuntimeException(exceptionBeforeTheGameHasStarted);
-        }
-
-        ClientGeneralInterface client = this;
-        try {
+            ClientGeneralInterface client = this;
             gameController.addRMIClient(this.personalPlayer.getNickname(), client);
-        } catch (RemoteException exceptionBeforeTheGameHasStarted) {
-            throw new RuntimeException(exceptionBeforeTheGameHasStarted);
+        }catch (RemoteException e){ //@TODO da replicare
+            System.out.println("Unable to communicate with the server! Shutting down.");
+            System.exit(-1);
         }
     }
 
@@ -488,6 +484,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * his nickname and to choose if he wants to join an already started Game or create a new one.
      */
     public void waitingRoom() {
+        try{
         sc = new Scanner(System.in);
         this.console = new BufferedReader(new InputStreamReader(System.in));
         boolean ok = false;
@@ -496,8 +493,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 tuiView = new InterfaceTUI();
                 tuiView.printWelcome();
                 if (personalPlayer.getNickname() == null) {
+                    String nickname;
                     while (!ok) {
-                        String nickname = tuiView.askNickname(sc);
+                        nickname = tuiView.askNickname(sc);
                         try {
                             this.chooseNickname(nickname);
                             personalPlayer.setNickname(nickname);
@@ -508,7 +506,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     }
                     System.out.println("Nickname correctly selected!");
                 }
-            try {
                 if (!SRMIInterface.getAvailableGameControllersId().isEmpty()) {
                     System.out.println("If you want you can join an already created lobby. These are the ones available:");
                     for (Integer i : SRMIInterface.getAvailableGameControllersId()) {
@@ -517,9 +514,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 } else {
                     System.out.println("There are no lobby available");
                 }
-            } catch (RemoteException exceptionBeforeTheGameHasStarted) {
-                throw new RuntimeException(exceptionBeforeTheGameHasStarted);
-            }
             ok = false;
                 int gameSelection = 0;
                 while (!ok) {
@@ -528,27 +522,19 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     try {
                         gameSelection = sc.nextInt();
                         if (gameSelection == -2) {
-                            try {
-                                if (!SRMIInterface.getAvailableGameControllersId().isEmpty()) {
-                                    System.out.println("If you want you can join an already created lobby. These are the ones available:");
-                                    for (Integer i : SRMIInterface.getAvailableGameControllersId()) {
-                                        System.out.println("ID: " + i);
-                                    }
-                                } else {
-                                    System.out.println("There are no lobby available");
+                            if (!SRMIInterface.getAvailableGameControllersId().isEmpty()) {
+                                System.out.println("If you want you can join an already created lobby. These are the ones available:");
+                                for (Integer i : SRMIInterface.getAvailableGameControllersId()) {
+                                    System.out.println("ID: " + i);
                                 }
-                            } catch (RemoteException exceptionBeforeTheGameHasStarted) {
-                                throw new RuntimeException(exceptionBeforeTheGameHasStarted);
+                            } else {
+                                System.out.println("There are no lobby available");
                             }
                         } else {
-                            try {
-                                if ((gameSelection != -1) && (!SRMIInterface.getAvailableGameControllersId().contains(gameSelection))) {
-                                    System.out.println("You wrote a wrong ID, try again.");
-                                } else {
-                                    ok = true;
-                                }
-                            } catch (RemoteException exceptionBeforeTheGameHasStarted) {
-                                throw new RuntimeException(exceptionBeforeTheGameHasStarted);
+                            if ((gameSelection != -1) && (!SRMIInterface.getAvailableGameControllersId().contains(gameSelection))) {
+                                System.out.println("You wrote a wrong ID, try again.");
+                            } else {
+                                ok = true;
                             }
                         }
                     } catch (InputMismatchException e) {
@@ -563,39 +549,45 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         while (!ok) {
                             try {
                                 gameSelection = sc.nextInt();
-                                ok = true;
+                                if((gameSelection<=4)&&(gameSelection>=2)) {
+                                    ok = true;
+                                }else{
+                                    System.out.println("Invalid number of players. Type a number between 2-4.");
+                                }
                             } catch (InputMismatchException e) {
                                 System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
                                 sc.next();
                             }
                         }
-                        createLobby(personalPlayer.getNickname(), gameSelection);
 
                         try {
+                            createLobby(personalPlayer.getNickname(), gameSelection); //PROBLEMA VA GESTITA ECCEZIONE
                             System.out.println("Successfully created a new lobby with id: " + gameController.getId());
-                        } catch (RemoteException exceptionBeforeTheGameHasStarted) {
-                            throw new RuntimeException(exceptionBeforeTheGameHasStarted);
+                        }catch (IllegalArgumentException e){
+                            ok=false;
+                            gameSelection=-1;
+                            System.out.println("Invalid number of players. Type a number between 2-4.");
                         }
 
                     } else {
-                        try {
-                            if (SRMIInterface.getAllGameControllers().containsKey(gameSelection)) {
-                                try {
-                                    System.out.println("Joining the " + gameSelection + " lobby...");
-                                    addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
-                                    System.out.println("Successfully joined the lobby with id: " + gameController.getId());
-                                    ok = true;
-                                    gameController.checkNPlayers();
-                                } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException e) {
-                                    System.out.println(ANSIFormatter.ANSI_RED + "The lobby you want to join is inaccessible, try again" + ANSIFormatter.ANSI_RESET);
-                                } // counter
+                        if (SRMIInterface.getAllGameControllers().containsKey(gameSelection)) {
+                            try {
+                                System.out.println("Joining the " + gameSelection + " lobby...");
+                                addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
+                                System.out.println("Successfully joined the lobby with id: " + gameController.getId());
+                                ok = true;
+                                gameController.checkNPlayers();
+                            } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException e) {
+                                System.out.println(ANSIFormatter.ANSI_RED + "The lobby you want to join is inaccessible, try again" + ANSIFormatter.ANSI_RESET);
                             }
-                        } catch (RemoteException exceptionBeforeTheGameHasStarted) {
-                            throw new RuntimeException(exceptionBeforeTheGameHasStarted);
                         }
                     }
                 }
 
+        }
+    } catch (RemoteException e){
+            System.out.println("Unable to communicate with the server! Shutting down.");
+            System.exit(-1);
         }
     }
 

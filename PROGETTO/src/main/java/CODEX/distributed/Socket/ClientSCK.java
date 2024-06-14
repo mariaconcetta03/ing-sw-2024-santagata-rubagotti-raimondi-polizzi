@@ -91,6 +91,7 @@ public class ClientSCK implements ClientGeneralInterface {
         int port = 1085; // server's port
         SocketAddress socketAddress = new InetSocketAddress(serverAddress, port);
         socket.connect(socketAddress);
+        Scanner sc= new Scanner(System.in);
 
         lobbyId = new HashSet<>();
 
@@ -123,7 +124,7 @@ public class ClientSCK implements ClientGeneralInterface {
                                 modifyClientSide(sckMessage);
                             }
 
-                        } catch (Exception e) { // if the server disconnects
+                        } catch (Exception e) { // if the server disconnects @TODO non Exception generica
                             if(running) {
 
                                     handleDisconnection();
@@ -227,10 +228,8 @@ public class ClientSCK implements ClientGeneralInterface {
             String nickname=null;
             while(!ok){
                 nickname = tuiView.askNickname(sc);
-
-                   this.chooseNickname(nickname);
-                    ok=true;
-
+                this.chooseNickname(nickname);
+                ok=true;
                 if(errorState&&!aDisconnectionHappened){
                     System.out.println("Nickname is already taken! Please try again.");
                     errorState=false;
@@ -241,14 +240,15 @@ public class ClientSCK implements ClientGeneralInterface {
             }
             personalPlayer.setNickname(nickname);
             System.out.println("Nickname correctly selected!");
+
             this.checkAvailableLobby();
             printLobby(lobbyId);
             ok=false;
-            int gameSelection=0;
 
-            while(!ok) {
-                boolean secondOk=false;
-                while ((!secondOk)) {
+            int gameSelection=0;
+           // while(!ok) {
+           //     boolean secondOk=false;
+                while (!ok) {
                     System.out.println("Type -1 if you want to create a new lobby, or the lobby id if you want to join it (if there are any available)");
                     System.out.println("Type -2  to refresh the available lobbies.");
                     try {
@@ -264,31 +264,39 @@ public class ClientSCK implements ClientGeneralInterface {
                         } else if ((gameSelection != -1) && (!lobbyId.contains(gameSelection))) {
                             System.out.println("You wrote a wrong ID, try again.");
                         } else {
-                            secondOk = true;
+                            ok = true;
                         }
                     } catch (InputMismatchException e) {
                         System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
+                        sc.next();
                     }
                 }
 
+                ok=false;
 
-                    boolean thirdOk=false;
+                    //boolean thirdOk=false;
+            while(!ok){
                     if (gameSelection == -1) {
                         System.out.println("How many players would you like to join you in this game?");
-                        while (!thirdOk) {
+                        while (!ok) {
                             try {
-                                sc = new Scanner(System.in);
                                 gameSelection = sc.nextInt();
-                                thirdOk = true;
+                                if((gameSelection<=4)&&(gameSelection>=2)) {
+                                    ok = true;
+                                }else{
+                                    System.out.println("Invalid number of players. Type a number between 2-4.");
+                                }
                             } catch (InputMismatchException e) {
                                 System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
+                                sc.next();
                             }
                         }
-                        createLobby(personalPlayer.getNickname(), gameSelection); //the controller (server side) doesn't have other exceptions (so we can't have an errorState here)
+                        createLobby(personalPlayer.getNickname(), gameSelection); //@TODO fare gestione di una possibile IllegalArgumentException
                         System.out.println("Successfully created a new lobby with id: " + this.gameID);
-                        ok=true;
+                        //ok=true;
                     } else if (lobbyId.contains(gameSelection)) {
-                        try {
+                        //try {
+                            System.out.println("Joining the " + gameSelection + " lobby...");
                             addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
                             if (errorState&&!aDisconnectionHappened) {
                                 System.out.println(ANSIFormatter.ANSI_RED + "The game you want to join is inaccessible, try again" + ANSIFormatter.ANSI_RESET);
@@ -297,6 +305,7 @@ public class ClientSCK implements ClientGeneralInterface {
                                 handleDisconnection();
                             } else {
                                 System.out.println("Successfully joined the lobby with id: " + this.gameID);
+                                ok=true;
                                 checkNPlayers(); // this method in the server side makes the game start
                                 /* TODO capire che eccezioni checkNPlayers() può lanciare
                                 if (errorState) { //l'eccezione lato server in checkNPlayers però non è ancora stata aggiunta
@@ -306,10 +315,9 @@ public class ClientSCK implements ClientGeneralInterface {
                                 ok = true;
 
                                  */
-                                ok=true;
                             }
-                        } catch (Exception ignored) {
-                        }
+                        //} catch (Exception ignored) { //@TODO non Exception generica
+                       // }
                     } else {
                         System.out.println("You wrote a wrong id, try again!");
                     }
@@ -1268,7 +1276,6 @@ public class ClientSCK implements ClientGeneralInterface {
             int intChoice=tuiView.showMenuAndWaitForSelection(this.getIsPlaying(),this.console);
             boolean ok;
             if(intChoice!=-1) {
-
                     switch (intChoice) {
                         case 0:
                             System.out.println("Are you sure to LEAVE the game? Type 1 if you want to leave any other character to return to the game.");

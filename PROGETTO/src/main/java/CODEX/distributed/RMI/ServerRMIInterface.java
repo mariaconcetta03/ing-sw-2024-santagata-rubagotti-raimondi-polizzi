@@ -13,7 +13,7 @@ public interface ServerRMIInterface extends Remote {
 
     void startServer() throws RemoteException;
 
-    GameControllerInterface createLobby(String creatorNickname, int numOfPlayers) throws RemoteException;
+    GameControllerInterface createLobby(String creatorNickname, int numOfPlayers) throws RemoteException, IllegalArgumentException;
 
     GameControllerInterface addPlayerToLobby(String playerNickname, int gameId) throws RemoteException, GameAlreadyStartedException, FullLobbyException, GameNotExistsException;
 
