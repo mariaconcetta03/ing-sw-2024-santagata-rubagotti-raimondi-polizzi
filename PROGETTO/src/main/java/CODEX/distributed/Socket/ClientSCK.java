@@ -221,16 +221,11 @@ public class ClientSCK implements ClientGeneralInterface {
         this.sc=new Scanner(System.in);
         this.console = new BufferedReader(new InputStreamReader(System.in));
         boolean ok=false;
-        int errorCounter=0;
         if (selectedView == 1) {
             tuiView = new InterfaceTUI();
             tuiView.printWelcome();
             String nickname=null;
             while(!ok){
-                if(errorCounter==3){
-                    System.out.println("Unable to communicate with the server! Shutting down.");
-                    System.exit(-1);
-                }
                 nickname = tuiView.askNickname(sc);
 
                    this.chooseNickname(nickname);
@@ -326,14 +321,14 @@ public class ClientSCK implements ClientGeneralInterface {
 
 
     /**
-     * This method let the client know which are the lobbies available and
+     * This method let the client know which are the lobbies availables and
      * it is used in the TUI
-     * @param ids
+     * @param ids are the indexes of the available lobbies
      */
     public void printLobby(HashSet<Integer> ids){
         if(!ids.isEmpty()) {
             for (Integer i : ids) {
-                System.out.println(i + " ");
+                System.out.println("ID: " + i);
             }
         }else{
             System.out.println("There are no lobby available.");
@@ -1276,8 +1271,15 @@ public class ClientSCK implements ClientGeneralInterface {
 
                     switch (intChoice) {
                         case 0:
-                            inGame = false;
-                            leaveGame(personalPlayer.getNickname());
+                            System.out.println("Are you sure to LEAVE the game? Type 1 if you want to leave any other character to return to the game.");
+                            try {
+                                if (sc.nextInt() == 1) {
+                                    inGame = false;
+                                    leaveGame(personalPlayer.getNickname());
+                                }
+                            } catch (InputMismatchException ignored) {
+                            }
+                            break;
                         case 1:
                             tuiView.printHand(personalPlayer.getPlayerDeck());
                             break;
