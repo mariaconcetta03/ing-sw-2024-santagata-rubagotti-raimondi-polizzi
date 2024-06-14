@@ -32,7 +32,7 @@ Here you can check our UML diagrams:
 - [Second Peer Review UML](Deliverables%2FFILES%20CONSEGNATI%2006-05%2022_45)
 - [High level UML Server-Client](Deliverables%2FUMLs%2FUML%20ALTO%20LIVELLO.png)
 - [Detailed UML Server-Client](Deliverables%2FUMLs%2FUML%20DETTAGLIO.png)
-- [Communication Protocol Diagrams]()
+- [Communication Protocol Diagrams](Deliverables%2FNETWORK%20SEQUENCE%20DIAGRAMS)
 ### Jar
 You can download the Jar to launch the game [here]().
 ## How to run
