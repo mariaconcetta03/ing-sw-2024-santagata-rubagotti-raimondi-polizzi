@@ -168,14 +168,18 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * @param numOfPlayers is the number of player the creator decided can play in the lobby
      */
     @Override
-    public void createLobby(String creatorNickname, int numOfPlayers) throws IllegalArgumentException {
+    public void createLobby(String creatorNickname, int numOfPlayers)  {
         try {
             this.gameController = this.SRMIInterface.createLobby(creatorNickname, numOfPlayers);
-            ClientGeneralInterface client = this;
+        } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+            handleDisconnectionFunction();
+        }
+
+        ClientGeneralInterface client = this;
+        try {
             gameController.addRMIClient(this.personalPlayer.getNickname(), client);
-        }catch (RemoteException e){ //@TODO da replicare
-            System.out.println("Unable to communicate with the server! Shutting down.");
-            System.exit(-1);
+        } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+            handleDisconnectionFunction();
         }
     }
 
@@ -194,13 +198,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         try {
             this.gameController = this.SRMIInterface.addPlayerToLobby(playerNickname, gameId);
         } catch (RemoteException exceptionBeforeTheGameHasStarted) {
-            throw new RuntimeException(exceptionBeforeTheGameHasStarted);
+            handleDisconnectionFunction();
         }
         ClientGeneralInterface client = this;
         try {
             gameController.addRMIClient(this.personalPlayer.getNickname(), client);
         } catch (RemoteException exceptionBeforeTheGameHasStarted) {
-            throw new RuntimeException(exceptionBeforeTheGameHasStarted);
+            handleDisconnectionFunction();
         }
     }
 
@@ -216,7 +220,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         try {
             this.SRMIInterface.chooseNickname(nickname);
         } catch (RemoteException exceptionBeforeTheGameHasStarted) {
-            throw new RuntimeException(exceptionBeforeTheGameHasStarted);
+            handleDisconnectionFunction();
         }
     }
 
@@ -247,13 +251,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         } catch (RemoteException e) {
             synchronized (disconnectionLock) {
                 if (selectedView == 1) {
+                    aDisconnectionHappened = true;
                     handleDisconnectionFunction();
                 }
                 if (selectedView == 2) {
-                    synchronized (guiLock) {
-                        aDisconnectionHappened = true; //serve per bloccare altre cose appena arriva una disconnessione
-                        guiLock.notify(); //nel caso in cui la gui sta facendo la wait di un evento (che dopo questa discconnessione non si verificherà mai)
-                    }
+                    aDisconnectionHappened = true;
                 }
             }
         }
@@ -279,13 +281,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         } catch (RemoteException e) {
             synchronized (disconnectionLock) {
                 if (selectedView == 1) {
+                    aDisconnectionHappened = true;
                     handleDisconnectionFunction();
                 }
                 if (selectedView == 2) {
-                    synchronized (guiLock) {
-                        aDisconnectionHappened = true; // blocks other actions
-                        guiLock.notify();
-                    }
+                    aDisconnectionHappened = true;
                 }
             }
         }
@@ -317,13 +317,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         } catch (RemoteException e) {
             synchronized (disconnectionLock) {
                 if (selectedView == 1) {
+                    aDisconnectionHappened = true;
                     handleDisconnectionFunction();
                 }
                 if (selectedView == 2) {
-                    synchronized (guiLock) {
-                        aDisconnectionHappened = true; // blocks other actions when a disconnection happens
-                        guiLock.notify();
-                    }
+                    aDisconnectionHappened = true;
                 }
             }
         }
@@ -347,13 +345,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         } catch (RemoteException e) {
             synchronized (disconnectionLock) {
                 if (selectedView == 1) {
+                    aDisconnectionHappened = true;
                     handleDisconnectionFunction();
                 }
                 if (selectedView == 2) {
-                    synchronized (guiLock) {
-                        aDisconnectionHappened = true; // blocks other actions when a disconnection happens
-                        guiLock.notify(); // if the gui is doing the "wait" then it takes the notify
-                    }
+                    aDisconnectionHappened = true;
                 }
             }
         }
@@ -386,13 +382,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         } catch (RemoteException e) {
             synchronized (disconnectionLock) {
                 if (selectedView == 1) {
+                    aDisconnectionHappened = true;
                     handleDisconnectionFunction();
                 }
                 if (selectedView == 2) {
-                    synchronized (guiLock) {
-                        aDisconnectionHappened = true;
-                        guiLock.notify();
-                    }
+                    aDisconnectionHappened = true;
                 }
             }
         }
@@ -427,13 +421,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         } catch (RemoteException e) {
             synchronized (disconnectionLock) {
                 if (selectedView == 1) {
+                    aDisconnectionHappened = true;
                     handleDisconnectionFunction();
                 }
                 if (selectedView == 2) {
-                    synchronized (guiLock) {
-                        aDisconnectionHappened = true;
-                        guiLock.notify();
-                    }
+                    aDisconnectionHappened = true;
                 }
             }
         }
@@ -472,7 +464,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         try {
             lobbies.addAll(SRMIInterface.getAvailableGameControllersId());
         } catch (RemoteException exceptionBeforeTheGameHasStarted) {
-            throw new RuntimeException(exceptionBeforeTheGameHasStarted);
+            handleDisconnectionFunction();
         }
         return lobbies;
     }
@@ -484,7 +476,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * his nickname and to choose if he wants to join an already started Game or create a new one.
      */
     public void waitingRoom() {
-        try{
         sc = new Scanner(System.in);
         this.console = new BufferedReader(new InputStreamReader(System.in));
         boolean ok = false;
@@ -493,9 +484,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 tuiView = new InterfaceTUI();
                 tuiView.printWelcome();
                 if (personalPlayer.getNickname() == null) {
-                    String nickname;
                     while (!ok) {
-                        nickname = tuiView.askNickname(sc);
+                        String nickname = tuiView.askNickname(sc);
                         try {
                             this.chooseNickname(nickname);
                             personalPlayer.setNickname(nickname);
@@ -506,6 +496,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     }
                     System.out.println("Nickname correctly selected!");
                 }
+            try {
                 if (!SRMIInterface.getAvailableGameControllersId().isEmpty()) {
                     System.out.println("If you want you can join an already created lobby. These are the ones available:");
                     for (Integer i : SRMIInterface.getAvailableGameControllersId()) {
@@ -514,6 +505,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 } else {
                     System.out.println("There are no lobby available");
                 }
+            } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+                handleDisconnectionFunction();
+            }
             ok = false;
                 int gameSelection = 0;
                 while (!ok) {
@@ -522,19 +516,27 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     try {
                         gameSelection = sc.nextInt();
                         if (gameSelection == -2) {
-                            if (!SRMIInterface.getAvailableGameControllersId().isEmpty()) {
-                                System.out.println("If you want you can join an already created lobby. These are the ones available:");
-                                for (Integer i : SRMIInterface.getAvailableGameControllersId()) {
-                                    System.out.println("ID: " + i);
+                            try {
+                                if (!SRMIInterface.getAvailableGameControllersId().isEmpty()) {
+                                    System.out.println("If you want you can join an already created lobby. These are the ones available:");
+                                    for (Integer i : SRMIInterface.getAvailableGameControllersId()) {
+                                        System.out.println("ID: " + i);
+                                    }
+                                } else {
+                                    System.out.println("There are no lobby available");
                                 }
-                            } else {
-                                System.out.println("There are no lobby available");
+                            } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+                                handleDisconnectionFunction();
                             }
                         } else {
-                            if ((gameSelection != -1) && (!SRMIInterface.getAvailableGameControllersId().contains(gameSelection))) {
-                                System.out.println("You wrote a wrong ID, try again.");
-                            } else {
-                                ok = true;
+                            try {
+                                if ((gameSelection != -1) && (!SRMIInterface.getAvailableGameControllersId().contains(gameSelection))) {
+                                    System.out.println("You wrote a wrong ID, try again.");
+                                } else {
+                                    ok = true;
+                                }
+                            } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+                                handleDisconnectionFunction();
                             }
                         }
                     } catch (InputMismatchException e) {
@@ -549,45 +551,39 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         while (!ok) {
                             try {
                                 gameSelection = sc.nextInt();
-                                if((gameSelection<=4)&&(gameSelection>=2)) {
-                                    ok = true;
-                                }else{
-                                    System.out.println("Invalid number of players. Type a number between 2-4.");
-                                }
+                                ok = true;
                             } catch (InputMismatchException e) {
                                 System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
                                 sc.next();
                             }
                         }
+                        createLobby(personalPlayer.getNickname(), gameSelection);
 
                         try {
-                            createLobby(personalPlayer.getNickname(), gameSelection); //PROBLEMA VA GESTITA ECCEZIONE
                             System.out.println("Successfully created a new lobby with id: " + gameController.getId());
-                        }catch (IllegalArgumentException e){
-                            ok=false;
-                            gameSelection=-1;
-                            System.out.println("Invalid number of players. Type a number between 2-4.");
+                        } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+                            handleDisconnectionFunction();
                         }
 
                     } else {
-                        if (SRMIInterface.getAllGameControllers().containsKey(gameSelection)) {
-                            try {
-                                System.out.println("Joining the " + gameSelection + " lobby...");
-                                addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
-                                System.out.println("Successfully joined the lobby with id: " + gameController.getId());
-                                ok = true;
-                                gameController.checkNPlayers();
-                            } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException e) {
-                                System.out.println(ANSIFormatter.ANSI_RED + "The lobby you want to join is inaccessible, try again" + ANSIFormatter.ANSI_RESET);
+                        try {
+                            if (SRMIInterface.getAllGameControllers().containsKey(gameSelection)) {
+                                try {
+                                    System.out.println("Joining the " + gameSelection + " lobby...");
+                                    addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
+                                    System.out.println("Successfully joined the lobby with id: " + gameController.getId());
+                                    ok = true;
+                                    gameController.checkNPlayers();
+                                } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException e) {
+                                    System.out.println(ANSIFormatter.ANSI_RED + "The lobby you want to join is inaccessible, try again" + ANSIFormatter.ANSI_RESET);
+                                } // counter
                             }
+                        } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+                            handleDisconnectionFunction();
                         }
                     }
                 }
 
-        }
-    } catch (RemoteException e){
-            System.out.println("Unable to communicate with the server! Shutting down.");
-            System.exit(-1);
         }
     }
 
@@ -1147,12 +1143,18 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             this.gameController.startHeartbeat(this.personalPlayer.getNickname());
             this.schedulerToSendHeartbeat = Executors.newScheduledThreadPool(1);
             this.schedulerToSendHeartbeat.scheduleAtFixedRate(() -> {
-                try {
-                    gameController.heartbeat(this.personalPlayer.getNickname());
-                } catch (RemoteException e) {
-                    aDisconnectionHappened=true;
-                    if(selectedView==1){
-                        handleDisconnectionFunction();
+                if(!aDisconnectionHappened) {
+                    try {
+                        gameController.heartbeat(this.personalPlayer.getNickname());
+                    } catch (RemoteException e) {
+                        aDisconnectionHappened = true;
+                        if (selectedView == 1) {
+                            handleDisconnectionFunction();
+                        }
+                    }
+                }else {
+                    if(schedulerToSendHeartbeat!=null){
+                        schedulerToSendHeartbeat.shutdown();
                     }
                 }
             }, 0, HEARTBEAT_INTERVAL, TimeUnit.SECONDS);
@@ -1250,12 +1252,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         System.out.println("A disconnection happened. Closing the game.");
         synchronized (disconnectionLock) {
             if (selectedView == 1) {
+                aDisconnectionHappened = true;
                 handleDisconnectionFunction();
             }
             if (selectedView == 2) {
-                synchronized (guiLock) {
-                    aDisconnectionHappened = true; // It is used to block other things as soon as a disconnection occurs
-                    guiLock.notify(); // in case the gui is waiting for an event (which after this disconnection will never happen)
+                aDisconnectionHappened = true; // It is used to block other things as soon as a disconnection occurs
+                synchronized (actionLock){
+                    actionLock.notify(); //to stop the waiting of something that will never arrive
                 }
             }
         }

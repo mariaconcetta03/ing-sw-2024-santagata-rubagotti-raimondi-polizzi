@@ -528,6 +528,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      */
     public void disconnection(){ // notify with disconnectionEvent
         synchronized (disconnectionLock) {
+            disconnection=true;
             if(firstDisconnection) {
                 System.out.println("the server has detected a disconnection");
                 game.notifyDisconnectionEvent();

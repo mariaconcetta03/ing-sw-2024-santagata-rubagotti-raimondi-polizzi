@@ -4,6 +4,7 @@ import CODEX.Exceptions.ColorAlreadyTakenException;
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
 import CODEX.org.model.Pawn;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.FXML;
@@ -13,10 +14,14 @@ import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.Scene;
+import javafx.util.Duration;
+
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class controls the window during the pawns scene
@@ -30,6 +35,8 @@ public class GUIPawnsController {
     private boolean choosen = false;
     private ExecutorService executor = Executors.newCachedThreadPool();
     private boolean pawnSelected=false;
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final Object disconnectionLock = new Object();
     
     @FXML
     private ImageView yellowPawn;
@@ -79,6 +86,8 @@ public class GUIPawnsController {
         ctr.setNetwork(network);
         ctr.setClientSCK(clientSCK);
         ctr.setRmiClient(rmiClient);
+        ctr.setScheduler(scheduler);
+        ctr.setDisconnectionLock(disconnectionLock);
         if (network == 1) {
             while (rmiClient.getPersonalPlayer().getPlayerDeck()[0] == null) {
             }
@@ -124,8 +133,6 @@ public class GUIPawnsController {
         stage.setHeight(height);
         stage.setX(x);
         stage.setY(y);
-
-        ctr.startPeriodicDisconnectionCheck();
 
     }
 
@@ -463,6 +470,61 @@ public class GUIPawnsController {
      */
     public void updateGameState() {
         Platform.runLater(this::changeScene);
+    }
+
+
+    /**
+     * This method checks if there is a disconnection
+     */
+    public void startPeriodicDisconnectionCheck() {
+        scheduler.scheduleAtFixedRate(() -> {
+            synchronized (disconnectionLock) {
+                if ( ((network==1) && (rmiClient.getADisconnectionHappened())) || ((network==2) && (clientSCK.getADisconnectionHappened())) ){
+                    Platform.runLater(() -> {
+                        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/handleDisconnection.fxml"));
+                        Parent root = null;
+                        try {
+                            root = fxmlLoader.load();
+                        } catch (IOException ignored) {
+                        }
+
+                        double width = stage.getWidth();
+                        double height = stage.getHeight();
+                        double x = stage.getX();
+                        double y = stage.getY();
+
+                        // new scene
+                        Scene scene;
+                        scene = new Scene(root);
+
+                        stage.setScene(scene);
+
+                        // setting the old values of position and dimension
+                        stage.setWidth(width);
+                        stage.setHeight(height);
+                        stage.setX(x);
+                        stage.setY(y);
+
+                        PauseTransition pause = new PauseTransition(Duration.seconds(3));
+                        pause.setOnFinished(event -> {
+                            stage.close();
+                            if(network==1){
+
+                                rmiClient.handleDisconnectionFunction();
+
+                            }
+                            if(network==2) {
+
+                                clientSCK.handleDisconnectionFunction();
+
+                            }
+                        });
+                        pause.play();
+                    });
+                    scheduler.shutdown(); // Stop the scheduler if there's the disconnection
+                }
+            }
+        }, 0, 1, TimeUnit.SECONDS); // Check every second
     }
 
 

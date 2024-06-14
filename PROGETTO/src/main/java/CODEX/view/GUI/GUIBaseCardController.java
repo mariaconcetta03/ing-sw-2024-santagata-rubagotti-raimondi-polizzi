@@ -36,8 +36,8 @@ public class GUIBaseCardController {
 
     private RMIClient rmiClient;
     private ClientSCK clientSCK;
-    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private Object disconnectionLock = new Object();
+    private ScheduledExecutorService scheduler;
+    private Object disconnectionLock;
     private Stage stage;
     private boolean baseCardPlayed = false;
     private GUIObjectiveController ctr;
@@ -247,69 +247,6 @@ public class GUIBaseCardController {
 
 
     /**
-     * This method checks if there is a disconnection
-     */
-    public void startPeriodicDisconnectionCheck() {
-        scheduler.scheduleAtFixedRate(() -> {
-            synchronized (disconnectionLock) {
-                if ( ((network==1) && (rmiClient.getADisconnectionHappened())) || ((network==2) && (clientSCK.getADisconnectionHappened())) ){
-                    Platform.runLater(() -> {
-                        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/handleDisconnection.fxml"));
-                        Parent root = null;
-                        try {
-                            root = fxmlLoader.load();
-                        } catch (IOException ignored) {
-                        }
-
-                        double width = stage.getWidth();
-                        double height = stage.getHeight();
-                        double x = stage.getX();
-                        double y = stage.getY();
-
-                        // new scene
-                        Scene scene;
-                        scene = new Scene(root);
-
-                        stage.setScene(scene);
-
-                        // setting the old values of position and dimension
-                        stage.setWidth(width);
-                        stage.setHeight(height);
-                        stage.setX(x);
-                        stage.setY(y);
-
-                        PauseTransition pause = new PauseTransition(Duration.seconds(3));
-                        pause.setOnFinished(event -> stageClose());
-                        pause.play();
-                    });
-                    scheduler.shutdown(); // Stop the scheduler if there's the disconnection
-                }
-            }
-        }, 0, 1, TimeUnit.SECONDS); // Check every second
-    }
-
-
-
-    /**
-     * This method closes the scene when there is a disconnection
-     */
-    private void stageClose(){
-        stage.close();
-        if(network==1){
-
-                rmiClient.handleDisconnectionFunction();
-
-        }
-        if(network==2) {
-
-                clientSCK.handleDisconnectionFunction();
-
-        }
-    }
-
-
-
-    /**
      * This method updates the state of the game
      */
     public void updateGameState() {
@@ -367,4 +304,24 @@ public class GUIBaseCardController {
         this.labelWithPlayerName.setText(text);
     }
 
+
+
+    /**
+     * Setter method
+     * @param scheduledExecutorService which is the scheduler used to check connection
+     */
+    public void setScheduler(ScheduledExecutorService scheduledExecutorService) {
+        this.scheduler=scheduledExecutorService;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param disconnectionLock which is a lock used both when there is a disconnection
+     * and when someone wants to leave the game
+     */
+    public void setDisconnectionLock(Object disconnectionLock) {
+        this.disconnectionLock=disconnectionLock;
+    }
 }

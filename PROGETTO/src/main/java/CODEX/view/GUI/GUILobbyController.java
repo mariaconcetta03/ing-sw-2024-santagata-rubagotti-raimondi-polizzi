@@ -192,6 +192,8 @@ public class GUILobbyController {
         Scene scene;
         scene = new Scene(root);
 
+        ctr.startPeriodicDisconnectionCheck();
+
         if(network==1){
             synchronized (rmiClient.getGuiPawnsControllerLock()) {
                 rmiClient.setGuiPawnsController(ctr);
@@ -231,7 +233,7 @@ public class GUILobbyController {
                     try {
                         rmiClient.getGameController().checkNPlayers(); // starts the game if the number of players is correct
                     } catch (RemoteException exceptionBeforeTheGameHasStarted) {
-                        throw new RuntimeException(exceptionBeforeTheGameHasStarted);
+                        rmiClient.handleDisconnectionFunction();
                     }
                     System.out.println("ho chiamato il checknplayers e chiamo SETWAITINGPLAYERS");
                     createButton.disabledProperty();

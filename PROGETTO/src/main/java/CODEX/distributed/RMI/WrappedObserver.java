@@ -60,7 +60,7 @@ public class WrappedObserver implements Observer {
                         System.out.println("ho fatto la pull dell'evento");
                     } catch (RemoteException e) {
                         aDisconnectionHappened = true;
-                        e.printStackTrace();
+                        //e.printStackTrace();
                     }
                     event = eventQueue.poll();
                 }

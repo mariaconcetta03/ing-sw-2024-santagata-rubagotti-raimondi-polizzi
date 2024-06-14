@@ -33,10 +33,10 @@ public class updateGameStateEvent implements Event{
                     if (!wrappedObserver.getADisconnectionHappened()){
                         try {
                             client.heartbeat(); //in gameController però la prima volta che viene scritta la variabile lastHeartbeatTime è in startHeartbeat
+                            System.out.println("Sent heartbeat");
                         } catch (RemoteException e) {
-                            throw new RuntimeException(e);
+                            wrappedObserver.setADisconnectionHappened(true);
                         }
-                        System.out.println("Sent heartbeat");
                     }else{
                         scheduler.shutdown();
                     }

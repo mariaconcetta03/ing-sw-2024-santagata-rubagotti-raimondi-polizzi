@@ -1234,11 +1234,15 @@ public class ClientSCK implements ClientGeneralInterface {
 
         synchronized (disconnectionLock) {
             if (selectedView == 1) { //TUI
+                aDisconnectionHappened = true;
                 handleDisconnectionFunction();
             } else if (selectedView == 2) {
-                synchronized (guiLock) {
-                    aDisconnectionHappened = true;
-                    guiLock.notify();
+                aDisconnectionHappened = true;
+                synchronized (actionLock){
+                    actionLock.notify(); //to stop the waiting of something that will never arrive
+                }
+                if(GUIPawnsController==null){ //the game has not started yet
+                    handleDisconnectionFunction();
                 }
             }
         }
