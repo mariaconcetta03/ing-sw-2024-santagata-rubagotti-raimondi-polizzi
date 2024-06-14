@@ -65,9 +65,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private final Object guiObjectiveControllerLock = new Object();
     private GUIObjectiveController guiObjectiveController = null;
     private final Object disconnectionLock = new Object();
-    public Player getPersonalPlayer() {
-        return personalPlayer;
-    }
     private Player personalPlayer;
     private int lastMoves = 10;
     private List<Player> playersInTheGame;
@@ -1425,6 +1422,16 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public Settings getNetworkSettings() {
         return networkSettings;
+    }
+
+
+
+    /**
+     * Getter method
+     * @return personalPlayer
+     */
+    public Player getPersonalPlayer() {
+        return personalPlayer;
     }
 
 
