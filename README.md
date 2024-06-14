@@ -25,7 +25,7 @@ Codex Naturalis is the final test of "Software Engineering", a course of "Bachel
 ###### Legend: ❌ Not Implemented     ✅ Implemented
 ## Documentation
 ### Test Coverage
-You can check up our JUnit test coverage [here](PROGETTO%2FDeliveries%2FtestCoverage.png).
+You can check up our JUnit test coverage [here](Deliverables/TEST COVERAGE/testCoverage.png).
 ### UML
 Here you can check our UML diagrams:
 - [First UML delivered](PROGETTO%2FDeliverables%2FFILES%20CONSEGNATI%2026-03%2FUML_v3.jpg)
