@@ -42,7 +42,7 @@ You can download the Jar to launch the game [here]().
 ```bash
 reg add HKEY_CURRENT_USER\Console /v VirtualTerminalLevel /t REG_DWORD /d 1
 ```
-3. Allow the prompt to show more characters in a single row: ```Prompt``` ```->``` ```(Right click) Properties``` ```->``` ```Layout``` ```->``` ```Deselect "Text output wraps when resizing"``` ```->``` ```Setting "9000" as width``` ```->``` ```Ok```
+3. Allow the prompt to show more characters in a single row: ```Prompt``` ➡ ```(Right click) Properties``` ➡ ```Layout``` ➡ ```Deselect "Text output wraps when resizing"``` ➡ ```Setting "9000" as width``` ➡ ```OK```
 4. Launch jar file using the following command (**pay attention to your directory**): 
 ```bash
 java -jar pathToServerLauncher\ServerLauncher.jar
@@ -54,7 +54,7 @@ java -jar pathToServerLauncher\ServerLauncher.jar
 ```bash
 reg add HKEY_CURRENT_USER\Console /v VirtualTerminalLevel /t REG_DWORD /d 1
 ```
-3. Allow the prompt to show more characters in a single row: ```Prompt``` ```->``` ```(Right click) Properties``` ```->``` ```Layout``` ```->``` ```Deselect "Text output wraps when resizing"``` ```->``` ```Setting "9000" as width``` ```->``` ```Ok```
+3. Allow the prompt to show more characters in a single row: ```Prompt``` ➡ ```(Right click) Properties``` ➡ ```Layout``` ➡ ```Deselect "Text output wraps when resizing"``` ➡ ```Setting "9000" as width``` ➡ ```OK```
 3. Launch jar file using the following command (**pay attention to your directory**):
 ```bash
 java -jar pathToClientLauncher\ClientLauncher.jar
