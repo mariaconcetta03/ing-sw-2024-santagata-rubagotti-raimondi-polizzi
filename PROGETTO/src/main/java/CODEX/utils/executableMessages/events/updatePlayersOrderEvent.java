@@ -12,13 +12,15 @@ import java.util.List;
  */
 public class updatePlayersOrderEvent implements Event {
     private List<Player> newPlayingOrder;
+    static int id=-1;
 
     public updatePlayersOrderEvent(List<Player> newPlayingOrder) {
         this.newPlayingOrder = newPlayingOrder;
     }
     @Override
     public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
-        System.out.println("CASO TMI");
+        id++;
+        System.out.println("-----------------ENTRATO NELLA EXECUTE-------  "+id+"------------");
         System.out.println("sto per fare l'updateround");
         client.updateRound(newPlayingOrder);
         System.out.println("ho fatto l'updateround");
