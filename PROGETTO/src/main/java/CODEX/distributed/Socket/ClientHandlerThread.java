@@ -9,6 +9,7 @@ import CODEX.org.model.*;
 import CODEX.utils.ErrorsAssociatedWithExceptions;
 import CODEX.utils.Observable;
 import CODEX.utils.Observer;
+import CODEX.utils.executableMessages.events.Event;
 import CODEX.utils.executableMessages.serverMessages.ServerError;
 import CODEX.utils.executableMessages.serverMessages.ServerMessage;
 import CODEX.utils.executableMessages.serverMessages.ServerOk;
@@ -121,7 +122,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
      * @param e event
      */
     @Override
-    public void update(Observable obs, CODEX.utils.executableMessages.events.Event e) {
+    public void update(Observable obs, Event e) {
         boolean check=e.executeSCKServerSide();
         if(check){ // true if the gameState has changed to 'STARTED'
             this.pongReceived=true; // initialization
