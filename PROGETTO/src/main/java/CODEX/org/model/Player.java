@@ -63,6 +63,7 @@ public class Player extends Observable implements Serializable {
      * modifies the market, whilst if it has been used
      * introduces another card in the player's deck
      * @param card is the card that the player has taken from a deck or from the market
+     * @throws CardNotDrawableException
      */
     public void drawCard(PlayableCard card) throws CardNotDrawableException {
         boolean drawn = false;
@@ -242,6 +243,7 @@ public class Player extends Observable implements Serializable {
     /**
      * Setter method
      * @param card is the personal objective chosen by the player
+     * @throws CardNotOwnedException
      */
     public void setPersonalObjective (ObjectiveCard card) throws CardNotOwnedException {
         if (this.personalObjective.contains(card)) {
