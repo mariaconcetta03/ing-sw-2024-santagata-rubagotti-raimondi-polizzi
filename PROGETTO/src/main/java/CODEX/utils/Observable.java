@@ -30,7 +30,10 @@ public class Observable {
      * @param e has caused the modification
      */
     public void notifyObservers(Event e) {
+        int i=0;
         for (Observer obs : observers) {
+            System.out.println("Observable "+i);
+            i++;
             obs.update(this, e);
         }
     }
