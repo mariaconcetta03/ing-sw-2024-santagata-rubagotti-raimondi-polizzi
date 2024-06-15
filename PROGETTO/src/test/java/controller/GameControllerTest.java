@@ -38,7 +38,7 @@ public class GameControllerTest extends TestCase {
         players.add(p3);
         players.add(p4);
 
-        g1.addClient("Pippo",new WrappedObserver(new RMIClient()));
+        g1.addClient("Pippo",new WrappedObserver(new RMIClient(), g1));
 
         g1.createGame(players);
         assertEquals(g1.getGame().getId(), 0);
@@ -853,7 +853,7 @@ public void testStartGame() throws RemoteException {
         g1.checkBaseCardPlayed();
 
         System.out.println(g1.getId());
-        g1.addClient("Pippo", new WrappedObserver(new RMIClient()));
+        g1.addClient("Pippo", new WrappedObserver(new RMIClient(), g1));
         g1.addRMIClient("Pippo", new RMIClient());
         g1.heartbeat("Pippo");
         g1.startHeartbeat("Pippo");

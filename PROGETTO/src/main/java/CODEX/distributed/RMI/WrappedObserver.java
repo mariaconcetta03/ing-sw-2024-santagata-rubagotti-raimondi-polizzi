@@ -43,6 +43,7 @@ public class WrappedObserver implements Observer {
     /**
      * Class constructor
      * @param ro the RMIClient which is an observer
+     * @param gameController is the associated GameController
      */
     public WrappedObserver(ClientGeneralInterface ro, GameController gameController) {
 
