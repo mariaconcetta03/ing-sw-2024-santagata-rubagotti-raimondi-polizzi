@@ -126,4 +126,10 @@ public class ClientLauncher {
             }
         }while(!selected);
     }
+
+
+    /**
+     * Default constructor
+     */
+    public ClientLauncher(){}
 }

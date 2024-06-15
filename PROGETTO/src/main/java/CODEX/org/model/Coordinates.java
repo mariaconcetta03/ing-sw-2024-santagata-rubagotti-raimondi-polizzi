@@ -82,7 +82,7 @@ public class Coordinates implements Serializable {
 
     /**
      * Setter method
-     * @param x
+     * @param x is the coordinate x
      */
     public void setX(int x) {
         this.x = x;

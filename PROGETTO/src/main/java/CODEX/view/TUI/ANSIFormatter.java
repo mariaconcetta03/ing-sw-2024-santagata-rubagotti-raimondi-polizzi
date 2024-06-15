@@ -5,6 +5,12 @@ package CODEX.view.TUI;
  * This class represents the colors used in the tui.
  */
 public class ANSIFormatter {
+    /**
+     * Default constructor
+     */
+    public ANSIFormatter(){}
+
+
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_RED = "\u001B[31m";

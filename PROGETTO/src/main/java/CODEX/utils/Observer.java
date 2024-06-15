@@ -12,6 +12,11 @@ public interface Observer {
     String nickname = null;
     void update(Observable obs, Event e);
 
+
+    /**
+     * Setter method
+     * @param nickname chosen by the player
+     */
     public void setNickname(String nickname);
 
     void setADisconnectionHappened(boolean aDisconnectionHappened);

@@ -13,6 +13,17 @@ import java.util.List;
  * specific moment
  */
 public class ClientAvailableLobbies implements ClientMessage {
+    /**
+     * Default constructor
+     */
+    public ClientAvailableLobbies(){}
+
+
+
+    /**
+     * This method checks what lobbies are available in a specific moment
+     * @param clientHandlerThread thread
+     */
     @Override
     public void execute(ClientHandlerThread clientHandlerThread) {
         List<Integer> list = new ArrayList<>();

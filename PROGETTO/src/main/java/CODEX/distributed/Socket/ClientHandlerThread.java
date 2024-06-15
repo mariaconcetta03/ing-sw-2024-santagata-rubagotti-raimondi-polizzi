@@ -401,9 +401,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
      * This method will be called inside the method execute of the clientMessage received after a
      * gameController/serverController methods invocation to tell the client what the controller has
      * effectively done (in this case we write a serverMessage)
-     *
      * WriteTheStream will also be called in the method update (we have it because ClientHandlerThread
      * is an observer) to tell the ClientSCK what is changed in the model
+     * @param sckMessage is the message sent to explain the action done by the controller
      */
     synchronized public void writeTheStream(SCKMessage sckMessage){
         if(running) {

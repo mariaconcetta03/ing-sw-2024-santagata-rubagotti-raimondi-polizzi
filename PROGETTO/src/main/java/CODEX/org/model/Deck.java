@@ -12,6 +12,13 @@ public abstract class Deck implements Serializable {
 
 
     /**
+     * Default constructor
+     */
+    public Deck(){}
+
+
+
+    /**
      * This method shuffles the deck: all the cards will have a random order after this function has been called
      */
     public void shuffleDeck() {

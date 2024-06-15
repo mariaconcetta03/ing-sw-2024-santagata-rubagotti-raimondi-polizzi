@@ -12,6 +12,19 @@ import java.util.List;
  * pawn colors in a specific moment
  */
 public class ClientAvailableColors implements ClientMessage {
+
+    /**
+     * Default class constructor
+     */
+    public ClientAvailableColors () {
+    }
+
+
+
+    /**
+     * This method checks what pawn colors are available in a precise moment
+     * @param clientHandlerThread client
+     */
     @Override
     public void execute(ClientHandlerThread clientHandlerThread) {
         List<Pawn> availableColors = clientHandlerThread.getGameController().getGame().getAvailableColors();

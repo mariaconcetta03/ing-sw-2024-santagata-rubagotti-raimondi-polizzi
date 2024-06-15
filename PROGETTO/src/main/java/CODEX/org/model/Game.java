@@ -15,7 +15,9 @@ public class Game extends Observable implements Serializable {
     private int id; // each Game has a different id
     private int nPlayers; // number of players in this game. It's decided by the lobby-creator
     private List<Player> players; // all the players in the game
-
+    /**
+     * This enum represents the different states of the game
+     */
     public enum GameState {
         STARTED,
         ENDING,
@@ -395,8 +397,7 @@ public class Game extends Observable implements Serializable {
 
 
     /**
-     * These 4 methods are useful to replace a card in the market.
-     * The market is formed by 2 gold cards and 2 resource cards, which the player can pick up during the game
+     * This method is useful to replace the gold card 1 in the market.
      */
     public void resetGoldCard1 () {
         if(!this.goldDeck.isFinished()){
@@ -411,6 +412,11 @@ public class Game extends Observable implements Serializable {
         notifyObservers(new updateResourceDeckEvent(resourceDeck));
     }
 
+
+
+    /**
+     * This method is useful to replace the gold card 2 in the market.
+     */
     public void resetGoldCard2 () {
         if(!this.goldDeck.isFinished()){
             this.goldCard2=this.goldDeck.getFirstCard();
@@ -424,6 +430,11 @@ public class Game extends Observable implements Serializable {
         notifyObservers(new updateResourceDeckEvent(resourceDeck));
     }
 
+
+
+    /**
+     * This method is useful to replace the resource card 1 in the market.
+     */
     public void resetResourceCard1 () {
         if(!this.resourceDeck.isFinished()){
             this.resourceCard1=this.resourceDeck.getFirstCard();
@@ -437,6 +448,11 @@ public class Game extends Observable implements Serializable {
         notifyObservers(new updateGoldDeckEvent(goldDeck));
     }
 
+
+
+    /**
+     * This method is useful to replace the resource card 2 in the market.
+     */
     public void resetResourceCard2 () {
         if(!this.resourceDeck.isFinished()){
             this.resourceCard2=this.resourceDeck.getFirstCard();

@@ -147,6 +147,13 @@ public class ClientSCK implements ClientGeneralInterface {
 
 
         /**
+         * Default constructor
+         */
+        public Settings (){}
+
+
+
+        /**
          * Setter method
          * @param serverName server address
          */
@@ -154,6 +161,8 @@ public class ClientSCK implements ClientGeneralInterface {
             SERVER_NAME = serverName;
         }
     }
+
+
 
 
 
@@ -199,7 +208,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * otherwise it is a ServerMessage (ServerMessage attribute of the sckMessage)
      * If the Event attribute of the sckMessage is not null the execute method will modify the local
      * attributes of the client.
-     * @param sckMessage
+     * @param sckMessage represents an event that has to be executed
      */
     public void modifyClientSide(SCKMessage sckMessage) {
         if (sckMessage.getEvent() != null) { // we have an update
@@ -649,11 +658,9 @@ public class ClientSCK implements ClientGeneralInterface {
      * @param nickname of the player who is going leave the game
      */
     @Override
-    public void leaveGame(String nickname) throws  IllegalArgumentException {
-        //abbiamo deciso che quando un giocatore vuole lasciare il gioco il server riceve una disconnessione
-        //if (!aDisconnectionHappened) non lo controllo perchè se viene rilevata sulla gui la disconnessione non viene premuto il tasto che porta a questa funzione
-        synchronized (disconnectionLock) {
-            if (!aDisconnectionHappened) { //per sicurezza lo controllo
+    public void leaveGame(String nickname) {
+     synchronized (disconnectionLock) {
+            if (!aDisconnectionHappened) {
                 System.out.println("game left.");
                 try { //we close all we have to close
                     running = false;
@@ -1253,7 +1260,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
     /**
      * This method is used in RMI Client
-     * @throws RemoteException
+     * @throws RemoteException when there's a problem in the communication
      */
     @Override
     public void heartbeat() throws RemoteException {
@@ -1263,7 +1270,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
     /**
      * This method is used in RMI Client
-     * @throws RemoteException
+     * @throws RemoteException when there's a problem in the communication
      */
     @Override
     public void startHeartbeat() throws RemoteException {
@@ -1732,7 +1739,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
     /**
      * Setter method
-     * @param guiGameController
+     * @param guiGameController is the GUI game controller (for the main match window)
      */
     public void setGuiGameController(GUIGameController guiGameController) {
         this.guiGameController=guiGameController;
@@ -1772,7 +1779,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
     /**
      * Setter method
-     * @param ctr
+     * @param ctr is the GUI controller
      */
     public void setGuiBaseCardController(GUIBaseCardController ctr) {
         this.guiBaseCardController=ctr;
@@ -1782,7 +1789,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
     /**
      * Setter method
-     * @param ctr
+     * @param ctr is the GUI controller
      */
     public void setGuiObjectiveController(GUIObjectiveController ctr) {
         this.guiObjectiveController=ctr;
@@ -1802,7 +1809,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
     /**
      * Setter method
-     * @param availableColors
+     * @param availableColors tells what colors a player can choose
      */
     public void setAvailableColors(List<Pawn> availableColors){
         this.availableColors=availableColors;
@@ -1812,7 +1819,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
     /**
      * Setter method
-     * @param isPlaying
+     * @param isPlaying tells about the status of a player
      */
     public void setIsPlaying(boolean isPlaying){
         this.isPlaying=isPlaying;
@@ -1822,7 +1829,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
     /**
      * Setter method
-     * @param errorState
+     * @param errorState if there's an error, then it is true, false otherwise
      */
     public void setErrorState (boolean errorState) {
         this.errorState = errorState;

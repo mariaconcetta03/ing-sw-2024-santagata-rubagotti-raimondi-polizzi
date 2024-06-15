@@ -19,10 +19,10 @@ public class ChatMessage implements Serializable {
 
     /**
      * Class contructor
-     * @param message
-     * @param senderNickname
-     * @param receiversNicknames
-     * @param timestamp
+     * @param message is a text message
+     * @param senderNickname is who is sending a message
+     * @param receiversNicknames is who is receiving a message
+     * @param timestamp date, hour
      */
     public ChatMessage(String message, String senderNickname, List<String> receiversNicknames, Timestamp timestamp) {
         this.message = message;

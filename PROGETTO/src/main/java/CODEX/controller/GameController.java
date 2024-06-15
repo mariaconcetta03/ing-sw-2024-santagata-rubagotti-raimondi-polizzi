@@ -46,8 +46,11 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     private boolean alreadyCheckedColors;
     private boolean alreadyCheckedObjectiveCards;
 
+
+
     /**
      * Class constructor, initialises lastRounds and lastDrawingRounds to 10 (improbable value)
+     * @throws RemoteException when there's a problem in the communication of GameController object
      */
     public GameController() throws RemoteException {
         super();
@@ -648,7 +651,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     /**
      * Setter method
      * @param serverController which manages the different game controllers
-     * @throws RemoteException
      */
     public void setServerController(ServerController serverController) throws RemoteException {
         this.serverController = serverController;
