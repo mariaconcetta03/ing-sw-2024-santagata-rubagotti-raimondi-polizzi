@@ -25,7 +25,15 @@ public class Player extends Observable implements Serializable {
     private PlayerState state;
     private int numObjectivesReached;
     public enum PlayerState {
+        /**
+         * The player is playing
+         */
         IS_PLAYING,
+
+
+        /**
+         * The player is waiting
+         */
         IS_WAITING
     } // it's the state associated to the player during the game
 
