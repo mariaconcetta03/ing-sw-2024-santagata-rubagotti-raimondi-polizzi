@@ -20,6 +20,7 @@ public class PlayableDeck extends Deck implements Serializable {
     /**
      * Class constructor
      * It creates a new deck, allocating space for a stack
+     * @param stack of cards
      */
     public PlayableDeck(Stack<PlayableCard> stack) {
         cards = stack;

@@ -378,6 +378,7 @@ public class GUIObjectiveController {
     /**
      * Setter method
      * @param cardID which the player chose (base card)
+     * @param orientation is the orientation of the card (front/back)
      */
     public void setBaseCard(int cardID, boolean orientation) {
         String path;

@@ -1626,8 +1626,11 @@ public class GUIGameController {
 
 
 
+
     /**
      * This method is invoked to update the player's deck
+     * @param nickname is player's nickname
+     * @param playerDeck is player's deck
      */
     public void updatePlayerDeck(String nickname,PlayableCard[] playerDeck) {
         Platform.runLater(() -> {
