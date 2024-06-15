@@ -464,7 +464,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * @param ro is the client who is joining the game
      */
     public void addRMIClient(String nickname, ClientGeneralInterface ro){
-        WrappedObserver wrapObs= new WrappedObserver(ro);
+        WrappedObserver wrapObs= new WrappedObserver(ro, this);
         if(!clientsConnected.containsValue(wrapObs)){
             clientsConnected.put(nickname, wrapObs);
         }

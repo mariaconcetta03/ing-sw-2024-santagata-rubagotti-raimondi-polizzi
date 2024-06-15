@@ -1,6 +1,7 @@
 package CODEX.distributed.RMI;
 
 
+import CODEX.controller.GameController;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.utils.Observable;
 import CODEX.utils.Observer;
@@ -23,6 +24,7 @@ import java.util.concurrent.ScheduledExecutorService;
  *      ----------------------------------------------------------------------------------------------------------
  */
 public class WrappedObserver implements Observer {
+    private GameController gameController;
     public ScheduledExecutorService scheduler;
     private static final int HEARTBEAT_INTERVAL = 2; // seconds
     private ClientGeneralInterface remoteClient;
@@ -42,9 +44,10 @@ public class WrappedObserver implements Observer {
      * Class constructor
      * @param ro the RMIClient which is an observer
      */
-    public WrappedObserver(ClientGeneralInterface ro) {
+    public WrappedObserver(ClientGeneralInterface ro, GameController gameController) {
 
-        remoteClient = ro;
+        this.gameController=gameController;
+        this.remoteClient = ro;
 
         WrappedObserver wrappedObserver=this;
         executor= Executors.newSingleThreadExecutor();
@@ -60,6 +63,7 @@ public class WrappedObserver implements Observer {
                         System.out.println("ho fatto la pull dell'evento");
                     } catch (RemoteException e) {
                         aDisconnectionHappened = true;
+                        gameController.disconnection();
                         //e.printStackTrace();
                     }
                     event = eventQueue.poll();
