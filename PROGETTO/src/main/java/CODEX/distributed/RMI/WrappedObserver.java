@@ -63,9 +63,9 @@ public class WrappedObserver implements Observer {
                         lastEvent = event.execute(remoteClient, wrappedObserver);
                         System.out.println("ho fatto la pull dell'evento");
                     } catch (RemoteException e) {
+                        e.printStackTrace();
                         aDisconnectionHappened = true;
                         gameController.disconnection();
-                        //e.printStackTrace();
                     }
                     event = eventQueue.poll();
                 }
