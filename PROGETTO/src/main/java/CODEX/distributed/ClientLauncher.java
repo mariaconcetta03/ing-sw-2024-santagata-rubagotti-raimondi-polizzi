@@ -18,6 +18,10 @@ import java.util.Scanner;
  * This class is the launcher of both rmi and tcp clients.
  */
 public class ClientLauncher {
+    /**
+     * Main method
+     * @param args null
+     */
     public static void main(String[] args) {
         boolean selected = false;
         int selection = 0;

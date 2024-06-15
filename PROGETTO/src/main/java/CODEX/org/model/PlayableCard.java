@@ -87,6 +87,22 @@ public class PlayableCard extends Card implements Serializable {
     /**
      * Class constructor
      * This method creates an instance of different types of playableCards
+     * @param id cardID
+     * @param points card's points
+     * @param front_up_right
+     * @param front_up_left
+     * @param front_down_right
+     * @param front_down_left
+     * @param back_up_right
+     * @param back_up_left
+     * @param back_down_right
+     * @param back_down_left
+     * @param centralResources
+     * @param coverAngleToReceivePoints
+     * @param haveFeatherToReceivePoints
+     * @param haveScrollToReceivePoints
+     * @param haveJarToReceivePoints
+     * @param neededResources
      */
     public PlayableCard (int id, int points, AngleType front_up_right, AngleType front_up_left, AngleType front_down_right, AngleType front_down_left,
                          AngleType back_up_right, AngleType back_up_left, AngleType back_down_right, AngleType back_down_left,

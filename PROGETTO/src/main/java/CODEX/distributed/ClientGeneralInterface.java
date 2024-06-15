@@ -7,6 +7,9 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This interface is useful for describing all the methods which a client can invoke for performing actions in the game
+ */
 public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
 
     /**
@@ -18,6 +21,13 @@ public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
      */
     void updateBoard(String boardOwner, Board board, PlayableCard newCard) throws RemoteException;
 
+
+
+    /**
+     * This is an update method
+     * @param resourceDeck the new deck we want to update
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
     void updateResourceDeck(PlayableDeck resourceDeck) throws RemoteException;
 
 
@@ -113,6 +123,14 @@ public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
      */
     void updateGameState(Game.GameState gameState) throws RemoteException;
 
+
+
+    /**
+     * This is an update method
+     * @param objCard1 is the first common Objective
+     * @param objCard2 is the second common Objective
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
     void updateCommonObjectives(ObjectiveCard objCard1, ObjectiveCard objCard2) throws RemoteException;
 
 
@@ -186,7 +204,22 @@ public interface ClientGeneralInterface extends Remote, ClientActionsInterface {
      */
     void handleDisconnectionFunction() throws RemoteException;
 
+
+
+    /**
+     * This method stops the waiting of the RMIClient, which was waiting for an OK message
+     * @param nickname of the player
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
+    void okEventExecute(String nickname) throws RemoteException;
+
+
+
+    /**
+     * Setter method
+     * @param b true if response is received, false otherwise
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
     void setResponseReceived(boolean b) throws RemoteException;
 
-    void okEventExecute(String nickname) throws RemoteException;
 }

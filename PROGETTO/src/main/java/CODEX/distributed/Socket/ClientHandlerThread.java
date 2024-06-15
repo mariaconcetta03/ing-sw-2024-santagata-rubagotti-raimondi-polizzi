@@ -51,9 +51,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
 
     /**
      * Class constructor
-     * @param client
-     * @param serverController
-     * @throws IOException
+     * @param client is a player
+     * @param serverController server controller
+     * @throws IOException when a problem occurs with input stream and output stream
      */
     public ClientHandlerThread(Socket client,ServerController serverController) throws IOException {
         this.serverController = serverController;

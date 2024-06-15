@@ -84,22 +84,88 @@ public interface GameControllerInterface extends Remote {
      */
     void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws RemoteException, IllegalArgumentException;
 
+
+
+    /**
+     * This method allows a player to choose a Pawn color
+     * @param chooserNickname is the nickname of the player who is going to select the Pawn
+     * @param selectedColor the chosen colour
+     * @throws ColorAlreadyTakenException if the pawn has been chosen by another user before
+     * @throws RemoteException if an exception happens while communicating with the remote
+     * @throws ColorAlreadyTakenException if the color chosen is already taken
+     */
     void choosePawnColor(String chooserNickname, Pawn selectedColor) throws RemoteException, ColorAlreadyTakenException;
 
+
+
+    /**
+     * This method allows the player to send a text message in the chat
+     * @param senderNickname is the nickname of the player who sends the message
+     * @param receiversNicknames are the nickname of the players who are going to receive the message
+     * @param message the string (message) sent
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
     void sendMessage(String senderNickname, List<String> receiversNicknames, String message) throws RemoteException;
 
+
+
+    /**
+     * This method is invoked when we need to check how many players there are in the game.
+     * If the number of players inside is correct, then it starts the game
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
     void checkNPlayers() throws RemoteException;
 
+
+
+    /**
+     * This method checks if all the players have played their base card.
+     * If they all did, then it gives the initial cards for the starting of the match.
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
     void checkBaseCardPlayed() throws RemoteException;
 
+
+
+    /**
+     * This method is invoked to check if all the players have chosen their objective card
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
     void checkObjectiveCardChosen() throws RemoteException;
 
+
+
+    /**
+     * This method is invoked to check if all the players have chosen their pawn color
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
     void checkChosenPawnColor() throws RemoteException;
 
+
+
+    /**
+     * Getter method
+     * @return the list of the players in the game
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
     List<Player> getGamePlayers() throws RemoteException;
 
+
+
+    /**
+     * This method is used for receiving the heartbeats to check disconnections
+     * @param nickname of the player
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
     void heartbeat(String nickname) throws RemoteException;
 
+
+
+    /**
+     * This method is used for starting the heartbeats to check disconnections
+     * @param nickname of the player
+     * @throws RemoteException if an exception happens while communicating with the remote
+     */
     void startHeartbeat(String nickname) throws RemoteException;
 
 }

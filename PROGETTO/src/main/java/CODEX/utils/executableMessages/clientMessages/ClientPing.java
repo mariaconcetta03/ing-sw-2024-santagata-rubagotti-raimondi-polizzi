@@ -1,6 +1,7 @@
 package CODEX.utils.executableMessages.clientMessages;
 
 import CODEX.distributed.Socket.ClientHandlerThread;
+import CODEX.distributed.Socket.ClientSCK;
 import CODEX.distributed.messages.SCKMessage;
 import CODEX.utils.executableMessages.serverMessages.ServerMessage;
 import CODEX.utils.executableMessages.serverMessages.ServerPong;

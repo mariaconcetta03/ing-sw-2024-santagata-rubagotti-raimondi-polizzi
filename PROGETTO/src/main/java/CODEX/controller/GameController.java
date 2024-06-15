@@ -34,7 +34,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     private Game game;
     private int lastRounds;
     private int lastDrawingRounds;
-    private List<Player> winners;
     private List<Player> gamePlayers;
     private int numberOfPlayers;
     private int id;
@@ -58,7 +57,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         serverController = null;
         lastRounds = 10;
         lastDrawingRounds = 10;
-        winners = new ArrayList<>();
         gamePlayers = new ArrayList<>();
         clientsConnected = new HashMap<>();
         numberOfPlayers = 0;
@@ -154,7 +152,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     /**
      * This method checks if all the players have played their base card.
      * If they all did, then it gives the initial cards for the starting of the match.
-
      */
     public synchronized void checkBaseCardPlayed()  {
         PlayableCard[][] tmp;
@@ -359,7 +356,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * This method is the one setting the right player in turn. If drawCard (decks finished) or playCard (20 points)
      * have triggered the ENDING condition it decreases our indexes to determine when the Game has to end.
      * INTERNAL USE METHOD
-     * @throws RemoteException
      */
     private void nextPhase() {
         if (game.getState() == Game.GameState.ENDING && lastRounds > 0) {
@@ -385,9 +381,8 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * This method is called when the ENDING Game condition is triggered to calculate how many moves are left and
      * how many times the players will draw in the next plays.
      * INTERNAL USE METHOD
-     * @throws RemoteException
      */
-    private void calculateLastMoves()  {
+    private void calculateLastMoves() {
             int firstPlayer = 0;
             lastRounds = game.getnPlayers();
 
@@ -413,9 +408,8 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * and 1 personalObj) and adds the points to the correct player.
      * Finally, it checks the winner (or winners) of the game, and puts them in a list called "winners".
      * INTERNAL USE METHOD
-     * @throws RemoteException
      */
-    private void endGame()  {
+    private void endGame() {
         // setting the game state to ENDED
         game.endGame();
 
@@ -481,9 +475,8 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     /**
      * This method is used for receiving the heartbeats to check disconnections
      * @param nickname of the player
-     * @throws RemoteException
      */
-    public void heartbeat(String nickname) throws RemoteException {
+    public void heartbeat(String nickname) {
         lastHeartbeatTimesOfEachPlayer.put(nickname,System.currentTimeMillis());
         System.out.println("Received heartbeat at " + lastHeartbeatTimesOfEachPlayer.get(nickname)+ " from "+ nickname);
     }
@@ -493,9 +486,8 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     /**
      * This method is used for starting the heartbeats to check disconnections
      * @param nickname of the player
-     * @throws RemoteException
      */
-    public void startHeartbeat(String nickname) throws RemoteException {
+    public void startHeartbeat(String nickname) {
         lastHeartbeatTimesOfEachPlayer.put(nickname,System.currentTimeMillis());
         startHeartbeatMonitor(nickname);
     }
@@ -529,7 +521,8 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * This method is used when the server detects a disconnection, so it removes all the observers
      * and removes the gameController of the match where the disconnection happened
      */
-    public void disconnection(){ // notify with disconnectionEvent
+    public void disconnection(){
+        // notify with disconnectionEvent
         synchronized (disconnectionLock) {
             disconnection=true;
             if(firstDisconnection) {
@@ -627,10 +620,9 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * Setter method
      * @param numberOfPlayers who are playing
      * @throws IllegalArgumentException if the number of players is wrong
-     * @throws  RemoteException
      * INTERNAL USE METHOD
      */
-    public void setNumberOfPlayers(int numberOfPlayers) throws IllegalArgumentException, RemoteException {
+    public void setNumberOfPlayers(int numberOfPlayers) throws IllegalArgumentException {
         if ((numberOfPlayers >= 2) && (numberOfPlayers <= 4)) {
             this.numberOfPlayers = numberOfPlayers;
         }else throw new IllegalArgumentException("Wrong number of players!");
@@ -652,7 +644,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * Setter method
      * @param serverController which manages the different game controllers
      */
-    public void setServerController(ServerController serverController) throws RemoteException {
+    public void setServerController(ServerController serverController) {
         this.serverController = serverController;
     }
 

@@ -63,7 +63,6 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method prints the welcome message to a new Player in the lobby
      */
@@ -82,9 +81,9 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method is used to print on the TUI a request for nickname
+     *
      * @param sc is the scanner for the input
      * @return the nickname selected
      */
@@ -104,9 +103,9 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method prints the correct menu containing the action the player can perform
+     *
      * @param isPlaying is true if the player is the one playing, false otherwise
      */
     public void gameTurn(boolean isPlaying) {
@@ -122,9 +121,9 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method actually prints the menu with the action the player can perform
+     *
      * @param isPlaying is true if the player is the one playing, false otherwise
      */
     public void printMenu(boolean isPlaying) {
@@ -147,11 +146,11 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method asks the player to select a pawn color
+     *
      * @param availableColors is a list of available colored pawns at that moment
-     * @param sc is the scanner for the input
+     * @param sc              is the scanner for the input
      * @return the selected pawn, null if that's an invalid one
      */
     public Pawn askPawnSelection(List<Pawn> availableColors, Scanner sc) {
@@ -182,10 +181,10 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method let the player select how to play his baseCard
-     * @param sc is the player's Scanner
+     *
+     * @param sc       is the player's Scanner
      * @param baseCard is the player's baseCard
      * @return true if the card is played face-up, false otherwise
      */
@@ -217,10 +216,10 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method is used to ask the player which Objective card he wants to keep
-     * @param sc is the player's Scanner
+     *
+     * @param sc             is the player's Scanner
      * @param objectiveCards are the 2 possible objective Cards to choose between
      * @return the objectiveCard chosen by the player
      */
@@ -247,10 +246,10 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method is used to ask the player which card he wants to play
-     * @param sc is the player's Scanner
+     *
+     * @param sc             is the player's Scanner
      * @param personalPlayer is the player who wants to play a card
      * @return the chosen card, null if the user inserted an invalid index
      */
@@ -277,9 +276,9 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method is used to ask the user which side he wants to play the card
+     *
      * @param sc is the player's Scanner
      * @return true if the card has to be played face up, false if it has to be played face down
      */
@@ -305,12 +304,12 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method is used to ask the user where he wants to play his card
-     * @param sc is the player' Scanner
+     *
+     * @param sc           is the player' Scanner
      * @param playableCard is the card he is playing
-     * @param board is its board
+     * @param board        is its board
      * @return the coordinates where the player wants to play the card, null if he inserted an invalid position
      */
     public Coordinates askCoordinates(Scanner sc, PlayableCard playableCard, Board board) {
@@ -336,13 +335,13 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method is used to ask the player which card he wants to draw after he played a card
-     * @param goldDeck is the deck containing the gold cards
-     * @param resourceDeck is the deck containing the resource cards
+     *
+     * @param goldDeck      is the deck containing the gold cards
+     * @param resourceDeck  is the deck containing the resource cards
      * @param visibileCards are the 4 cards faced-up on the table
-     * @param sc is the player's Scanner
+     * @param sc            is the player's Scanner
      * @return the card the player wants to draw
      */
     public PlayableCard askCardToDraw(PlayableDeck goldDeck, PlayableDeck resourceDeck, List<PlayableCard> visibileCards, Scanner sc) {
@@ -386,9 +385,9 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method is used to print some playableCard (player Hand, drawable cards...)
+     *
      * @param cardsToPrint are the cards that have to be printed
      */
     public void printPlayableCards(List<PlayableCard> cardsToPrint) {
@@ -717,9 +716,9 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method is used to print the cards a Player is keeping in is hands
+     *
      * @param playerDeck is the collection of cards the Player has in his hands
      */
     public void printHand(PlayableCard[] playerDeck) {
@@ -729,9 +728,9 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method prints the common Objective Cards and the personal Objective card of the player
+     *
      * @param objectiveCards are the 3 Objective cards to be printed
      */
     public void printObjectiveCard(List<ObjectiveCard> objectiveCards) {
@@ -886,9 +885,9 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method prints all the resources and objects that are "visible" on the player's board
+     *
      * @param board is the player's board
      */
     public void printAvailableResources(Board board) {
@@ -901,9 +900,9 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method is used to print the positions where the player can play a card
+     *
      * @param board is the player's board
      */
     public void printPlayablePositions(Board board) {
@@ -914,9 +913,9 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method is used to print the table of the selected board
+     *
      * @param board is the player's selected board
      */
     public void printTable(Board board) {
@@ -1694,9 +1693,9 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method prints an ordered scoreBoard of the game
+     *
      * @param players are the players in the game
      */
     public void printScoreBoard(List<Player> players) {
@@ -1708,9 +1707,9 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method is called at the very end to announce to the player if he has won or not.
+     *
      * @param winner is true if the player position is 1st, false otherwise
      */
     public void printWinner(boolean winner) {
@@ -1734,9 +1733,9 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method prints the drawable cards on the play table
+     *
      * @param goldDeck      is the deck containing the gold cards
      * @param resourceDeck  is the deck containing the resource cards
      * @param visibileCards are the 4 cards faced-up on the table
@@ -1771,7 +1770,6 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method prints the legend for understanding the cards
      */
@@ -1788,9 +1786,8 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
-     * This method cancels evrything is written in the interface
+     * This method cancels everything is written in the interface
      */
     public static void clearScreen() {
         System.out.print("\033[H\033[2J");
@@ -1798,11 +1795,11 @@ public class InterfaceTUI implements Serializable {
     }
 
 
-
     /**
      * This method is used to correctly print the menu to the user and capture his input
+     *
      * @param isPlaying is true if the player is currently the one in turn
-     * @param console is the BufferedReader of the player
+     * @param console   is the BufferedReader of the player
      * @return intValue which is the index of the action that the player wants to perform,
      * -1 if anything was inserted by the user or if there was a bad input
      */
@@ -1836,35 +1833,35 @@ public class InterfaceTUI implements Serializable {
         return intValue;
     }
 
-}
 
 
-
-/**
+    /**
      * This method prints the last messages of a specific Chat
+     *
      * @param messages are all the messages the client received
-     * @param user     is the person we are chatting with
+     * @param user     is the string of the nickname of the person we are chatting with
+     * @param personalNickname nickname of the player who is seing the chat
      */
-  /*  public void printChat(List<ChatMessage> messages, String user, String personalNickname) {
-        /*System.out.println("These are the last 20 messages of the chat with "+user+":");
-       // int index=messages.size();
-        int counter=0;
+    public void printChat(List<ChatMessage> messages, String user, String personalNickname) {
+        System.out.println("These are the last 20 messages of the chat with " + user + ":");
+        int index = messages.size();
+        int counter = 0;
         List<String> tmpMessageUsersNicknames;
-        List<String> nicknamesToCheck=new ArrayList<>();
+        List<String> nicknamesToCheck = new ArrayList<>();
         nicknamesToCheck.add(user);
         nicknamesToCheck.add(personalNickname);
 
-
-        for(int i= messages.size()-1;(i>0)&&(counter<20);i--){
-                tmpMessageUsersNicknames= new ArrayList<>();
-                for(Player p: messages.get(i).getReceiver()) {
-                    tmpMessageUsersNicknames.add(p.getNickname());
-                }
-                tmpMessageUsersNicknames.add(messages.get(i).getSender().getNickname());
-                if(tmpMessageUsersNicknames.containsAll(nicknamesToCheck)){
-                    System.out.println(messages.get(i).getSender()+"["+messages.get(i).getTimestamp()+"]: "+messages.get(i).getMessage());
-                    counter++;
-                }
+        for (int i = messages.size() - 1; (i > 0) && (counter < 20); i--) {
+            tmpMessageUsersNicknames = new ArrayList<>();
+            for (String p : messages.get(i).getReceiver()) {
+                tmpMessageUsersNicknames.add(p);
+            }
+            tmpMessageUsersNicknames.add(messages.get(i).getSender());
+            if (tmpMessageUsersNicknames.containsAll(nicknamesToCheck)) {
+                System.out.println(messages.get(i).getSender() + "[" + messages.get(i).getTimestamp() + "]: " + messages.get(i).getMessage());
+                counter++;
+            }
         }
+    }
 
-    } */
+}

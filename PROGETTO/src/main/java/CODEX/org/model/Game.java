@@ -19,9 +19,24 @@ public class Game extends Observable implements Serializable {
      * This enum represents the different states of the game
      */
     public enum GameState {
+        /**
+         * The game has started
+         */
         STARTED,
+
+        /**
+         * The game is ending (last turns)
+         */
         ENDING,
+
+        /**
+         * The game has ended
+         */
         ENDED,
+
+        /**
+         * The game is waiting for start
+         */
         WAITING_FOR_START
     }
     private GameState state;
@@ -322,6 +337,7 @@ public class Game extends Observable implements Serializable {
      * P1 and P2 are the 2 players the chat is composed by
      * @param p1Nickname first player in the chat
      * @param p2Nickname second player in the chat
+     * @return the created new chat
      */
     public Chat startChat (String p1Nickname, String p2Nickname) {
         List<String> playersInChat = new ArrayList<>();

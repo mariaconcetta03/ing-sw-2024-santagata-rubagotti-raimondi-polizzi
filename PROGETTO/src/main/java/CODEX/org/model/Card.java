@@ -9,7 +9,10 @@ import java.io.Serializable;
 public abstract class Card implements Serializable {
     private int id; // each card has a different ID
 
-
+    /**
+     * Default constructor
+     */
+    public Card(){}
 
     /**
      * Getter method

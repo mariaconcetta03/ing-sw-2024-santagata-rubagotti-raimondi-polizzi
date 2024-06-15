@@ -84,7 +84,8 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * Class constructor
      * we call this constructor after we ask the IP address and the port of the server
-     * @throws IOException
+     * @param serverAddress is the IP address of the server
+     * @throws IOException if there is a problem with input stream and output stream
      */
     public ClientSCK(String serverAddress) throws IOException {
         this.socket = new Socket();
@@ -226,7 +227,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * This method is called when the client is created. Absolves the function of helping the player to select
      * his nickname and to choose if he wants to join an already started Game or create a new one.
      */
-    public void waitingRoom() throws RemoteException {
+    public void waitingRoom() {
         this.isPlaying=false;
         this.sc=new Scanner(System.in);
         this.console = new BufferedReader(new InputStreamReader(System.in));
@@ -300,7 +301,7 @@ public class ClientSCK implements ClientGeneralInterface {
                                 sc.next();
                             }
                         }
-                        createLobby(personalPlayer.getNickname(), gameSelection); //@TODO fare gestione di una possibile IllegalArgumentException
+                        createLobby(personalPlayer.getNickname(), gameSelection);
                         System.out.println("Successfully created a new lobby with id: " + this.gameID);
                         //ok=true;
                     } else if (lobbyId.contains(gameSelection)) {
@@ -316,17 +317,7 @@ public class ClientSCK implements ClientGeneralInterface {
                                 System.out.println("Successfully joined the lobby with id: " + this.gameID);
                                 ok=true;
                                 checkNPlayers(); // this method in the server side makes the game start
-                                /* TODO capire che eccezioni checkNPlayers() può lanciare
-                                if (errorState) { //l'eccezione lato server in checkNPlayers però non è ancora stata aggiunta
-                                    System.out.println("The game is already started!");
-                                    errorState = false;
-                                } else {
-                                ok = true;
-
-                                 */
                             }
-                        //} catch (Exception ignored) { //@TODO non Exception generica
-                       // }
                     } else {
                         System.out.println("You wrote a wrong id, try again!");
                     }
@@ -1709,7 +1700,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
     /**
      * Setter method
-     * @param received
+     * @param received true if it is received, false otherwise
      */
     public void setPongReceived(Boolean received){ //to be used in ServerPong
         this.pongReceived=received;
@@ -1729,7 +1720,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
     /**
      * Setter method
-     * @param responseReceived
+     * @param responseReceived true if it is received, false otherwise
      */
     public void setResponseReceived(boolean responseReceived){
         this.responseReceived=responseReceived;
@@ -1749,7 +1740,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
     /**
      * Setter method
-     * @param guiLobbyController
+     * @param guiLobbyController is the lobby controller of the GUI
      */
     public void setGuiLobbyController(GUILobbyController guiLobbyController) {
         this.guiLobbyController = guiLobbyController;
@@ -1759,7 +1750,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
     /**
      * Setter method
-     * @param done
+     * @param done true if it is received, false otherwise
      */
     public void setDone(boolean done) {
         this.done = done;
@@ -1769,7 +1760,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
     /**
      * Setter method
-     * @param ctr
+     * @param ctr controller of the GUI's window of the pawns
      */
     public void setGuiPawnsController(GUIPawnsController ctr) {
         this.GUIPawnsController=ctr;
@@ -1839,7 +1830,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
     /**
      * Setter method
-     * @param gameID
+     * @param gameID int ID of the game
      */
     public void setGameID(Integer gameID){
         this.gameID=gameID;

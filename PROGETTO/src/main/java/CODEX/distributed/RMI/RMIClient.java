@@ -19,7 +19,6 @@ import java.util.concurrent.*;
 
 /**
  * This class represents a client RMI
- *
  *  ----------------------------------- H O W   I T   W O R K S ----------------------------------------
  *  RMI CLIENT CALLS THE REMOTE METHODS THROUGH THE RMISERVER INTERFACE (WHICH RMI CLIENT HAS INSIDE)
  *  THE RMI SERVER GOES TO MODIFY THE MODEL (UPON CLIENT REQUEST) THROUGH THE CONTROLLER.
@@ -203,7 +202,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     /**
      * Once connected the player get to choose his nickname that must be different from all the other presents
      * @param nickname is the String he wants to put as his nickname
-    * @throws NicknameAlreadyTakenException if the nickname has already been chosen by another user
+     * @throws NicknameAlreadyTakenException if the nickname has already been chosen by another user
      */
     @Override
     public void chooseNickname(String nickname) throws NicknameAlreadyTakenException {
@@ -351,7 +350,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This method allows a player to choose the color of his pawn
      * @param chooserNickname is the nickname of the player who needs to choose the color
      * @param selectedColor   is the color chosen by the player
-      * @throws ColorAlreadyTakenException if someone chose the color before you
+     * @throws ColorAlreadyTakenException if someone chose the color before you
      */
     @Override
     public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws  ColorAlreadyTakenException {

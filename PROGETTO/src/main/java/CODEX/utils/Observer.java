@@ -10,6 +10,12 @@ import java.rmi.RemoteException;
  */
 public interface Observer {
     String nickname = null;
+
+    /**
+     * This is an update method
+     * @param obs observable
+     * @param e event of update
+     */
     void update(Observable obs, Event e);
 
 
@@ -19,6 +25,11 @@ public interface Observer {
      */
     public void setNickname(String nickname);
 
+
+    /**
+     * Setter method
+     * @param aDisconnectionHappened true in a disconnection happened, false otherwise
+     */
     void setADisconnectionHappened(boolean aDisconnectionHappened);
 }
 

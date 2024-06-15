@@ -92,7 +92,7 @@ public class Coordinates implements Serializable {
 
     /**
      * Setter method
-     * @param y
+     * @param y is the coordinate y
      */
     public void setY(int y) {
         this.y = y;
@@ -101,18 +101,39 @@ public class Coordinates implements Serializable {
 
 
     /**
-     * These 4 functions return the coordinates which surround the current Coordinate object
+     * These function returns the coordinates which surround the current Coordinate object (up right)
      * @return Coordinates(x,y)
      */
     public Coordinates findUpRight() {
         return new Coordinates(this.x + 1, this.y + 1);
     }
+
+
+
+    /**
+     * These function returns the coordinates which surround the current Coordinate object (up left)
+     * @return Coordinates(x,y)
+     */
     public Coordinates findUpLeft() {
         return new Coordinates(this.x - 1, this.y + 1);
     }
+
+
+
+    /**
+     * These function returns the coordinates which surround the current Coordinate object (down right)
+     * @return Coordinates(x,y)
+     */
     public Coordinates findDownRight() {
         return new Coordinates(this.x + 1, this.y - 1);
     }
+
+
+
+    /**
+     * These function returns the coordinates which surround the current Coordinate object (down left)
+     * @return Coordinates(x,y)
+     */
     public Coordinates findDownLeft() {
         return new Coordinates(this.x - 1, this.y - 1);
     }
