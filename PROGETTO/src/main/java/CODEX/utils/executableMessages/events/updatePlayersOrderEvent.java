@@ -18,7 +18,7 @@ public class updatePlayersOrderEvent implements Event {
         this.newPlayingOrder = newPlayingOrder;
     }
     @Override
-    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+    public synchronized boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         id++;
         System.out.println("-----------------ENTRATO NELLA EXECUTE-------  "+id+"------------");
         System.out.println("sto per fare l'updateround "+id);
