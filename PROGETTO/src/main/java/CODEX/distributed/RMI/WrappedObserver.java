@@ -56,13 +56,17 @@ public class WrappedObserver implements Observer {
             Event event;
             boolean lastEvent;
             while (!aDisconnectionHappened&&!Thread.currentThread().isInterrupted()) {
+
                 lastEvent = false;
                 event = eventQueue.poll();
-                while (!lastEvent && event!=null) {
+                while (!aDisconnectionHappened && !lastEvent && event!=null) {
+                    System.out.println("ho fatto la while interno");
                     try {
+                        System.out.println("sto facendo il try");
                         lastEvent = event.execute(remoteClient, wrappedObserver);
                         System.out.println("ho fatto la pull dell'evento");
                     } catch (RemoteException e) {
+                        System.out.println("ho fatto la renot");
                         e.printStackTrace();
                         aDisconnectionHappened = true;
                         gameController.disconnection();

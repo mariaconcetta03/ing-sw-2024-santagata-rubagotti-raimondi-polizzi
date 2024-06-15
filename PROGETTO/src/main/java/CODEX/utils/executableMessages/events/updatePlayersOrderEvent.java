@@ -18,7 +18,10 @@ public class updatePlayersOrderEvent implements Event {
     }
     @Override
     public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+        System.out.println("CASO TMI");
+        System.out.println("sto per fare l'updateround");
         client.updateRound(newPlayingOrder);
+        System.out.println("ho fatto l'updateround");
         return false;
     }
     @Override
