@@ -105,6 +105,8 @@ public class GUIGameController {
     private Label selectedCardLabel;
     @FXML
     private Label boardLabel;
+    @FXML
+    private Label lastRoundLabel;
 
     private RMIClient rmiClient;
     private ClientSCK clientSCK;
@@ -157,8 +159,12 @@ public class GUIGameController {
             if (rmiClient.getPlayersInTheGame().get(0).getNickname().equals(rmiClient.getPersonalPlayer().getNickname())) {
                 this.turnLabel.setText("It's your turn!");
 
-                //mostriamo subito la board del giocatore in turno, se il giocatore in turno è p1 (quello a cui appartiene la view)
                 showP1Board();
+
+                    if(lastRound){
+                        lastRoundLabel.setOpacity(1);
+                    }
+
             } else {
                 this.turnLabel.setText("It's " + rmiClient.getPlayersInTheGame().get(0).getNickname() + "'s turn!");
             }
@@ -166,7 +172,12 @@ public class GUIGameController {
             clientSCK.setGuiGameController(this);
             if (clientSCK.getPlayersInTheGame().get(0).getNickname().equals(clientSCK.getPersonalPlayer().getNickname())) {
                 this.turnLabel.setText("It's your turn!");
+
                 showP1Board();
+
+                if(lastRound){
+                    lastRoundLabel.setOpacity(1);
+                }
 
             } else {
                 this.turnLabel.setText("It's " + clientSCK.getPlayersInTheGame().get(0).getNickname() + "'s turn!");
@@ -1250,6 +1261,7 @@ public class GUIGameController {
      * @param button clicked
      */
     private synchronized void buttonClicked(Button button) {
+
          if(!cardPlaced) {
              String buttonText = button.getText();
              String[] coordinates = buttonText.split(",");
@@ -1456,6 +1468,7 @@ public class GUIGameController {
                          showP1Board();
 
                          if (lastRound) {
+                             lastRoundLabel.setOpacity(0);
                              selectedCardLabel.setText("This was your last round: YOU CAN'T DRAW ANY CARDS");
                          }
                      }

@@ -182,6 +182,10 @@
                            <VBox.margin>
                               <Insets top="5.0" />
                            </VBox.margin></Label>
+                        <Label fx:id="lastRoundLabel" alignment="CENTER" opacity="0.0" prefHeight="31.0" prefWidth="422.0" text="PAY ATTENTION! This is your last round!" textFill="#000a7a">
+                           <font>
+                              <Font name="Georgia Bold" size="12.0" />
+                           </font></Label>
                      </children>
                   </VBox>
                     </children>
