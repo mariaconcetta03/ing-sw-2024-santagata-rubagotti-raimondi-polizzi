@@ -798,8 +798,13 @@ public class GUIGameController {
 
         // SETTING THE CORRECT POSITION: IT DEPENDS ON THE NUMBER OF THE PLAYERS IN THE GAME
 
-        boardPane.setHvalue((75.0*(dimension/2.0))/(75.0*83));
-        boardPane.setVvalue((44.775*(81.0-dimension/2.0))/(44.775*81));
+        if (nPlayers == 4) {
+            boardPane.setVvalue(0.7959933348481407);
+            boardPane.setHvalue(0.1786530143673829);
+        } else {
+            boardPane.setHvalue((75.0*(dimension/2.0))/(75.0*83));
+            boardPane.setVvalue((44.775*(81.0-dimension/2.0))/(44.775*81));
+        }
 
         for(Integer integer:cardsOnP1Board.keySet()){
             System.out.println(integer);
@@ -839,8 +844,13 @@ public class GUIGameController {
         System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
         System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
 
-        boardPane.setHvalue((75.0*(dimension /2))/(75.0*83));
-        boardPane.setVvalue((44.775*(81-dimension /2))/(44.775*81));
+        if (nPlayers == 4) {
+            boardPane.setVvalue(0.7959933348481407);
+            boardPane.setHvalue(0.1786530143673829);
+        } else {
+            boardPane.setHvalue((75.0*(dimension/2.0))/(75.0*83));
+            boardPane.setVvalue((44.775*(81.0-dimension/2.0))/(44.775*81));
+        }
 
         // SHOWING THE CARDS
         for(Integer integer:cardsOnP2Board.keySet()){
@@ -877,8 +887,13 @@ public class GUIGameController {
         System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
         System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
 
-        boardPane.setHvalue((75.0*(dimension /2))/(75.0*83));
-        boardPane.setVvalue((44.775*(81-dimension /2))/(44.775*81));
+        if (nPlayers == 4) {
+            boardPane.setVvalue(0.7959933348481407);
+            boardPane.setHvalue(0.1786530143673829);
+        } else {
+            boardPane.setHvalue((75.0*(dimension/2.0))/(75.0*83));
+            boardPane.setVvalue((44.775*(81.0-dimension/2.0))/(44.775*81));
+        }
 
         for(Integer integer:cardsOnP3Board.keySet()){
             String path=null;
@@ -916,8 +931,13 @@ public class GUIGameController {
         System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
         System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
 
-        boardPane.setHvalue((75.0*(dimension /2))/(75.0*83));
-        boardPane.setVvalue((44.775*(81-dimension /2))/(44.775*81));
+        if (nPlayers == 4) {
+            boardPane.setVvalue(0.7959933348481407);
+            boardPane.setHvalue(0.1786530143673829);
+        } else {
+            boardPane.setHvalue((75.0*(dimension/2.0))/(75.0*83));
+            boardPane.setVvalue((44.775*(81.0-dimension/2.0))/(44.775*81));
+        }
 
         for(Integer integer:cardsOnP4Board.keySet()){
             String path=null;
