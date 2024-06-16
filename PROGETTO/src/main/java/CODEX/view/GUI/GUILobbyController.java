@@ -74,6 +74,8 @@ public class GUILobbyController {
      */
     public void showNoLobbyError() {
         availableLobbies.setOpacity(0);
+        availableLobbies.setDisable(true);
+        joinButton.setDisable(true);
         lobbyError1.setOpacity(1);
         lobbyError2.setOpacity(1);
         lobbyError3.setOpacity(1);
@@ -88,6 +90,9 @@ public class GUILobbyController {
      */
     public void hideNoLobbyError() {
         availableLobbies.setOpacity(1);
+        availableLobbies.setDisable(false);
+        joinButton.setDisable(false);
+        createButton.setDisable(false);
         lobbyError1.setOpacity(0);
         lobbyError2.setOpacity(0);
         lobbyError3.setOpacity(0);
@@ -238,8 +243,7 @@ public class GUILobbyController {
                         rmiClient.handleDisconnectionFunction();
                     }
                     System.out.println("ho chiamato il checknplayers e chiamo SETWAITINGPLAYERS");
-                    createButton.disabledProperty();
-                    joinButton.disabledProperty();
+
                     setWaitingPlayers();
 
                 } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException e) {
@@ -258,8 +262,7 @@ public class GUILobbyController {
                     updateAvailableLobbies(); // updates the available lobbies
                 } else {
                     clientSCK.checkNPlayers(); // starts the game if the number of players is correct
-                    createButton.disabledProperty();
-                    joinButton.disabledProperty();
+
                     setWaitingPlayers();
                 }
             }
@@ -278,18 +281,11 @@ public class GUILobbyController {
             if (!input.isBlank() && (input.equals("2") || input.equals("3") || input.equals("4"))) {
                 if (network == 1) {
 
-
                         rmiClient.createLobby(rmiClient.getPersonalPlayer().getNickname(), Integer.parseInt(input));
-
-                    createButton.disabledProperty();
-                        joinButton.disabledProperty();
 
                 } else if (network==2) {
 
                         clientSCK.createLobby(clientSCK.getPersonalPlayer().getNickname(), Integer.parseInt(input));
-
-                    createButton.disabledProperty();
-                    joinButton.disabledProperty();
                 }
                 updateAvailableLobbies();
                 setWaitingPlayers();
@@ -333,9 +329,10 @@ public class GUILobbyController {
         waitingPlayers.setOpacity(1);
         fullLobby.setOpacity(0);
 
-        availableLobbies.disabledProperty();
-        createText.disabledProperty();
-        refreshButton.disabledProperty();
+        availableLobbies.setDisable(true);
+        joinButton.setDisable(true);
+        createText.setDisable(true);
+        refreshButton.setDisable(true);
 
         // Dynamic text update in a separate thread
         this.pointsThread= new Thread(() -> {
