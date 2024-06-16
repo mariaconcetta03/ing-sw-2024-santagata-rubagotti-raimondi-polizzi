@@ -837,6 +837,10 @@ public class ClientSCK implements ClientGeneralInterface {
      */
     @Override
     public void showWinner(Map<Integer, List<String>> finalScoreBoard)  {
+        errorState=false;
+        synchronized (actionLock){
+            actionLock.notify(); //to stop the waiting of something that will never arrive
+        }
         if(selectedView==1) { //TUI
             Map<String, Player> players=new HashMap<>();
             for(Player p: playersInTheGame){
@@ -1232,8 +1236,10 @@ public class ClientSCK implements ClientGeneralInterface {
 
         synchronized (disconnectionLock) {
             if (selectedView == 1) { //TUI
-                aDisconnectionHappened = true;
-                handleDisconnectionFunction();
+                if(lastMoves!=0) {
+                    aDisconnectionHappened = true;
+                    handleDisconnectionFunction();
+                }
             } else if (selectedView == 2) {
                 aDisconnectionHappened = true;
                 synchronized (actionLock){
@@ -1381,7 +1387,7 @@ public class ClientSCK implements ClientGeneralInterface {
                                             tmp.add(goldCard2);
                                             card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
                                             this.drawCard(personalPlayer.getNickname(), card);
-                                        } else if (aDisconnectionHappened) {
+                                        } else if (aDisconnectionHappened && lastMoves!=0) {
                                             handleDisconnection();
                                         }else{
                                             System.out.println("You can't play this card! Returning to menu...");

@@ -144,9 +144,7 @@ public class GUIGameController {
     private boolean lastRound=false;
     private MediaPlayer mediaPlayer;
     private boolean playingMusic = true;
-    private boolean isPLaying=false;
-    private boolean booleanChangeScene=false;
-    private List<Player> listOfwinners;
+
 
 
     /**
@@ -194,8 +192,10 @@ public class GUIGameController {
      */
     public synchronized void leaveGame() {
         synchronized (disconnectionLock) {
-            if ( ((network==1)&&(!rmiClient.getADisconnectionHappened())) || ((network==2)&&(!clientSCK.getADisconnectionHappened())) ){
-                scheduler.shutdown();
+
+                if(!scheduler.isShutdown()) {
+                    scheduler.shutdown();
+                }
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/gameLeft.fxml"));
                 Parent root = null;
                 try {
@@ -233,7 +233,7 @@ public class GUIGameController {
                         this.clientSCK.leaveGame(this.clientSCK.getPersonalPlayer().getNickname());
 
                 }
-            }
+
         }
 
     }
@@ -1264,9 +1264,6 @@ public class GUIGameController {
      */
     private synchronized void buttonClicked(Button button) {
 
-
-            isPLaying=true;
-
             if (!cardPlaced) {
                 String buttonText = button.getText();
                 String[] coordinates = buttonText.split(",");
@@ -1473,9 +1470,6 @@ public class GUIGameController {
                                 lastRoundLabel.setOpacity(0);
                                 selectedCardLabel.setText("This was your last round: YOU CAN'T DRAW ANY CARDS");
                             }
-                        }
-                        if(booleanChangeScene){
-                            changeScene(listOfwinners);
                         }
 
                     }
@@ -1832,16 +1826,7 @@ public class GUIGameController {
      */
     public void updateWinners(List<Player> winners) {
         scheduler.shutdownNow(); //this is the scheduler that checks the disconnections of the other players
-        if(network==1){
-            Platform.runLater(() -> changeScene(winners));
-        }else if(network==2){
-            if (!isPLaying) {
-                Platform.runLater(() -> changeScene(winners));
-            } else {
-                listOfwinners = winners;
-                booleanChangeScene = true;
-            }
-        }
+        Platform.runLater(() -> changeScene(winners));
     }
 
 

@@ -1156,6 +1156,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     @Override
     public void showWinner(Map<Integer, List<String>> finalScoreBoard) throws RemoteException {
+        synchronized (actionLock){
+            actionLock.notify(); //to stop the waiting of something that will never arrive
+        }
+
         if (selectedView == 1) { //TUI
             Map<String, Player> players = new HashMap<>();
             for (Player p : playersInTheGame) {
@@ -1187,9 +1191,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
         }
         if (selectedView == 2) { //GUI
-            synchronized (actionLock){
-                actionLock.notify(); //to stop the waiting of something that will never arrive
-            }
             // there will be an update notified to GUIGameController. When this notification arrives then I change the screen
             if (guiGameController != null) {
                 Map<String, Player> players = new HashMap<>();
@@ -1231,8 +1232,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         System.out.println("A disconnection happened. Closing the game.");
         synchronized (disconnectionLock) {
             if (selectedView == 1) {
-                aDisconnectionHappened = true;
-                handleDisconnectionFunction();
+                if(lastMoves!=0) {
+                    aDisconnectionHappened = true;
+                    handleDisconnectionFunction();
+                }
             }
             if (selectedView == 2) {
                 aDisconnectionHappened = true; // It is used to block other things as soon as a disconnection occurs
