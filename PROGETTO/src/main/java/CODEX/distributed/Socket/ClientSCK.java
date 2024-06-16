@@ -1322,7 +1322,8 @@ public class ClientSCK implements ClientGeneralInterface {
                             }
                             break;
                         case 5:
-                            tuiView.printScoreBoard(playersInTheGame);
+                            List<Player> tmpList = new ArrayList<>(playersInTheGame);
+                            tuiView.printScoreBoard(tmpList);
                             break;
                         case 6: tuiView.printLegend();
                             break;
