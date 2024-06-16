@@ -1187,6 +1187,9 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
         }
         if (selectedView == 2) { //GUI
+            synchronized (actionLock){
+                actionLock.notify(); //to stop the waiting of something that will never arrive
+            }
             // there will be an update notified to GUIGameController. When this notification arrives then I change the screen
             if (guiGameController != null) {
                 Map<String, Player> players = new HashMap<>();
