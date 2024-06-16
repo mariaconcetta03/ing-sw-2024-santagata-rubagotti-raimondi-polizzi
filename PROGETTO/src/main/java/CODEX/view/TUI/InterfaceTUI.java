@@ -90,14 +90,23 @@ public class InterfaceTUI implements Serializable {
     public String askNickname(Scanner sc) {
         boolean selected = false;
         String nickname = null;
+        String spaceString = "    ";
+
         while (!selected) {
             System.out.println("Insert your nickname: ");
             nickname = sc.nextLine();
-            if (!nickname.isBlank()) {
+
+
+            if (!nickname.isBlank() && nickname.length() < 15 && !nickname.contains(spaceString)) {
                 selected = true;
-            } else {
+            } else if(nickname.isBlank()){
                 System.out.println("Insert a non-empty nickname: ");
+            }else if(nickname.length() > 15){
+                System.out.println("Insert a shorter nickname: ");
+            } else if (nickname.contains(spaceString)) {
+                System.out.println("Insert a nickname without too many spaces: ");
             }
+
         }
         return nickname;
     }
