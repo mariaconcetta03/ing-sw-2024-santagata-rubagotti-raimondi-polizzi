@@ -71,6 +71,7 @@ public class ClientSCK implements ClientGeneralInterface {
     private boolean nicknameSet = false;
     private final Object guiLock;
     private GUILobbyController guiLobbyController;
+    private boolean showWinnerArrived=false;
 
 
     /*
@@ -837,6 +838,7 @@ public class ClientSCK implements ClientGeneralInterface {
      */
     @Override
     public void showWinner(Map<Integer, List<String>> finalScoreBoard)  {
+        showWinnerArrived=true;
         errorState=false;
         synchronized (actionLock){
             actionLock.notify(); //to stop the waiting of something that will never arrive
@@ -865,8 +867,13 @@ public class ClientSCK implements ClientGeneralInterface {
                     System.out.println(ANSIFormatter.ANSI_RED+i + "_ "+ANSIFormatter.ANSI_RESET + s+" with "+players.get(s).getPoints()+" points and "+players.get(s).getNumObjectivesReached()+" objectives reached.");
                 }
             }
-            Executor executor= Executors.newSingleThreadExecutor();
-            executor.execute(()->{System.exit(-1);});
+            Timer finalTimer = new Timer(true);
+            finalTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    System.exit(0); //status 0 -> no errors
+                }
+            },6000); //6 seconds
 
         }
         if(selectedView==2){ //GUI
@@ -1236,7 +1243,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
         synchronized (disconnectionLock) {
             if (selectedView == 1) { //TUI
-                if(lastMoves!=0) {
+                if(!showWinnerArrived) {
                     aDisconnectionHappened = true;
                     handleDisconnectionFunction();
                 }
@@ -1387,7 +1394,7 @@ public class ClientSCK implements ClientGeneralInterface {
                                             tmp.add(goldCard2);
                                             card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
                                             this.drawCard(personalPlayer.getNickname(), card);
-                                        } else if (aDisconnectionHappened && lastMoves!=0) {
+                                        } else if (aDisconnectionHappened && !showWinnerArrived) {
                                             handleDisconnection();
                                         }else{
                                             System.out.println("You can't play this card! Returning to menu...");

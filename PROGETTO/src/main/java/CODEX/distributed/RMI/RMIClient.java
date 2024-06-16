@@ -75,7 +75,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private Map<Integer, Chat> chats;
     private Settings networkSettings;
     private GUILobbyController guiLobbyController = null;
-
+    private boolean showWinnerArrived=false;
 
 
     @Override
@@ -1156,6 +1156,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     @Override
     public void showWinner(Map<Integer, List<String>> finalScoreBoard) throws RemoteException {
+        showWinnerArrived=true;
         synchronized (actionLock){
             actionLock.notify(); //to stop the waiting of something that will never arrive
         }
@@ -1185,9 +1186,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 }
             }
 
-            executor.execute(() -> {
-                System.exit(-1);
-            });
+            Timer finalTimer = new Timer(true);
+            finalTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    System.exit(0); //status 0 -> no errors
+                }
+            },6000); //6 seconds
 
         }
         if (selectedView == 2) { //GUI
@@ -1232,7 +1237,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         System.out.println("A disconnection happened. Closing the game.");
         synchronized (disconnectionLock) {
             if (selectedView == 1) {
-                if(lastMoves!=0) {
+                if(!showWinnerArrived) {
                     aDisconnectionHappened = true;
                     handleDisconnectionFunction();
                 }
