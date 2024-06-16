@@ -37,7 +37,14 @@ public class GUINicknameController {
      */
     public synchronized void sendNickname() throws IOException {
         String input = nickname.getText();
-        if(!input.isBlank()) {
+        boolean tooBlankSpace = false;
+        String spaceString = "   ";
+
+        if(input.contains(spaceString)){
+            tooBlankSpace = true;
+        }
+
+        if(!input.isBlank() && input.length() < 15 && !tooBlankSpace) {
             System.out.println(nickname.getCharacters());
             System.out.println("prec NET" + network);
 
