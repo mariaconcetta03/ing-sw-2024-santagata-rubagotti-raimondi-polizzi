@@ -11,19 +11,14 @@ import java.util.List;
  * This event is useful to communicate that the playing order has changed
  */
 public class updatePlayersOrderEvent implements Event {
-    private List<Player> newPlayingOrder;
-    static int id=-1;
+    private final List<Player> newPlayingOrder;
 
     public updatePlayersOrderEvent(List<Player> newPlayingOrder) {
         this.newPlayingOrder = newPlayingOrder;
     }
     @Override
-    public synchronized boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
-        id++;
-        System.out.println("-----------------ENTRATO NELLA EXECUTE-------  "+id+"------------");
-        System.out.println("sto per fare l'updateround "+id);
+    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.updateRound(newPlayingOrder);
-        System.out.println("ho fatto l'updateround   "  +id);
         return false;
     }
     @Override

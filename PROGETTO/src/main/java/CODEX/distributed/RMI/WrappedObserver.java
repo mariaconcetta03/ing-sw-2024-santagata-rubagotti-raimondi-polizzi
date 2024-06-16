@@ -83,7 +83,7 @@ public class WrappedObserver implements Observer {
      * This is an update method
      * @param obs is the observable who called the notify
      */
-    synchronized public void update(Observable obs, Event event) {
+    public void update(Observable obs, Event event) {
         System.out.println("ho fatto la push dell'evento "+event.toString());
         eventQueue.add(event); //push
     }

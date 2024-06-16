@@ -1789,7 +1789,9 @@ public class GUIGameController {
         Scene scene;
         scene = new Scene(root);
 
-        stage.setScene(scene);
+        scheduler.shutdown(); //this is the scheduler that checks the disconnections of the other players
+
+        stage.setScene(scene); //at this moment the scene is showed
 
         // setting the od values of position and dimension
         stage.setWidth(width);
@@ -1797,7 +1799,6 @@ public class GUIGameController {
         stage.setX(x);
         stage.setY(y);
 
-        stage.show();
         int seconds=40;
         PauseTransition delay = new PauseTransition(Duration.seconds(seconds));
         delay.setOnFinished(event -> {
@@ -1840,7 +1841,7 @@ public class GUIGameController {
     /**
      * This method is used when a player clicks on the button "MUSIC ON/OFF" to play or stop the music
      */
-    public void musicONOFF() {
+    public synchronized void musicONOFF() {
         if (playingMusic) {
             mediaPlayer.stop();
             playingMusic = false;
