@@ -24,6 +24,8 @@ import java.util.List;
 public class GUILobbyController {
 
     @FXML
+    private Label secondPartLabelPlayerName;
+    @FXML
     private Label labelWithPlayerName;
     @FXML
     private ComboBox<Integer> availableLobbies;
@@ -313,6 +315,8 @@ public class GUILobbyController {
      * This method makes the players waiting for the game to start
      */
     public void setWaitingPlayers() {
+        labelWithPlayerName.setOpacity(0);
+        secondPartLabelPlayerName.setOpacity(0);
         availableLobbies.setOpacity(0);
         lobbyError1.setOpacity(0);
         lobbyError2.setOpacity(0);

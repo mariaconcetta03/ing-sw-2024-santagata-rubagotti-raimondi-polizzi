@@ -21,7 +21,7 @@
                               <Insets top="100.0" />
                            </VBox.margin>
                         </Label>
-                        <Label text="or create a new one" textFill="WHITE">
+                        <Label fx:id="secondPartLabelPlayerName" text="or create a new one" textFill="WHITE">
                            <font>
                               <Font name="Georgia" size="55.0" />
                            </font>
