@@ -521,7 +521,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      */
     public void disconnection(){
         synchronized (disconnectionLock) {
-            if(game!=null&&game.getState().equals(Game.GameState.STARTED)) {
+            if(game!=null&&game.getState()!=null&&(game.getState().equals(Game.GameState.STARTED)||game.getState().equals(Game.GameState.ENDING)||game.getState().equals(Game.GameState.ENDED) )){
                 disconnection = true;
                 if (firstDisconnection) {
                     game.notifyDisconnectionEvent();

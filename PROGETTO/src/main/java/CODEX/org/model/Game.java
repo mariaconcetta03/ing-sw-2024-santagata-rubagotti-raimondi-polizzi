@@ -39,7 +39,7 @@ public class Game extends Observable implements Serializable {
          */
         WAITING_FOR_START
     }
-    private GameState state;
+    private GameState state=null;
 
     private Player currentPlayer; // player who needs to play at this moment (now, it's his turn)
     private PlayableDeck resourceDeck; // contains all the resource cards
