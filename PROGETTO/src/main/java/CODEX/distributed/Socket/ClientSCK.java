@@ -1396,10 +1396,10 @@ public class ClientSCK implements ClientGeneralInterface {
                                             this.drawCard(personalPlayer.getNickname(), card);
                                         } else if (aDisconnectionHappened && !showWinnerArrived) {
                                             handleDisconnection();
-                                        }else{
+                                        }else if(errorState){
                                             System.out.println("You can't play this card! Returning to menu...");
                                             errorState=false; //to be used the next time
-                                    }
+                                        }
                                     }
                                 } else {
                                     System.out.println("The coordinates are null");
