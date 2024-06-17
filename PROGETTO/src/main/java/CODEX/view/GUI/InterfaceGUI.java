@@ -68,12 +68,12 @@ public class InterfaceGUI extends Application {
     public static void main(String[] args, ClientSCK clientSCK, RMIClient rmiClient) {
         if (args[0].equals("RMI")) {
             InterfaceGUI.network = 1;
-            System.out.println("Hai scelto RMI");
+            System.out.println("You have chosen RMI connection");
         } else if (args[0].equals("TCP")) {
             InterfaceGUI.network = 2;
-            System.out.println("Hai scelto TCP");
+            System.out.println("You have chosen TCP connection");
         } else {
-            System.out.println("NON E NESSUN CASO");
+            System.out.println("FATAL ERROR");
         }
 
         InterfaceGUI.clientSCK=clientSCK;

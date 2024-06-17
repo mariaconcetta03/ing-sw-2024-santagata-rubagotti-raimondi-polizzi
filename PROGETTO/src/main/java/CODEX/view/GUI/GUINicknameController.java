@@ -45,8 +45,6 @@ public class GUINicknameController {
         }
 
         if(!input.isBlank() && input.length() < 15 && !tooBlankSpace) {
-            System.out.println(nickname.getCharacters());
-            System.out.println("prec NET" + network);
 
             if (network == 1) { //RMI
                 correctNickname = rmiClient.setNickname(nickname.getCharacters().toString());
@@ -111,8 +109,6 @@ public class GUINicknameController {
                 stage.setY(y);
 
                 // setting the dynamic parameters of the new window
-                System.out.println("NET" + network);
-
                 ctr.setOnEnterPressed();
 
                 if (network == 1) {

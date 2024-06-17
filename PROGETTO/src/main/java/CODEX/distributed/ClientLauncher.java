@@ -79,11 +79,9 @@ public class ClientLauncher {
                     if (serverAddress.equals("")) { // if string is empty then it uses localhost
                         ClientSCK.Settings.setServerName("127.0.0.1");
                         clientSCK = new ClientSCK("127.0.0.1");
-                        System.out.println("Set server address: 127.0.0.1");
                     } else {
                         clientSCK = new ClientSCK(serverAddress);
                         ClientSCK.Settings.setServerName(serverAddress);
-                        System.out.println("Set server address: " + serverAddress);
                     }
                     clientSCK.setSelectedView(1); //TUI
                     clientSCK.waitingRoom();
@@ -99,11 +97,9 @@ public class ClientLauncher {
                     if (serverAddress.equals("")) { // if string is empty then it uses localhost
                         ClientSCK.Settings.setServerName("127.0.0.1");
                         clientSCK = new ClientSCK("127.0.0.1");
-                        System.out.println("Set server address: 127.0.0.1");
                     } else {
                         clientSCK = new ClientSCK(serverAddress);
                         ClientSCK.Settings.setServerName(serverAddress);
-                        System.out.println("Set server address: " + serverAddress);
                     }
                     clientSCK.setSelectedView(2); //GUI
                 } catch (IOException e) {

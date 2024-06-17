@@ -40,10 +40,8 @@ public class ServerLauncher extends UnicastRemoteObject {
         serverAddress = sc.nextLine();
         if (serverAddress.equals("")) { // if string is empty then it uses localhost
             System.setProperty("java.rmi.server.hostname", "127.0.0.1");
-            System.out.println("Server address: 127.0.0.1");
         } else {
             System.setProperty("java.rmi.server.hostname", serverAddress); // choosing right address
-            System.out.println("Server address: " + serverAddress);
         }
 
         RMIServer rmiServer= new RMIServer(serverController);

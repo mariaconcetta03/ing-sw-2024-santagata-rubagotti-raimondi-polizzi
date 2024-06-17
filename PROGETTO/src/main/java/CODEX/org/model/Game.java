@@ -695,7 +695,6 @@ public class Game extends Observable implements Serializable {
      */
     public void setLastEvent(ErrorsAssociatedWithExceptions lastEvent) {
         this.lastEvent = lastEvent;
-        System.out.println("ERROR: "+lastEvent.toString());
     }
 
 

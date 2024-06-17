@@ -120,7 +120,6 @@ public class GUILobbyController {
                  availableLobbies.getItems().clear();
                  clientSCK.checkAvailableLobby();
                  setAvailableLobbies(clientSCK.getAvailableLobbies().stream().toList());
-                 System.out.println("le lobby disponibili sono:");
                  clientSCK.printLobby(clientSCK.getAvailableLobbies());
                  if (clientSCK.getAvailableLobbies().isEmpty()) {
                      showNoLobbyError();
@@ -234,20 +233,16 @@ public class GUILobbyController {
         if (availableLobbies.getValue() != null) {
             if (network == 1) {
                 try {
-                    System.out.println("sto per chiamare addplayertolobby");
                     rmiClient.addPlayerToLobby(rmiClient.getPersonalPlayer().getNickname(), availableLobbies.getValue());
-                    System.out.println("ho chiamato addplayer to lobby e sto per chiamare checknplayers");
                     try {
                         rmiClient.getGameController().checkNPlayers(); // starts the game if the number of players is correct
                     } catch (RemoteException exceptionBeforeTheGameHasStarted) {
                         rmiClient.handleDisconnectionFunction();
                     }
-                    System.out.println("ho chiamato il checknplayers e chiamo SETWAITINGPLAYERS");
 
                     setWaitingPlayers();
 
                 } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException e) {
-                    System.out.println("RMI: QUESTA LOBBY A CUI STAI CERCANDO DI AGGIUNGERTI è PIENA!");
                     fullLobby.setOpacity(1); // shows the message error "This lobby is full"
                     updateAvailableLobbies(); // updates the available lobbies
                 }
@@ -257,7 +252,6 @@ public class GUILobbyController {
 
                 if (clientSCK.getErrorState()) {
                     clientSCK.setErrorState(false);
-                    System.out.println("TCP: QUESTA LOBBY A CUI STAI CERCANDO DI AGGIUNGERTI è PIENA!");
                     fullLobby.setOpacity(1); // shows the message error "This lobby is full"
                     updateAvailableLobbies(); // updates the available lobbies
                 } else {
@@ -267,7 +261,6 @@ public class GUILobbyController {
                 }
             }
         }
-        System.out.println("eccoci");
     }
 
 
@@ -301,7 +294,6 @@ public class GUILobbyController {
      */
     public void updateGameState() {
         lobbyHasStarted=true;
-        System.out.println("lobbyHasStarted: "+ lobbyHasStarted);
     }
 
 
@@ -356,10 +348,8 @@ public class GUILobbyController {
 
             }
 
-            System.out.println("sono prima del runlater, changescene");
             Platform.runLater(this::changeScene);
         });
-        System.out.println("sto per far partire i puntini");
         pointsThread.start();
     }
 

@@ -1335,7 +1335,7 @@ public class ClientSCK implements ClientGeneralInterface {
         if(this.timer!=null) {
             this.timer.cancel(); //to be sure
         }
-        System.exit(0)
+        System.exit(0);
     }
 
 

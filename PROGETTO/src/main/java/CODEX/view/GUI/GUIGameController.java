@@ -373,16 +373,8 @@ public class GUIGameController {
      * This method is called by the previous GUI Objective Controller
      */
     public void setAllFeatures() {
-        System.out.println("STO SETTANDO TUTTE LE FEATURES");
-
         if (this.network == 1) {
             this.dimension=rmiClient.getPersonalPlayer().getBoard().getBoardDimensions();
-            System.out.println("dimension/2 " + dimension/2);
-
-            // PRINTING THE PLAYERS IN THE GAME
-            for (Player p : rmiClient.getPlayersInTheGame()) {
-                System.out.println("giocatore: " + p.getNickname());
-            }
 
             // THE FIRST PLAYER IT'S ALWAYS ME NOW! (IN PLAYERSINORDER)
             setPlayersInOrder(rmiClient.getPlayersInTheGame());
@@ -394,7 +386,6 @@ public class GUIGameController {
                 }
             }
             playersInOrder = newList; // aggiungo in prima posizione il PERSONAL PLAYER
-            System.out.println("ECCO I NUOVI PLAYERS IN ORDER CON ME COME PRIMA POSIZIONE!");
 
 
             // SETTING THE PERSONAL OBJECTIVE
@@ -448,12 +439,7 @@ public class GUIGameController {
 
         } else if (this.network == 2) {
             this.dimension=clientSCK.getPersonalPlayer().getBoard().getBoardDimensions();
-            System.out.println("dimension/2 " + dimension/2);
 
-            // PRINTING THE PLAYERS IN THE GAME
-            for (Player p: clientSCK.getPlayersInTheGame()) {
-                System.out.println("giocatore: " + p.getNickname());
-            }
 
             // THE FIRST PLAYER IT'S ALWAYS ME NOW! (IN PLAYERSINORDER)
             setPlayersInOrder(clientSCK.getPlayersInTheGame());
@@ -465,7 +451,6 @@ public class GUIGameController {
                 }
             }
             playersInOrder = newList;
-            System.out.println("ECCO I NUOVI PLAYERS IN ORDER CON ME COME PRIMA POSIZIONE!");
 
 
             // SETTING THE PERSONAL OBJECTIVE
@@ -681,7 +666,6 @@ public class GUIGameController {
         // SETTING THE TABLE AND ITS DIMENSIONS
         int i=1;
         for (Player p: playersInOrder) {
-            System.out.println("nickname: " + p.getNickname());
             if(i==1){
                 tableP1=p.getBoard().getTable();
                 cardsOnP1Board=new HashMap<>();
@@ -806,8 +790,8 @@ public class GUIGameController {
         initializeGridPaneCells(true);
 
         // PRINTING THE CURRENT POSITIONS OF THE SCROLL PANE TO SET THEM!
-        System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
-        System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
+        // System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
+        // System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
 
         // SETTING THE CORRECT POSITION: IT DEPENDS ON THE NUMBER OF THE PLAYERS IN THE GAME
 
@@ -823,7 +807,6 @@ public class GUIGameController {
         }
 
         for(Integer integer:cardsOnP1Board.keySet()){
-            System.out.println(integer);
             String path=null;
             if(cardsOnP1Board.get(integer).getOrientation()) {
                 path = "/images/cards/front/  (" + cardsOnP1Board.get(integer).getId() + ").png";
@@ -855,10 +838,6 @@ public class GUIGameController {
         updateLabel(boardLabel, playersInOrder.get(1).getNickname() + "'s board");
         grid.getChildren().clear();
         initializeGridPaneCells(false);
-
-        // PRINTING THE CURRENT POSITIONS OF THE SCROLL PANE TO SET THEM!
-        System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
-        System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
 
         if (nPlayers == 4) {
             boardPane.setVvalue(0.7959933348481407);
@@ -902,10 +881,6 @@ public class GUIGameController {
         grid.getChildren().clear();
         initializeGridPaneCells(false);
 
-        // PRINTING THE CURRENT POSITIONS OF THE SCROLL PANE TO SET THEM!
-        System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
-        System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
-
         if (nPlayers == 4) {
             boardPane.setVvalue(0.7959933348481407);
             boardPane.setHvalue(0.1786530143673829);
@@ -948,10 +923,6 @@ public class GUIGameController {
         updateLabel(boardLabel, playersInOrder.get(3).getNickname() + "'s board");
         grid.getChildren().clear();
         initializeGridPaneCells(false);
-
-        // PRINTING THE CURRENT POSITIONS OF THE SCROLL PANE TO SET THEM!
-        System.out.println("VERTICALE CORRENTE: " + boardPane.getVvalue());
-        System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
 
         if (nPlayers == 4) {
             boardPane.setVvalue(0.7959933348481407);
@@ -1256,7 +1227,6 @@ public class GUIGameController {
 
         if(playablePositions != null){
             for(Coordinates coordinates:this.playablePositions) {
-                System.out.println("Playable position (x, y): " + coordinates.getX() + " " + coordinates.getY());
                 Button button = new Button();
                 button.setOpacity(0.5);
                 button.setPrefSize(70, 38.25);
@@ -1289,7 +1259,6 @@ public class GUIGameController {
                             PlayableCard[] playerDeck = rmiClient.getPersonalPlayer().getPlayerDeck();
                             if (selectedCard == 1) {
                                 cardPlaced = true;
-                                System.out.println("PLAYED CARD 1");
                                 try {
 
                                     rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[0], new Coordinates(col, row), orientationCard1);
@@ -1312,13 +1281,11 @@ public class GUIGameController {
                                         updateLabel(selectedCardLabel, "Sorry, a disconnection happened");
                                     }
                                 } catch (IllegalArgumentException e) {
-                                    System.out.println("Qui non ho abbastanza risorse");
                                     updateLabel(selectedCardLabel, "You don't have enough resources!");
                                     cardPlaced = false;
                                 }
                             } else if (selectedCard == 2) {
                                 cardPlaced = true;
-                                System.out.println("PLAYED CARD 2");
                                 try {
 
                                     rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[1], new Coordinates(col, row), orientationCard2);
@@ -1341,13 +1308,11 @@ public class GUIGameController {
                                         updateLabel(selectedCardLabel, "Sorry, a disconnection happened");
                                     }
                                 } catch (IllegalArgumentException e) {
-                                    System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                                     updateLabel(selectedCardLabel, "You don't have enough resources!");
                                     cardPlaced = false;
                                 }
                             } else if (selectedCard == 3) {
                                 cardPlaced = true;
-                                System.out.println("PLAYED CARD 3");
                                 try {
 
                                     rmiClient.playCard(rmiClient.getPersonalPlayer().getNickname(), playerDeck[2], new Coordinates(col, row), orientationCard3);
@@ -1370,7 +1335,6 @@ public class GUIGameController {
                                         updateLabel(selectedCardLabel, "Sorry, a disconnection happened");
                                     }
                                 } catch (IllegalArgumentException e) {
-                                    System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                                     updateLabel(selectedCardLabel, "You don't have enough resources!");
                                     cardPlaced = false;
                                 }
@@ -1380,13 +1344,11 @@ public class GUIGameController {
                             PlayableCard[] playerDeck = clientSCK.getPersonalPlayer().getPlayerDeck();
                             if (selectedCard == 1) {
                                 //cardPlaced = true;
-                                System.out.println("PLAYED CARD 1");
 
                                 clientSCK.setErrorState(false);
                                 clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), playerDeck[0], new Coordinates(col, row), orientationCard1);
 
                                 if (clientSCK.getErrorState()) {
-                                    System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                                     updateLabel(selectedCardLabel, "You don't have enough resources!");
                                     cardPlaced = false;
                                     clientSCK.setErrorState(false);
@@ -1409,13 +1371,11 @@ public class GUIGameController {
                                 }
                             } else if (selectedCard == 2) {
                                 //cardPlaced = true;
-                                System.out.println("PLAYED CARD 2");
 
                                 clientSCK.setErrorState(false);
                                 clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), playerDeck[1], new Coordinates(col, row), orientationCard2);
 
                                 if (clientSCK.getErrorState()) {
-                                    System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                                     updateLabel(selectedCardLabel, "You don't have enough resources!");
                                     cardPlaced = false;
                                     clientSCK.setErrorState(false);
@@ -1437,13 +1397,11 @@ public class GUIGameController {
                                     updateLabel(selectedCardLabel, "Sorry, a disconnection happened");
                                 }
                             } else if (selectedCard == 3) {
-                                System.out.println("PLAYED CARD 3");
 
                                 clientSCK.setErrorState(false);
                                 clientSCK.playCard(clientSCK.getPersonalPlayer().getNickname(), playerDeck[2], new Coordinates(col, row), orientationCard3);
 
                                 if (clientSCK.getErrorState()) {
-                                    System.out.println("YOU DO NOT HAVE ENOUGH RESOURCES TO PLAY THIS CARD HERE");
                                     updateLabel(selectedCardLabel, "You don't have enough resources!");
                                     cardPlaced = false;
                                     clientSCK.setErrorState(false);
@@ -1584,7 +1542,6 @@ public class GUIGameController {
      */
     public void updateBoard(String boardOwner, PlayableCard newCard) {
         if(boardOwner.equals(playersInOrder.get(1).getNickname())){
-            System.out.println("sto aggiornando la board del player p2");
             p2Counter++;
             cardsOnP2Board.put(p2Counter, newCard);
             if((currentBoard!=null)&&currentBoard.equals(playersInOrder.get(1).getNickname())){
@@ -1593,7 +1550,6 @@ public class GUIGameController {
                 });
             }
         } else if (playersInOrder.size() >= 3 && boardOwner.equals(playersInOrder.get(2).getNickname())) {
-            System.out.println("sto aggiornando la board del player p3");
             p3Counter++;
             cardsOnP3Board.put(p3Counter, newCard);
             if((currentBoard!=null)&&currentBoard.equals(playersInOrder.get(2).getNickname())){
@@ -1602,7 +1558,6 @@ public class GUIGameController {
                 });
             }
         } else if (playersInOrder.size() >= 4 && boardOwner.equals(playersInOrder.get(3).getNickname())) {
-            System.out.println("sto aggiornando la board del player p4");
             p4Counter++;
             cardsOnP4Board.put(p4Counter, newCard);
             if((currentBoard!=null)&&currentBoard.equals(playersInOrder.get(3).getNickname())){

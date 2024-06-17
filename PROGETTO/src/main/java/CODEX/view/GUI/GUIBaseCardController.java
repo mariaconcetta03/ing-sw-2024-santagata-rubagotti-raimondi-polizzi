@@ -81,7 +81,6 @@ public class GUIBaseCardController {
             baseCardPlayed = true;
             Platform.runLater(() -> {
                 stateLabel.setText("Front side selected! Now wait for everyone to choose.");
-                System.out.println("selezionato fronte");
 
             });
 
@@ -119,7 +118,6 @@ public class GUIBaseCardController {
 
             Platform.runLater(() -> {
                 stateLabel.setText("Back side selected! Now wait for everyone to choose.");
-                System.out.println("Selezionato retro");
             });
 
             if (network == 1) {

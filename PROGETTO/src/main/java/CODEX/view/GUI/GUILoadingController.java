@@ -29,7 +29,6 @@ public class GUILoadingController {
      * @throws IOException
      */
     public void startClicked () throws IOException {
-        System.out.println("sono in startClicked()");
 
         stage.close();
         stage = new Stage();
@@ -37,10 +36,8 @@ public class GUILoadingController {
         Image icon = new Image(getClass().getResourceAsStream("/images/others/Codex_Icon.png"));
         stage.getIcons().add(icon);
         stage.setTitle("Codex Naturalis");
-        System.out.println("sto per fare fxmlloader di nickname... arriverà un messaggio di conferma quando ho finito");
         FXMLLoader fxmlLoader = new FXMLLoader(GUILoadingController.class.getResource("/nickname.fxml"));
         Parent root = fxmlLoader.load();
-        System.out.println("ho finito fxmlloader di nickname");
         Scene scene = new Scene(root);
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 

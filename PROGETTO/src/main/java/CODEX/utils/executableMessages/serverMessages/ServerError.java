@@ -26,7 +26,6 @@ public class ServerError implements ServerMessage{
         synchronized (clientSCK.actionLock){
             // printing error and then giving the chance to continue actions to the client
             clientSCK.setErrorState(true);
-            System.out.println(this.event.toString());
             clientSCK.setResponseReceived(true);
             clientSCK.actionLock.notify();
         }

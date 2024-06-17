@@ -93,9 +93,7 @@ public class GUIObjectiveController {
                 }
 
                 Platform.runLater(() -> {
-                    System.out.println("sto per chiamare il selectionLabel");
                     selectionLabel.setText("Right objective selected. Now wait for everyone to choose.");
-                    System.out.println("selezionato destra");
                     objectiveSelected = true;
                 });
             }).start();
@@ -138,7 +136,6 @@ public class GUIObjectiveController {
                 // thread to change the scene always in JAVA FX thread
                 Platform.runLater(() -> {
                     selectionLabel.setText("Left objective selected. Now wait for everyone to choose.");
-                    System.out.println("selezionato sinistra");
                 });
             }).start();
         }
@@ -172,13 +169,6 @@ public class GUIObjectiveController {
         ctr.setClientSCK(clientSCK);
         ctr.setRmiClient(rmiClient);
 
-        if (network == 1) {
-            System.out.println("il player ha scelto obiettivo con ID: " + rmiClient.getPersonalPlayer().getPersonalObjective());
-
-        } else if (network == 2) {
-            System.out.println("il player ha scelto obiettivo con ID: " + clientSCK.getPersonalPlayer().getPersonalObjective());
-
-        }
         if ((network == 1)||(network == 2 && !clientSCK.getADisconnectionHappened())) {
             ctr.setObjectiveCardselected(objectiveCardselected);
             ctr.setAllFeatures();
