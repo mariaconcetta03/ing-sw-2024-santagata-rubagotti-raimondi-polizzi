@@ -14,10 +14,6 @@ public class ServerPing implements ServerMessage{
     @Override
     public void execute(ClientSCK clientSCK){
         ClientMessage clientMessage=new ClientPong();
-        try {
             clientSCK.sendMessage(new SCKMessage(clientMessage));
-        } catch (IOException ignored) {
-
-        }
     }
 }

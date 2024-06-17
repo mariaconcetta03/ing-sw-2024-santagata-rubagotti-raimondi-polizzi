@@ -86,6 +86,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                     try {
                         sckMessage = (SCKMessage) this.input.readObject();
                     } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
                         System.out.println("lost the connection...Bye, bye");
                         running=false;
                         try {
@@ -413,6 +414,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                 output.flush();
                 output.reset();
             } catch (IOException e) {
+                e.printStackTrace();
                 System.err.println(e.getMessage());
                 System.out.println("the connection has been interrupted....Bye bye");
                 try { // we close all we have to close

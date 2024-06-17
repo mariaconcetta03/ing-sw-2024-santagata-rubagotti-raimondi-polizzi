@@ -125,13 +125,13 @@ public class ClientSCK implements ClientGeneralInterface {
                                 // we are not using a thread because the updates are executed in order
                                 modifyClientSide(sckMessage);
                             }
-
-                        } catch (Exception e) { // if the server disconnects @TODO non Exception generica
+                        } catch (IOException e) { // if the server disconnects @TODO non Exception generica
+                            e.printStackTrace();
                             if(running) {
-
                                     handleDisconnection();
-
                             }
+                        }catch (ClassNotFoundException e){
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -194,6 +194,7 @@ public class ClientSCK implements ClientGeneralInterface {
                     outputStream.flush();
                     outputStream.reset();
                 } catch (IOException e) {
+                    e.printStackTrace();
                     aDisconnectionHappened=true;
                     responseReceived = true; // not to start a wait for other answers
                     handleDisconnection();
