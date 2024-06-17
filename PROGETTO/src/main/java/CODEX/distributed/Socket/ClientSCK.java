@@ -1421,7 +1421,7 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * This method manages disconnections
      */
-    public void handleDisconnectionFunction(){
+    public synchronized void handleDisconnectionFunction(){
         // TUI + GUI
         running=false;
         inGame=false;

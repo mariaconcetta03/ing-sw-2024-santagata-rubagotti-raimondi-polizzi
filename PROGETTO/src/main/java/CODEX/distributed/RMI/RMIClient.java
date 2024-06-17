@@ -1255,7 +1255,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     /**
      * This method manages disconnections
      */
-    public void handleDisconnectionFunction() {
+    public synchronized void handleDisconnectionFunction() {
         inGame = false;
         if (this.executor != null) {
             this.executor.shutdown();

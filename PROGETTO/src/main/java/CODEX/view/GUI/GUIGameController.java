@@ -225,12 +225,12 @@ public class GUIGameController {
                 pause.play();
                 if (network == 1) {
 
-                        this.rmiClient.leaveGame(this.rmiClient.getPersonalPlayer().getNickname());
+                        this.rmiClient.handleDisconnectionFunction();
 
 
                 } else if (network == 2) {
 
-                        this.clientSCK.leaveGame(this.clientSCK.getPersonalPlayer().getNickname());
+                        this.clientSCK.handleDisconnectionFunction();
 
                 }
 
