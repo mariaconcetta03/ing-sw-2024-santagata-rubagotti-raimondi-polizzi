@@ -1468,7 +1468,7 @@ public class GUIGameController {
 
                             if (lastRound) {
                                 lastRoundLabel.setOpacity(0);
-                                selectedCardLabel.setText("This was your last round: YOU CAN'T DRAW ANY CARDS");
+                                selectedCardLabel.setText("This was your last round: YOU CAN'T DRAW ANY CARD");
                             }
                         }
 
