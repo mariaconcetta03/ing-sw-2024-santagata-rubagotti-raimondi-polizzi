@@ -29,7 +29,7 @@ public class Observable {
      * It will inform the Observers to perform an update action contacting the Client related to them.
      * @param e has caused the modification
      */
-    public synchronized void notifyObservers(Event e) {
+    public void notifyObservers(Event e) {
         for (Observer obs : observers) {
             obs.update(this, e);
         }
@@ -41,7 +41,7 @@ public class Observable {
      * This method add an Observer to the Observable
      * @param obs is the Observer we are adding
      */
-    public synchronized void addObserver(Observer obs) {
+    public void addObserver(Observer obs) {
         if (!this.observers.contains(obs)) {
             this.observers.add(obs);
         }
@@ -52,7 +52,7 @@ public class Observable {
     /**
      * This method removes all the observers from the list
      */
-    public synchronized void removeObservers() {
+    public void removeObservers() {
         for (int i = 0; i < observers.size(); i++) {
             observers.remove(observers.get(i));
         }
@@ -63,7 +63,7 @@ public class Observable {
     /**
      * This method is used to notify a disconnection event
      */
-    public synchronized void notifyDisconnectionEvent() {
+    public void notifyDisconnectionEvent() {
         for (int i = 0; i < observers.size(); i++) {
             observers.get(i).setADisconnectionHappened(true);
         }

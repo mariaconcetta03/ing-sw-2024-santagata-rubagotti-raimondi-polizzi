@@ -526,8 +526,14 @@ public class GameController extends UnicastRemoteObject implements GameControlle
             if(firstDisconnection) {
                 game.notifyDisconnectionEvent();
                 for (Player p : gamePlayers) {
+                    // if a disconnection happened before the game has started: two players
+                    // in the same game could have the same nickname but it isn't a problem because
+                    // as soon as the game starts all the players will disconnect
                     serverController.getAllNicknames().remove(p.getNickname());
                 }
+
+                //DO NOT REMOVE: we could use a separate thread that checks which games have ended and frees the corresponding ids
+                /*
                 for(Chat c: game.getChats().values()){
                     c.removeObservers();
                 }
@@ -536,8 +542,13 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                 }
                 game.removeObservers();
 
+                 */
 
+                //DO NOT REMOVE
+                /*
                 serverController.getAllGameControllers().remove(id);
+
+                 */
 
                 firstDisconnection=false;
             }
