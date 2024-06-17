@@ -1064,14 +1064,14 @@ public class ClientSCK implements ClientGeneralInterface {
                 // before starting the thread that prints the menu we communicate which is the player that is playing
                 if(lastMoves>0){
                     if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
-                        setIsPlaying(true);
                         System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
                         if(lastMoves<=playersInTheGame.size()){
                             System.out.println("This is your last turn! You will not draw.");
                         }
+                        setIsPlaying(true);
                     } else {
-                        setIsPlaying(false);
                         System.out.println(ANSIFormatter.ANSI_BLUE+playersInTheGame.get(0).getNickname() + " is playing!"+ANSIFormatter.ANSI_RESET);
+                        setIsPlaying(false);
                     }
                 }else{
                     inGame=false;

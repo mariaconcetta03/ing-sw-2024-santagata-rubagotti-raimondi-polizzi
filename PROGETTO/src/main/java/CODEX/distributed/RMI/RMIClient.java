@@ -979,15 +979,14 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 if (turnCounter != 0) {
                     if (lastMoves > 0) {
                         if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
-                            isPlaying = true;
                             System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
                             if (lastMoves <= playersInTheGame.size()) {
                                 System.out.println("This is your last turn! You will not draw.");
                             }
-
+                            isPlaying = true;
                         } else {
-                            isPlaying = false;
                             System.out.println(ANSIFormatter.ANSI_BLUE+playersInTheGame.get(0).getNickname() + " is playing!"+ANSIFormatter.ANSI_RESET);
+                            isPlaying = false;
                         }
                     } else {
                         inGame = false;
