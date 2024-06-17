@@ -228,11 +228,13 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 synchronized (actionLock) {
                     responseReceived = false;
                     this.gameController.playCard(nickname, selectedCard, position, orientation);
-                    while (!responseReceived) {
-                        try {
-                            actionLock.wait();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                    if(selectedView==1) {
+                        while (!responseReceived) {
+                            try {
+                                actionLock.wait();
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
                 }
