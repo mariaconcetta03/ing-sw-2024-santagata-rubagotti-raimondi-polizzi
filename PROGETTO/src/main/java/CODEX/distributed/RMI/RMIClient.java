@@ -1227,6 +1227,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             if (selectedView == 1) {
                 if(!showWinnerArrived) {
                     aDisconnectionHappened = true;
+                    System.out.println(ANSIFormatter.ANSI_RED+"A disconnection happened. Closing the game."+ANSIFormatter.ANSI_RESET);
                     handleDisconnectionFunction();
                 }
             }
