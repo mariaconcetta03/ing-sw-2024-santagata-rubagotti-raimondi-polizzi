@@ -432,7 +432,9 @@
                         <ColumnConstraints hgrow="NEVER" minWidth="75.0" prefWidth="75.0" />
                     </columnConstraints>
                     <rowConstraints>
-                        <!-- 81 ROWS -->
+                        <!-- 83 ROWS -->
+                        <RowConstraints minHeight="44.775" prefHeight="44.775" vgrow="NEVER" />
+                        <RowConstraints minHeight="44.775" prefHeight="44.775" vgrow="NEVER" />
                         <RowConstraints minHeight="44.775" prefHeight="44.775" vgrow="NEVER" />
                         <RowConstraints minHeight="44.775" prefHeight="44.775" vgrow="NEVER" />
                         <RowConstraints minHeight="44.775" prefHeight="44.775" vgrow="NEVER" />

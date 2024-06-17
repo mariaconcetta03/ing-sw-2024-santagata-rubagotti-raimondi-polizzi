@@ -144,6 +144,8 @@ public class GUIGameController {
     private boolean lastRound=false;
     private MediaPlayer mediaPlayer;
     private boolean playingMusic = true;
+    private int colDifference;
+    private int rowDifference;
 
 
 
@@ -507,6 +509,8 @@ public class GUIGameController {
         // 2 players
         if (((this.network == 1)&&(rmiClient.getPlayersInTheGame().size() == 2))||((this.network == 2)&&(clientSCK.getPlayersInTheGame().size() == 2)) ){
             this.nPlayers=2;
+            colDifference = 0;
+            rowDifference = 0;
             points1.setOpacity(1);
             points2.setOpacity(1);
             points3.setOpacity(0);
@@ -548,6 +552,8 @@ public class GUIGameController {
         // 3 players
         else if (((this.network == 1)&&(rmiClient.getPlayersInTheGame().size() == 3))||((this.network == 2)&&(clientSCK.getPlayersInTheGame().size() == 3))) {
             this.nPlayers=3;
+            colDifference = 14;
+            rowDifference = 14;
             points1.setOpacity(1);
             points2.setOpacity(1);
             points3.setOpacity(1);
@@ -601,6 +607,8 @@ public class GUIGameController {
         // 4 players
         else if (((this.network == 1)&&(rmiClient.getPlayersInTheGame().size() == 4))||((this.network == 2)&&(clientSCK.getPlayersInTheGame().size() == 4))) {
             this.nPlayers=4;
+            colDifference = 20;
+            rowDifference = 20;
             points1.setOpacity(1);
             points2.setOpacity(1);
             points3.setOpacity(1);
@@ -794,17 +802,8 @@ public class GUIGameController {
         // System.out.println("ORIZZONTALE CORRENTE: " + boardPane.getHvalue());
 
         // SETTING THE CORRECT POSITION: IT DEPENDS ON THE NUMBER OF THE PLAYERS IN THE GAME
-
-        if (nPlayers == 4) {
-            boardPane.setVvalue(0.7959933348481407);
-            boardPane.setHvalue(0.1786530143673829);
-        } else if (nPlayers == 3) {
-            boardPane.setVvalue(0.7135368530446393);
-            boardPane.setHvalue(0.2683708676981834);
-        } else if (nPlayers == 2){
-            boardPane.setHvalue((75.0*(dimension/2.0))/(75.0*83));
-            boardPane.setVvalue((44.775*(81.0-dimension/2.0))/(44.775*81));
-        }
+            boardPane.setHvalue((75.0*(81.0/2.0))/(75.0*83));
+            boardPane.setVvalue((44.775*(81.0-81.0/2.0))/(44.775*81));
 
         for(Integer integer:cardsOnP1Board.keySet()){
             String path=null;
@@ -822,7 +821,7 @@ public class GUIGameController {
             imageView.toFront();
             Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5); // margin regulations
             GridPane.setMargin(imageView, insets);
-            this.grid.add(imageView, cardsOnP1Board.get(integer).getPosition().getX(), 81-cardsOnP1Board.get(integer).getPosition().getY());
+            this.grid.add( imageView, cardsOnP1Board.get(integer).getPosition().getX()+rowDifference, 81-cardsOnP1Board.get(integer).getPosition().getY()-colDifference);
         }
 
     }
@@ -839,16 +838,9 @@ public class GUIGameController {
         grid.getChildren().clear();
         initializeGridPaneCells(false);
 
-        if (nPlayers == 4) {
-            boardPane.setVvalue(0.7959933348481407);
-            boardPane.setHvalue(0.1786530143673829);
-        } else if (nPlayers == 3) {
-            boardPane.setVvalue(0.7135368530446393);
-            boardPane.setHvalue(0.2683708676981834);
-        } else if (nPlayers == 2){
-            boardPane.setHvalue((75.0*(dimension/2.0))/(75.0*83));
-            boardPane.setVvalue((44.775*(81.0-dimension/2.0))/(44.775*81));
-        }
+        boardPane.setHvalue((75.0*(81.0/2.0))/(75.0*83));
+        boardPane.setVvalue((44.775*(81.0-81.0/2.0))/(44.775*81));
+
 
         // SHOWING THE CARDS
         for(Integer integer:cardsOnP2Board.keySet()){
@@ -866,7 +858,7 @@ public class GUIGameController {
             imageView.toFront();
             Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5);
             GridPane.setMargin(imageView, insets);
-            this.grid.add(imageView, cardsOnP2Board.get(integer).getPosition().getX(), 81-cardsOnP2Board.get(integer).getPosition().getY());
+            this.grid.add(imageView, cardsOnP2Board.get(integer).getPosition().getX() + rowDifference, 81-cardsOnP2Board.get(integer).getPosition().getY()-colDifference);
         }
     }
 
@@ -881,16 +873,9 @@ public class GUIGameController {
         grid.getChildren().clear();
         initializeGridPaneCells(false);
 
-        if (nPlayers == 4) {
-            boardPane.setVvalue(0.7959933348481407);
-            boardPane.setHvalue(0.1786530143673829);
-        } else if (nPlayers == 3) {
-            boardPane.setVvalue(0.7135368530446393);
-            boardPane.setHvalue(0.2683708676981834);
-        } else if (nPlayers == 2){
-            boardPane.setHvalue((75.0*(dimension/2.0))/(75.0*83));
-            boardPane.setVvalue((44.775*(81.0-dimension/2.0))/(44.775*81));
-        }
+        boardPane.setHvalue((75.0*(81.0/2.0))/(75.0*83));
+        boardPane.setVvalue((44.775*(81.0-81.0/2.0))/(44.775*81));
+
 
         for(Integer integer:cardsOnP3Board.keySet()){
             String path=null;
@@ -908,7 +893,7 @@ public class GUIGameController {
             imageView.toFront();
            Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5);
             GridPane.setMargin(imageView, insets);
-            this.grid.add(imageView, cardsOnP3Board.get(integer).getPosition().getX(), 81-cardsOnP3Board.get(integer).getPosition().getY());
+            this.grid.add(imageView, cardsOnP3Board.get(integer).getPosition().getX() + rowDifference, 81-cardsOnP3Board.get(integer).getPosition().getY()-colDifference);
         }
 
     }
@@ -924,16 +909,9 @@ public class GUIGameController {
         grid.getChildren().clear();
         initializeGridPaneCells(false);
 
-        if (nPlayers == 4) {
-            boardPane.setVvalue(0.7959933348481407);
-            boardPane.setHvalue(0.1786530143673829);
-        } else if (nPlayers == 3) {
-            boardPane.setVvalue(0.7135368530446393);
-            boardPane.setHvalue(0.2683708676981834);
-        } else if (nPlayers == 2){
-            boardPane.setHvalue((75.0*(dimension/2.0))/(75.0*83));
-            boardPane.setVvalue((44.775*(81.0-dimension/2.0))/(44.775*81));
-        }
+        boardPane.setHvalue((75.0*(81.0/2.0))/(75.0*83));
+        boardPane.setVvalue((44.775*(81.0-81.0/2.0))/(44.775*81));
+
 
         for(Integer integer:cardsOnP4Board.keySet()){
             String path=null;
@@ -951,7 +929,7 @@ public class GUIGameController {
             imageView.toFront();
            Insets insets = new Insets(-8.7375, -12.5, -8.7375, -12.5);
             GridPane.setMargin(imageView, insets);
-            this.grid.add(imageView, cardsOnP4Board.get(integer).getPosition().getX(), 81-cardsOnP4Board.get(integer).getPosition().getY());
+            this.grid.add(imageView, cardsOnP4Board.get(integer).getPosition().getX()+rowDifference, 81-cardsOnP4Board.get(integer).getPosition().getY()-colDifference);
         }
 
     }
@@ -1232,7 +1210,7 @@ public class GUIGameController {
                 button.setPrefSize(70, 38.25);
                 button.setText(coordinates.getX() + "," + coordinates.getY());
                 button.setOnAction(event -> buttonClicked((Button) event.getSource()));
-                grid.add(button, coordinates.getX(), 81-coordinates.getY());
+                grid.add(button, coordinates.getX()+rowDifference, 81-coordinates.getY()-colDifference);
             }
         }
 
