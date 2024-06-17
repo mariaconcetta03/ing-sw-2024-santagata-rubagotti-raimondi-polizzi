@@ -182,9 +182,8 @@ public class ClientSCK implements ClientGeneralInterface {
      * This method allows the Client to send, through the socket, a message to be read (using its input stream)
      * by the ClientHandlerThread
      * @param sckMessage is the message containing objects and Event relative to the action to perform
-     * @throws IOException in case the Server is unreachable we shut down the Client.
      */
-    public void sendMessage(SCKMessage sckMessage) throws IOException {
+    public void sendMessage(SCKMessage sckMessage) {
         // this method is called ONLY inside ClientGeneralInterface methods
         synchronized (outputLock) {
             if (!aDisconnectionHappened) {
@@ -257,8 +256,6 @@ public class ClientSCK implements ClientGeneralInterface {
             ok=false;
 
             int gameSelection=0;
-           // while(!ok) {
-           //     boolean secondOk=false;
                 while (!ok) {
                     System.out.println("Type -1 if you want to create a new lobby, or the lobby id if you want to join it (if there are any available)");
                     System.out.println("Type -2  to refresh the available lobbies.");
@@ -284,9 +281,7 @@ public class ClientSCK implements ClientGeneralInterface {
                 }
 
                 ok=false;
-
-                    //boolean thirdOk=false;
-            while(!ok){
+                while(!ok){
                     if (gameSelection == -1) {
                         System.out.println("How many players would you like to join you in this game?");
                         while (!ok) {
@@ -304,9 +299,7 @@ public class ClientSCK implements ClientGeneralInterface {
                         }
                         createLobby(personalPlayer.getNickname(), gameSelection);
                         System.out.println("Successfully created a new lobby with id: " + this.gameID);
-                        //ok=true;
                     } else if (lobbyId.contains(gameSelection)) {
-                        //try {
                             System.out.println("Joining the " + gameSelection + " lobby...");
                             addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
                             if (errorState&&!aDisconnectionHappened) {
@@ -353,11 +346,7 @@ public class ClientSCK implements ClientGeneralInterface {
         synchronized (actionLock) {
             lobbyId=new HashSet<>();
             ClientMessage clientMessage= new ClientAvailableLobbies();
-            try {
-                sendMessage(new SCKMessage(clientMessage));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived) {
                 try {
                     actionLock.wait();
@@ -376,11 +365,7 @@ public class ClientSCK implements ClientGeneralInterface {
     public void checkAvailableColors(){
         synchronized (actionLock) {
             ClientMessage clientMessage= new ClientAvailableColors();
-            try {
-                sendMessage(new SCKMessage(clientMessage));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived) {
                 try {
                     actionLock.wait();
@@ -400,11 +385,7 @@ public class ClientSCK implements ClientGeneralInterface {
     public void checkNPlayers(){
         synchronized (actionLock) {
             ClientMessage clientMessage=new CheckNPlayers();
-            try {
-                sendMessage(new SCKMessage(clientMessage));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived){ //in realtà qua non avremmo bisogno di aspettare la risposta
                 try {
                     actionLock.wait();
@@ -430,11 +411,7 @@ public class ClientSCK implements ClientGeneralInterface {
     public void addPlayerToLobby(String playerNickname, int gameId)  {
         synchronized (actionLock) {
             ClientMessage clientMessage=new AddPlayerToLobby(playerNickname,gameId);
-            try {
-                sendMessage(new SCKMessage(clientMessage));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived){
                 try {
                     actionLock.wait();
@@ -454,11 +431,7 @@ public class ClientSCK implements ClientGeneralInterface {
     public void chooseNickname(String nickname)  {
         synchronized (actionLock) {
             ClientMessage clientMessage=new ChooseNickname(nickname);
-            try {
-                sendMessage(new SCKMessage(clientMessage));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived) {
                 try {
                     actionLock.wait();
@@ -480,11 +453,7 @@ public class ClientSCK implements ClientGeneralInterface {
     public void createLobby(String creatorNickname, int numOfPlayers)  {
         synchronized (actionLock) {
             ClientMessage clientMessage=new CreateLobby(creatorNickname,numOfPlayers);
-            try {
-                sendMessage(new SCKMessage(clientMessage));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived) {
                 try {
                     actionLock.wait();
@@ -507,11 +476,7 @@ public class ClientSCK implements ClientGeneralInterface {
     public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation)  {
         synchronized (actionLock) {
             ClientMessage clientMessage=new PlayCard(nickname,selectedCard,position,orientation);
-            try {
-                sendMessage(new SCKMessage(clientMessage));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived) {
                 try {
                     actionLock.wait();
@@ -536,11 +501,7 @@ public class ClientSCK implements ClientGeneralInterface {
     public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation)  {
         synchronized (actionLock) {
             ClientMessage clientMessage=new PlayBaseCard(nickname,baseCard,orientation);
-            try {
-                sendMessage(new SCKMessage(clientMessage));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            sendMessage(new SCKMessage(clientMessage));
         }
     }
 
@@ -555,11 +516,7 @@ public class ClientSCK implements ClientGeneralInterface {
     public void drawCard(String nickname, PlayableCard selectedCard)  {
         synchronized (actionLock) {
             ClientMessage clientMessage=new DrawCard(nickname,selectedCard);
-            try {
-                sendMessage(new SCKMessage(clientMessage));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived) {
                 try {
                     actionLock.wait();
@@ -581,12 +538,7 @@ public class ClientSCK implements ClientGeneralInterface {
     public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard)  {
         synchronized (actionLock) {
             ClientMessage clientMessage=new ChooseObjectiveCard(chooserNickname,selectedCard);
-            try {
-                sendMessage(new SCKMessage(clientMessage));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
+            sendMessage(new SCKMessage(clientMessage));
         }
     }
 
@@ -601,11 +553,7 @@ public class ClientSCK implements ClientGeneralInterface {
     public void choosePawnColor(String chooserNickname, Pawn selectedColor) {
         synchronized (actionLock) {
             ClientMessage clientMessage=new ChoosePawnColor(chooserNickname,selectedColor);
-            try {
-                sendMessage(new SCKMessage(clientMessage));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived) {
                 try {
                     actionLock.wait();
@@ -628,11 +576,7 @@ public class ClientSCK implements ClientGeneralInterface {
     public void sendMessage(String senderNickname, List<String> receiversNickname, String message)  {
         synchronized (actionLock) {
             ClientMessage clientMessage=new SendMessage(senderNickname,receiversNickname,message);
-            try {
-                sendMessage(new SCKMessage(clientMessage));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived) {
                 try {
                     actionLock.wait();
@@ -690,8 +634,6 @@ public class ClientSCK implements ClientGeneralInterface {
         if (boardOwner.equals(personalPlayer.getNickname())) {
             System.out.println("I received the board.");
             personalPlayer.setBoard(board);
-            InterfaceTUI t = new InterfaceTUI();
-            t.printTable(board);
         }
 
         for (Player p : playersInTheGame) {
@@ -1203,21 +1145,11 @@ public class ClientSCK implements ClientGeneralInterface {
                     public void run() {
                         if(pongReceived) {
                             pongReceived=false;
-                            try {
                                 ClientMessage clientMessage=new ClientPing();
                                 sendMessage(new SCKMessage(clientMessage));
-                            } catch (IOException e) { //
-                                // the connection doesn't is open (and it doesn't seem to be open)
-
-                                    handleDisconnection();
-
-                            }
                         }else{
                             //there are no pongs received
-
-
                                 handleDisconnection();
-
                         }
                     }
                 }, 0, 10000);
@@ -1459,11 +1391,7 @@ public class ClientSCK implements ClientGeneralInterface {
      */
     public void checkChosenPawnColor(){
         ClientMessage clientMessage=new CheckChosenPawnColor();
-        try {
-            sendMessage(new SCKMessage(clientMessage));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        sendMessage(new SCKMessage(clientMessage));
     }
 
 
@@ -1473,12 +1401,7 @@ public class ClientSCK implements ClientGeneralInterface {
      */
     public void checkObjectiveCardChosen(){
         ClientMessage clientMessage=new CheckObjectiveCardChosen();
-        try {
-            sendMessage(new SCKMessage(clientMessage));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+        sendMessage(new SCKMessage(clientMessage));
     }
 
 
@@ -1488,12 +1411,7 @@ public class ClientSCK implements ClientGeneralInterface {
      */
     public void checkBaseCardPlayed(){
         ClientMessage clientMessage=new CheckBaseCardPlayed();
-        try {
-            sendMessage(new SCKMessage(clientMessage));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+        sendMessage(new SCKMessage(clientMessage));
     }
 
 
