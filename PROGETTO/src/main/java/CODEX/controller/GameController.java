@@ -31,7 +31,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     private boolean firstDisconnection = true;
     private Map <String, Long> lastHeartbeatTimesOfEachPlayer;
     private ServerController serverController;
-    private Game game;
+    private Game game=null;
     private int lastRounds;
     private int lastDrawingRounds;
     private List<Player> gamePlayers;
@@ -520,41 +520,20 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * and removes the gameController of the match where the disconnection happened
      */
     public void disconnection(){
-        // notify with disconnectionEvent
         synchronized (disconnectionLock) {
-            disconnection=true;
-            if(firstDisconnection) {
-                game.notifyDisconnectionEvent();
+            if(game!=null&&game.getState().equals(Game.GameState.STARTED)) {
+                disconnection = true;
+                if (firstDisconnection) {
+                    game.notifyDisconnectionEvent();
 
-                /*
-                for (Player p : gamePlayers) {
-                    // if a disconnection happened before the game has started: two players
-                    // in the same game could have the same nickname but it isn't a problem because
-                    // as soon as the game starts all the players will disconnect-> but if a player of another game takes the same nickname that has been removed is a problem
-                    serverController.getAllNicknames().remove(p.getNickname());
+                    for (Player p : gamePlayers) {
+                        serverController.getAllNicknames().remove(p.getNickname());
+                    }
+
+                    serverController.getAllGameControllers().remove(id);
+
+                    firstDisconnection = false;
                 }
-
-                 */
-
-                //DO NOT REMOVE: we could use a separate thread that checks which games have ended and frees the corresponding ids
-                /*
-                for(Chat c: game.getChats().values()){
-                    c.removeObservers();
-                }
-                for (Player p : game.getPlayers()) {
-                    p.removeObservers();
-                }
-                game.removeObservers();
-
-                 */
-
-                //DO NOT REMOVE
-                /*
-                serverController.getAllGameControllers().remove(id);
-
-                 */
-
-                firstDisconnection=false;
             }
         }
     }
