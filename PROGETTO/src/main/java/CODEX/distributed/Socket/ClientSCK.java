@@ -485,7 +485,6 @@ public class ClientSCK implements ClientGeneralInterface {
                     throw new RuntimeException(e);
                 }
             }
-            System.out.println("usciti dalla wait di playCard");
         }
     }
 
@@ -598,7 +597,6 @@ public class ClientSCK implements ClientGeneralInterface {
     public void leaveGame(String nickname) {
      synchronized (disconnectionLock) {
             if (!aDisconnectionHappened) {
-                System.out.println("game left.");
                 try { //we close all we have to close
                     running = false;
                     inGame = false;
@@ -633,14 +631,12 @@ public class ClientSCK implements ClientGeneralInterface {
     public void updateBoard(String boardOwner, Board board, PlayableCard newCard)  {
         // we have to change the view and the local model
         if (boardOwner.equals(personalPlayer.getNickname())) {
-            System.out.println("I received the board.");
             personalPlayer.setBoard(board);
         }
 
         for (Player p : playersInTheGame) {
             if (boardOwner.equals(p.getNickname())) {
                 p.setBoard(board);
-                System.out.println("I received " + p.getNickname() + "'s board.");
             }
         }
 
@@ -662,10 +658,7 @@ public class ClientSCK implements ClientGeneralInterface {
     public void updateResourceDeck(PlayableDeck resourceDeck) {
         // we have to change the view and the local model
         this.resourceDeck=resourceDeck;
-        if (selectedView == 1) {
-            System.out.println("I received the updateResourceDeck.");
-        } else if (selectedView == 2) {
-
+       if (selectedView == 2) {
             if(guiGameController!=null){
                 guiGameController.updateResourceDeck();
             }
@@ -682,9 +675,7 @@ public class ClientSCK implements ClientGeneralInterface {
     public void updateGoldDeck(PlayableDeck goldDeck)  {
         // we have to change the view and the local model
         this.goldDeck=goldDeck;
-        if (selectedView == 1) {
-            System.out.println("I received the updateGoldDeck.");
-        } else if (selectedView == 2) {
+        if (selectedView == 2) {
             if(guiGameController!=null){
                 guiGameController.updateGoldDeck();
             }
@@ -701,7 +692,6 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void updatePlayerDeck(String playerNickname, PlayableCard[] playerDeck)  {
         //we have to change the view and the local model
-        System.out.println("I received the updated "+playerNickname+"'s deck.");
         if(playerNickname.equals(personalPlayer.getNickname())){
             personalPlayer.setPlayerDeck(playerDeck);
         }
@@ -713,7 +703,6 @@ public class ClientSCK implements ClientGeneralInterface {
         }
 
        if (selectedView == 2) {
-
             if(!(playerNickname.equals(personalPlayer.getNickname()))){
                 if(guiGameController!=null){
                     guiGameController.updatePlayerDeck(playerNickname,playerDeck);
@@ -735,8 +724,6 @@ public class ClientSCK implements ClientGeneralInterface {
             personalPlayer.addPersonalObjective(card);
             if (personalPlayer.getPersonalObjectives().size() == 2) {
                     if (selectedView == 1) {
-                        System.out.println("I received the updatePersonalObjective.");
-
                         new Thread(()->{
                             boolean ok = false;
                             while (!ok) {
@@ -844,7 +831,6 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void updateLastMoves(int lastMoves)  {
         this.lastMoves=lastMoves;
-        System.out.println("LAST MOVES "+this.lastMoves);
     }
 
 
@@ -857,10 +843,8 @@ public class ClientSCK implements ClientGeneralInterface {
     public void updateResourceCard1(PlayableCard card)  {
         // we have to change the view and the local model
         this.resourceCard1=card;
-        if (selectedView == 1) {
-            System.out.println("I received the updateResourceCard1.");
-        } else if (selectedView == 2) {
 
+       if (selectedView == 2) {
             if(guiGameController!=null){
                 guiGameController.updateResourceCard1(card);
             }
@@ -877,10 +861,7 @@ public class ClientSCK implements ClientGeneralInterface {
     public void updateResourceCard2(PlayableCard card)  {
         // we have to change the view and the local model
         this.resourceCard2=card;
-        if (selectedView == 1) {
-            System.out.println("I received the updateResourceCard2.");
-        } else if (selectedView == 2) {
-
+         if (selectedView == 2) {
             if(guiGameController!=null){
                 guiGameController.updateResourceCard2(card);
             }
@@ -897,10 +878,7 @@ public class ClientSCK implements ClientGeneralInterface {
     public void updateGoldCard1(PlayableCard card)  {
         // we have to change the view and the local model
         this.goldCard1=card;
-        if (selectedView == 1) {
-            System.out.println("I received the updateGoldCard1.");
-        } else if (selectedView == 2) {
-
+        if (selectedView == 2) {
             if(guiGameController!=null){
                 guiGameController.updateGoldCard1(card);
             }
@@ -917,10 +895,7 @@ public class ClientSCK implements ClientGeneralInterface {
     public void updateGoldCard2(PlayableCard card) {
         // we have to change the view and the local model
         this.goldCard2=card;
-        if (selectedView == 1) {
-            System.out.println("I received the updateGoldCard2.");
-        } else if (selectedView == 2) {
-
+        if (selectedView == 2) {
             if(guiGameController!=null){
                 guiGameController.updateGoldCard2(card);
             }
@@ -936,10 +911,6 @@ public class ClientSCK implements ClientGeneralInterface {
      */
     @Override
     public void updateChat(Integer chatIdentifier, Chat chat) {
-        // we have to change the view and the local model
-        if (selectedView == 1) {
-            System.out.println("You received a message (updateGoldCard2).");
-        }
     }
 
 
@@ -959,11 +930,7 @@ public class ClientSCK implements ClientGeneralInterface {
                 p.setColor(pawn);
             }
         }
-        if (selectedView == 1) {
-            System.out.println("I received the updatePawns.");
-        } else if (selectedView == 2) {
-
-
+        if (selectedView == 2) {
             synchronized (guiPawnsControllerLock) {
 
                 while (GUIPawnsController == null) {
@@ -988,7 +955,6 @@ public class ClientSCK implements ClientGeneralInterface {
      */
     @Override
     public void updateRound(List<Player> newPlayingOrder)  { //taken from RMIClient
-        System.out.println("I received the updateRound.");
         playersInTheGame = newPlayingOrder;
         if (selectedView == 1) { //TUI
             // when turnCounter==-1 we have to initialize this list
@@ -1061,7 +1027,6 @@ public class ClientSCK implements ClientGeneralInterface {
             //first time: -1 -> 0, second time 0 -> 1  so from the second time on we enter if(turnCounter>=1)
         }
         else if (selectedView == 2) { //GUI
-            System.out.println("I received the updateRound.");
             //playersInTheGame = newPlayingOrder;
             if(this.turnCounter == -1){
                 synchronized (guiGamestateLock) {
@@ -1083,7 +1048,6 @@ public class ClientSCK implements ClientGeneralInterface {
                 if(lastMoves>0) {
 
                     if (lastMoves <= playersInTheGame.size()) {
-                        System.out.println("This is your last turn! You will not draw.");
                         if (guiGameController != null) {
                             guiGameController.updatePoints();
                             guiGameController.updateRound(true);
@@ -1114,7 +1078,6 @@ public class ClientSCK implements ClientGeneralInterface {
      */
     @Override
     public void updateCommonObjectives(ObjectiveCard card1, ObjectiveCard card2){
-        System.out.println("I received the updateCommonObjectives.");
         this.commonObjective1=card1;
         this.commonObjective2=card2;
     }
@@ -1128,7 +1091,6 @@ public class ClientSCK implements ClientGeneralInterface {
     @Override
     public void updateGameState(Game.GameState gameState)  {
         // we have to change the view and the local model
-        System.out.println("I received the updateGameState.");
         if (selectedView == 1) {
             if(gameState.equals(Game.GameState.STARTED)) {
                 inGame=true;
@@ -1159,7 +1121,6 @@ public class ClientSCK implements ClientGeneralInterface {
         } else if (selectedView == 2) {
             if(gameState.equals(Game.GameState.STARTED)) {
                 inGame = true;
-                System.out.println("The game has started!");
             }
         }
     }
@@ -1172,7 +1133,6 @@ public class ClientSCK implements ClientGeneralInterface {
      */
     @Override
     public void handleDisconnection()  {
-        System.out.println("evento disconnessione arrivato");
 
         synchronized (disconnectionLock) {
             if (selectedView == 1) { //TUI
@@ -1375,10 +1335,7 @@ public class ClientSCK implements ClientGeneralInterface {
         if(this.timer!=null) {
             this.timer.cancel(); //to be sure
         }
-        System.out.println("A disconnection happened.");
-
-        System.exit(0);
-
+        System.exit(0)
     }
 
 
@@ -1624,8 +1581,6 @@ public class ClientSCK implements ClientGeneralInterface {
                 handleDisconnection();
 
         }
-
-        System.out.println("il nickname è stato settato a: " + this.personalPlayer.getNickname());
         return this.nicknameSet;
     }
 

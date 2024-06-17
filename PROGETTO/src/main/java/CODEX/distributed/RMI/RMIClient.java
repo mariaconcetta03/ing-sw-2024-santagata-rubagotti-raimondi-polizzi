@@ -89,7 +89,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public void okEventExecute(String nickname) {
         if (nickname.equals(personalPlayer.getNickname())) {
             synchronized (actionLock) {
-                System.out.println("dentro la syn di ok");
                 responseReceived = true;
                 actionLock.notify();
             }
@@ -135,10 +134,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         public void setSERVER_NAME(String SERVER_NAME) {
             if (SERVER_NAME.equals("")) { // empty string --> localhost
                 Settings.this.SERVER_NAME = "127.0.0.1";
-                System.out.println("hai lasciato la stringa vuota! quindi ho settato il localhost: 127.0.0.1");
             } else {
                 this.SERVER_NAME = SERVER_NAME;
-                System.out.println("hai inserito l'IP, quindi ho settato il server name a: " + SERVER_NAME);
             }
         }
     }
@@ -435,7 +432,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 }
                 this.schedulerToCheckReceivedHeartBeat.shutdown();
                 this.schedulerToSendHeartbeat.shutdown();
-                System.out.println("You left the game.");
                 System.exit(0); //status 0 -> no errors
             }
         }
@@ -790,7 +786,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     @Override
     public void updatePlayerDeck(String playerNickname, PlayableCard[] playerDeck) throws RemoteException {
-        System.out.println("I received the updated " + playerNickname + "'s deck.");
         if (playerNickname.equals(personalPlayer.getNickname())) {
             personalPlayer.setPlayerDeck(playerDeck);
         }
@@ -949,11 +944,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         }
 
         if (selectedView == 2) {
-            System.out.println("RMI: sto per entrare nel syn");
             synchronized (guiPawnsControllerLock) {
-                System.out.println("RMI: nel syn");
                 while (GUIPawnsController == null) {
-                    System.out.println("RMI: adesso faccio la wait()");
                     try {
                         guiPawnsControllerLock.wait();
                     } catch (InterruptedException e) {
@@ -961,7 +953,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     }
                 }
             }
-            System.out.println("RMI: uscito dal syn");
             GUIPawnsController.updatePawns(pawn);
         }
     }
@@ -1045,7 +1036,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             turnCounter++;
 
         } else if (selectedView == 2) {
-            System.out.println("I received the updateRound.");
             if (this.turnCounter == -1) { // first time that updateRound is called
                 synchronized (guiGamestateLock) {
                     while (guiLobbyController == null) {
@@ -1066,7 +1056,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 if (lastMoves > 0) { // initialized to 10 (high value) and then it is set to an int with the first UpdateLastMovesEvent received
 
                     if (lastMoves <= playersInTheGame.size()) {
-                        System.out.println("This is your last turn! You will not draw.");
                         // player can't draw cards --> passing the boolean true to guiGameController.updateRound(boolean lastRound)
                         if (guiGameController != null) {
                             guiGameController.updatePoints();
@@ -1224,7 +1213,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     @Override
     public void updateLastMoves(int lastMoves) throws RemoteException {
         this.lastMoves = lastMoves;
-        System.out.println("LAST MOVES " + this.lastMoves);
     }
 
 
@@ -1235,7 +1223,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     @Override
     public void handleDisconnection() {
-        System.out.println("A disconnection happened. Closing the game.");
         synchronized (disconnectionLock) {
             if (selectedView == 1) {
                 if(!showWinnerArrived) {
@@ -1532,7 +1519,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         } catch (NicknameAlreadyTakenException e) {
             this.nicknameSet = false;
         }
-        System.out.println("il nickname è stato settato a: " + this.personalPlayer.getNickname());
         return this.nicknameSet;
     }
 

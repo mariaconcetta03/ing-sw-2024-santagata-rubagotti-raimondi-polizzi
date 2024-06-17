@@ -219,7 +219,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                 try {
                     currentPlayer.drawCard(selectedCard);
                 } catch (CardNotDrawableException e) {
-                    System.out.println("This card can't be drawn!");
                     game.setLastEvent(ErrorsAssociatedWithExceptions.CARD_NOT_DRAWN);
                     return;
                 }
@@ -478,7 +477,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      */
     public void heartbeat(String nickname) {
         lastHeartbeatTimesOfEachPlayer.put(nickname,System.currentTimeMillis());
-        //System.out.println("Received heartbeat at " + lastHeartbeatTimesOfEachPlayer.get(nickname)+ " from "+ nickname);
     }
 
 
@@ -526,7 +524,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         synchronized (disconnectionLock) {
             disconnection=true;
             if(firstDisconnection) {
-                System.out.println("the server has detected a disconnection");
                 game.notifyDisconnectionEvent();
                 for (Player p : gamePlayers) {
                     serverController.getAllNicknames().remove(p.getNickname());

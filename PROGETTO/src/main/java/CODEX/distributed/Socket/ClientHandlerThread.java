@@ -87,7 +87,6 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                         sckMessage = (SCKMessage) this.input.readObject();
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
-                        System.out.println("lost the connection...Bye, bye");
                         running=false;
                         try {
                             input.close();
@@ -100,7 +99,6 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                         gameController.disconnection();
 
                         Thread.currentThread().interrupt(); // stopping the ClientHandlerThread
-                        System.out.println("appena chiamato interrupt");
                     }
                     if(sckMessage!=null&&running) {
                         react(sckMessage);
@@ -146,7 +144,6 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                         writeTheStream(new SCKMessage(serverMessage));
 
                     }else{ // there are no pongs received
-                        System.out.println("the connection has been interrupted...Bye bye");
                         try {
                             running=false;
                             input.close();
@@ -416,7 +413,6 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
             } catch (IOException e) {
                 e.printStackTrace();
                 System.err.println(e.getMessage());
-                System.out.println("the connection has been interrupted....Bye bye");
                 try { // we close all we have to close
                     running = false;
                     input.close();
