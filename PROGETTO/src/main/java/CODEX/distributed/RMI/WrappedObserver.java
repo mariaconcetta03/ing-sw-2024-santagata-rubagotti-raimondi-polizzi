@@ -63,7 +63,7 @@ public class WrappedObserver implements Observer {
                     if (event != null) {
                         try {
                             lastEvent = event.execute(remoteClient, wrappedObserver);
-                            System.out.println("ho fatto la pull dell'evento");
+                            //System.out.println("ho fatto la pull dell'evento");
                         } catch (RemoteException e) {
                             aDisconnectionHappened = true;
                             gameController.disconnection();
@@ -84,7 +84,7 @@ public class WrappedObserver implements Observer {
      * @param obs is the observable who called the notify
      */
     public void update(Observable obs, Event event) {
-        System.out.println("ho fatto la push dell'evento "+event.toString());
+        //System.out.println("ho fatto la push dell'evento "+event.toString());
         eventQueue.add(event); //push
     }
 

@@ -478,7 +478,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      */
     public void heartbeat(String nickname) {
         lastHeartbeatTimesOfEachPlayer.put(nickname,System.currentTimeMillis());
-        System.out.println("Received heartbeat at " + lastHeartbeatTimesOfEachPlayer.get(nickname)+ " from "+ nickname);
+        //System.out.println("Received heartbeat at " + lastHeartbeatTimesOfEachPlayer.get(nickname)+ " from "+ nickname);
     }
 
 
