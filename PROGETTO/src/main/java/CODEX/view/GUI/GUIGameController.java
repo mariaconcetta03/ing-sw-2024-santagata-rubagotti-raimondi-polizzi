@@ -814,7 +814,10 @@ public class GUIGameController {
         if (nPlayers == 4) {
             boardPane.setVvalue(0.7959933348481407);
             boardPane.setHvalue(0.1786530143673829);
-        } else {
+        } else if (nPlayers == 3) {
+            boardPane.setVvalue(0.7255057339542743);
+            boardPane.setHvalue(0.2541528582195104);
+        } else if (nPlayers == 2){
             boardPane.setHvalue((75.0*(dimension/2.0))/(75.0*83));
             boardPane.setVvalue((44.775*(81.0-dimension/2.0))/(44.775*81));
         }
@@ -860,7 +863,10 @@ public class GUIGameController {
         if (nPlayers == 4) {
             boardPane.setVvalue(0.7959933348481407);
             boardPane.setHvalue(0.1786530143673829);
-        } else {
+        } else if (nPlayers == 3) {
+            boardPane.setVvalue(0.7255057339542743);
+            boardPane.setHvalue(0.2541528582195104);
+        } else if (nPlayers == 2){
             boardPane.setHvalue((75.0*(dimension/2.0))/(75.0*83));
             boardPane.setVvalue((44.775*(81.0-dimension/2.0))/(44.775*81));
         }
@@ -903,7 +909,10 @@ public class GUIGameController {
         if (nPlayers == 4) {
             boardPane.setVvalue(0.7959933348481407);
             boardPane.setHvalue(0.1786530143673829);
-        } else {
+        } else if (nPlayers == 3) {
+            boardPane.setVvalue(0.7255057339542743);
+            boardPane.setHvalue(0.2541528582195104);
+        } else if (nPlayers == 2){
             boardPane.setHvalue((75.0*(dimension/2.0))/(75.0*83));
             boardPane.setVvalue((44.775*(81.0-dimension/2.0))/(44.775*81));
         }
@@ -947,7 +956,10 @@ public class GUIGameController {
         if (nPlayers == 4) {
             boardPane.setVvalue(0.7959933348481407);
             boardPane.setHvalue(0.1786530143673829);
-        } else {
+        } else if (nPlayers == 3) {
+            boardPane.setVvalue(0.7255057339542743);
+            boardPane.setHvalue(0.2541528582195104);
+        } else if (nPlayers == 2){
             boardPane.setHvalue((75.0*(dimension/2.0))/(75.0*83));
             boardPane.setVvalue((44.775*(81.0-dimension/2.0))/(44.775*81));
         }
