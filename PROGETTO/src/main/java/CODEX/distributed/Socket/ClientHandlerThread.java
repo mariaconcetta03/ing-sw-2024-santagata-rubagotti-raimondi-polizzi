@@ -65,6 +65,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
         this.inputLock = new Object();
 
         this.running = true;
+        this.gameController = null;
 
     }
 
@@ -96,7 +97,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                         }
                         timer.cancel(); // stops the timer
 
-                        gameController.disconnection();
+                        if (gameController != null) {
+                            gameController.disconnection();
+                        }
 
                         Thread.currentThread().interrupt(); // stopping the ClientHandlerThread
                     }
@@ -152,8 +155,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                         } catch (IOException e) { // needed for the close clause
                         }
                         timer.cancel(); // stops the timer
-
-                         gameController.disconnection();
+                        if (gameController != null) {
+                            gameController.disconnection();
+                        }
                     }
                 }
             }, 0, 10000); // every 10 seconds
@@ -422,8 +426,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
 
                 }
                 timer.cancel(); // stops the timer
-
-                gameController.disconnection();
+                if (gameController != null) {
+                    gameController.disconnection();
+                }
 
                 Thread.currentThread().interrupt();
             }
