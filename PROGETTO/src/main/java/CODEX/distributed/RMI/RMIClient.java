@@ -1180,6 +1180,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             finalTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
+                    System.out.println("timer sta facendo exit");
                     System.exit(0); //status 0 -> no errors
                 }
             },6000); //6 seconds
@@ -1261,6 +1262,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
+                System.out.println("timer sta facendo exit");
                 System.exit(0); //status 0 -> no errors
             }
 
