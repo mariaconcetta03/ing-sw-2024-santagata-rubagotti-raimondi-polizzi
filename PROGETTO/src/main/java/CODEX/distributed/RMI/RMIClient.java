@@ -1307,10 +1307,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 if (lambdaContext.heartbeatTask != null && !lambdaContext.heartbeatTask.isCancelled()) {
                     lambdaContext.heartbeatTask.cancel(true); //closes schedulerToCheckReceivedHeartBeat
                 }
-
-
-                    handleDisconnection();
-
+                System.out.println("timeout superato");
+                handleDisconnection();
             }
         }, 0, TIMEOUT, TimeUnit.SECONDS);
     }
