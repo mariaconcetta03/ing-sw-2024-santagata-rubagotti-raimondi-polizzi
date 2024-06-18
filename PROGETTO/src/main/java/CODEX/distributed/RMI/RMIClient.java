@@ -169,6 +169,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         ClientGeneralInterface client = this;
         gameController.addRMIClient(this.personalPlayer.getNickname(), client);
         } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+            System.out.println("remote in create lobby");
             handleDisconnectionFunction();
         }
     }
@@ -190,6 +191,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         ClientGeneralInterface client = this;
         gameController.addRMIClient(this.personalPlayer.getNickname(), client);
         } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+            System.out.println("remote in addplayer to lobby");
             handleDisconnectionFunction();
         }
     }
@@ -206,6 +208,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         try {
             this.SRMIInterface.chooseNickname(nickname);
         } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+            System.out.println("remote in choose nickname");
             handleDisconnectionFunction();
         }
     }
@@ -238,6 +241,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             }
         } catch (RemoteException e) {
             synchronized (disconnectionLock) {
+                System.out.println("remote in play card");
                 if (selectedView == 1) {
                     aDisconnectionHappened = true;
                     handleDisconnectionFunction();
@@ -268,6 +272,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             }
         } catch (RemoteException e) {
             synchronized (disconnectionLock) {
+                System.out.println("remote in play base card");
                 if (selectedView == 1) {
                     aDisconnectionHappened = true;
                     handleDisconnectionFunction();
@@ -304,6 +309,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             }
         } catch (RemoteException e) {
             synchronized (disconnectionLock) {
+                System.out.println("remote in draw card");
                 if (selectedView == 1) {
                     aDisconnectionHappened = true;
                     handleDisconnectionFunction();
@@ -332,6 +338,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             }
         } catch (RemoteException e) {
             synchronized (disconnectionLock) {
+                System.out.println("remote in choose obj card");
                 if (selectedView == 1) {
                     aDisconnectionHappened = true;
                     handleDisconnectionFunction();
@@ -369,6 +376,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             }
         } catch (RemoteException e) {
             synchronized (disconnectionLock) {
+                System.out.println("remote in choose pawn color");
                 if (selectedView == 1) {
                     aDisconnectionHappened = true;
                     handleDisconnectionFunction();
@@ -406,6 +414,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             }
         } catch (RemoteException e) {
             synchronized (disconnectionLock) {
+                System.out.println("remote in send message");
                 if (selectedView == 1) {
                     aDisconnectionHappened = true;
                     handleDisconnectionFunction();
@@ -449,6 +458,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         try {
             lobbies.addAll(SRMIInterface.getAvailableGameControllersId());
         } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+            System.out.println("remote in get availablelobbies");
             handleDisconnectionFunction();
         }
         return lobbies;
@@ -559,6 +569,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 }
             }
         } catch (RemoteException exceptionBeforeTheGameHasStarted){
+            System.out.println("remote in waiting room");
             handleDisconnectionFunction();
         }
     }
@@ -1115,6 +1126,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     } catch (RemoteException e) {
                         aDisconnectionHappened = true;
                         if (selectedView == 1) {
+                            System.out.println("remote in update game state");
                             handleDisconnectionFunction();
                         }
                     }
