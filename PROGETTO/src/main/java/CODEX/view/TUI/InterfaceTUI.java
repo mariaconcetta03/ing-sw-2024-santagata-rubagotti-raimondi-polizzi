@@ -135,20 +135,17 @@ public class InterfaceTUI implements Serializable {
      */
     public void printMenu(boolean isPlaying) {
         System.out.println("These are the action you can perform");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "menu" + ANSIFormatter.ANSI_RESET + " - Print the menu                      |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "0" + ANSIFormatter.ANSI_RESET + " - Leave the game                         |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "1" + ANSIFormatter.ANSI_RESET + " - Check the cards in your hand           |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "2" + ANSIFormatter.ANSI_RESET + " - Check the objective cards              |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "3" + ANSIFormatter.ANSI_RESET + " - Check the drawable cards               |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "4" + ANSIFormatter.ANSI_RESET + " - Look at yours or someone else's board  |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "5" + ANSIFormatter.ANSI_RESET + " - Check the points scored                |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "6" + ANSIFormatter.ANSI_RESET + " - Check the textual interface's legend   |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "7" + ANSIFormatter.ANSI_RESET + " - Ask who is playing                     |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "8" + ANSIFormatter.ANSI_RESET + " - Send a message in the chat             |");
-        System.out.println("| " + ANSIFormatter.ANSI_RED + "9" + ANSIFormatter.ANSI_RESET + " - Read the last messages of a chat       |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "menu" + ANSIFormatter.ANSI_RESET + " - Print the menu                         |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "0" + ANSIFormatter.ANSI_RESET + " - Leave the game                            |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "1" + ANSIFormatter.ANSI_RESET + " - Check the cards in your, or others, hand  |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "2" + ANSIFormatter.ANSI_RESET + " - Check the objective cards                 |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "3" + ANSIFormatter.ANSI_RESET + " - Check the drawable cards                  |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "4" + ANSIFormatter.ANSI_RESET + " - Look at yours or someone else's board     |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "5" + ANSIFormatter.ANSI_RESET + " - Check the points scored                   |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "6" + ANSIFormatter.ANSI_RESET + " - Check the textual interface's legend      |");
+        System.out.println("| " + ANSIFormatter.ANSI_RED + "7" + ANSIFormatter.ANSI_RESET + " - Ask who is playing                        |");
         if (isPlaying) {
-            System.out.println("| " + ANSIFormatter.ANSI_RED + "10" + ANSIFormatter.ANSI_RESET + " - Play a card                           |");
-            // the draw will be called after the play action
+            System.out.println("| " + ANSIFormatter.ANSI_RED + "8" + ANSIFormatter.ANSI_RESET + " - Play a card                               |");
         }
     }
 
@@ -201,7 +198,7 @@ public class InterfaceTUI implements Serializable {
         tmp.add(baseCard);
 
         System.out.println("This is your base card:");
-        printPlayableCards(tmp);
+        printPlayableCards(tmp, false);
         System.out.println("Would you like to play it upwards(1) or downwards(2)?");
         while (true) {
             try {
@@ -262,7 +259,7 @@ public class InterfaceTUI implements Serializable {
      */
     public PlayableCard askPlayCard(Scanner sc, Player personalPlayer) {
         int cardIndex = -1;
-        printHand(personalPlayer.getPlayerDeck());
+        printHand(personalPlayer.getPlayerDeck(), true);
         System.out.println("This is your Board:");
         printTable(personalPlayer.getBoard());
         System.out.println();
@@ -397,7 +394,7 @@ public class InterfaceTUI implements Serializable {
      *
      * @param cardsToPrint are the cards that have to be printed
      */
-    public void printPlayableCards(List<PlayableCard> cardsToPrint) {
+    public void printPlayableCards(List<PlayableCard> cardsToPrint, boolean hideCards) {
         String firstRow = "";
         String secondRow = "";
         String thirdRow = "";
@@ -413,188 +410,190 @@ public class InterfaceTUI implements Serializable {
         boolean evenNSpaces = false;
         String cardColor = ANSIFormatter.ANSI_WHITE;
 
-        for (PlayableCard card : cardsToPrint) {
-            if (card != null) {
-                if ((card.getId() < 81) || (card.getId() > 86)) {
-                    if (card.getId() > 0) {
-                        cardColor = cardColors.get(card.getCentralResources().get(0));
-                    }
-                    indexString = indexString.concat("          (" + index + ")          ");
-                    index++;
-                } else {
-                    cardColor = ANSIFormatter.ANSI_WHITE;
-                }
-                if ((cardsToPrint.size() == 6) && (nDecks > 0)) {
-                    nDecks--;
-                    if (nDecks == 1) {
-                        if (cardsToPrint.get(0).getId() != -1) {
-                            firstRow = firstRow.concat(" _____________________");
-                            secondRow = secondRow.concat("|          " + ANSIFormatter.ANSI_RED + "?" + rst + "          |");
-                            thirdRow = thirdRow.concat("|    THIS SIDE WILL   |");
-                            fourthRow = fourthRow.concat("|    BE SHOWN ONLY    |");
-                            fifthRow = fifthRow.concat("|    WHEN THE CARD    |");
-                            sixthRow = sixthRow.concat("|      IS DRAWN       |");
-                            seventhRow = seventhRow.concat("|_____________________|");
-                        } else {
-                            firstRow = firstRow.concat(" _____________________");
-                            secondRow = secondRow.concat("|                     |");
-                            thirdRow = thirdRow.concat("|     THE RESOURCE    |");
-                            fourthRow = fourthRow.concat("|        DECK         |");
-                            fifthRow = fifthRow.concat("|     IS FINISHED     |");
-                            sixthRow = sixthRow.concat("|         " + ANSIFormatter.ANSI_RED + ":(" + rst + "          |");
-                            seventhRow = seventhRow.concat("|_____________________|");
+        if(!hideCards) {
+            for (PlayableCard card : cardsToPrint) {
+                if (card != null) {
+                    if ((card.getId() < 81) || (card.getId() > 86)) {
+                        if (card.getId() > 0) {
+                            cardColor = cardColors.get(card.getCentralResources().get(0));
                         }
+                        indexString = indexString.concat("          (" + index + ")          ");
+                        index++;
                     } else {
-                        if (cardsToPrint.get(1).getId() != -2) {
-                            firstRow = firstRow.concat(" _____________________");
-                            secondRow = secondRow.concat("|          " + ANSIFormatter.ANSI_RED + "?" + rst + "          |");
-                            thirdRow = thirdRow.concat("|    THIS SIDE WILL   |");
-                            fourthRow = fourthRow.concat("|    BE SHOWN ONLY    |");
-                            fifthRow = fifthRow.concat("|    WHEN THE CARD    |");
-                            sixthRow = sixthRow.concat("|      IS DRAWN       |");
-                            seventhRow = seventhRow.concat("|_____________________|");
-                        } else {
-                            firstRow = firstRow.concat(" _____________________");
-                            secondRow = secondRow.concat("|                     |");
-                            thirdRow = thirdRow.concat("|      THE GOLD       |");
-                            fourthRow = fourthRow.concat("|        DECK         |");
-                            fifthRow = fifthRow.concat("|     IS FINISHED     |");
-                            sixthRow = sixthRow.concat("|         " + ANSIFormatter.ANSI_RED + ":(" + rst + "          |");
-                            seventhRow = seventhRow.concat("|_____________________|");
-                        }
+                        cardColor = ANSIFormatter.ANSI_WHITE;
                     }
-                } else {
-                    firstRow = firstRow.concat(cardColor + " _____________________" + rst);
-                    secondRow = secondRow.concat(cardColor + "|" + rst);
-                    thirdRow = thirdRow.concat(cardColor + "|" + rst);
-                    if (!card.get_front_up_left().equals(AngleType.ABSENT)) {
-                        secondRow = secondRow.concat(abbreviations.get(card.get_front_up_left()) + cardColor + " |" + rst);
-                        thirdRow = thirdRow.concat(cardColor + "__|               " + rst);
-                    } else {
-                        secondRow = secondRow.concat("   ");
-                        thirdRow = thirdRow.concat("                  ");
-                    }
-                    pointsString = "";
-                    if (card.getPoints() > 0) {
-                        pointsString = pointsString.concat(card.getPoints() + "pt");
-                        if (card.isScrollToReceivePoints()) {
-                            pointsString = pointsString.concat("*" + abbreviations.get(AngleType.SCROLL));
-                        } else if (card.isJarToReceivePoints()) {
-                            pointsString = pointsString.concat("*" + abbreviations.get(AngleType.JAR));
-                        } else if (card.isFeatherToReceivePoints()) {
-                            pointsString = pointsString.concat("*" + abbreviations.get(AngleType.FEATHER));
-                        } else if (card.isCoverAngleToReceivePoints()) {
-                            pointsString = pointsString.concat("*angCov");
-                        }
-                        nSpaces = cornerDistance - pointsString.length();
-                        if (nSpaces % 2 == 0) {
-                            evenNSpaces = true;
-                        } else {
-                            evenNSpaces = false;
-                        }
-                        nSpaces = nSpaces / 2;
-                        for (int i = 0; i < nSpaces; i++) {
-                            pointsString = " " + pointsString + " ";
-                        }
-                        if (!evenNSpaces) {
-                            pointsString = " " + pointsString;
-                        }
-                        secondRow = secondRow.concat(pointsString);
-                    } else {
-                        secondRow = secondRow.concat("               ");
-                    }
-
-                    if (!card.get_front_up_right().equals(AngleType.ABSENT)) {
-                        secondRow = secondRow.concat(cardColor + "| " + rst + abbreviations.get(card.get_front_up_right()) + cardColor + "|" + rst);
-                        thirdRow = thirdRow.concat(cardColor + "|__|" + rst);
-                    } else {
-                        secondRow = secondRow.concat(cardColor + "   |" + rst);
-                        thirdRow = thirdRow.concat(cardColor + "   |" + rst);
-                    }
-
-                    //fourth Row
-                    fourthRow = fourthRow.concat(cardColor + "|                     |" + rst);
-
-                    //fifth Row
-                    fifthRow = fifthRow.concat(cardColor + "|" + rst);
-                    sixthRow = sixthRow.concat(cardColor + "|" + rst);
-                    seventhRow = seventhRow.concat(cardColor + "|" + rst);
-
-                    if (!card.get_front_down_left().equals(AngleType.ABSENT)) {
-                        fifthRow = fifthRow.concat(cardColor + "__" + rst);
-                        sixthRow = sixthRow.concat(abbreviations.get(card.get_front_down_left()) + cardColor + " |" + rst);
-                        seventhRow = seventhRow.concat(cardColor + "__|_______________" + rst);
-                    } else {
-                        fifthRow = fifthRow.concat("  ");
-                        sixthRow = sixthRow.concat("   ");
-                        seventhRow = seventhRow.concat(cardColor + "__________________" + rst);
-                    }
-                    fifthRow = fifthRow.concat("                 ");
-
-                    pointsString = "";
-                    nSpaces = 0;
-                    int k = 0;
-                    if (!card.getNeededResources().keySet().isEmpty()) {
-                        for (AngleType a : card.getNeededResources().keySet()) {
-                            if ((card.getNeededResources().keySet().size() != 1) && (k != card.getNeededResources().keySet().size() - 1)) {
-                                k++;
-                                pointsString = pointsString.concat(ANSIFormatter.ANSI_RED + card.getNeededResources().get(a) + "*" + abbreviations.get(a) + ", " + ANSIFormatter.ANSI_RESET);
+                    if ((cardsToPrint.size() == 6) && (nDecks > 0)) {
+                        nDecks--;
+                        if (nDecks == 1) {
+                            if (cardsToPrint.get(0).getId() != -1) {
+                                firstRow = firstRow.concat(" _____________________");
+                                secondRow = secondRow.concat("|          " + ANSIFormatter.ANSI_RED + "?" + rst + "          |");
+                                thirdRow = thirdRow.concat("|    THIS SIDE WILL   |");
+                                fourthRow = fourthRow.concat("|    BE SHOWN ONLY    |");
+                                fifthRow = fifthRow.concat("|    WHEN THE CARD    |");
+                                sixthRow = sixthRow.concat("|      IS DRAWN       |");
+                                seventhRow = seventhRow.concat("|_____________________|");
                             } else {
-                                pointsString = pointsString.concat(ANSIFormatter.ANSI_RED + card.getNeededResources().get(a) + "*" + abbreviations.get(a) + ANSIFormatter.ANSI_RESET);
+                                firstRow = firstRow.concat(" _____________________");
+                                secondRow = secondRow.concat("|                     |");
+                                thirdRow = thirdRow.concat("|     THE RESOURCE    |");
+                                fourthRow = fourthRow.concat("|        DECK         |");
+                                fifthRow = fifthRow.concat("|     IS FINISHED     |");
+                                sixthRow = sixthRow.concat("|         " + ANSIFormatter.ANSI_RED + ":(" + rst + "          |");
+                                seventhRow = seventhRow.concat("|_____________________|");
                             }
-                            nSpaces += 9;
-                        }
-                        nSpaces = nSpaces + cornerDistance - pointsString.length();
-                        if (nSpaces % 2 == 0) {
-                            evenNSpaces = true;
                         } else {
-                            evenNSpaces = false;
+                            if (cardsToPrint.get(1).getId() != -2) {
+                                firstRow = firstRow.concat(" _____________________");
+                                secondRow = secondRow.concat("|          " + ANSIFormatter.ANSI_RED + "?" + rst + "          |");
+                                thirdRow = thirdRow.concat("|    THIS SIDE WILL   |");
+                                fourthRow = fourthRow.concat("|    BE SHOWN ONLY    |");
+                                fifthRow = fifthRow.concat("|    WHEN THE CARD    |");
+                                sixthRow = sixthRow.concat("|      IS DRAWN       |");
+                                seventhRow = seventhRow.concat("|_____________________|");
+                            } else {
+                                firstRow = firstRow.concat(" _____________________");
+                                secondRow = secondRow.concat("|                     |");
+                                thirdRow = thirdRow.concat("|      THE GOLD       |");
+                                fourthRow = fourthRow.concat("|        DECK         |");
+                                fifthRow = fifthRow.concat("|     IS FINISHED     |");
+                                sixthRow = sixthRow.concat("|         " + ANSIFormatter.ANSI_RED + ":(" + rst + "          |");
+                                seventhRow = seventhRow.concat("|_____________________|");
+                            }
                         }
-                        nSpaces = nSpaces / 2;
-                        for (int i = 0; i < nSpaces; i++) {
-                            pointsString = " " + pointsString + " ";
-                        }
-                        if (!evenNSpaces) {
-                            pointsString = " " + pointsString;
-                        }
-                        sixthRow = sixthRow.concat(pointsString);
                     } else {
-                        sixthRow = sixthRow.concat("               ");
+                        firstRow = firstRow.concat(cardColor + " _____________________" + rst);
+                        secondRow = secondRow.concat(cardColor + "|" + rst);
+                        thirdRow = thirdRow.concat(cardColor + "|" + rst);
+                        if (!card.get_front_up_left().equals(AngleType.ABSENT)) {
+                            secondRow = secondRow.concat(abbreviations.get(card.get_front_up_left()) + cardColor + " |" + rst);
+                            thirdRow = thirdRow.concat(cardColor + "__|               " + rst);
+                        } else {
+                            secondRow = secondRow.concat("   ");
+                            thirdRow = thirdRow.concat("                  ");
+                        }
+                        pointsString = "";
+                        if (card.getPoints() > 0) {
+                            pointsString = pointsString.concat(card.getPoints() + "pt");
+                            if (card.isScrollToReceivePoints()) {
+                                pointsString = pointsString.concat("*" + abbreviations.get(AngleType.SCROLL));
+                            } else if (card.isJarToReceivePoints()) {
+                                pointsString = pointsString.concat("*" + abbreviations.get(AngleType.JAR));
+                            } else if (card.isFeatherToReceivePoints()) {
+                                pointsString = pointsString.concat("*" + abbreviations.get(AngleType.FEATHER));
+                            } else if (card.isCoverAngleToReceivePoints()) {
+                                pointsString = pointsString.concat("*angCov");
+                            }
+                            nSpaces = cornerDistance - pointsString.length();
+                            if (nSpaces % 2 == 0) {
+                                evenNSpaces = true;
+                            } else {
+                                evenNSpaces = false;
+                            }
+                            nSpaces = nSpaces / 2;
+                            for (int i = 0; i < nSpaces; i++) {
+                                pointsString = " " + pointsString + " ";
+                            }
+                            if (!evenNSpaces) {
+                                pointsString = " " + pointsString;
+                            }
+                            secondRow = secondRow.concat(pointsString);
+                        } else {
+                            secondRow = secondRow.concat("               ");
+                        }
+
+                        if (!card.get_front_up_right().equals(AngleType.ABSENT)) {
+                            secondRow = secondRow.concat(cardColor + "| " + rst + abbreviations.get(card.get_front_up_right()) + cardColor + "|" + rst);
+                            thirdRow = thirdRow.concat(cardColor + "|__|" + rst);
+                        } else {
+                            secondRow = secondRow.concat(cardColor + "   |" + rst);
+                            thirdRow = thirdRow.concat(cardColor + "   |" + rst);
+                        }
+
+                        //fourth Row
+                        fourthRow = fourthRow.concat(cardColor + "|                     |" + rst);
+
+                        //fifth Row
+                        fifthRow = fifthRow.concat(cardColor + "|" + rst);
+                        sixthRow = sixthRow.concat(cardColor + "|" + rst);
+                        seventhRow = seventhRow.concat(cardColor + "|" + rst);
+
+                        if (!card.get_front_down_left().equals(AngleType.ABSENT)) {
+                            fifthRow = fifthRow.concat(cardColor + "__" + rst);
+                            sixthRow = sixthRow.concat(abbreviations.get(card.get_front_down_left()) + cardColor + " |" + rst);
+                            seventhRow = seventhRow.concat(cardColor + "__|_______________" + rst);
+                        } else {
+                            fifthRow = fifthRow.concat("  ");
+                            sixthRow = sixthRow.concat("   ");
+                            seventhRow = seventhRow.concat(cardColor + "__________________" + rst);
+                        }
+                        fifthRow = fifthRow.concat("                 ");
+
+                        pointsString = "";
+                        nSpaces = 0;
+                        int k = 0;
+                        if (!card.getNeededResources().keySet().isEmpty()) {
+                            for (AngleType a : card.getNeededResources().keySet()) {
+                                if ((card.getNeededResources().keySet().size() != 1) && (k != card.getNeededResources().keySet().size() - 1)) {
+                                    k++;
+                                    pointsString = pointsString.concat(ANSIFormatter.ANSI_RED + card.getNeededResources().get(a) + "*" + abbreviations.get(a) + ", " + ANSIFormatter.ANSI_RESET);
+                                } else {
+                                    pointsString = pointsString.concat(ANSIFormatter.ANSI_RED + card.getNeededResources().get(a) + "*" + abbreviations.get(a) + ANSIFormatter.ANSI_RESET);
+                                }
+                                nSpaces += 9;
+                            }
+                            nSpaces = nSpaces + cornerDistance - pointsString.length();
+                            if (nSpaces % 2 == 0) {
+                                evenNSpaces = true;
+                            } else {
+                                evenNSpaces = false;
+                            }
+                            nSpaces = nSpaces / 2;
+                            for (int i = 0; i < nSpaces; i++) {
+                                pointsString = " " + pointsString + " ";
+                            }
+                            if (!evenNSpaces) {
+                                pointsString = " " + pointsString;
+                            }
+                            sixthRow = sixthRow.concat(pointsString);
+                        } else {
+                            sixthRow = sixthRow.concat("               ");
+                        }
+
+                        if (!card.get_front_down_right().equals(AngleType.ABSENT)) {
+                            fifthRow = fifthRow.concat(cardColor + "__|" + rst);
+                            sixthRow = sixthRow.concat(cardColor + "| " + rst + abbreviations.get(card.get_front_down_right()) + cardColor + "|" + rst);
+                            seventhRow = seventhRow.concat(cardColor + "|__|" + rst);
+                        } else {
+                            fifthRow = fifthRow.concat(cardColor + "  |" + rst);
+                            sixthRow = sixthRow.concat(cardColor + "   |" + rst);
+                            seventhRow = seventhRow.concat(cardColor + "___|" + rst);
+                        }
                     }
 
-                    if (!card.get_front_down_right().equals(AngleType.ABSENT)) {
-                        fifthRow = fifthRow.concat(cardColor + "__|" + rst);
-                        sixthRow = sixthRow.concat(cardColor + "| " + rst + abbreviations.get(card.get_front_down_right()) + cardColor + "|" + rst);
-                        seventhRow = seventhRow.concat(cardColor + "|__|" + rst);
-                    } else {
-                        fifthRow = fifthRow.concat(cardColor + "  |" + rst);
-                        sixthRow = sixthRow.concat(cardColor + "   |" + rst);
-                        seventhRow = seventhRow.concat(cardColor + "___|" + rst);
-                    }
+                    indexString = indexString.concat("     ");
+                    firstRow = firstRow.concat("      ");
+                    secondRow = secondRow.concat("     ");
+                    thirdRow = thirdRow.concat("     ");
+                    fourthRow = fourthRow.concat("     ");
+                    fifthRow = fifthRow.concat("     ");
+                    sixthRow = sixthRow.concat("     ");
+                    seventhRow = seventhRow.concat("     ");
+
                 }
-
-                indexString = indexString.concat("     ");
-                firstRow = firstRow.concat("      ");
-                secondRow = secondRow.concat("     ");
-                thirdRow = thirdRow.concat("     ");
-                fourthRow = fourthRow.concat("     ");
-                fifthRow = fifthRow.concat("     ");
-                sixthRow = sixthRow.concat("     ");
-                seventhRow = seventhRow.concat("     ");
-
             }
+            System.out.println(ANSIFormatter.ANSI_CYAN + "FRONT:" + ANSIFormatter.ANSI_RESET);
+            if (!indexString.isBlank()) {
+                System.out.println(ANSIFormatter.ANSI_YELLOW + indexString + ANSIFormatter.ANSI_RESET);
+            }
+            System.out.println(firstRow);
+            System.out.println(secondRow);
+            System.out.println(thirdRow);
+            System.out.println(fourthRow);
+            System.out.println(fifthRow);
+            System.out.println(sixthRow);
+            System.out.println(seventhRow);
         }
-        System.out.println(ANSIFormatter.ANSI_CYAN + "FRONT:" + ANSIFormatter.ANSI_RESET);
-        if (!indexString.isBlank()) {
-            System.out.println(ANSIFormatter.ANSI_YELLOW + indexString + ANSIFormatter.ANSI_RESET);
-        }
-        System.out.println(firstRow);
-        System.out.println(secondRow);
-        System.out.println(thirdRow);
-        System.out.println(fourthRow);
-        System.out.println(fifthRow);
-        System.out.println(sixthRow);
-        System.out.println(seventhRow);
 
         //BACK
         firstRow = "";
@@ -728,10 +727,14 @@ public class InterfaceTUI implements Serializable {
      *
      * @param playerDeck is the collection of cards the Player has in his hands
      */
-    public void printHand(PlayableCard[] playerDeck) {
-        System.out.println("The card you've got are:");
+    public void printHand(PlayableCard[] playerDeck, boolean isOwner) {
         List<PlayableCard> cards = new ArrayList<>(Arrays.asList(playerDeck));
-        printPlayableCards(cards);
+        if(isOwner) {
+            System.out.println("The card you've got are:");
+            printPlayableCards(cards, false);
+        }else{
+            printPlayableCards(cards, true);
+        }
     }
 
 
@@ -1773,7 +1776,7 @@ public class InterfaceTUI implements Serializable {
         }
         tmp.addAll(visibileCards);
 
-        printPlayableCards(tmp);
+        printPlayableCards(tmp, false);
     }
 
 
@@ -1822,7 +1825,7 @@ public class InterfaceTUI implements Serializable {
                     printMenu(isPlaying);
                 } else {
                     intValue = Integer.parseInt(value);
-                    if ((intValue >= 0) && (intValue <= 9) || (isPlaying && intValue == 10)) {
+                    if ((intValue >= 0) && (intValue <= 7) || (isPlaying && intValue == 8)) {
                         return intValue;
                     } else {
                         System.out.println("Please, insert one of the possible values.");

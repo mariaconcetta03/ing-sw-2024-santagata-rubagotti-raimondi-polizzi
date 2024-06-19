@@ -242,7 +242,7 @@ public class ClientSCK implements ClientGeneralInterface {
                 this.chooseNickname(nickname);
                 ok=true;
                 if(errorState&&!aDisconnectionHappened){
-                    System.out.println("Nickname is already taken! Please try again.");
+                    System.out.println(ANSIFormatter.ANSI_RED+"Nickname is already taken! Please try again."+ANSIFormatter.ANSI_RESET);
                     errorState=false;
                     ok=false;
                 }else if(aDisconnectionHappened){
@@ -250,7 +250,7 @@ public class ClientSCK implements ClientGeneralInterface {
                 }
             }
             personalPlayer.setNickname(nickname);
-            System.out.println("Nickname correctly selected!");
+            System.out.println(ANSIFormatter.ANSI_GREEN+"Nickname correctly selected!"+ANSIFormatter.ANSI_RESET);
 
             this.checkAvailableLobby();
             printLobby(lobbyId);
@@ -299,7 +299,7 @@ public class ClientSCK implements ClientGeneralInterface {
                             }
                         }
                         createLobby(personalPlayer.getNickname(), gameSelection);
-                        System.out.println("Successfully created a new lobby with id: " + this.gameID);
+                        System.out.println(ANSIFormatter.ANSI_GREEN+"Successfully created a new lobby with id: " + this.gameID+ANSIFormatter.ANSI_RESET);
                     } else if (lobbyId.contains(gameSelection)) {
                             System.out.println("Joining the " + gameSelection + " lobby...");
                             addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
@@ -309,7 +309,7 @@ public class ClientSCK implements ClientGeneralInterface {
                             }else if(aDisconnectionHappened){
                                 handleDisconnection();
                             } else {
-                                System.out.println("Successfully joined the lobby with id: " + this.gameID);
+                                System.out.println(ANSIFormatter.ANSI_GREEN+"Successfully joined the lobby with id: " + this.gameID+ANSIFormatter.ANSI_RESET);
                                 ok=true;
                                 checkNPlayers(); // this method in the server side makes the game start
                             }
@@ -727,7 +727,7 @@ public class ClientSCK implements ClientGeneralInterface {
                         new Thread(()->{
                             boolean ok = false;
                             while (!ok) {
-                                tuiView.printHand(personalPlayer.getPlayerDeck());
+                                tuiView.printHand(personalPlayer.getPlayerDeck(), true);
                                 try {
                                     ObjectiveCard tmp=tuiView.askChoosePersonalObjective(sc, personalPlayer.getPersonalObjectives());
                                     chooseObjectiveCard(personalPlayer.getNickname(),tmp);
@@ -1117,7 +1117,9 @@ public class ClientSCK implements ClientGeneralInterface {
                     }
                 }, 0, 10000);
 
-            }
+            } else if (gameState.equals(Game.GameState.ENDED)) {
+            System.out.println(ANSIFormatter.ANSI_RED + "\nThe game has ended.\n" + ANSIFormatter.ANSI_RESET);
+        }
         } else if (selectedView == 2) {
             if(gameState.equals(Game.GameState.STARTED)) {
                 inGame = true;
@@ -1184,6 +1186,7 @@ public class ClientSCK implements ClientGeneralInterface {
         if(selectedView==1) {
             int intChoice=tuiView.showMenuAndWaitForSelection(this.getIsPlaying(),this.console);
             boolean ok;
+            String nickname;
             if(intChoice!=-1) {
                     switch (intChoice) {
                         case 0:
@@ -1197,7 +1200,18 @@ public class ClientSCK implements ClientGeneralInterface {
                             }
                             break;
                         case 1:
-                            tuiView.printHand(personalPlayer.getPlayerDeck());
+                            ok = false;
+                            System.out.println("Which player's hand do you want to see?");
+                            nickname = sc.next();
+                            for (Player player : playersInTheGame) {
+                                if (player.getNickname().equals(nickname)) {
+                                    ok = true;
+                                    tuiView.printHand(player.getPlayerDeck(), nickname.equals(personalPlayer.getNickname()));
+                                }
+                            }
+                            if (!ok) {
+                                System.out.println("There is no such player in this lobby! Try again.");
+                            }
                             break;
                         case 2:
                             List<ObjectiveCard> list = new ArrayList<>();
@@ -1217,7 +1231,7 @@ public class ClientSCK implements ClientGeneralInterface {
                         case 4:
                             ok = false;
                             System.out.println("Which player's board do you want to see?");
-                            String nickname = sc.next();
+                            nickname = sc.next();
                             for (Player player : playersInTheGame) {
                                 if (player.getNickname().equals(nickname)) {
                                     ok = true;
@@ -1237,39 +1251,6 @@ public class ClientSCK implements ClientGeneralInterface {
                         case 7: System.out.println(ANSIFormatter.ANSI_BLUE+"It's "+playersInTheGame.get(0).getNickname()+"'s turn!"+ANSIFormatter.ANSI_RESET);
                             break;
                         case 8:
-                            System.out.println("Do you want to send a message to everybody (type 1) or a private message (type the single nickname)?");
-                            String answer = sc.next();
-                            if (answer.equals("1")) {
-                                List<String> receivers = new ArrayList<>();
-                                for (Player p : playersInTheGame) {
-                                    if (!p.getNickname().equals(personalPlayer.getNickname())) {
-                                        receivers.add(p.getNickname());
-                                    }
-                                }
-                                System.out.println("Now type the message you want to send: ");
-                                answer = sc.nextLine();
-                                sendMessage(personalPlayer.getNickname(), receivers, answer);
-                            } else {
-                                ok = false;
-                                for (Player p : playersInTheGame) {
-                                    if (p.getNickname().equals(answer)) {
-                                        ok = true;
-                                    }
-                                }
-                                if (ok) {
-                                    List<String> receivers = new ArrayList<>();
-                                    receivers.add(answer);
-                                    System.out.println("Now type the message you want to send: ");
-                                    answer = sc.nextLine();
-                                    sendMessage(personalPlayer.getNickname(), receivers, answer);
-                                } else {
-                                    System.out.println("There is no such player in this lobby!");
-                                }
-                            }
-                            break;
-                        case 9:
-                            break;
-                        case 10:
                             boolean orientation = true;
                             PlayableCard card = null;
                             Coordinates coordinates;
@@ -1278,7 +1259,7 @@ public class ClientSCK implements ClientGeneralInterface {
                                 orientation = tuiView.askCardOrientation(sc);
                                 coordinates = tuiView.askCoordinates(sc, card, personalPlayer.getBoard());
                                 if (coordinates != null) {
-                                    if(coordinates.getX()!=-1) {
+                                    if (coordinates.getX() != -1) {
                                         this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
                                         if ((!errorState) && (lastMoves > playersInTheGame.size()) && !aDisconnectionHappened) {
                                             tmp = new ArrayList<>();
@@ -1290,16 +1271,14 @@ public class ClientSCK implements ClientGeneralInterface {
                                             this.drawCard(personalPlayer.getNickname(), card);
                                         } else if (aDisconnectionHappened && !showWinnerArrived) {
                                             handleDisconnection();
-                                        }else if(errorState){
-                                            System.out.println("You can't play this card! Returning to menu...");
-                                            errorState=false; //to be used the next time
+                                        } else if (errorState) {
+                                            System.out.println(ANSIFormatter.ANSI_RED + "You can't play this card! Returning to menu..." + ANSIFormatter.ANSI_RESET);
+                                            errorState = false; //to be used the next time
                                         }
                                     }
-                                } else {
-                                    System.out.println("The coordinates are null");
+                                }else{
+                                    System.out.println(ANSIFormatter.ANSI_RED+"You can't play this card! Returning to menu..."+ANSIFormatter.ANSI_RESET);
                                 }
-                            } else {
-                                System.out.println("The card is null");
                             }
                             break;
                         default:

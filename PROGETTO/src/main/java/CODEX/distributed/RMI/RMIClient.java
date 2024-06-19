@@ -487,10 +487,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                             personalPlayer.setNickname(nickname);
                             ok = true;
                         } catch (NicknameAlreadyTakenException ex) {
-                            System.out.println("Nickname is already taken! Please try again.");
+                            System.out.println(ANSIFormatter.ANSI_RED+"Nickname is already taken! Please try again."+ANSIFormatter.ANSI_RESET);
                         }
                     }
-                    System.out.println("Nickname correctly selected!");
+                    System.out.println(ANSIFormatter.ANSI_GREEN+"Nickname correctly selected!"+ANSIFormatter.ANSI_RESET);
                 }
                 if (!SRMIInterface.getAvailableGameControllersId().isEmpty()) {
                     System.out.println("If you want you can join an already created lobby. These are the ones available:");
@@ -547,7 +547,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         }
                         try {
                             createLobby(personalPlayer.getNickname(), gameSelection);
-                            System.out.println("Successfully created a new lobby with id: " + gameController.getId());
+                            System.out.println(ANSIFormatter.ANSI_GREEN+"Successfully created a new lobby with id: " + gameController.getId()+ANSIFormatter.ANSI_RESET);
                         }catch (IllegalArgumentException e){
                             ok=false;
                             gameSelection=-1;
@@ -558,7 +558,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                             try {
                                 System.out.println("Joining the " + gameSelection + " lobby...");
                                 addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
-                                System.out.println("Successfully joined the lobby with id: " + gameController.getId());
+                                System.out.println(ANSIFormatter.ANSI_GREEN+"Successfully joined the lobby with id: " + gameController.getId()+ANSIFormatter.ANSI_RESET);
                                 ok = true;
                                 gameController.checkNPlayers();
                             } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException e) {
@@ -584,6 +584,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         boolean ok = false;
         boolean read = false;
         int choice;
+        String nickname;
         if (selectedView == 1) {
             choice = tuiView.showMenuAndWaitForSelection(isPlaying, console);
             if (choice != -1) {
@@ -598,7 +599,18 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                             } catch (InputMismatchException ignored) {}
                             break;
                         case 1:
-                            tuiView.printHand(personalPlayer.getPlayerDeck());
+                            ok = false;
+                            System.out.println("Which player's hand do you want to see?");
+                            nickname = sc.next();
+                            for (Player player : playersInTheGame) {
+                                if (player.getNickname().equals(nickname)) {
+                                    ok = true;
+                                    tuiView.printHand(player.getPlayerDeck(), nickname.equals(personalPlayer.getNickname()));
+                                }
+                            }
+                            if (!ok) {
+                                System.out.println("There is no such player in this lobby! Try again.");
+                            }
                             break;
                         case 2:
                             List<ObjectiveCard> list = new ArrayList<>();
@@ -618,7 +630,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         case 4:
                             ok = false;
                             System.out.println("Which player's board do you want to see?");
-                            String nickname = sc.next();
+                            nickname = sc.next();
                             for (Player player : playersInTheGame) {
                                 if (player.getNickname().equals(nickname)) {
                                     ok = true;
@@ -640,41 +652,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                             System.out.println(ANSIFormatter.ANSI_BLUE + "It's " + playersInTheGame.get(0).getNickname() + "'s turn!" + ANSIFormatter.ANSI_RESET);
                             break;
                         case 8:
-                            System.out.println("Do you want to send a message to everybody (type 1) or a private message (type the single nickname)?");
-                            String answer = sc.next();
-                            sc.nextLine();
-                            if (answer.equals("1")) {
-                                List<String> receivers = new ArrayList<>();
-                                for (Player p : playersInTheGame) {
-                                    if (!p.getNickname().equals(personalPlayer.getNickname())) {
-                                        receivers.add(p.getNickname());
-                                    }
-                                }
-                                System.out.println("Now type the message you want to send: ");
-                                answer = sc.nextLine();
-                                sendMessage(personalPlayer.getNickname(), receivers, answer);
-                            } else {
-                                ok = false;
-                                for (Player p : playersInTheGame) {
-                                    if (p.getNickname().equals(answer)) {
-                                        ok = true;
-                                    }
-                                }
-                                if (ok) {
-                                    List<String> receivers = new ArrayList<>();
-                                    receivers.add(answer);
-                                    System.out.println("Now type the message you want to send: ");
-                                    answer = sc.nextLine();
-                                    sendMessage(personalPlayer.getNickname(), receivers, answer);
-                                    System.out.println("Message correctly sent!");
-                                } else {
-                                    System.out.println("There is no such player in this lobby! Try again.");
-                                }
-                            }
-                            break;
-                        case 9:
-                            break;
-                        case 10:
                             boolean orientation = true;
                             PlayableCard card = null;
                             Coordinates coordinates;
@@ -697,11 +674,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                                                 this.drawCard(personalPlayer.getNickname(), card);
                                             }
                                         } catch (IllegalArgumentException e) {
-                                            System.out.println("You can't play this card! Returning to menu...");
+                                            System.out.println(ANSIFormatter.ANSI_RED+"You can't play this card! Returning to menu..."+ANSIFormatter.ANSI_RESET);
                                         }
                                     }
                                 } else {
-                                    System.out.println("You can't play this card! Returning to menu...");
+                                    System.out.println(ANSIFormatter.ANSI_RED+"You can't play this card! Returning to menu..."+ANSIFormatter.ANSI_RESET);
                                 }
                             }
                             break;
@@ -832,7 +809,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     executor.execute(() -> {
                         boolean ok = false;
                         while (!ok) {
-                            tuiView.printHand(personalPlayer.getPlayerDeck());
+                            tuiView.printHand(personalPlayer.getPlayerDeck(), true);
                             try {
                                 ObjectiveCard tmp = tuiView.askChoosePersonalObjective(sc, personalPlayer.getPersonalObjectives());
                                 chooseObjectiveCard(personalPlayer.getNickname(), tmp);
@@ -1124,6 +1101,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     try {
                         gameController.heartbeat(this.personalPlayer.getNickname());
                     } catch (RemoteException e) {
+                        e.printStackTrace();
                         aDisconnectionHappened = true;
                         if (selectedView == 1) {
                             System.out.println("remote in update game state");
@@ -1141,7 +1119,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             if (gameState.equals(Game.GameState.STARTED)) {
                 System.out.println(ANSIFormatter.ANSI_RED + "The game has started!" + ANSIFormatter.ANSI_RESET);
                 executor = Executors.newCachedThreadPool();
-            } else if (gameState.equals(Game.GameState.ENDING)) {
+            } else if (gameState.equals(Game.GameState.ENDING)) { //@TODO da rimuovere post test
                 System.out.println(ANSIFormatter.ANSI_RED + "Ending condition triggered: someone reached 20 points or both the deck are finished." + ANSIFormatter.ANSI_RESET);
             } else if (gameState.equals(Game.GameState.ENDED)) {
                 System.out.println(ANSIFormatter.ANSI_RED + "\nThe game has ended.\n" + ANSIFormatter.ANSI_RESET);
