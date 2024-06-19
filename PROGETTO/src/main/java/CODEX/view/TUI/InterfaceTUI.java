@@ -352,6 +352,14 @@ public class InterfaceTUI implements Serializable {
         printDrawableCards(goldDeck, resourceDeck, visibileCards);
         PlayableCard returnCard;
         int cardIndex = -1;
+
+        List<PlayableCard> notNullCards= new ArrayList<>();
+        for(PlayableCard p: visibileCards){
+            if(p!=null){
+                notNullCards.add(p);
+            }
+        }
+
         while (true) {
             System.out.println("Which card do you want to draw? Type 0 for the top goldDeck, 1 for the top resourceDeck.");
             System.out.println("Type the index for one of the visible cards");
@@ -371,8 +379,8 @@ public class InterfaceTUI implements Serializable {
                     } catch (EmptyStackException e) {
                         System.out.println("The gold deck is finished! Draw another card.");
                     }
-                } else if ((cardIndex > 1) && (cardIndex < 2 + visibileCards.size())) {
-                    returnCard = visibileCards.get(cardIndex - 2);
+                } else if ((cardIndex > 1) && (cardIndex < 2 + notNullCards.size())) {
+                    returnCard = notNullCards.get(cardIndex - 2);
                     if (returnCard == null) {
                         System.out.println("Not a valid index, try again.");
                     } else {
