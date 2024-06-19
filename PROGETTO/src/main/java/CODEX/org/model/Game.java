@@ -63,6 +63,7 @@ public class Game extends Observable implements Serializable {
     private final List<Pawn> alreadySelectedColors;
     private ErrorsAssociatedWithExceptions lastEvent; // this flag gives some essential information about the last event which occurred in this Game
     private int lastMoves;
+    private final Object gameStateIsChangingLock= new Object();
 
 
 
@@ -651,6 +652,15 @@ public class Game extends Observable implements Serializable {
     }
 
 
+    /**
+     * Getter method
+     * @return a lock used in class GameController (disconnection())
+     */
+    public Object getGameStateIsChangingLock() {
+        return gameStateIsChangingLock;
+    }
+
+
 
     /**
      * Setter method
@@ -677,14 +687,16 @@ public class Game extends Observable implements Serializable {
      * @param state of the game
      */
     public void setState (GameState state) {
-        this.state = state;
-        boolean theGameHasJustStarted;
-        if(this.state.equals(GameState.STARTED)){
-            theGameHasJustStarted=true;
-        }else {
-            theGameHasJustStarted=false;
+        synchronized (gameStateIsChangingLock) {
+            this.state = state;
+            boolean theGameHasJustStarted;
+            if (this.state.equals(GameState.STARTED)) {
+                theGameHasJustStarted = true;
+            } else {
+                theGameHasJustStarted = false;
+            }
+            notifyObservers(new updateGameStateEvent(this.state, theGameHasJustStarted));
         }
-        notifyObservers(new updateGameStateEvent(this.state,theGameHasJustStarted));
     }
 
 
