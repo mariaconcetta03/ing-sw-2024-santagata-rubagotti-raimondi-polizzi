@@ -31,5 +31,8 @@ public interface Observer {
      * @param aDisconnectionHappened true in a disconnection happened, false otherwise
      */
     void setADisconnectionHappened(boolean aDisconnectionHappened);
+
+
+    void setShowWinnerEvent(boolean b);
 }
 

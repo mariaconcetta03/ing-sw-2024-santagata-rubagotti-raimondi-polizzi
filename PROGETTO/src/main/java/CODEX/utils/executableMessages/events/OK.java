@@ -22,7 +22,7 @@ public class OK implements Event{
     @Override
     public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.okEventExecute(this.nickname);
-        return true;
+        return false;
     }
 
 

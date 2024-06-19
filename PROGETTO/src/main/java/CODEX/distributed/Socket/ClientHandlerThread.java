@@ -46,7 +46,8 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     private boolean pongReceived;
     private Timer timer;
     private boolean aDisconnectionHappened=false;
-
+    private boolean check=false;
+    private boolean showWinnerEvent=false;
 
 
     /**
@@ -97,7 +98,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                         }
                         timer.cancel(); // stops the timer
 
-                        if (gameController != null) {
+                        if (gameController != null&&check) {
                             gameController.disconnection();
                         }
 
@@ -125,8 +126,9 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
      */
     @Override
     public void update(Observable obs, Event e) {
-        boolean check=e.executeSCKServerSide();
-        if(check){ // true if the gameState has changed to 'STARTED'
+        boolean checkTmp=e.executeSCKServerSide();
+        if(checkTmp){ // true if the gameState has changed to 'STARTED'
+            check= true;
             this.pongReceived=true; // initialization
             // isDaemon==true -> maintenance activities performed as long as the application is running
             this.timer = new Timer(true);
@@ -141,7 +143,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                  */
                 @Override
                 public void run() {
-                    if(pongReceived&& !aDisconnectionHappened) {
+                    if((pongReceived&& !aDisconnectionHappened)||showWinnerEvent) {
                         pongReceived=false;
                         CODEX.utils.executableMessages.serverMessages.ServerMessage serverMessage= new ServerPing();
                         writeTheStream(new SCKMessage(serverMessage));
@@ -155,7 +157,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                         } catch (IOException e) { // needed for the close clause
                         }
                         timer.cancel(); // stops the timer
-                        if (gameController != null) {
+                        if (gameController != null&&check) {
                             gameController.disconnection();
                         }
                     }
@@ -426,7 +428,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
 
                 }
                 timer.cancel(); // stops the timer
-                if (gameController != null) {
+                if (gameController != null&&check) {
                     gameController.disconnection();
                 }
 
@@ -465,6 +467,16 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
      */
     public void setPongReceived(Boolean received){
         this.pongReceived=received;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param b if there's been showWinner event true, false otherwise
+     */
+    public void setShowWinnerEvent(boolean b) {
+        this.showWinnerEvent = b;
     }
 
 }
