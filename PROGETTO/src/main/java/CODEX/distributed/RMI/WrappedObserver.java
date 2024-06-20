@@ -32,8 +32,7 @@ public class WrappedObserver implements Observer {
     private boolean aDisconnectionHappened = false;
     private ExecutorService executor;
     private ConcurrentLinkedQueue<Event> eventQueue = new ConcurrentLinkedQueue<>();
-
-
+    private boolean showWinnerEvent=false;
 
 
 
@@ -53,24 +52,17 @@ public class WrappedObserver implements Observer {
         WrappedObserver wrappedObserver=this;
         executor= Executors.newSingleThreadExecutor();
         executor.execute(()-> {
-            Event event;
-            boolean lastEvent;
-            while (!aDisconnectionHappened&&!Thread.currentThread().isInterrupted()) {
-                event = null;
-                lastEvent = false;
-                while ((!lastEvent||event!=null)&&!aDisconnectionHappened) {
-                    event = eventQueue.poll();
-                    if (event != null) {
-                        try {
-                            lastEvent = event.execute(remoteClient, wrappedObserver);
-                        } catch (RemoteException e) {
-                            aDisconnectionHappened = true;
-                            gameController.disconnection();
-                            e.printStackTrace();
-
-                        }
+            Event event=null;
+            while (!aDisconnectionHappened||showWinnerEvent) {
+                event = eventQueue.poll();
+                if (event != null) {
+                    try {
+                        event.execute(remoteClient, wrappedObserver);
+                    } catch (RemoteException e) {
+                        aDisconnectionHappened = true;
+                        gameController.disconnection();
+                        e.printStackTrace();
                     }
-
                 }
             }
         });
@@ -134,5 +126,15 @@ public class WrappedObserver implements Observer {
      */
     public void setADisconnectionHappened(boolean aDisconnectionHappened) {
         this.aDisconnectionHappened = aDisconnectionHappened;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param b if there's been showWinner event true, false otherwise
+     */
+    public void setShowWinnerEvent(boolean b) {
+        this.showWinnerEvent = b;
     }
 }

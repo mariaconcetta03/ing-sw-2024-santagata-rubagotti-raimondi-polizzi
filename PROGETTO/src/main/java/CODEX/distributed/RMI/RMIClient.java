@@ -76,6 +76,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private Settings networkSettings;
     private GUILobbyController guiLobbyController = null;
     private boolean showWinnerArrived=false;
+    private boolean firstHandleDisconnectionFunctionCalled=false;
 
 
     @Override
@@ -1137,6 +1138,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     @Override
     public void showWinner(Map<Integer, List<String>> finalScoreBoard) throws RemoteException {
         showWinnerArrived=true;
+        System.out.println("showWinner has arrived");
         synchronized (actionLock){
             actionLock.notify(); //to stop the waiting of something that will never arrive
         }
@@ -1218,7 +1220,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             if (selectedView == 1) {
                 if(!showWinnerArrived) {
                     aDisconnectionHappened = true;
-                    System.out.println(ANSIFormatter.ANSI_RED+"A disconnection happened. Closing the game."+ANSIFormatter.ANSI_RESET);
                     handleDisconnectionFunction();
                 }
             }
@@ -1237,26 +1238,32 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      * This method manages disconnections
      */
     public synchronized void handleDisconnectionFunction() {
-        inGame = false;
-        if (this.executor != null) {
-            this.executor.shutdown();
-        }
-        if (this.schedulerToCheckReceivedHeartBeat != null) {
-            this.schedulerToCheckReceivedHeartBeat.shutdown();
-        }
-        if (this.schedulerToSendHeartbeat != null) {
-            this.schedulerToSendHeartbeat.shutdown();
-            // firstly closing the heart beat
-        }
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                System.out.println("timer sta facendo exit");
-                System.exit(0); //status 0 -> no errors
+        if(!firstHandleDisconnectionFunctionCalled) {
+            firstHandleDisconnectionFunctionCalled = true;
+            if (selectedView == 1) {
+                System.out.println(ANSIFormatter.ANSI_RED + "A disconnection happened. Closing the game." + ANSIFormatter.ANSI_RESET);
             }
+            inGame = false;
+            if (this.executor != null) {
+                this.executor.shutdown();
+            }
+            if (this.schedulerToCheckReceivedHeartBeat != null) {
+                this.schedulerToCheckReceivedHeartBeat.shutdown();
+            }
+            if (this.schedulerToSendHeartbeat != null) {
+                this.schedulerToSendHeartbeat.shutdown();
+                // firstly closing the heart beat
+            }
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    System.out.println("timer sta facendo exit");
+                    System.exit(0); //status 0 -> no errors
+                }
 
-        }, 2000);
+            }, 2000);
+        }
     }
 
 

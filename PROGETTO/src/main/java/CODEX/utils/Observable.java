@@ -69,4 +69,14 @@ public class Observable {
         }
     }
 
+
+    /**
+     * This method is used to notify a showWinner event
+     */
+    public void notifyWinner() {
+        for (int i = 0; i < observers.size(); i++) {
+            observers.get(i).setShowWinnerEvent(true);
+        }
+    }
+
 }
