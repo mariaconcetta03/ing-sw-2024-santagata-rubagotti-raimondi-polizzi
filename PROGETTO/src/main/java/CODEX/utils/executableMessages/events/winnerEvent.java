@@ -19,7 +19,7 @@ public class winnerEvent implements Event {
     @Override
     public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
         client.showWinner(finalScoreBoard);
-        return true;
+        return false;
     }
 
     @Override

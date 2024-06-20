@@ -1295,9 +1295,6 @@ public class ClientSCK implements ClientGeneralInterface {
      * This method manages disconnections
      */
     public synchronized void handleDisconnectionFunction(){
-        if(selectedView==1){
-            System.out.println(ANSIFormatter.ANSI_RED+"A disconnection happened. Closing the game."+ANSIFormatter.ANSI_RESET);
-        }
         // TUI + GUI
         running=false;
         inGame=false;

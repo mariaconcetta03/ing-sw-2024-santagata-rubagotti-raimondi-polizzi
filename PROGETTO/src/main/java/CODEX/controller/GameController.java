@@ -424,7 +424,6 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         }
         game.setLastEvent(new updatePlayersOrderEvent(game.getPlayers())); //lista aggiornata con i punti
         game.winner();
-        game.notifyWinner();
 
         //removing all the observers since the game will not continue
         for(Player p: game.getPlayers()){
@@ -522,17 +521,19 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      */
     public void disconnection(){
         synchronized (disconnectionLock) {
-            disconnection = true;
-            if (firstDisconnection) {
-                game.notifyDisconnectionEvent();
+            if(game!=null&&game.getState()!=null&&(game.getState().equals(Game.GameState.STARTED)||game.getState().equals(Game.GameState.ENDING)||game.getState().equals(Game.GameState.ENDED) )){
+                disconnection = true;
+                if (firstDisconnection) {
+                    game.notifyDisconnectionEvent();
 
-                for (Player p : gamePlayers) {
-                    serverController.getAllNicknames().remove(p.getNickname());
+                    for (Player p : gamePlayers) {
+                        serverController.getAllNicknames().remove(p.getNickname());
+                    }
+
+                    serverController.getAllGameControllers().remove(id);
+
+                    firstDisconnection = false;
                 }
-
-                serverController.getAllGameControllers().remove(id);
-
-                firstDisconnection = false;
             }
         }
     }
