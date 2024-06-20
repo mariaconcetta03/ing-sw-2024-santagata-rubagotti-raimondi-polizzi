@@ -973,6 +973,8 @@ public class GUIGameController {
 
                 }
             }
+        }else{
+            resourceDeck.setDisable(true);
         }
 
     }
@@ -1017,6 +1019,8 @@ public class GUIGameController {
 
                 }
             }
+        }else{
+            goldDeck.setDisable(true);
         }
     }
 
@@ -1026,35 +1030,38 @@ public class GUIGameController {
      * This method draws a card from resource card 1
      */
     public synchronized void drawCardFromRC1(){
-        if(emptySpace!=0&&!lastRound){
-            Integer temp=emptySpace;
-            emptySpace=0;
-            if(resourceCard1.getImage()!=null) {
-                if (temp == 1) {
-                    orientationCard1 = true;
-                    player1Card1.setImage(resourceCard1.getImage());
-                } else if (temp == 2) {
-                    orientationCard2 = true;
-                    player1Card2.setImage(resourceCard1.getImage());
-                } else if (temp == 3) {
-                    orientationCard3 = true;
-                    player1Card3.setImage(resourceCard1.getImage());
-                }
-                if (network == 2) {
+        if(resourceCard1.getImage()!=null) {
+            if (emptySpace != 0 && !lastRound) {
+                Integer temp = emptySpace;
+                emptySpace = 0;
+                if (resourceCard1.getImage() != null) {
+                    if (temp == 1) {
+                        orientationCard1 = true;
+                        player1Card1.setImage(resourceCard1.getImage());
+                    } else if (temp == 2) {
+                        orientationCard2 = true;
+                        player1Card2.setImage(resourceCard1.getImage());
+                    } else if (temp == 3) {
+                        orientationCard3 = true;
+                        player1Card3.setImage(resourceCard1.getImage());
+                    }
+                    if (network == 2) {
 
                         clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getResourceCard1());
 
-                } else if (network == 1) {
+                    } else if (network == 1) {
 
 
                         rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getResourceCard1());
 
 
+                    }
                 }
+
             }
-
+        }else{
+            resourceCard1.setDisable(true);
         }
-
     }
 
 
@@ -1063,32 +1070,36 @@ public class GUIGameController {
      * This method draws a card from resource card 2
      */
     public synchronized void drawCardFromRC2(){
-        if(emptySpace!=0&&!lastRound){
-            Integer temp=emptySpace;
-            emptySpace=0;
-            if(resourceCard2.getImage()!=null) {
-                if (temp == 1) {
-                    orientationCard1 = true;
-                    player1Card1.setImage(resourceCard2.getImage());
-                } else if (temp == 2) {
-                    orientationCard2 = true;
-                    player1Card2.setImage(resourceCard2.getImage());
-                } else if (temp == 3) {
-                    orientationCard3 = true;
-                    player1Card3.setImage(resourceCard2.getImage());
-                }
-                if (network == 2) {
+        if(resourceCard2.getImage()!=null) {
+            if (emptySpace != 0 && !lastRound) {
+                Integer temp = emptySpace;
+                emptySpace = 0;
+                if (resourceCard2.getImage() != null) {
+                    if (temp == 1) {
+                        orientationCard1 = true;
+                        player1Card1.setImage(resourceCard2.getImage());
+                    } else if (temp == 2) {
+                        orientationCard2 = true;
+                        player1Card2.setImage(resourceCard2.getImage());
+                    } else if (temp == 3) {
+                        orientationCard3 = true;
+                        player1Card3.setImage(resourceCard2.getImage());
+                    }
+                    if (network == 2) {
 
                         clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getResourceCard2());
 
-                } else if (network == 1) {
+                    } else if (network == 1) {
 
 
                         rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getResourceCard2());
 
 
+                    }
                 }
             }
+        }else{
+            resourceCard2.setDisable(true);
         }
 
     }
@@ -1099,34 +1110,37 @@ public class GUIGameController {
      * This method draws a card from gold card 1
      */
     public synchronized void drawCardFromGC1(){
-        if(emptySpace!=0&&!lastRound){
-            Integer temp=emptySpace;
-            emptySpace=0;
-            if(goldCard1.getImage()!=null) {
-                if (temp == 1) {
-                    orientationCard1 = true;
-                    player1Card1.setImage(goldCard1.getImage());
-                } else if (temp == 2) {
-                    orientationCard2 = true;
-                    player1Card2.setImage(goldCard1.getImage());
-                } else if (temp == 3) {
-                    orientationCard3 = true;
-                    player1Card3.setImage(goldCard1.getImage());
-                }
-                if (network == 2) {
+        if(goldCard1.getImage()!=null) {
+            if (emptySpace != 0 && !lastRound) {
+                Integer temp = emptySpace;
+                emptySpace = 0;
+                if (goldCard1.getImage() != null) {
+                    if (temp == 1) {
+                        orientationCard1 = true;
+                        player1Card1.setImage(goldCard1.getImage());
+                    } else if (temp == 2) {
+                        orientationCard2 = true;
+                        player1Card2.setImage(goldCard1.getImage());
+                    } else if (temp == 3) {
+                        orientationCard3 = true;
+                        player1Card3.setImage(goldCard1.getImage());
+                    }
+                    if (network == 2) {
 
                         clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getGoldCard1());
 
-                } else if (network == 1) {
+                    } else if (network == 1) {
 
 
                         rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getGoldCard1());
 
 
+                    }
                 }
             }
+        }else{
+            goldCard1.setDisable(true);
         }
-
     }
 
 
@@ -1135,35 +1149,38 @@ public class GUIGameController {
      * This method draws a card from gold card 2
      */
     public synchronized void drawCardFromGC2(){
-        if(emptySpace!=0&&!lastRound){
-            Integer temp=emptySpace;
-            emptySpace=0;
-            if(goldCard2.getImage()!=null) {
-                if (temp == 1) {
-                    orientationCard1 = true;
-                    player1Card1.setImage(goldCard2.getImage());
-                } else if (temp == 2) {
-                    orientationCard2 = true;
-                    player1Card2.setImage(goldCard2.getImage());
-                } else if (temp == 3) {
-                    orientationCard3 = true;
-                    player1Card3.setImage(goldCard2.getImage());
-                }
-                if (network == 2) {
+        if(goldCard2.getImage()!=null) {
+            if (emptySpace != 0 && !lastRound) {
+                Integer temp = emptySpace;
+                emptySpace = 0;
+                if (goldCard2.getImage() != null) {
+                    if (temp == 1) {
+                        orientationCard1 = true;
+                        player1Card1.setImage(goldCard2.getImage());
+                    } else if (temp == 2) {
+                        orientationCard2 = true;
+                        player1Card2.setImage(goldCard2.getImage());
+                    } else if (temp == 3) {
+                        orientationCard3 = true;
+                        player1Card3.setImage(goldCard2.getImage());
+                    }
+                    if (network == 2) {
 
                         clientSCK.drawCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getGoldCard2());
 
-                } else if (network == 1) {
+                    } else if (network == 1) {
 
 
                         rmiClient.drawCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getGoldCard2());
 
 
+                    }
                 }
+
             }
-
+        }else{
+            goldCard2.setDisable(true);
         }
-
     }
 
 
@@ -1702,7 +1719,7 @@ public class GUIGameController {
      * This method changes the scene
      * @param winners list of players who won the game or who tied
      */
-    public void changeScene(List<Player> winners) {
+    public void changeScene(Map <Integer, List<String>> winners) {
 
             // let's show the new window: winners and losers
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/winners.fxml"));
@@ -1756,7 +1773,6 @@ public class GUIGameController {
 
                     clientSCK.handleDisconnectionFunction();
 
-
                 }
             });
             delay.play();
@@ -1769,7 +1785,7 @@ public class GUIGameController {
      * This method updates the list of winners
      * @param winners of the game
      */
-    public void updateWinners(List<Player> winners) {
+    public void updateWinners(Map <Integer, List<String>> winners) {
         scheduler.shutdownNow(); //this is the scheduler that checks the disconnections of the other players
         Platform.runLater(() -> changeScene(winners));
     }

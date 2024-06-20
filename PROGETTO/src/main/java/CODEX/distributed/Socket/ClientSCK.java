@@ -808,16 +808,7 @@ public class ClientSCK implements ClientGeneralInterface {
         }
         if(selectedView==2){ //GUI
             if(guiGameController!=null){
-                Map<String, Player> players=new HashMap<>();
-                for(Player p: playersInTheGame){
-                    players.put(p.getNickname(), p);
-                }
-                List<Player> winners=new ArrayList<>();
-
-                for (String s : finalScoreBoard.get(1)) {
-                    winners.add(players.get(s));
-                }
-                guiGameController.updateWinners(winners);
+                guiGameController.updateWinners(finalScoreBoard );
             }
         }
     }
