@@ -31,7 +31,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     private boolean firstDisconnection = true;
     private Map <String, Long> lastHeartbeatTimesOfEachPlayer;
     private ServerController serverController;
-    private Game game=null;
+    private Game game;
     private int lastRounds;
     private int lastDrawingRounds;
     private List<Player> gamePlayers;
@@ -189,8 +189,11 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                 game.setState(Game.GameState.ENDING);
                 calculateLastMoves();
             }
-            if(lastDrawingRounds<=0){
-                nextPhase();
+
+            synchronized (this.game.getPlayers()) {
+                if (lastDrawingRounds <= 0) {
+                    nextPhase();
+                }
             }
         }
         game.setLastEvent(new OK(nickname));

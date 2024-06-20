@@ -24,7 +24,9 @@ public class updateBoardEvent implements Event {
 
     @Override
     public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
-        client.updateBoard(boardOwner, board, newCard);
+        synchronized (board.getPlayer().getGame().getPlayers()) {
+            client.updateBoard(boardOwner, board, newCard);
+        }
         return false;
     }
     @Override
