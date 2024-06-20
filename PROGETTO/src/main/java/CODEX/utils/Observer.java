@@ -23,7 +23,7 @@ public interface Observer {
      * Setter method
      * @param nickname chosen by the player
      */
-    public void setNickname(String nickname);
+    void setNickname(String nickname);
 
 
     /**

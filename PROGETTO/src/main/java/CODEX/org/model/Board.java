@@ -474,4 +474,14 @@ public class Board implements Serializable  {
     public Coordinates getRightLimit() {
         return rightLimit;
     }
+
+
+
+    /**
+     * Getter method
+     * @return the right player who owns this Board
+     */
+    public Player getPlayer() {
+        return player;
+    }
 }
