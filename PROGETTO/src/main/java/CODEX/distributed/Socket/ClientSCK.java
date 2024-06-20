@@ -1131,7 +1131,6 @@ public class ClientSCK implements ClientGeneralInterface {
             if (selectedView == 1) { //TUI
                 if(!showWinnerArrived) {
                     aDisconnectionHappened = true;
-                    System.out.println(ANSIFormatter.ANSI_RED+"A disconnection happened. Closing the game."+ANSIFormatter.ANSI_RESET);
                     handleDisconnectionFunction();
                 }
             } else if (selectedView == 2) {
@@ -1286,6 +1285,9 @@ public class ClientSCK implements ClientGeneralInterface {
      * This method manages disconnections
      */
     public synchronized void handleDisconnectionFunction(){
+        if(selectedView==1){
+            System.out.println(ANSIFormatter.ANSI_RED+"A disconnection happened. Closing the game."+ANSIFormatter.ANSI_RESET);
+        }
         // TUI + GUI
         running=false;
         inGame=false;
