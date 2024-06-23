@@ -12,11 +12,11 @@ import java.util.concurrent.TimeUnit;
 /**
  * This event is useful to communicate that the game state has changed
  */
-public class updateGameStateEvent implements Event{
+public class UpdateGameStateEvent implements Event{
         private Game.GameState gameState;
         private Boolean startCheckConnection; //this has to be initialized when the Event is instantiated
 
-        public updateGameStateEvent(Game.GameState gameState, boolean theGameHasJustStarted) {
+        public UpdateGameStateEvent(Game.GameState gameState, boolean theGameHasJustStarted) {
 
             this.gameState = gameState;
             this.startCheckConnection = theGameHasJustStarted;
@@ -53,7 +53,7 @@ public class updateGameStateEvent implements Event{
         }
 
     @Override
-        public boolean executeSCKServerSide() { //returns true when we are considering updateGameState and the new state is 'STARTED'
+        public boolean executeSCKServerSide() {
             return this.startCheckConnection;
 
         }

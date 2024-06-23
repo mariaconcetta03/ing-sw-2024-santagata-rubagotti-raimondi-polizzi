@@ -2,53 +2,58 @@ package CODEX.distributed;
 
 import CODEX.controller.ServerController;
 import CODEX.distributed.RMI.RMIServer;
-import CODEX.distributed.Socket.ClientSCK;
 import CODEX.distributed.Socket.ServerSCK;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.rmi.server.*;
 import java.util.Scanner;
 
 
 /**
  * This is the server. It launches both RMI and TCP Servers.
  */
-public class ServerLauncher extends UnicastRemoteObject {
-
+public class ServerLauncher {
 
 
     /**
      * Class constructor
-     * @throws RemoteException
      */
-    public ServerLauncher() throws RemoteException {}
-
+    public ServerLauncher() {
+    }
 
 
     /**
      * Main method
+     *
      * @param args unused
-     * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         ServerController serverController = new ServerController();
 
         String serverAddress = "";
         System.out.println("Insert Server's IP address (leave blank for localHost): ");
         Scanner sc = new Scanner(System.in);
         serverAddress = sc.nextLine();
-        if (serverAddress.equals("")) { // if string is empty then it uses localhost
+        if (serverAddress.equals("")) {
             System.setProperty("java.rmi.server.hostname", "127.0.0.1");
         } else {
-            System.setProperty("java.rmi.server.hostname", serverAddress); // choosing right address
+            System.setProperty("java.rmi.server.hostname", serverAddress);
         }
 
-        RMIServer rmiServer= new RMIServer(serverController);
-        rmiServer.startServer();
-
-        ServerSCK socketServer= new ServerSCK(serverController);
-        ServerSCK.Settings.setServerName(serverAddress);
-        socketServer.startServer();
+        try {
+            RMIServer rmiServer = new RMIServer(serverController);
+            rmiServer.startServer();
+        } catch (RemoteException e) {
+            System.out.println("Error while starting the RMI Server. Try again. Closing...");
+            System.exit(-1);
+        }
+        try {
+            ServerSCK socketServer = new ServerSCK(serverController);
+            socketServer.setServerName(serverAddress);
+            socketServer.startServer();
+        } catch (IOException e) {
+            System.out.println("Error while starting the TCP Server. Try again. Closing...");
+            System.exit(-1);
+        }
     }
 }

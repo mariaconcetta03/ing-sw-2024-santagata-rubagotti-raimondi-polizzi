@@ -10,12 +10,12 @@ import java.rmi.RemoteException;
 /**
  * This event is useful to communicate that gold deck has changed
  */
-public class updateGoldDeckEvent implements Event {
+public class UpdateGoldDeckEvent implements Event {
     /**
      * Constructor method
      * @param goldDeck is the card to be updated.
      */
-    public updateGoldDeckEvent(PlayableDeck goldDeck){
+    public UpdateGoldDeckEvent(PlayableDeck goldDeck){
         this.goldDeck=goldDeck;
     }
     private PlayableDeck goldDeck;
@@ -33,7 +33,7 @@ public class updateGoldDeckEvent implements Event {
     }
 
     @Override
-    public boolean executeSCKServerSide() { //returns true when we are considering updateGameState and the new state is 'STARTED'
+    public boolean executeSCKServerSide() {
         return false;
 
     }

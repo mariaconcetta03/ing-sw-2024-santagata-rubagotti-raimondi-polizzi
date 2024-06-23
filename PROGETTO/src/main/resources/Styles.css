@@ -1,22 +1,22 @@
 .background_pane {
     -fx-background-image: url("images/others/Intestazione_Codex_Naturalis.jpg");
-    -fx-background-size: cover; /* Adatta l'immagine all'AnchorPane */
+    -fx-background-size: cover; /* Adapts the image to the AnchorPane */
 }
 
 
 .loading_pane {
     -fx-background-image: url("images/others/Loading.png");
-    -fx-background-size: cover; /* Adatta l'immagine all'AnchorPane */
+    -fx-background-size: cover;
 }
 
 .tot {
     -fx-background-image: url("images/others/TotalBlack.png");
-    -fx-background-size: cover; /* Adatta l'immagine all'AnchorPane */
+    -fx-background-size: cover;
 }
 
 .game_pane {
     -fx-background-image: url("images/others/Game_Background.jpg");
-    -fx-background-size: cover; /* Adatta l'immagine all'AnchorPane */
+    -fx-background-size: cover;
 }
 
 

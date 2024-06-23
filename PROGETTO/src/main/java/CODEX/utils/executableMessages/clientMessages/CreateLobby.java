@@ -10,17 +10,16 @@ public class CreateLobby implements ClientMessage {
     private final int numOfPlayers;
 
 
-
     /**
      * This method is used to create a new lobby
+     *
      * @param creatorNickname player creator
-     * @param numOfPlayers in the lobby
+     * @param numOfPlayers    in the lobby
      */
     public CreateLobby(String creatorNickname, int numOfPlayers) {
         this.creatorNickname = creatorNickname;
         this.numOfPlayers = numOfPlayers;
     }
-
 
 
     @Override

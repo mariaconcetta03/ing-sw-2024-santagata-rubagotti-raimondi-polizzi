@@ -7,15 +7,17 @@ import java.io.Serializable;
  */
 
 public abstract class Card implements Serializable {
-    private int id; // each card has a different ID
+    private int id;
 
     /**
      * Default constructor
      */
-    public Card(){}
+    public Card() {
+    }
 
     /**
      * Getter method
+     *
      * @return the id of a card
      */
     public int getId() {
@@ -23,12 +25,12 @@ public abstract class Card implements Serializable {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param id of the card
      */
-    public void setId (int id) {
+    public void setId(int id) {
         this.id = id;
     }
 

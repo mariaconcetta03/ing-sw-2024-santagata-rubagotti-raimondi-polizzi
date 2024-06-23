@@ -3,33 +3,35 @@ package CODEX.utils.executableMessages.events;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.distributed.Socket.ClientSCK;
-import CODEX.org.model.ChatMessage;
+import CODEX.org.model.PlayableCard;
 import java.rmi.RemoteException;
 
-/**
- * This event is useful to communicate that one chat has been changed, because of
- * new messages, and so it needs to be updated
- */
-public class updateChatMessageEvent implements Event{
-    private ChatMessage messageToBeAdded;
-    private String chatIdentifier;
 
-    public updateChatMessageEvent(String chatIdentifier, ChatMessage messageToBeAdded){
-        this.chatIdentifier=chatIdentifier;
-        this.messageToBeAdded=messageToBeAdded;
+/**
+ * This event is useful to communicate that resource card 2 has changed
+ */
+public class UpdateResourceCard2Event implements Event {
+    private PlayableCard card;
+
+    public UpdateResourceCard2Event(PlayableCard card) {
+        this.card = card;
     }
+
     @Override
     public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
-return false;
+        client.updateResourceCard2(card);
+        return false;
     }
-
     @Override
     public void executeSCK(ClientSCK client) {
+
+            client.updateResourceCard2(card);
 
     }
 
     @Override
     public boolean executeSCKServerSide() {
         return false;
+
     }
 }

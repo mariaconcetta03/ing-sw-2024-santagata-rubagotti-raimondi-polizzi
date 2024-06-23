@@ -27,7 +27,7 @@ public class PlayerTest extends TestCase {
         Game game= new Game(players, 1);
         p1.setGame(game);
         p2.setGame(game);
-        game.setnPlayers(2);
+        game.setNPlayers(2);
         game.startGame();
         p1.playBaseCard(true, p1.getPlayerDeck()[0]);
         p2.playBaseCard(true, p2.getPlayerDeck()[0]);
@@ -80,7 +80,7 @@ public class PlayerTest extends TestCase {
         Player p1 = new Player();
         Player p2 = new Player();
         Game game = new Game(p1, 1);
-        game.setnPlayers(2);
+        game.setNPlayers(2);
         game.addPlayer(p2);
         p1.setGame(game);
         p2.setGame(game);

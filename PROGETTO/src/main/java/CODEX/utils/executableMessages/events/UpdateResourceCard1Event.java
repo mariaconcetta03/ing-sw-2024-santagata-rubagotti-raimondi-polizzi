@@ -3,34 +3,37 @@ package CODEX.utils.executableMessages.events;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.distributed.Socket.ClientSCK;
+import CODEX.org.model.PlayableCard;
 
 import java.rmi.RemoteException;
-import java.util.List;
-import java.util.Map;
+
+
 
 /**
- * This event is useful to communicate the winners of the game (and the ranking)
+ * This event is useful to communicate that resource card 1 has changed
  */
-public class winnerEvent implements Event {
-    Map<Integer, List<String>> finalScoreBoard;
-    public winnerEvent(Map<Integer, List<String>> finalScoreBoard){
-        this.finalScoreBoard=finalScoreBoard;
-    }
-    @Override
-    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
-        client.showWinner(finalScoreBoard);
-        return false;
+public class UpdateResourceCard1Event implements Event {
+    private PlayableCard card;
+
+    public UpdateResourceCard1Event(PlayableCard card) {
+        this.card = card;
     }
 
+    @Override
+    public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
+        client.updateResourceCard1(card);
+        return false;
+    }
     @Override
     public void executeSCK(ClientSCK client) {
 
-            client.showWinner(finalScoreBoard);
+            client.updateResourceCard1(card);
 
     }
 
     @Override
     public boolean executeSCKServerSide() {
         return false;
+
     }
 }

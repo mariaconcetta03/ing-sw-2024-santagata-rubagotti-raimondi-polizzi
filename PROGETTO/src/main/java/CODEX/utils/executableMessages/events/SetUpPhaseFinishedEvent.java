@@ -7,32 +7,22 @@ import CODEX.distributed.Socket.ClientSCK;
 import java.rmi.RemoteException;
 
 /**
- * This event is useful to communicate that an operation was completed successfully
- * and the client when receives it finishes his waiting activity
+ * This event is useful to communicate that the game can start because all the players have all that is need to start the game
  */
-public class OK implements Event {
-    private final String nickname; //this identifies the right receiver of this OK
-
-
-    public OK(String nickname) {
-        this.nickname = nickname;
-    }
-
-
+public class SetUpPhaseFinishedEvent implements Event {
     @Override
     public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
-        client.okEventExecute(this.nickname);
-        return true;
+        client.finishedSetUpPhase();
+        return false;
     }
-
-
     @Override
     public void executeSCK(ClientSCK client) {
+            client.finishedSetUpPhase();
     }
-
 
     @Override
     public boolean executeSCKServerSide() {
         return false;
+
     }
 }

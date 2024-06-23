@@ -10,14 +10,14 @@ public class ClientPong implements ClientMessage {
     /**
      * Default constructor
      */
-    public ClientPong(){
+    public ClientPong() {
 
     }
 
 
-
     /**
      * This method sets "PongReceived" to true
+     *
      * @param clientHandlerThread thread
      */
     @Override

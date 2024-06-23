@@ -4,33 +4,35 @@ import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.distributed.Socket.ClientSCK;
 import CODEX.org.model.PlayableCard;
+
 import java.rmi.RemoteException;
 
 
 /**
- * This event is useful to communicate that resource card 2 has changed
+ * This event is useful to communicate that gold card 2 has changed
  */
-public class updateResourceCard2Event implements Event {
-    private PlayableCard card;
+public class UpdateGoldCard2Event implements Event {
 
-    public updateResourceCard2Event(PlayableCard card) {
+    public UpdateGoldCard2Event(PlayableCard card) {
         this.card = card;
     }
 
+    private PlayableCard card;
+
     @Override
     public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
-        client.updateResourceCard2(card);
+        client.updateGoldCard2(card);
         return false;
     }
     @Override
     public void executeSCK(ClientSCK client) {
 
-            client.updateResourceCard2(card);
+            client.updateGoldCard2(card);
 
     }
 
     @Override
-    public boolean executeSCKServerSide() { //returns true when we are considering updateGameState and the new state is 'STARTED'
+    public boolean executeSCKServerSide() {
         return false;
 
     }

@@ -9,7 +9,6 @@ public class ServerOk implements ServerMessage {
     private final Integer gameId;
 
 
-
     /**
      * Class constructor default
      */
@@ -18,15 +17,14 @@ public class ServerOk implements ServerMessage {
     }
 
 
-
     /**
      * Class constructor
+     *
      * @param gameId game ID
      */
     public ServerOk(Integer gameId) {
         this.gameId = gameId;
     }
-
 
 
     @Override

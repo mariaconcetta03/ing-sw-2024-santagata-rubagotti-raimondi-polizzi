@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -63,9 +64,8 @@ public class GUILobbyController {
     private int network = 0; //1 = rmi  2 = sck
     private GUIPawnsController ctr;
     private Stage stage;
-    private Thread pointsThread=null;
-    boolean lobbyHasStarted=false;
-
+    private Thread pointsThread = null;
+    boolean lobbyHasStarted = false;
 
 
     /**
@@ -81,7 +81,6 @@ public class GUILobbyController {
         lobbyError3.setOpacity(1);
         joinButton.setOpacity(0);
     }
-
 
 
     /**
@@ -100,44 +99,40 @@ public class GUILobbyController {
     }
 
 
-
     /**
      * This method updates the available lobbies, if there are new ones
      */
     public void updateAvailableLobbies() {
         if (network == 1) { // RMI
 
-                availableLobbies.getItems().clear();
-                setAvailableLobbies(rmiClient.getAvailableLobbies());
-                if (rmiClient.getAvailableLobbies().isEmpty()) {
-                    showNoLobbyError();
-                } else {
-                    hideNoLobbyError();
-                }
+            availableLobbies.getItems().clear();
+            setAvailableLobbies(rmiClient.getAvailableLobbies());
+            if (rmiClient.getAvailableLobbies().isEmpty()) {
+                showNoLobbyError();
+            } else {
+                hideNoLobbyError();
+            }
 
         } else if (network == 2) { // TCP
 
-                 availableLobbies.getItems().clear();
-                 clientSCK.checkAvailableLobby();
-                 setAvailableLobbies(clientSCK.getAvailableLobbies().stream().toList());
-                 clientSCK.printLobby(clientSCK.getAvailableLobbies());
-                 if (clientSCK.getAvailableLobbies().isEmpty()) {
-                     showNoLobbyError();
-                 } else {
-                     hideNoLobbyError();
-                 }
+            availableLobbies.getItems().clear();
+            clientSCK.checkAvailableLobby();
+            setAvailableLobbies(clientSCK.getAvailableLobbies().stream().toList());
+            clientSCK.printLobby(clientSCK.getAvailableLobbies());
+            if (clientSCK.getAvailableLobbies().isEmpty()) {
+                showNoLobbyError();
+            } else {
+                hideNoLobbyError();
+            }
 
         }
     }
 
 
-
     /**
      * This method will change the scene to the next one, where the player has to choose the pawn
      */
-    public void changeScene(){
-
-        // let's show the new window!
+    public void changeScene() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/pawns.fxml"));
         Parent root = null;
         try {
@@ -151,11 +146,11 @@ public class GUILobbyController {
         stage.setOnCloseRequest(event -> {
             if (network == 1) {
 
-                    rmiClient.handleDisconnectionFunction();
+                rmiClient.handleDisconnectionFunction();
 
             } else if (network == 2) {
 
-                    clientSCK.handleDisconnectionFunction();
+                clientSCK.handleDisconnectionFunction();
 
             }
         });
@@ -164,11 +159,11 @@ public class GUILobbyController {
         stage.setOnCloseRequest(event -> {
             if (network == 1) {
 
-                    rmiClient.handleDisconnectionFunction();
+                rmiClient.handleDisconnectionFunction();
 
             } else if (network == 2) {
 
-                    clientSCK.handleDisconnectionFunction();
+                clientSCK.handleDisconnectionFunction();
 
             }
         });
@@ -178,14 +173,14 @@ public class GUILobbyController {
         ctr.setClientSCK(clientSCK);
         ctr.setRmiClient(rmiClient);
 
-       if (network == 1) {
+        if (network == 1) {
 
-               ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", now click the");
-               ctr.setColoredPawns();
-           } else if (network == 2) {
+            ctr.setLabelWithPlayerName(rmiClient.getPersonalPlayer().getNickname() + ", now click the");
+            ctr.setColoredPawns();
+        } else if (network == 2) {
 
-               ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", now click the");
-               ctr.setColoredPawns();
+            ctr.setLabelWithPlayerName(clientSCK.getPersonalPlayer().getNickname() + ", now click the");
+            ctr.setColoredPawns();
         }
 
         // old dimensions and position
@@ -200,13 +195,14 @@ public class GUILobbyController {
 
         ctr.startPeriodicDisconnectionCheck();
 
-        if(network==1){
+        if (network == 1) {
             synchronized (rmiClient.getGuiPawnsControllerLock()) {
                 rmiClient.setGuiPawnsController(ctr);
                 rmiClient.getGuiPawnsControllerLock().notify();
                 rmiClient.setDone(true);
             }
-        }if(network==2){
+        }
+        if (network == 2) {
             synchronized (clientSCK.getGuiPawnsControllerLock()) {
                 clientSCK.setGuiPawnsController(ctr);
                 clientSCK.getGuiPawnsControllerLock().notify();
@@ -222,7 +218,6 @@ public class GUILobbyController {
         stage.setX(x);
         stage.setY(y);
     }
-
 
 
     /**
@@ -248,7 +243,7 @@ public class GUILobbyController {
                 }
             } else if (network == 2) {
 
-                    clientSCK.addPlayerToLobby(clientSCK.getPersonalPlayer().getNickname(), availableLobbies.getValue());
+                clientSCK.addPlayerToLobby(clientSCK.getPersonalPlayer().getNickname(), availableLobbies.getValue());
 
                 if (clientSCK.getErrorState()) {
                     clientSCK.setErrorState(false);
@@ -264,38 +259,35 @@ public class GUILobbyController {
     }
 
 
-
     /**
      * This method is called when the player wants to create a new lobby
      */
-    public synchronized void createNewLobby(){
-            wrongNumber.setOpacity(0);
-            String input = createText.getText();
-            if (!input.isBlank() && (input.equals("2") || input.equals("3") || input.equals("4"))) {
-                if (network == 1) {
+    public synchronized void createNewLobby() {
+        wrongNumber.setOpacity(0);
+        String input = createText.getText();
+        if (!input.isBlank() && (input.equals("2") || input.equals("3") || input.equals("4"))) {
+            if (network == 1) {
 
-                        rmiClient.createLobby(rmiClient.getPersonalPlayer().getNickname(), Integer.parseInt(input));
+                rmiClient.createLobby(rmiClient.getPersonalPlayer().getNickname(), Integer.parseInt(input));
 
-                } else if (network==2) {
+            } else if (network == 2) {
 
-                        clientSCK.createLobby(clientSCK.getPersonalPlayer().getNickname(), Integer.parseInt(input));
-                }
-                updateAvailableLobbies();
-                setWaitingPlayers();
-            } else {
-                wrongNumber.setOpacity(1);
+                clientSCK.createLobby(clientSCK.getPersonalPlayer().getNickname(), Integer.parseInt(input));
             }
+            updateAvailableLobbies();
+            setWaitingPlayers();
+        } else {
+            wrongNumber.setOpacity(1);
+        }
     }
-
 
 
     /**
      * This method updates the game state to STARTED
      */
     public void updateGameState() {
-        lobbyHasStarted=true;
+        lobbyHasStarted = true;
     }
-
 
 
     /**
@@ -327,7 +319,7 @@ public class GUILobbyController {
         refreshButton.setDisable(true);
 
         // Dynamic text update in a separate thread
-        this.pointsThread= new Thread(() -> {
+        this.pointsThread = new Thread(() -> {
             while (!lobbyHasStarted) {
                 try {
                     // Update text on the JavaFX Application Thread
@@ -354,7 +346,6 @@ public class GUILobbyController {
     }
 
 
-
     /**
      * This method makes possible to use enter when joining a lobby or creating ones and so creatinng one
      */
@@ -367,47 +358,47 @@ public class GUILobbyController {
         });
 
         // CREATING A LOBBY
-        createText.setOnKeyPressed(event-> {
-            if(event.getCode() == KeyCode.ENTER){
+        createText.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
                 createNewLobby();
             }
         });
     }
 
 
-
     /**
      * Setter method
+     *
      * @param client which is the client of the player
      */
     public void setRmiClient(RMIClient client) {
-             this.rmiClient = client;
+        this.rmiClient = client;
     }
-
 
 
     /**
      * Setter method
+     *
      * @param client which is the client of the player
      */
-    public void setClientSCK (ClientSCK client) {
+    public void setClientSCK(ClientSCK client) {
         this.clientSCK = client;
     }
 
 
-
     /**
      * Setter method
+     *
      * @param network which is the type of client of the player
      */
-    public void setNetwork (int network) {
+    public void setNetwork(int network) {
         this.network = network;
     }
 
 
-
     /**
      * Setter method
+     *
      * @param stage of the scene which will be changed here
      */
     public void setStage(Stage stage) {
@@ -415,9 +406,9 @@ public class GUILobbyController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param text which is the name of the player
      */
     public void setLabelWithPlayerName(String text) {
@@ -425,13 +416,13 @@ public class GUILobbyController {
     }
 
 
-
     /**
      * Setter method
-     * @param lobby sets the avialable lobbies to which the player can partecipate
+     *
+     * @param lobby sets the available lobbies to which the player can partecipate
      */
-    public void setAvailableLobbies(List<Integer> lobby){
-        for (int i = 0; i < lobby.size(); i++){
+    public void setAvailableLobbies(List<Integer> lobby) {
+        for (int i = 0; i < lobby.size(); i++) {
             availableLobbies.getItems().add(lobby.get(i));
         }
         if (lobby.isEmpty()) {

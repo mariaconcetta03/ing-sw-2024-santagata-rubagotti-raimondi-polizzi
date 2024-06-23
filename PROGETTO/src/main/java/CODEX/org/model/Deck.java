@@ -7,15 +7,14 @@ import java.util.*;
  * This abstract class represents a deck of cards of the same type
  */
 public abstract class Deck implements Serializable {
-    private Stack<? extends Card> cards; // all the cards into deck
-
+    private Stack<? extends Card> cards;
 
 
     /**
      * Default constructor
      */
-    public Deck(){}
-
+    public Deck() {
+    }
 
 
     /**
@@ -26,9 +25,9 @@ public abstract class Deck implements Serializable {
     }
 
 
-
     /**
      * Check if the deck is finished (contains no more cards)
+     *
      * @return true if the deck is finished, false if it's not
      */
     public boolean isFinished() { // if the deck it's finished, then returns TRUE. If it's not, then returns FALSE

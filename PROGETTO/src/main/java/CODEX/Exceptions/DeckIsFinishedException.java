@@ -9,6 +9,7 @@ public class DeckIsFinishedException extends Exception implements ExceptionAssoc
 
     /**
      * Class constructor
+     *
      * @param errormessage is the message we want to give
      */
     public DeckIsFinishedException(String errormessage) {
@@ -17,7 +18,7 @@ public class DeckIsFinishedException extends Exception implements ExceptionAssoc
 
     @Override
     public ErrorsAssociatedWithExceptions getAssociatedEvent() {
-        return null; //qual è l'evento associato?
+        return null;
     }
 }
 

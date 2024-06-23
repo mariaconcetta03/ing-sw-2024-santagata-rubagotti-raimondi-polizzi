@@ -11,17 +11,16 @@ public class DrawCard implements ClientMessage {
     private final PlayableCard selectedCard;
 
 
-
     /**
      * This method is used to draw a card
-     * @param nickname player
+     *
+     * @param nickname     player
      * @param selectedCard to draw
      */
     public DrawCard(String nickname, PlayableCard selectedCard) {
         this.nickname = nickname;
         this.selectedCard = selectedCard;
     }
-
 
 
     @Override

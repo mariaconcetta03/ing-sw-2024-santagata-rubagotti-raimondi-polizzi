@@ -9,11 +9,11 @@ import java.rmi.RemoteException;
 /**
  * This event is useful to communicate that player pawn has changed
  */
-public class updatePlayerPawnEvent implements Event {
+public class UpdatePlayerPawnEvent implements Event {
     private String nickname;
     private Pawn pawn;
 
-    public updatePlayerPawnEvent(String nickname, Pawn pawn) {
+    public UpdatePlayerPawnEvent(String nickname, Pawn pawn) {
         this.nickname = nickname;
         this.pawn = pawn;
     }
@@ -31,7 +31,7 @@ public class updatePlayerPawnEvent implements Event {
     }
 
     @Override
-    public boolean executeSCKServerSide() { //returns true when we are considering updateGameState and the new state is 'STARTED'
+    public boolean executeSCKServerSide() {
         return false;
 
     }

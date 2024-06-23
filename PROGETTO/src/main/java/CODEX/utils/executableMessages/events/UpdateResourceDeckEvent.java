@@ -9,9 +9,9 @@ import java.rmi.RemoteException;
 /**
  * This event is useful to communicate that resource deck has changed
  */
-public class updateResourceDeckEvent implements Event {
+public class UpdateResourceDeckEvent implements Event {
     private PlayableDeck resourceDeck;
-    public updateResourceDeckEvent(PlayableDeck resourceDeck){
+    public UpdateResourceDeckEvent(PlayableDeck resourceDeck){
         this.resourceDeck=resourceDeck;
     }
     @Override
@@ -27,7 +27,7 @@ public class updateResourceDeckEvent implements Event {
     }
 
     @Override
-    public boolean executeSCKServerSide() { //returns true when we are considering updateGameState and the new state is 'STARTED'
+    public boolean executeSCKServerSide() {
         return false;
 
     }

@@ -13,19 +13,18 @@ public class SendMessage implements ClientMessage {
     private final String message;
 
 
-
     /**
      * This method is used to send a chat message
-     * @param senderNickname sender
+     *
+     * @param senderNickname    sender
      * @param receiversNickname receiver / receivers
-     * @param message text message
+     * @param message           text message
      */
     public SendMessage(String senderNickname, List<String> receiversNickname, String message) {
         this.senderNickname = senderNickname;
         this.receiversNickname = receiversNickname;
         this.message = message;
     }
-
 
 
     @Override

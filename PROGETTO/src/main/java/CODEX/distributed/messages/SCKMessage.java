@@ -3,6 +3,7 @@ package CODEX.distributed.messages;
 import CODEX.utils.executableMessages.clientMessages.ClientMessage;
 import CODEX.utils.executableMessages.events.Event;
 import CODEX.utils.executableMessages.serverMessages.ServerMessage;
+
 import java.io.Serializable;
 
 /**
@@ -16,6 +17,7 @@ public class SCKMessage implements Serializable {
 
     /**
      * Class constructor
+     *
      * @param msg is the message for passing information to the server
      */
     public SCKMessage(ClientMessage msg) {
@@ -25,9 +27,9 @@ public class SCKMessage implements Serializable {
     }
 
 
-
     /**
      * Class constructor
+     *
      * @param msg is the message for passing information to the client
      */
     public SCKMessage(ServerMessage msg) {
@@ -37,9 +39,9 @@ public class SCKMessage implements Serializable {
     }
 
 
-
     /**
      * Class constructor
+     *
      * @param event is a message sent by the model (update)
      */
     public SCKMessage(Event event) {
@@ -50,9 +52,9 @@ public class SCKMessage implements Serializable {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return event of the update sent by the model
      */
     public Event getEvent() {
@@ -60,9 +62,9 @@ public class SCKMessage implements Serializable {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return serverMessage which is a message sent by the server (return values of the controller)
      */
     public ServerMessage getServerMessage() {
@@ -70,9 +72,9 @@ public class SCKMessage implements Serializable {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return clientMessage which is a message sent by the client
      */
     public ClientMessage getClientMessage() {

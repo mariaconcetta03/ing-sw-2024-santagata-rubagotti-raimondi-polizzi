@@ -12,9 +12,9 @@ import java.util.*;
  * This class represents the instance of a single game started by the Server
  */
 public class Game extends Observable implements Serializable {
-    private int id; // each Game has a different id
-    private int nPlayers; // number of players in this game. It's decided by the lobby-creator
-    private List<Player> players; // all the players in the game
+    private int id;
+    private int nPlayers;
+    private List<Player> players;
     /**
      * This enum represents the different states of the game
      */
@@ -41,27 +41,24 @@ public class Game extends Observable implements Serializable {
     }
     private GameState state=null;
 
-    private Player currentPlayer; // player who needs to play at this moment (now, it's his turn)
-    private PlayableDeck resourceDeck; // contains all the resource cards
-    private PlayableDeck goldDeck; // contains all the gold cards
-    private PlayableDeck baseDeck; // contains all the base cards, which are the cards that players use to start the game
-    private ObjectiveDeck objectiveDeck; // contains all the objective cards
+    private Player currentPlayer;
+    private PlayableDeck resourceDeck;
+    private PlayableDeck goldDeck;
+    private PlayableDeck baseDeck;
+    private ObjectiveDeck objectiveDeck;
 
-    /* these ones are the 4 cards which are at the table center: players can see them and can decide to draw from the
-       deck, or to draw one of these cards */
     private PlayableCard resourceCard1;
     private PlayableCard resourceCard2;
     private PlayableCard goldCard1;
     private PlayableCard goldCard2;
 
-    /* this 2 cards represent the 2 common goals (objectives) */
     private ObjectiveCard objectiveCard1;
     private ObjectiveCard objectiveCard2;
 
-    private Map<Integer, Chat> chats; // contains all the chats started during the game. String is the crasi of the nickname
+    private Map<Integer, Chat> chats;
     private int chatId=0;
     private final List<Pawn> alreadySelectedColors;
-    private ErrorsAssociatedWithExceptions lastEvent; // this flag gives some essential information about the last event which occurred in this Game
+    private ErrorsAssociatedWithExceptions lastEvent;
     private int lastMoves;
 
 
@@ -99,7 +96,7 @@ public class Game extends Observable implements Serializable {
 
 
     /**
-     * Class constructor (used for testing purposes) @TODO rimuovere
+     * Class constructor
      * @param player creator
      * @param id game ID
      */
@@ -155,23 +152,23 @@ public class Game extends Observable implements Serializable {
 
         // setting the state of the game to STARTED
         setState(GameState.STARTED);
-        notifyObservers(new updatePlayersOrderEvent(players));//NEW
+        notifyObservers(new UpdatePlayersOrderEvent(players));//NEW
 
         // shuffling the resource deck and giving 2 cards to the market
         this.resourceDeck.shuffleDeck();
         this.resourceCard1 = this.resourceDeck.getFirstCard();
-        notifyObservers(new updateResourceCard1Event(resourceCard1));//NEW
+        notifyObservers(new UpdateResourceCard1Event(resourceCard1));
 
         this.resourceCard2 = this.resourceDeck.getFirstCard();
-        notifyObservers(new updateResourceCard2Event(resourceCard2));//NEW
+        notifyObservers(new UpdateResourceCard2Event(resourceCard2));
 
 
         // shuffling the gold deck and giving 2 cards to the market
         this.goldDeck.shuffleDeck();
         this.goldCard1 = this.goldDeck.getFirstCard();
-        notifyObservers(new updateGoldCard1Event(goldCard1));
+        notifyObservers(new UpdateGoldCard1Event(goldCard1));
         this.goldCard2 = this.goldDeck.getFirstCard();
-        notifyObservers(new updateGoldCard2Event(goldCard2));
+        notifyObservers(new UpdateGoldCard2Event(goldCard2));
 
 
         // shuffling the base deck and each player draws a starter card (base card)
@@ -215,8 +212,8 @@ public class Game extends Observable implements Serializable {
         players.get(0).setState(Player.PlayerState.IS_PLAYING);
 
 
-        notifyObservers(new updateGoldDeckEvent(goldDeck));
-        notifyObservers(new updateResourceDeckEvent(resourceDeck));
+        notifyObservers(new UpdateGoldDeckEvent(goldDeck));
+        notifyObservers(new UpdateResourceDeckEvent(resourceDeck));
     }
 
 
@@ -225,7 +222,7 @@ public class Game extends Observable implements Serializable {
      * This method is called by the GameController when all the players have chosen their Pawn's color
      */
     public void chosenPawns(){
-        notifyObservers(new updatePlayersOrderEvent(players));
+        notifyObservers(new UpdatePlayersOrderEvent(players));
     }
 
 
@@ -251,7 +248,7 @@ public class Game extends Observable implements Serializable {
         List<Object> tmp=new ArrayList<>();
         tmp.add(this.objectiveCard1);
         tmp.add(this.objectiveCard2);
-        notifyObservers(new updateCommonObjectivesEvent(objectiveCard1, objectiveCard2));
+        notifyObservers(new UpdateCommonObjectivesEvent(objectiveCard1, objectiveCard2));
 
         // giving each player 2 objective cards, next he will decide which one to choose
         for (int i = 0; i<nPlayers; i++) {
@@ -260,8 +257,8 @@ public class Game extends Observable implements Serializable {
         }
 
 
-        notifyObservers(new updateGoldDeckEvent(goldDeck));
-        notifyObservers(new updateResourceDeckEvent(resourceDeck));
+        notifyObservers(new UpdateGoldDeckEvent(goldDeck));
+        notifyObservers(new UpdateResourceDeckEvent(resourceDeck));
     }
 
 
@@ -326,7 +323,7 @@ public class Game extends Observable implements Serializable {
 
         }
 
-        notifyObservers(new winnerEvent(finalScoreBoard));
+        notifyObservers(new WinnerEvent(finalScoreBoard));
         return finalScoreBoard;
     }
 
@@ -407,7 +404,7 @@ public class Game extends Observable implements Serializable {
         this.players.remove(0);
         this.currentPlayer = this.players.get(0);
         this.players.get(0).setState(Player.PlayerState.IS_PLAYING);
-        notifyObservers(new updatePlayersOrderEvent(players));
+        notifyObservers(new UpdatePlayersOrderEvent(players));
     }
 
 
@@ -423,9 +420,9 @@ public class Game extends Observable implements Serializable {
         }else{
             this.goldCard1=null;
         }
-        notifyObservers(new updateGoldCard1Event(goldCard1));
-        notifyObservers(new updateGoldDeckEvent(goldDeck));
-        notifyObservers(new updateResourceDeckEvent(resourceDeck));
+        notifyObservers(new UpdateGoldCard1Event(goldCard1));
+        notifyObservers(new UpdateGoldDeckEvent(goldDeck));
+        notifyObservers(new UpdateResourceDeckEvent(resourceDeck));
     }
 
 
@@ -441,9 +438,9 @@ public class Game extends Observable implements Serializable {
         }else{
             this.goldCard2=null;
         }
-        notifyObservers(new updateGoldCard2Event(goldCard2));
-        notifyObservers(new updateGoldDeckEvent(goldDeck));
-        notifyObservers(new updateResourceDeckEvent(resourceDeck));
+        notifyObservers(new UpdateGoldCard2Event(goldCard2));
+        notifyObservers(new UpdateGoldDeckEvent(goldDeck));
+        notifyObservers(new UpdateResourceDeckEvent(resourceDeck));
     }
 
 
@@ -459,9 +456,9 @@ public class Game extends Observable implements Serializable {
         }else{
             this.resourceCard1=null;
         }
-        notifyObservers(new updateResourceCard1Event(resourceCard1));
-        notifyObservers(new updateResourceDeckEvent(resourceDeck));
-        notifyObservers(new updateGoldDeckEvent(goldDeck));
+        notifyObservers(new UpdateResourceCard1Event(resourceCard1));
+        notifyObservers(new UpdateResourceDeckEvent(resourceDeck));
+        notifyObservers(new UpdateGoldDeckEvent(goldDeck));
     }
 
 
@@ -477,9 +474,9 @@ public class Game extends Observable implements Serializable {
         }else{
             this.resourceCard2=null;
         }
-        notifyObservers(new updateResourceCard2Event(resourceCard2));
-        notifyObservers(new updateResourceDeckEvent(resourceDeck));
-        notifyObservers(new updateGoldDeckEvent(goldDeck));
+        notifyObservers(new UpdateResourceCard2Event(resourceCard2));
+        notifyObservers(new UpdateResourceDeckEvent(resourceDeck));
+        notifyObservers(new UpdateGoldDeckEvent(goldDeck));
     }
 
 
@@ -666,7 +663,7 @@ public class Game extends Observable implements Serializable {
      * Setter method
      * @param nPlayers is the number of the players
      */
-    public void setnPlayers(int nPlayers) {
+    public void setNPlayers(int nPlayers) {
         this.nPlayers = nPlayers;
     }
 
@@ -684,7 +681,7 @@ public class Game extends Observable implements Serializable {
         }else {
             theGameHasJustStarted=false;
         }
-        notifyObservers(new updateGameStateEvent(this.state,theGameHasJustStarted));
+        notifyObservers(new UpdateGameStateEvent(this.state,theGameHasJustStarted));
     }
 
 
@@ -715,6 +712,6 @@ public class Game extends Observable implements Serializable {
      */
     public void setLastMoves(int lastMoves) {
         this.lastMoves = lastMoves;
-        notifyObservers(new updateLastMovesEvent(this.lastMoves));
+        notifyObservers(new UpdateLastMovesEvent(this.lastMoves));
     }
 }

@@ -8,7 +8,8 @@ public class ANSIFormatter {
     /**
      * Default constructor
      */
-    public ANSIFormatter(){}
+    public ANSIFormatter() {
+    }
 
 
     public static final String ANSI_RESET = "\u001B[0m";

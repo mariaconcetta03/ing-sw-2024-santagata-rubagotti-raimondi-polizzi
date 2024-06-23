@@ -12,11 +12,11 @@ import java.rmi.RemoteException;
  * This event is useful to communicate that the board of one player has
  * been modified
  */
-public class updateBoardEvent implements Event {
+public class UpdateBoardEvent implements Event {
     private String boardOwner;
     private Board board;
     private PlayableCard newCard;
-    public updateBoardEvent(String boardOwner, Board board, PlayableCard newCard){
+    public UpdateBoardEvent(String boardOwner, Board board, PlayableCard newCard){
         this.boardOwner=boardOwner;
         this.board= board;
         this.newCard = newCard;
@@ -37,7 +37,7 @@ public class updateBoardEvent implements Event {
     }
 
     @Override
-    public boolean executeSCKServerSide() { // returns true when we are considering updateGameState and the new state is 'STARTED'
+    public boolean executeSCKServerSide() {
         return false;
 
     }

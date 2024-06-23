@@ -2,7 +2,9 @@ package CODEX.view.GUI;
 
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
+
 import java.io.IOException;
+
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
@@ -23,12 +25,12 @@ public class GUILoadingController {
     private ClientSCK clientSCK = null;
 
 
-
     /**
      * This method sets the scene for choosing nickname
-     * @throws IOException
+     *
+     * @throws IOException if there is a problem with input stream and output stream
      */
-    public void startClicked () throws IOException {
+    public void startClicked() throws IOException {
 
         stage.close();
         stage = new Stage();
@@ -51,18 +53,18 @@ public class GUILoadingController {
         stage.setOnCloseRequest(event -> {
             if (network == 1) {
 
-                    rmiClient.handleDisconnectionFunction();
+                rmiClient.handleDisconnectionFunction();
 
             } else if (network == 2) {
 
-                    clientSCK.handleDisconnectionFunction();
+                clientSCK.handleDisconnectionFunction();
 
             }
         });
 
-        if(clientSCK!=null){
+        if (clientSCK != null) {
             controller.setClientSCK(clientSCK);
-        } else if (rmiClient!=null){
+        } else if (rmiClient != null) {
             controller.setRmiClient(rmiClient);
         }
 
@@ -73,9 +75,9 @@ public class GUILoadingController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param stage of the scene which will be changed here
      */
     public void setStage(Stage stage) {
@@ -83,9 +85,9 @@ public class GUILoadingController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param network which is the type of client of the player
      */
     public void setNetwork(int network) {
@@ -93,23 +95,23 @@ public class GUILoadingController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param clientSCK which is the client of the player
      */
-    public void setClientSCK(ClientSCK clientSCK){
-        this.clientSCK=clientSCK;
+    public void setClientSCK(ClientSCK clientSCK) {
+        this.clientSCK = clientSCK;
     }
 
 
-
     /**
      * Setter method
+     *
      * @param rmiClient which is the client of the player
      */
-    public void setRmiClient(RMIClient rmiClient){
-        this.rmiClient=rmiClient;
+    public void setRmiClient(RMIClient rmiClient) {
+        this.rmiClient = rmiClient;
     }
 
 }

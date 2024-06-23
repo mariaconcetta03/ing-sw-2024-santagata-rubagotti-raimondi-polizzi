@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.util.Duration;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -57,24 +58,19 @@ public class GUIObjectiveController {
     private int card3ID;
     private int network = 0; //1 = rmi  2 = sck
     private boolean objectiveSelected = false;
-    private ObjectiveCard objectiveCardselected=null;
-
+    private ObjectiveCard objectiveCardselected = null;
 
 
     /**
      * This method is invoked when the player chooses the right objective
      */
-    public synchronized void selectedRightObjective () {
+    public synchronized void selectedRightObjective() {
         objCard1.disabledProperty();
         objCard2.disabledProperty();
         if (!objectiveSelected) {
             new Thread(() -> {
                 if (network == 1) {
-
-
-
-                            rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(1));
-
+                    rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(1));
                     try {
                         rmiClient.getGameController().checkObjectiveCardChosen();
                     } catch (RemoteException e) {
@@ -84,9 +80,9 @@ public class GUIObjectiveController {
 
                 } else if (network == 2) {
 
-                        clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(1));
+                    clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(1));
 
-                    if(!clientSCK.getErrorState()){
+                    if (!clientSCK.getErrorState()) {
                         clientSCK.checkObjectiveCardChosen();
                         objectiveCardselected = clientSCK.getPersonalPlayer().getPersonalObjectives().get(1);
                     }
@@ -101,21 +97,17 @@ public class GUIObjectiveController {
     }
 
 
-
     /**
      * This method is invoked when the player chooses the left objective
      */
-    public synchronized void selectedLeftObjective () {
+    public synchronized void selectedLeftObjective() {
         objCard1.disabledProperty();
         objCard2.disabledProperty();
         if (!objectiveSelected) {
             objectiveSelected = true;
             new Thread(() -> {
                 if (network == 1) {
-
-
-                            rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(0));
-
+                    rmiClient.chooseObjectiveCard(rmiClient.getPersonalPlayer().getNickname(), rmiClient.getPersonalPlayer().getPersonalObjectives().get(0));
                     try {
                         rmiClient.getGameController().checkObjectiveCardChosen();
                     } catch (RemoteException e) {
@@ -125,9 +117,9 @@ public class GUIObjectiveController {
 
                 } else if (network == 2) {
 
-                        clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(0));
+                    clientSCK.chooseObjectiveCard(clientSCK.getPersonalPlayer().getNickname(), clientSCK.getPersonalPlayer().getPersonalObjectives().get(0));
 
-                    if(!clientSCK.getErrorState()){
+                    if (!clientSCK.getErrorState()) {
                         clientSCK.checkObjectiveCardChosen();
                         objectiveCardselected = clientSCK.getPersonalPlayer().getPersonalObjectives().get(0);
                     }
@@ -142,18 +134,15 @@ public class GUIObjectiveController {
     }
 
 
-
     /**
      * This method changes the scene to the next one
      */
     public void changeScene() {
-        // let's show the new window!
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/game.fxml"));
         Parent root = null;
         try {
             root = fxmlLoader.load();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ignored) {
         }
 
         GUIGameController ctr = null;
@@ -169,8 +158,8 @@ public class GUIObjectiveController {
         ctr.setClientSCK(clientSCK);
         ctr.setRmiClient(rmiClient);
 
-        if ((network == 1)||(network == 2 && !clientSCK.getADisconnectionHappened())) {
-            ctr.setObjectiveCardselected(objectiveCardselected);
+        if ((network == 1) || (network == 2 && !clientSCK.getADisconnectionHappened())) {
+            ctr.setObjectiveCardSelected(objectiveCardselected);
             ctr.setAllFeatures();
 
             // old dimensions and position
@@ -211,12 +200,11 @@ public class GUIObjectiveController {
     }
 
 
-
     /**
      * This method changes the orientation of the first card of the player deck
      */
-    public synchronized void changeOrientationCard1(){
-        if(orientationCard1) {
+    public synchronized void changeOrientationCard1() {
+        if (orientationCard1) {
             String path;
             path = "/images/cards/back/  (" + card1ID + ").png";
             Image image = new Image(getClass().getResourceAsStream(path));
@@ -232,18 +220,17 @@ public class GUIObjectiveController {
     }
 
 
-
     /**
      * This method changes the orientation of the second card of the player deck
      */
-    public synchronized void changeOrientationCard2(){
-        if(orientationCard2) {
+    public synchronized void changeOrientationCard2() {
+        if (orientationCard2) {
             String path;
             path = "/images/cards/back/  (" + card2ID + ").png";
             Image image = new Image(getClass().getResourceAsStream(path));
             card2.setImage(image);
             orientationCard2 = false;
-        }else{
+        } else {
             String path;
             path = "/images/cards/front/  (" + card2ID + ").png";
             Image image = new Image(getClass().getResourceAsStream(path));
@@ -253,19 +240,17 @@ public class GUIObjectiveController {
     }
 
 
-
-
     /**
      * This method changes the orientation of the third card of the player deck
      */
-    public synchronized void changeOrientationCard3(){
-        if(orientationCard3) {
+    public synchronized void changeOrientationCard3() {
+        if (orientationCard3) {
             String path;
             path = "/images/cards/back/  (" + card3ID + ").png";
             Image image = new Image(getClass().getResourceAsStream(path));
             card3.setImage(image);
             orientationCard3 = false;
-        }else{
+        } else {
             String path;
             path = "/images/cards/front/  (" + card3ID + ").png";
             Image image = new Image(getClass().getResourceAsStream(path));
@@ -275,30 +260,29 @@ public class GUIObjectiveController {
     }
 
 
-
     /**
      * This method updates the game state
      */
     public void updateGameState() {
-        Platform.runLater(()->{
+        Platform.runLater(() -> {
             changeScene();
         });
     }
 
 
-
     /**
      * This method sets the nickname of the player
-     * @param text
+     *
+     * @param text is the sentence to be displayed
      */
     public void setLabelWithPlayerName(String text) {
         this.labelWithPlayerName.setText(text);
     }
 
 
-
     /**
      * Setter method
+     *
      * @param cardID which has to be shown to the player
      */
     public void setObjCard1(int cardID) {
@@ -309,9 +293,9 @@ public class GUIObjectiveController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param cardID which has to be shown to the player
      */
     public void setObjCard2(int cardID) {
@@ -322,9 +306,9 @@ public class GUIObjectiveController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param cardID which belongs to the player's deck (first card)
      */
     public void setCard1(int cardID) {
@@ -336,9 +320,9 @@ public class GUIObjectiveController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param cardID which belongs to the player's deck (second card)
      */
     public void setCard2(int cardID) {
@@ -350,9 +334,9 @@ public class GUIObjectiveController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param cardID which belongs to the player's deck (third card)
      */
     public void setCard3(int cardID) {
@@ -364,10 +348,10 @@ public class GUIObjectiveController {
     }
 
 
-
     /**
      * Setter method
-     * @param cardID which the player chose (base card)
+     *
+     * @param cardID      which the player chose (base card)
      * @param orientation is the orientation of the card (front/back)
      */
     public void setBaseCard(int cardID, boolean orientation) {
@@ -382,9 +366,9 @@ public class GUIObjectiveController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param stage here will be shown the next scenes
      */
     public void setStage(Stage stage) {
@@ -392,9 +376,9 @@ public class GUIObjectiveController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param client which is the client of the player
      */
     public void setRmiClient(RMIClient client) {
@@ -402,29 +386,29 @@ public class GUIObjectiveController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param client which is the client of the player
      */
-    public void setClientSCK (ClientSCK client) {
+    public void setClientSCK(ClientSCK client) {
         this.clientSCK = client;
     }
 
 
-
     /**
      * Setter method
+     *
      * @param network rmi or tcp (1 or 2)
      */
-    public void setNetwork (int network) {
+    public void setNetwork(int network) {
         this.network = network;
     }
 
 
-
     /**
      * Setter method
+     *
      * @param scheduler scheduler
      */
     public void setScheduler(ScheduledExecutorService scheduler) {
@@ -432,9 +416,9 @@ public class GUIObjectiveController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param disconnectionLock lock
      */
     public void setDisconnectionLock(Object disconnectionLock) {

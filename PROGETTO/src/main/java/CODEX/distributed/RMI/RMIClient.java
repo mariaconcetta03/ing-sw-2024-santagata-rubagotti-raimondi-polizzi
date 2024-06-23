@@ -19,27 +19,25 @@ import java.util.concurrent.*;
 
 /**
  * This class represents a client RMI
- *  ----------------------------------- H O W   I T   W O R K S ----------------------------------------
- *  RMI CLIENT CALLS THE REMOTE METHODS THROUGH THE RMISERVER INTERFACE (WHICH RMI CLIENT HAS INSIDE)
- *  THE RMI SERVER GOES TO MODIFY THE MODEL (UPON CLIENT REQUEST) THROUGH THE CONTROLLER.
- *  FOR THE METHODS OF THE GAMECONTROLLER, THE CLIENT INVOKES THEM DIRECTLY BY PASSING THROUGH THE
- *  GAMECONTROLLER. THE GAME CONTROLLER IS PASSED TO THE CLIENT BY THE METHODS "startLobby"
- *  AND "addPlayerToLobby"
- *  ----------------------------------------------------------------------------------------------------
+ *  RMI Client calls the remote methods through the ServerRMIInterface. Upon client request, it then modifies
+ *  the model through the GameController.
+ *  For the methods of the GameController, the client invokes them directly by using the
+ *  GameControllerInterface, that is passed to the client by the methods "startLobby"
+ *  and "addPlayerToLobby"
  */
 public class RMIClient extends UnicastRemoteObject implements ClientGeneralInterface {
     private final Object guiLock;
     private static final int HEARTBEAT_INTERVAL = 2; // seconds
     private static final int TIMEOUT = 4; // seconds
     private ScheduledExecutorService schedulerToSendHeartbeat;
-    ScheduledExecutorService schedulerToCheckReceivedHeartBeat;
+    private ScheduledExecutorService schedulerToCheckReceivedHeartBeat;
     private long lastHeartbeatTime;
     private boolean done = false;
     private ServerRMIInterface SRMIInterface;
-    ExecutorService executor;
+    private ExecutorService executor;
     private BufferedReader console;
-    Scanner sc;
-    int turnCounter = -1;
+    private Scanner sc;
+    private int turnCounter = -1;
 
     private GameControllerInterface gameController = null;
     // given to the client when the game is started (lobby created or player joined to a lobby)
@@ -54,7 +52,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private PlayableCard resourceCard2;
     private GUIGameController guiGameController = null;
     private boolean aDisconnectionHappened = false;
-    private final Object guiGamestateLock = new Object();
+    private final Object guiGameStateLock = new Object();
     private final Object guiPawnsControllerLock = new Object();
     private GUIPawnsController GUIPawnsController = null;
     private final Object actionLock = new Object();
@@ -73,10 +71,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     private boolean baseCard = false;
     private boolean nicknameSet = false;
     private Map<Integer, Chat> chats;
-    private Settings networkSettings;
     private GUILobbyController guiLobbyController = null;
     private boolean showWinnerArrived=false;
     private boolean firstHandleDisconnectionFunctionCalled=false;
+    private int PORT = 1099; // 1099 standard port for RMI registry
+    private String SERVER_NAME = "127.0.0.1"; // LOCALHOST
 
 
     @Override
@@ -106,39 +105,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
         this.guiLock = new Object();
         personalPlayer = new Player();
         chats = new HashMap<>();
-        networkSettings = new Settings();
-    }
-
-
-
-
-    /**
-     * Settings class
-     * It is about port and ip address of the server which the client needs to communicate with
-     */
-    public static class Settings {
-        static int PORT = 1099; // 1099 standard port for RMI registry
-        String SERVER_NAME = "127.0.0.1"; // LOCALHOST
-
-        /**
-         * Getter method
-         * @return the IP of the server
-         */
-        public String getSERVER_NAME() {
-            return this.SERVER_NAME;
-        }
-
-        /**
-         * Setter method
-         * @param SERVER_NAME IP address of the server
-         */
-        public void setSERVER_NAME(String SERVER_NAME) {
-            if (SERVER_NAME.equals("")) { // empty string --> localhost
-                Settings.this.SERVER_NAME = "127.0.0.1";
-            } else {
-                this.SERVER_NAME = SERVER_NAME;
-            }
-        }
     }
 
 
@@ -151,8 +117,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
     public void SRMIInterfaceFromRegistry() throws RemoteException, NotBoundException {
         Registry registryServer = null;
         // getting the registry
-        registryServer = LocateRegistry.getRegistry(networkSettings.getSERVER_NAME(),
-                Settings.PORT);
+        registryServer = LocateRegistry.getRegistry (this.SERVER_NAME, this.PORT);
         // looking up the registry to search for the remote object
         this.SRMIInterface = (ServerRMIInterface) registryServer.lookup("Server");
     }
@@ -233,8 +198,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         while (!responseReceived) {
                             try {
                                 actionLock.wait();
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
+                            } catch (InterruptedException ignored) {
                             }
                         }
                     }
@@ -302,8 +266,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     while (!responseReceived) {
                         try {
                             actionLock.wait();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                        } catch (InterruptedException ignored) {
                         }
                     }
                 }
@@ -369,8 +332,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     while (!responseReceived) {
                         try {
                             actionLock.wait();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                        } catch (InterruptedException ignored) {
                         }
                     }
                 }
@@ -407,8 +369,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     while (!responseReceived) {
                         try {
                             actionLock.wait();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                        } catch (InterruptedException ignored) {
                         }
                     }
                 }
@@ -937,8 +898,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 while (GUIPawnsController == null) {
                     try {
                         guiPawnsControllerLock.wait();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                    } catch (InterruptedException ignored) {
                     }
                 }
             }
@@ -981,7 +941,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                                 }
                             } catch (InterruptedException e) {
                                 System.out.println("Issues while executing the app. Closing the program.");
-                                e.printStackTrace();
                                 System.exit(-1);
                             }
                         });
@@ -1017,7 +976,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                         }
                     } catch (RemoteException e) {
                         System.out.println("Unable to communicate with the Server. Shutting down.");
-                        e.printStackTrace();
                         System.exit(-1);
                     }
                 });
@@ -1026,12 +984,11 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
         } else if (selectedView == 2) {
             if (this.turnCounter == -1) { // first time that updateRound is called
-                synchronized (guiGamestateLock) {
+                synchronized (guiGameStateLock) {
                     while (guiLobbyController == null) {
                         try {
-                            guiGamestateLock.wait();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                            guiGameStateLock.wait();
+                        } catch (InterruptedException ignored) {
                         }
                     }
                 }
@@ -1102,7 +1059,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     try {
                         gameController.heartbeat(this.personalPlayer.getNickname());
                     } catch (RemoteException e) {
-                        e.printStackTrace();
                         aDisconnectionHappened = true;
                         if (selectedView == 1) {
                             System.out.println("remote in update game state");
@@ -1376,10 +1332,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     /**
      * Getter method
-     * @return the network settings
+     * @return the IP of the server
      */
-    public Settings getNetworkSettings() {
-        return networkSettings;
+    public String getSERVER_NAME() {
+        return this.SERVER_NAME;
     }
 
 
@@ -1466,10 +1422,10 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     /**
      * Getter method
-     * @return guiGamestateLock
+     * @return guiGameStateLock
      */
     public Object getGuiGamestateLock() {
-        return guiGamestateLock;
+        return guiGameStateLock;
     }
 
 
@@ -1568,6 +1524,20 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
      */
     public void setGuiObjectiveController(GUIObjectiveController ctr) {
         this.guiObjectiveController = ctr;
+    }
+
+
+
+    /**
+     * Setter method
+     * @param SERVER_NAME IP address of the server
+     */
+    public void setSERVER_NAME(String SERVER_NAME) {
+        if (SERVER_NAME.equals("")) { // empty string --> localhost
+            this.SERVER_NAME = "127.0.0.1";
+        } else {
+            this.SERVER_NAME = SERVER_NAME;
+        }
     }
 
 }

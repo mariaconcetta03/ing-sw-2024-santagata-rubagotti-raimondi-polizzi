@@ -14,13 +14,13 @@ public class PlayCard implements ClientMessage {
     private final boolean orientation;
 
 
-
     /**
      * This method is used to play a card
-     * @param nickname player which is playing
+     *
+     * @param nickname     player which is playing
      * @param selectedCard card to play
-     * @param position where to play
-     * @param orientation front or back
+     * @param position     where to play
+     * @param orientation  front or back
      */
     public PlayCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) {
         this.nickname = nickname;
@@ -28,7 +28,6 @@ public class PlayCard implements ClientMessage {
         this.position = position;
         this.orientation = orientation;
     }
-
 
 
     @Override

@@ -8,6 +8,7 @@ import CODEX.utils.ErrorsAssociatedWithExceptions;
 public interface ExceptionAssociatedWithAnEvent {
     /**
      * Getter method
+     *
      * @return associatedEvent
      */
     ErrorsAssociatedWithExceptions getAssociatedEvent();

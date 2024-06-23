@@ -3,7 +3,9 @@ package CODEX.view.GUI;
 import CODEX.distributed.RMI.RMIClient;
 import CODEX.distributed.Socket.ClientSCK;
 import javafx.fxml.FXML;
+
 import java.io.IOException;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -32,26 +34,27 @@ public class GUINicknameController {
 
 
     /**
-     * This method makes possible choosing a nickname before evry action
-     * @throws IOException
+     * This method makes possible choosing a nickname before every action
+     *
+     * @throws IOException if there is a problem with input stream and output stream
      */
     public synchronized void sendNickname() throws IOException {
         String input = nickname.getText();
         boolean tooBlankSpace = false;
         String spaceString = "   ";
 
-        if(input.contains(spaceString)){
+        if (input.contains(spaceString)) {
             tooBlankSpace = true;
         }
 
-        if(!input.isBlank() && input.length() < 15 && !tooBlankSpace) {
+        if (!input.isBlank() && input.length() < 15 && !tooBlankSpace) {
 
             if (network == 1) { //RMI
                 correctNickname = rmiClient.setNickname(nickname.getCharacters().toString());
             } else if (network == 2) { //SCK
                 clientSCK.setErrorState(false);
 
-                    clientSCK.chooseNickname(nickname.getCharacters().toString());
+                clientSCK.chooseNickname(nickname.getCharacters().toString());
 
                 correctNickname = clientSCK.setNickname(nickname.getCharacters().toString());
             }
@@ -64,30 +67,28 @@ public class GUINicknameController {
                 nicknameUsed.setOpacity(0);
                 nickname.disabledProperty();
                 sendNicknameButton.disabledProperty();
-                // let's show the new window!
+
+                // showing the new window
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/lobby.fxml"));
                 Scene scene = new Scene(fxmlLoader.load());
                 GUILobbyController ctr = fxmlLoader.getController();
-                if(network==1){
+                if (network == 1) {
                     synchronized (rmiClient.getGuiGamestateLock()) {
                         rmiClient.setGuiLobbyController(ctr);
                         rmiClient.getGuiGamestateLock().notify();
                     }
-                }if(network==2){
-                    synchronized (clientSCK.getGuiGamestateLock()) {
+                }
+                if (network == 2) {
+                    synchronized (clientSCK.getGuiGameStateLock()) {
                         clientSCK.setGuiLobbyController(ctr);
-                        clientSCK.getGuiGamestateLock().notify();
+                        clientSCK.getGuiGameStateLock().notify();
                     }
                 }
                 stage.setOnCloseRequest(event -> {
                     if (network == 1) {
-
-                            rmiClient.handleDisconnectionFunction();
-
+                        rmiClient.handleDisconnectionFunction();
                     } else if (network == 2) {
-
-                            clientSCK.handleDisconnectionFunction();
-
+                        clientSCK.handleDisconnectionFunction();
                     }
                 });
 
@@ -132,9 +133,9 @@ public class GUINicknameController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param stage of the scene which will be changed here
      */
     public void setStage(Stage stage) {
@@ -142,9 +143,9 @@ public class GUINicknameController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param rmiClient which is the client of the player
      */
     public void setRmiClient(RMIClient rmiClient) {
@@ -152,9 +153,9 @@ public class GUINicknameController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param clientSCK which is the client of the player
      */
     public void setClientSCK(ClientSCK clientSCK) {
@@ -162,15 +163,14 @@ public class GUINicknameController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param network which is the type of client of the player
      */
     public void setNetwork(int network) {
         this.network = network;
     }
-
 
 
     /**
@@ -183,7 +183,7 @@ public class GUINicknameController {
                     sendNickname();
                 } catch (IOException ignored) {
                 }
-            }else {
+            } else {
                 nicknameUsed.setOpacity(0);
             }
         });

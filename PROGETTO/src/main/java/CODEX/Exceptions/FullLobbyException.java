@@ -8,9 +8,10 @@ import CODEX.utils.ErrorsAssociatedWithExceptions;
 public class FullLobbyException extends Exception implements ExceptionAssociatedWithAnEvent {
     /**
      * Class constructor
+     *
      * @param errormessage is the message we want to give
      */
-    public FullLobbyException (String errormessage){
+    public FullLobbyException(String errormessage) {
         super(errormessage);
     }
 

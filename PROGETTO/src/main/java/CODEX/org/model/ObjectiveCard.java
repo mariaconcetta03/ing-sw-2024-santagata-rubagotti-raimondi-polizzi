@@ -7,12 +7,11 @@ import java.util.*;
  * This class represents an objective card in the game
  */
 public class ObjectiveCard extends Card implements Serializable {
-    private int cardPoints; // points the card gives when the player achieves the goal (only one time)
-    private Map<AngleType, Integer> resources; // each resource is associated with an int, which
-    // indicates the number of resources needed by the objective card
-    private Coordinates positionCard1; // the next card of the pattern composed by three cards
-    private Coordinates positionCard2; // the third card of the pattern
-    private AngleType card0Type; // AngleType and not CentralType because of some problems in counting the resources
+    private int cardPoints;
+    private Map<AngleType, Integer> resources;
+    private Coordinates positionCard1;
+    private Coordinates positionCard2;
+    private AngleType card0Type;
     private AngleType card1Type;
     private AngleType card2Type;
 
@@ -20,13 +19,13 @@ public class ObjectiveCard extends Card implements Serializable {
 
     /**
      * Class constructor for the obj cards which require a specific pattern
-     * @param id
-     * @param cardPoints
-     * @param positionCard1
-     * @param positionCard2
-     * @param card0Type
-     * @param card1Type
-     * @param card2Type
+     * @param id of the card
+     * @param cardPoints associated with the card
+     * @param positionCard1 that the card needs to have to make the pattern
+     * @param positionCard2 that the card needs to have to make the pattern
+     * @param card0Type which is type of the card needed to make the pattern
+     * @param card1Type which is type of the card needed to make the pattern
+     * @param card2Type which is type of the card needed to make the pattern
      */
     public void ObjectiveCardPattern(int id, int cardPoints, Coordinates positionCard1, Coordinates positionCard2, AngleType card0Type, AngleType card1Type, AngleType card2Type) {
         this.setId(id);
@@ -42,9 +41,9 @@ public class ObjectiveCard extends Card implements Serializable {
 
     /**
      * Class constructor for the obj cards which require a specific number of resources
-     * @param id
-     * @param cardPoints
-     * @param resources
+     * @param id of the card
+     * @param cardPoints associated with the card
+     * @param resources needed to make points
      */
     public void ObjectiveCardNumber(int id, int cardPoints, Map<AngleType, Integer> resources) {
         this.setId(id);
@@ -130,13 +129,12 @@ public class ObjectiveCard extends Card implements Serializable {
      * @param player the Player which we are checking the objective for
      */
     private void addNumberPointsToPlayer(Player player) {
-        int minResources = Integer.MAX_VALUE; // that's an improbable superior limit
+        int minResources = Integer.MAX_VALUE;
         Map<AngleType, Integer> symbolsOnBoard = player.getBoard().getNumResources();
 
-        for (AngleType t : resources.keySet()) { // resources.keySet() will never be empty because we are considering an Objective_card_number
+        for (AngleType t : resources.keySet()) {
             if (symbolsOnBoard.containsKey(t)) {
                 if ((symbolsOnBoard.get(t) / resources.get(t)) < minResources) {
-                    // to avoid a division by zero resources doesn't have to contain keys associated with zero
                     minResources = symbolsOnBoard.get(t) / resources.get(t);
                 }
             }
@@ -144,11 +142,9 @@ public class ObjectiveCard extends Card implements Serializable {
         int pointsToBeAdded = 0;
         pointsToBeAdded = minResources * this.getCardPoints();
 
-        // if we completed the objective at least once we take note of that
         if (pointsToBeAdded != 0) {
             player.addNumObjectivesReached();
         }
-        // adding the just calculated point to the player
         player.addPoints(pointsToBeAdded);
     }
 
@@ -162,12 +158,12 @@ public class ObjectiveCard extends Card implements Serializable {
         int counter = 0;
         Set<Coordinates> cardsPositions = player.getBoard().getPlayedCards().keySet();
         Set<Coordinates> alreadyCountedPositions = new HashSet<>();
-        // temp values to help me directly remove the coordinates if found
-        Coordinates temp1 = null;
-        Coordinates temp2 = null;
+
+        Coordinates temp1;
+        Coordinates temp2;
 
         for (Coordinates center : cardsPositions) {
-            // temp values to help me directly write in alreadyCountedPositions the coordinates if found
+
             temp1 = sumCoordinates(center, positionCard1);
             temp2 = sumCoordinates(center, positionCard2);
             if (!(alreadyCountedPositions.contains(center)) && !(alreadyCountedPositions.contains(temp1)) && !(alreadyCountedPositions.contains(temp2))) {
@@ -177,8 +173,8 @@ public class ObjectiveCard extends Card implements Serializable {
                     if (player.getBoard().getPlayedCards().get(temp1).equals(card1Type) &&
                             player.getBoard().getPlayedCards().get(temp2).equals(card2Type) &&
                             player.getBoard().getPlayedCards().get(center).equals(card0Type)) {
-                        counter++; // increment the counter
-                        alreadyCountedPositions.add(center); // to mark the coordinates already counted in a pattern
+                        counter++;
+                        alreadyCountedPositions.add(center);
                         alreadyCountedPositions.add(temp1);
                         alreadyCountedPositions.add(temp2);
                     }
@@ -193,7 +189,6 @@ public class ObjectiveCard extends Card implements Serializable {
             player.addNumObjectivesReached();
         }
 
-        // adding the points just calculated to the player
         player.addPoints(pointsToBeAdded);
     }
 
@@ -332,6 +327,12 @@ public class ObjectiveCard extends Card implements Serializable {
         this.card2Type = card2Type;
     }
 
+
+
+    /**
+     * Setter method
+     * @param resources of the cards
+     */
     public void setResources(Map<AngleType, Integer> resources) {
         this.resources = resources;
     }

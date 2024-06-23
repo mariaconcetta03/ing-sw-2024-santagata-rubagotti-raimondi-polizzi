@@ -14,9 +14,9 @@ public class ColorAlreadyTakenException extends Exception implements ExceptionAs
     }
 
 
-
     /**
      * This method is used to get the associated event
+     *
      * @return COLOR_ALREADY_TAKEN
      */
     @Override

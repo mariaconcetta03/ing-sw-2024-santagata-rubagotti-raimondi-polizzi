@@ -1,6 +1,7 @@
 package CODEX.distributed.Socket;
 
 import CODEX.controller.ServerController;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -12,71 +13,57 @@ import java.util.concurrent.Executors;
 
 
 /**
- * This class represents the Socket server
- *
- * The update method called in the model after every modification should reach the game controller which has saved all the players of that game
- * in the game controller we can save the clientHandlerThread (socket) of the players and the update should modify the socket
- * then the class ClientSCK (the real client because it's not on the same virtual machine) reads the modified socket and change its view
+ * This class represents the Socket server, which is unique.
  */
 
 public class ServerSCK extends UnicastRemoteObject {
-    private final int port;
     private final ServerController serverController;
-
+    private String SERVER_NAME = "127.0.0.1"; // LOCALHOST
 
 
     /**
      * Class constructor
+     *
      * @param serverController serverController
-     * @throws RemoteException
+     * @throws RemoteException if an exception happens while communicating with the remote
      */
-    public ServerSCK (ServerController serverController) throws RemoteException {
-        this.port=Settings.PORT;
-        this.serverController=serverController;
+    public ServerSCK(ServerController serverController) throws RemoteException {
+        this.serverController = serverController;
     }
 
 
-
     /**
-     * Settings class
-     */
-    public static class Settings {
-        static int PORT = 50000; // free ports: from 49152 to 65535
-        static String SERVER_NAME = "127.0.0.1"; // LOCALHOST
-
-        /**
-         * Setter method
-         * @param serverName server address
-         */
-        public static void setServerName(String serverName) {
-                SERVER_NAME = serverName;
-            }
-    }
-
-
-
-    /**
-     * This method starts the server socket and never returns (there is a non-ending while loop)
+     * This method starts the server socket and never returns (there is a non-ending while loop).
+     * The maximum queue length for incoming connection is set to 50.
+     * If a connection request arrives when the queue is full, the connection is refused
+     *
      * @throws IOException when the input/output stream is terminated
      */
     public void startServer() throws IOException {
         ExecutorService executor = Executors.newCachedThreadPool();
         ServerSocket serverSocket;
         try {
-            InetAddress serverAddress = InetAddress.getByName(Settings.SERVER_NAME);
+            InetAddress serverAddress = InetAddress.getByName(this.SERVER_NAME);
             serverSocket = new ServerSocket(1085, 10, serverAddress);
         } catch (IOException e) {
-            System.err.println(e.getMessage()); // Porta non disponibile
+            System.err.println(e.getMessage()); //port not available
             return;
         }
         System.out.println("TCP Server ready");
-        // The maximum queue length for incoming connection indications (a request to connect) is set to 50.
-        // If a connection indication arrives when the queue is full, the connection is refused
         while (true) {
-            Socket client = serverSocket.accept(); // accept() returns the client just accepted
-            // serverController methods will be called only by ClientHandlerThread
-            executor.submit(new ClientHandlerThread(client,serverController)); // we also pass a pointer to the server
+            Socket client = serverSocket.accept();
+            executor.submit(new ClientHandlerThread(client, serverController));
         }
     }
 
+
+    /**
+     * Setter method
+     *
+     * @param serverName server address
+     */
+    public void setServerName(String serverName) {
+        this.SERVER_NAME = serverName;
+    }
 }
+

@@ -5,6 +5,7 @@ import CODEX.distributed.messages.SCKMessage;
 import CODEX.org.model.Pawn;
 import CODEX.utils.executableMessages.serverMessages.ServerAvailableColors;
 import CODEX.utils.executableMessages.serverMessages.ServerMessage;
+
 import java.util.List;
 
 /**
@@ -16,13 +17,13 @@ public class ClientAvailableColors implements ClientMessage {
     /**
      * Default class constructor
      */
-    public ClientAvailableColors () {
+    public ClientAvailableColors() {
     }
-
 
 
     /**
      * This method checks what pawn colors are available in a precise moment
+     *
      * @param clientHandlerThread client
      */
     @Override

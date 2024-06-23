@@ -10,8 +10,9 @@ import CODEX.org.model.*;
 import CODEX.utils.Observer;
 import CODEX.utils.ErrorsAssociatedWithExceptions;
 import CODEX.utils.executableMessages.events.OK;
-import CODEX.utils.executableMessages.events.setUpPhaseFinishedEvent;
-import CODEX.utils.executableMessages.events.updatePlayersOrderEvent;
+import CODEX.utils.executableMessages.events.SetUpPhaseFinishedEvent;
+import CODEX.utils.executableMessages.events.UpdatePlayersOrderEvent;
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.Timestamp;
@@ -23,13 +24,13 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * This class is the controller of a game. Here are present all the methods which can be invoked during a match.
+ * This class is the controller of a game. It contains all the methods which can be invoked during a match.
  */
 public class GameController extends UnicastRemoteObject implements GameControllerInterface {
     private static final int TIMEOUT = 4; // seconds
     private boolean disconnection = false;
     private boolean firstDisconnection = true;
-    private Map <String, Long> lastHeartbeatTimesOfEachPlayer;
+    private Map<String, Long> lastHeartbeatTimesOfEachPlayer;
     private ServerController serverController;
     private Game game;
     private int lastRounds;
@@ -38,17 +39,16 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     private int numberOfPlayers;
     private int id;
     private Map<String, Observer> clientsConnected;
-    private final Object disconnectionLock=new Object();
-
+    private final Object disconnectionLock = new Object();
     private boolean alreadyCheckedNPlayers;
     private boolean alreadyCheckedBaseCards;
     private boolean alreadyCheckedColors;
     private boolean alreadyCheckedObjectiveCards;
 
 
-
     /**
      * Class constructor, initialises lastRounds and lastDrawingRounds to 10 (improbable value)
+     *
      * @throws RemoteException when there's a problem in the communication of GameController object
      */
     public GameController() throws RemoteException {
@@ -62,20 +62,20 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         numberOfPlayers = 0;
         id = 0;
         lastHeartbeatTimesOfEachPlayer = new HashMap<>();
-        alreadyCheckedNPlayers=false;
-        alreadyCheckedColors=false;
-        alreadyCheckedBaseCards=false;
-        alreadyCheckedObjectiveCards=false;
+        alreadyCheckedNPlayers = false;
+        alreadyCheckedColors = false;
+        alreadyCheckedBaseCards = false;
+        alreadyCheckedObjectiveCards = false;
     }
-
 
 
     /**
      * This method creates the Game that will be managed by GameController
+     *
      * @param gamePlayers is the List of players that will be in the Game
      */
-    public void createGame (List<Player> gamePlayers)   {
-        if(this.game==null) {
+    public void createGame(List<Player> gamePlayers) {
+        if (this.game == null) {
             game = new Game(gamePlayers, id);
             // adding Observers to Game and Player classes
             for (Observer obs : clientsConnected.values()) {
@@ -90,9 +90,9 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     }
 
 
-
     /**
      * This method adds a player to the waiting ones in the lobby (gamePlayers)
+     *
      * @param player is the one player added to the lobby
      * @throws ArrayIndexOutOfBoundsException if the of players is exceeded
      */
@@ -105,19 +105,17 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     }
 
 
-
     /**
      * This method is invoked when we need to check how many players there are in the game.
      * If the number of players inside is correct, then it starts the game
      */
     public synchronized void checkNPlayers() {
-        if ((!alreadyCheckedNPlayers)&&(gamePlayers.size() == numberOfPlayers)) {
-            alreadyCheckedNPlayers=true;
+        if ((!alreadyCheckedNPlayers) && (gamePlayers.size() == numberOfPlayers)) {
+            alreadyCheckedNPlayers = true;
             createGame(gamePlayers);
-            startGame(); //removed illegalstate
+            startGame();
         }
     }
-
 
 
     /**
@@ -126,34 +124,33 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * 3 cards (2 resource cards and 1 gold card).
      * INTERNAL USE METHOD
      */
-    public void startGame()  {
-        if(game.getState() == Game.GameState.WAITING_FOR_START) {
+    public void startGame() {
+        if (game.getState() == Game.GameState.WAITING_FOR_START) {
             game.startGame();
         }
     }
 
 
-
     /**
      * This method let the Player place the baseCard (in the middle of the table) and, if all the players
      * have placed their baseCard, it let the Game finish the set-up phase giving the last necessary cards
-     * @param nickname the player who plays the card
-     * @param baseCard the base card played
+     *
+     * @param nickname    the player who plays the card
+     * @param baseCard    the base card played
      * @param orientation of the played card
      */
     public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) {
-        Player player= getPlayerByNickname(nickname);
+        Player player = getPlayerByNickname(nickname);
         player.playBaseCard(orientation, baseCard);
-        player.getPlayerDeck()[0]=null; // baseCard deleted from player deck
+        player.getPlayerDeck()[0] = null; // baseCard deleted from player deck
     }
-
 
 
     /**
      * This method checks if all the players have played their base card.
      * If they all did, then it gives the initial cards for the starting of the match.
      */
-    public synchronized void checkBaseCardPlayed()  {
+    public synchronized void checkBaseCardPlayed() {
         PlayableCard[][] tmp;
         //for all players in the game
         for (Player p1 : game.getPlayers()) {
@@ -163,29 +160,29 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                 return;
             }
         }
-        if (!alreadyCheckedBaseCards){
-            alreadyCheckedBaseCards=true;
+        if (!alreadyCheckedBaseCards) {
+            alreadyCheckedBaseCards = true;
             game.giveInitialCards();
         }
     }
 
 
-
     /**
      * This method "plays" the card selected by the Player in his own Board
-     * @param nickname is the nickname of the Player that wants to play a card
+     *
+     * @param nickname     is the nickname of the Player that wants to play a card
      * @param selectedCard the Card the Player wants to play
-     * @param position the position where the Player wants to play the Card
-     * @param orientation the side on which the Player wants to play the Card
+     * @param position     the position where the Player wants to play the Card
+     * @param orientation  the side on which the Player wants to play the Card
      * @throws IllegalArgumentException if there is an error in playing the card
      */
-    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws  IllegalArgumentException {
+    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) throws IllegalArgumentException {
         Player currentPlayer = game.getPlayers().get(0);
         if (!getPlayerByNickname(nickname).equals(currentPlayer)) {
             game.setLastEvent(ErrorsAssociatedWithExceptions.NOT_YOUR_TURN);
-        }else{
+        } else {
             currentPlayer.playCard(selectedCard, position, orientation);
-            if ((game.getState() != Game.GameState.ENDING) && (currentPlayer.getPoints() >= 20) && (lastRounds==10)) {
+            if ((game.getState() != Game.GameState.ENDING) && (currentPlayer.getPoints() >= 20) && (lastRounds == 10)) {
                 game.setState(Game.GameState.ENDING);
                 calculateLastMoves();
             }
@@ -199,10 +196,10 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     }
 
 
-
     /**
      * This method allows the currentPlayer to draw a card from the decks or from the unveiled ones
-     * @param nickname of the player who is going to draw the card
+     *
+     * @param nickname     of the player who is going to draw the card
      * @param selectedCard is the Card the Players wants to draw
      */
     public void drawCard(String nickname, PlayableCard selectedCard) {
@@ -229,7 +226,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                     calculateLastMoves();
                 } // if the score becomes higher than 20 there would be only one another turn to be played
                 nextPhase();
-            }else{
+            } else {
                 // you can't draw if you still haven't played a card
                 game.setLastEvent(ErrorsAssociatedWithExceptions.CARD_NOT_DRAWN);
             }
@@ -238,50 +235,49 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     }
 
 
-
     /**
      * This method allows the chooser Player to select his personal ObjectiveCard
+     *
      * @param chooserNickname is the nickname of the player selecting the ObjectiveCard
-     * @param selectedCard is the ObjectiveCard the player selected
+     * @param selectedCard    is the ObjectiveCard the player selected
      */
-    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard)  {
-        Player chooser= getPlayerByNickname(chooserNickname);
+    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) {
+        Player chooser = getPlayerByNickname(chooserNickname);
         try {
             chooser.setPersonalObjective(selectedCard);
-        }catch(CardNotOwnedException e) {
+        } catch (CardNotOwnedException e) {
             // only if the player is able to partially hack the game
-            game.setLastEvent (ErrorsAssociatedWithExceptions.OBJECTIVE_CARD_NOT_OWNED);
+            game.setLastEvent(ErrorsAssociatedWithExceptions.OBJECTIVE_CARD_NOT_OWNED);
         }
     }
-
 
 
     /**
      * This method is invoked to check if all the players have chosen their objective card
      */
-    public synchronized void checkObjectiveCardChosen(){
-        for(Player p: game.getPlayers()){
-            if(p.getPersonalObjectives().size()==2){
+    public synchronized void checkObjectiveCardChosen() {
+        for (Player p : game.getPlayers()) {
+            if (p.getPersonalObjectives().size() == 2) {
                 return;
             }
         }
         // finished choosing the objective card: need to start the real Game
-        if(!alreadyCheckedObjectiveCards){
-            alreadyCheckedObjectiveCards=true;
-            game.setLastEvent(new setUpPhaseFinishedEvent());
+        if (!alreadyCheckedObjectiveCards) {
+            alreadyCheckedObjectiveCards = true;
+            game.setLastEvent(new SetUpPhaseFinishedEvent());
         }
     }
 
 
-
     /**
      * This method allows a player to choose a Pawn color
+     *
      * @param chooserNickname is the nickname of the player who is going to select the Pawn
-     * @param selectedColor the chosen colour
+     * @param selectedColor   the chosen colour
      * @throws ColorAlreadyTakenException if the pawn has been chosen by another user before
      */
-    public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws  ColorAlreadyTakenException {
-        Player chooser= getPlayerByNickname(chooserNickname);
+    public void choosePawnColor(String chooserNickname, Pawn selectedColor) throws ColorAlreadyTakenException {
+        Player chooser = getPlayerByNickname(chooserNickname);
         synchronized (game.getAlreadySelectedColors()) {
             if (!game.getAlreadySelectedColors().contains(selectedColor)) {
                 chooser.setColor(selectedColor);
@@ -294,63 +290,61 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     }
 
 
-
     /**
      * This method is invoked to check if all the players have chosen their pawn color
      */
-    public synchronized void checkChosenPawnColor()  {
-        for(Player p1: game.getPlayers()){
-            if(p1.getChosenColor()==null){
+    public synchronized void checkChosenPawnColor() {
+        for (Player p1 : game.getPlayers()) {
+            if (p1.getChosenColor() == null) {
                 return;
             }
         }
-        if(!alreadyCheckedColors) {
-            alreadyCheckedColors=true;
+        if (!alreadyCheckedColors) {
+            alreadyCheckedColors = true;
             game.chosenPawns();
         }
     }
 
 
-
     /**
      * This method allows the player to send a text message in the chat
-     * @param senderNickname is the nickname of the player who sends the message
+     *
+     * @param senderNickname     is the nickname of the player who sends the message
      * @param receiversNicknames are the nickname of the players who are going to receive the message
-     * @param message the string (message) sent
+     * @param message            the string (message) sent
      */
-    public void sendMessage(String senderNickname, List<String> receiversNicknames, String message)  {
-       receiversNicknames.add(senderNickname);
-       Chat tmp;
-       if(!game.getChats().isEmpty()) {
-           tmp=game.getChatByUsers(receiversNicknames);
-               if(tmp!=null){
-                   receiversNicknames.remove(senderNickname);
-                   tmp.sendMessage(new ChatMessage(message, senderNickname, receiversNicknames, new Timestamp(System.currentTimeMillis())));
-                   return;
-               }
-           }
-           if (receiversNicknames.size() == game.getnPlayers()) {
-               receiversNicknames.remove(senderNickname);
-               tmp=game.startGeneralChat();
-               for(Observer obs: clientsConnected.values()){
-                   tmp.addObserver(obs);
-               }
-               tmp.sendMessage(new ChatMessage(message, senderNickname, receiversNicknames, new Timestamp(System.currentTimeMillis())));
-           }else {
-               receiversNicknames.remove(senderNickname);
-               tmp = game.startChat(senderNickname, receiversNicknames.get(0));
-               for(String s: receiversNicknames){
-                   for(String nickname: clientsConnected.keySet()){
-                       if(s.equals(nickname)){
-                           tmp.addObserver(clientsConnected.get(nickname));
-                       }
-                   }
-               }
-               tmp.sendMessage(new ChatMessage(message, senderNickname, receiversNicknames, new Timestamp(System.currentTimeMillis())));
-           }
+    public void sendMessage(String senderNickname, List<String> receiversNicknames, String message) {
+        receiversNicknames.add(senderNickname);
+        Chat tmp;
+        if (!game.getChats().isEmpty()) {
+            tmp = game.getChatByUsers(receiversNicknames);
+            if (tmp != null) {
+                receiversNicknames.remove(senderNickname);
+                tmp.sendMessage(new ChatMessage(message, senderNickname, receiversNicknames, new Timestamp(System.currentTimeMillis())));
+                return;
+            }
+        }
+        if (receiversNicknames.size() == game.getnPlayers()) {
+            receiversNicknames.remove(senderNickname);
+            tmp = game.startGeneralChat();
+            for (Observer obs : clientsConnected.values()) {
+                tmp.addObserver(obs);
+            }
+            tmp.sendMessage(new ChatMessage(message, senderNickname, receiversNicknames, new Timestamp(System.currentTimeMillis())));
+        } else {
+            receiversNicknames.remove(senderNickname);
+            tmp = game.startChat(senderNickname, receiversNicknames.get(0));
+            for (String s : receiversNicknames) {
+                for (String nickname : clientsConnected.keySet()) {
+                    if (s.equals(nickname)) {
+                        tmp.addObserver(clientsConnected.get(nickname));
+                    }
+                }
+            }
+            tmp.sendMessage(new ChatMessage(message, senderNickname, receiversNicknames, new Timestamp(System.currentTimeMillis())));
+        }
         game.setLastEvent(new OK(senderNickname));
     }
-
 
 
     /**
@@ -360,22 +354,20 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      */
     private void nextPhase() {
         if (game.getState() == Game.GameState.ENDING && lastRounds > 0) {
-            lastRounds --;
+            lastRounds--;
             game.setLastMoves(lastRounds);
-            if(lastDrawingRounds>0) {
+            if (lastDrawingRounds > 0) {
                 lastDrawingRounds--;
             }
             game.nextRound();
-        if (game.getState() == Game.GameState.ENDING && lastRounds == 0) {
-            // 20 points reached --> the players will have only another round
-            endGame();
-        }
+            if (game.getState() == Game.GameState.ENDING && lastRounds == 0) {
+                // 20 points reached --> the players will have only another round
+                endGame();
+            }
         } else if (game.getState() == Game.GameState.STARTED) {
-            // the order of the players in the list will be changed
             game.nextRound();
         }
     }
-
 
 
     /**
@@ -384,24 +376,23 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      * INTERNAL USE METHOD
      */
     private void calculateLastMoves() {
-            int firstPlayer = 0;
-            lastRounds = game.getnPlayers();
+        int firstPlayer = 0;
+        lastRounds = game.getnPlayers();
 
-            for (int i = 0; i<game.getnPlayers(); i++) {
-                if (game.getPlayers().get(i).isFirst()) {
-                    firstPlayer = i;
-                }
+        for (int i = 0; i < game.getnPlayers(); i++) {
+            if (game.getPlayers().get(i).isFirst()) {
+                firstPlayer = i;
             }
-            if (firstPlayer > 0) {
-                lastRounds = lastRounds + firstPlayer;
-                lastDrawingRounds=firstPlayer;
-            } else if (firstPlayer == 0) {
-                lastRounds = game.getnPlayers()*2;
-                lastDrawingRounds=game.getnPlayers();
-            }
-            game.setLastMoves(lastRounds);
         }
-
+        if (firstPlayer > 0) {
+            lastRounds = lastRounds + firstPlayer;
+            lastDrawingRounds = firstPlayer;
+        } else if (firstPlayer == 0) {
+            lastRounds = game.getnPlayers() * 2;
+            lastDrawingRounds = game.getnPlayers();
+        }
+        game.setLastMoves(lastRounds);
+    }
 
 
     /**
@@ -418,20 +409,20 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         ObjectiveCard commonObj1 = game.getObjectiveCard1();
         ObjectiveCard commonObj2 = game.getObjectiveCard2();
         ObjectiveCard personalObjective;
-        for (int i = 0; i<game.getnPlayers(); i++) {
+        for (int i = 0; i < game.getnPlayers(); i++) {
             personalObjective = game.getPlayers().get(i).getPersonalObjective();
             commonObj1.addPointsToPlayer(game.getPlayers().get(i));
             commonObj2.addPointsToPlayer(game.getPlayers().get(i));
             personalObjective.addPointsToPlayer(game.getPlayers().get(i));
         }
-        game.setLastEvent(new updatePlayersOrderEvent(game.getPlayers())); //lista aggiornata con i punti
+        game.setLastEvent(new UpdatePlayersOrderEvent(game.getPlayers())); //lista aggiornata con i punti
         game.winner();
 
         //removing all the observers since the game will not continue
-        for(Player p: game.getPlayers()){
+        for (Player p : game.getPlayers()) {
             p.removeObservers();
         }
-        for(Chat c: game.getChats().values()){
+        for (Chat c : game.getChats().values()) {
             c.removeObservers();
         }
         game.removeObservers();
@@ -439,63 +430,63 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         //removing the ID
         serverController.getAllGameControllers().remove(id);
 
-        for(Player p: gamePlayers) {
+        for (Player p : gamePlayers) {
             serverController.getAllNicknames().remove(p.getNickname());
         }
     }
 
 
-
     /**
      * This method allows the ServerController to add a Client connected to the specific GameController
+     *
      * @param nickname is the nickname of the Client
-     * @param client is the new added Client
+     * @param client   is the new added Client
      */
-    public void addClient(String nickname, Observer client){
-        if(!clientsConnected.containsValue(client)){
+    public void addClient(String nickname, Observer client) {
+        if (!clientsConnected.containsValue(client)) {
             clientsConnected.put(nickname, client);
         }
     }
 
 
-
     /**
      * This method is called remotely by the RMIClient when he asks to create a Lobby or join a Lobby
+     *
      * @param nickname is the nickname of the Client
-     * @param ro is the client who is joining the game
+     * @param ro       is the client who is joining the game
      */
-    public void addRMIClient(String nickname, ClientGeneralInterface ro){
-        WrappedObserver wrapObs= new WrappedObserver(ro, this);
-        if(!clientsConnected.containsValue(wrapObs)){
+    public void addRMIClient(String nickname, ClientGeneralInterface ro) {
+        WrappedObserver wrapObs = new WrappedObserver(ro, this);
+        if (!clientsConnected.containsValue(wrapObs)) {
             clientsConnected.put(nickname, wrapObs);
         }
     }
 
 
-
     /**
      * This method is used for receiving the heartbeats to check disconnections
+     *
      * @param nickname of the player
      */
     public void heartbeat(String nickname) {
-        lastHeartbeatTimesOfEachPlayer.put(nickname,System.currentTimeMillis());
+        lastHeartbeatTimesOfEachPlayer.put(nickname, System.currentTimeMillis());
     }
-
 
 
     /**
      * This method is used for starting the heartbeats to check disconnections
+     *
      * @param nickname of the player
      */
     public void startHeartbeat(String nickname) {
-        lastHeartbeatTimesOfEachPlayer.put(nickname,System.currentTimeMillis());
+        lastHeartbeatTimesOfEachPlayer.put(nickname, System.currentTimeMillis());
         startHeartbeatMonitor(nickname);
     }
 
 
-
     /**
      * This method is used for monitoring the heartbeats of the different clients
+     *
      * @param nickname of the player
      */
     private void startHeartbeatMonitor(String nickname) {
@@ -503,10 +494,10 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         var lambdaContext = new Object() {
             ScheduledFuture<?> heartbeatTask;
         };
-        lambdaContext.heartbeatTask =scheduler.scheduleAtFixedRate(() -> {
+        lambdaContext.heartbeatTask = scheduler.scheduleAtFixedRate(() -> {
             long currentTime = System.currentTimeMillis();
-            if (((currentTime - lastHeartbeatTimesOfEachPlayer.get(nickname)) / 1000 > TIMEOUT)||disconnection) {
-                disconnection=true;
+            if (((currentTime - lastHeartbeatTimesOfEachPlayer.get(nickname)) / 1000 > TIMEOUT) || disconnection) {
+                disconnection = true;
                 if (lambdaContext.heartbeatTask != null && !lambdaContext.heartbeatTask.isCancelled()) {
                     lambdaContext.heartbeatTask.cancel(true); // closing the scheduler
                 }
@@ -516,14 +507,13 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     }
 
 
-
     /**
      * This method is used when the server detects a disconnection, so it removes all the observers
      * and removes the gameController of the match where the disconnection happened
      */
-    public void disconnection(){
+    public void disconnection() {
         synchronized (disconnectionLock) {
-            if(game!=null&&game.getState()!=null&&(game.getState().equals(Game.GameState.STARTED)||game.getState().equals(Game.GameState.ENDING)||game.getState().equals(Game.GameState.ENDED) )){
+            if (game != null && game.getState() != null && (game.getState().equals(Game.GameState.STARTED) || game.getState().equals(Game.GameState.ENDING) || game.getState().equals(Game.GameState.ENDED))) {
                 disconnection = true;
                 if (firstDisconnection) {
                     game.notifyDisconnectionEvent();
@@ -541,9 +531,9 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     }
 
 
-
     /**
      * Getter method
+     *
      * @return the ID of the gameController
      */
     public int getId() {
@@ -551,9 +541,9 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     }
 
 
-
     /**
      * Getter method
+     *
      * @return the game of the related gameController
      */
     public Game getGame() {
@@ -561,9 +551,9 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     }
 
 
-
     /**
      * Getter method
+     *
      * @return how many rounds there are before closing the game
      */
     public int getLastRounds() {
@@ -571,9 +561,9 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     }
 
 
-
     /**
      * Getter method
+     *
      * @return how many rounds there are before the players can't draw any cards
      */
     public int getLastDrawingRounds() {
@@ -581,16 +571,16 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     }
 
 
-
     /**
      * Getter method
      * This method returns the player given his nickname
+     *
      * @param Nickname is the nickname we are using to search for a player
      * @return the player if found, null otherwise
      */
     public Player getPlayerByNickname(String Nickname) {
-        for(Player player : gamePlayers){
-            if(player.getNickname().equals(Nickname)){
+        for (Player player : gamePlayers) {
+            if (player.getNickname().equals(Nickname)) {
                 return player;
             }
         }
@@ -598,9 +588,9 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     }
 
 
-
     /**
      * Getter method
+     *
      * @return the list of the players in the game
      */
     public List<Player> getGamePlayers() {
@@ -608,23 +598,23 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     }
 
 
-
     /**
      * Setter method
+     *
      * @param numberOfPlayers who are playing
      * @throws IllegalArgumentException if the number of players is wrong
-     * INTERNAL USE METHOD
+     *                                  INTERNAL USE METHOD
      */
     public void setNumberOfPlayers(int numberOfPlayers) throws IllegalArgumentException {
         if ((numberOfPlayers >= 2) && (numberOfPlayers <= 4)) {
             this.numberOfPlayers = numberOfPlayers;
-        }else throw new IllegalArgumentException("Wrong number of players!");
+        } else throw new IllegalArgumentException("Wrong number of players!");
     }
-
 
 
     /**
      * Setter method
+     *
      * @param id of the Game controller
      */
     public void setId(int id) {
@@ -632,9 +622,9 @@ public class GameController extends UnicastRemoteObject implements GameControlle
     }
 
 
-
     /**
      * Setter method
+     *
      * @param serverController which manages the different game controllers
      */
     public void setServerController(ServerController serverController) {

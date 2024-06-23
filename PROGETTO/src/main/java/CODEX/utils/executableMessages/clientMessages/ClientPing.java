@@ -1,7 +1,6 @@
 package CODEX.utils.executableMessages.clientMessages;
 
 import CODEX.distributed.Socket.ClientHandlerThread;
-import CODEX.distributed.Socket.ClientSCK;
 import CODEX.distributed.messages.SCKMessage;
 import CODEX.utils.executableMessages.serverMessages.ServerMessage;
 import CODEX.utils.executableMessages.serverMessages.ServerPong;
@@ -13,10 +12,12 @@ public class ClientPing implements ClientMessage {
     /**
      * Default constructor
      */
-    public ClientPing() {}
+    public ClientPing() {
+    }
 
     /**
      * This method sends a ping message that the client is connected
+     *
      * @param clientHandlerThread thread
      */
     @Override

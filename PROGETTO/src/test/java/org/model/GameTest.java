@@ -27,7 +27,7 @@ public class GameTest extends TestCase {
         players.add(p1);
         players.add(p);
         Game game = new Game(players, 1);
-        game.setnPlayers(2);
+        game.setNPlayers(2);
 
         for (int i = 0; i< game.getPlayers().size(); i++) {
             System.out.println("Player number " + i + " with nickname " + players.get(i).getNickname());
@@ -45,7 +45,7 @@ public class GameTest extends TestCase {
         players.add(p1);
         players.add(p);
         Game game = new Game(players, 1);
-        game.setnPlayers(2);
+        game.setNPlayers(2);
         Player p3 = new Player();
         p3.setNickname("Minnie");
         assertThrows(ArrayIndexOutOfBoundsException.class, ()->{
@@ -65,7 +65,7 @@ public class GameTest extends TestCase {
         Player p2 = new Player();
         Player p3 = new Player();
         Player p4 = new Player();
-        game.setnPlayers(4);
+        game.setNPlayers(4);
         game.addPlayer(p2);
         game.addPlayer(p3);
         game.addPlayer(p4);
@@ -113,7 +113,7 @@ public class GameTest extends TestCase {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
 
-        game.setnPlayers(2);
+        game.setNPlayers(2);
 
         int numPlayers = game.getnPlayers();
         p1.setGame(game);
@@ -134,7 +134,7 @@ public class GameTest extends TestCase {
         Player p1 = new Player();
         Game game = new Game(p1,1);
         Player p = new Player();
-        game.setnPlayers(2);
+        game.setNPlayers(2);
         game.addPlayer(p);
 
         int nPlayers = game.getnPlayers();
@@ -163,7 +163,7 @@ public class GameTest extends TestCase {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
         Player p = new Player();
-        game.setnPlayers(2);
+        game.setNPlayers(2);
         game.addPlayer(p);
 
         int nPlayers = game.getnPlayers();
@@ -234,7 +234,7 @@ public class GameTest extends TestCase {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
         Player p = new Player();
-        game.setnPlayers(2);
+        game.setNPlayers(2);
         game.addPlayer(p);
 
         int nPlayers = game.getnPlayers();
@@ -272,7 +272,7 @@ public class GameTest extends TestCase {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
         Player p = new Player();
-        game.setnPlayers(2);
+        game.setNPlayers(2);
         game.addPlayer(p);
 
         int nPlayers = game.getnPlayers();
@@ -309,7 +309,7 @@ public class GameTest extends TestCase {
         Player p1 = new Player();
         Game game = new Game(p1, 1);
         Player p = new Player();
-        game.setnPlayers(2);
+        game.setNPlayers(2);
         game.addPlayer(p);
 
         int nPlayers = game.getnPlayers();
@@ -393,7 +393,7 @@ public class GameTest extends TestCase {
         Player p2 = new Player();
         Player p3 = new Player();
         Player p4 = new Player();
-        game.setnPlayers(4);
+        game.setNPlayers(4);
         game.addPlayer(p2);
         game.addPlayer(p3);
         game.addPlayer(p4);
@@ -432,7 +432,7 @@ public class GameTest extends TestCase {
         Player p2 = new Player();
         Player p3 = new Player();
         Player p4 = new Player();
-        game.setnPlayers(4);
+        game.setNPlayers(4);
         game.addPlayer(p2);
         game.addPlayer(p3);
         game.addPlayer(p4);
@@ -465,7 +465,7 @@ public class GameTest extends TestCase {
         Player p2 = new Player();
         Player p3 = new Player();
         Player p4 = new Player();
-        game.setnPlayers(4);
+        game.setNPlayers(4);
         game.addPlayer(p2);
         game.addPlayer(p3);
         game.addPlayer(p4);
@@ -498,7 +498,7 @@ public class GameTest extends TestCase {
         Player p2 = new Player();
         Player p3 = new Player();
         Player p4 = new Player();
-        game.setnPlayers(4);
+        game.setNPlayers(4);
         game.addPlayer(p2);
         game.addPlayer(p3);
         game.addPlayer(p4);
@@ -531,7 +531,7 @@ public class GameTest extends TestCase {
         Player p2 = new Player();
         Player p3 = new Player();
         Player p4 = new Player();
-        game.setnPlayers(4);
+        game.setNPlayers(4);
         game.addPlayer(p2);
         game.addPlayer(p3);
         game.addPlayer(p4);

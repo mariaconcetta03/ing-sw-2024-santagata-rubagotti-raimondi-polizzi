@@ -9,12 +9,12 @@ import java.rmi.RemoteException;
 /**
  * This event is useful to communicate that gold card 1 has changed
  */
-public class updateGoldCard1Event implements Event {
+public class UpdateGoldCard1Event implements Event {
     /**
      * Constructor method
      * @param card is the card to be updated.
      */
-    public updateGoldCard1Event(PlayableCard card){
+    public UpdateGoldCard1Event(PlayableCard card){
         this.card=card;
     }
     private PlayableCard card;
@@ -24,6 +24,8 @@ public class updateGoldCard1Event implements Event {
         client.updateGoldCard1(card);
         return false;
     }
+
+
     @Override
     public void executeSCK(ClientSCK client) {
 
@@ -32,7 +34,7 @@ public class updateGoldCard1Event implements Event {
     }
 
     @Override
-    public boolean executeSCKServerSide() { //returns true when we are considering updateGameState and the new state is 'STARTED'
+    public boolean executeSCKServerSide() {
         return false;
 
     }

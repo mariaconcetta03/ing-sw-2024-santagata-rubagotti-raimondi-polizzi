@@ -3,37 +3,32 @@ package CODEX.utils.executableMessages.events;
 import CODEX.distributed.ClientGeneralInterface;
 import CODEX.distributed.RMI.WrappedObserver;
 import CODEX.distributed.Socket.ClientSCK;
-import CODEX.org.model.PlayableCard;
 
 import java.rmi.RemoteException;
 
-
 /**
- * This event is useful to communicate that gold card 2 has changed
+ * This event is useful to communicate that the number of
+ * last moves remained has changed
  */
-public class updateGoldCard2Event implements Event {
-
-    public updateGoldCard2Event(PlayableCard card) {
-        this.card = card;
+public class UpdateLastMovesEvent implements Event{
+    private int lastMoves;
+    public UpdateLastMovesEvent(int lastMoves){
+        this.lastMoves=lastMoves;
     }
-
-    private PlayableCard card;
-
     @Override
     public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
-        client.updateGoldCard2(card);
+        client.updateLastMoves(lastMoves);
         return false;
-    }
-    @Override
-    public void executeSCK(ClientSCK client) {
-
-            client.updateGoldCard2(card);
-
     }
 
     @Override
-    public boolean executeSCKServerSide() { //returns true when we are considering updateGameState and the new state is 'STARTED'
-        return false;
+    public void executeSCK(ClientSCK client) {
+            client.updateLastMoves(lastMoves);
+    }
 
+
+    @Override
+    public boolean executeSCKServerSide() {
+        return false;
     }
 }

@@ -19,17 +19,6 @@ public class InterfaceTUI implements Serializable {
     private boolean firstMenu = true;
     private int cornerDistance = 15;
 
-    /*
-     * SOME EMOJIS TO REPRESENT THE RESOURCES
-     * 🪶 feather
-     * 🫙 jar
-     * 📃 scroll
-     * 🍄 fungi
-     * 🦋 insect
-     * 🐺 animal
-     * 🌿 plant
-     */
-
 
     /**
      * Class constructor
@@ -1147,7 +1136,7 @@ public class InterfaceTUI implements Serializable {
                                     seventhRow = seventhRow.concat(cardColor + "__________________" + rst);
                                 }
                             }
-                        } else { //printing top roght angle of downLeftCard
+                        } else { //printing top right angle of downLeftCard
                             if (downLeftCard.getOrientation()) {
                                 if (!downLeftCard.get_front_up_right().equals(AngleType.ABSENT)) {
                                     sixthRow = sixthRow.concat(downLeftColor + "|" + rst);
@@ -1158,7 +1147,7 @@ public class InterfaceTUI implements Serializable {
                                 } else {
                                     fifthRow = fifthRow.concat(downLeftColor + "__                 " + rst);
                                     sixthRow = sixthRow.concat(downLeftColor + "   |" + rst);
-                                    seventhRow = seventhRow.concat(downLeftColor + "   |" + rst + cardColor + "_______________" + rst); //@TODO sistemare angoli coperti ma ABSENT
+                                    seventhRow = seventhRow.concat(downLeftColor + "   |" + rst + cardColor + "_______________" + rst);
                                 }
                             } else {
                                 if (!downLeftCard.get_back_up_right().equals(AngleType.ABSENT)) {
@@ -1460,7 +1449,7 @@ public class InterfaceTUI implements Serializable {
                         } else { // printing top right angle of downLeftCard
                             if (downLeftCard.getOrientation()) {
                                 if (!downLeftCard.get_front_up_right().equals(AngleType.ABSENT)) {
-                                    thirdRow = thirdRow.concat(downLeftColor + "|" + rst); //@TODO è ok?
+                                    thirdRow = thirdRow.concat(downLeftColor + "|" + rst);
                                     fourthRow = fourthRow.concat(downLeftColor + "|" + rst);
                                     secondRow = secondRow.concat(downLeftColor + "__                 " + rst);
                                     thirdRow = thirdRow.concat(abbreviations.get(downLeftCard.get_front_up_right()) + downLeftColor + " |" + rst);
@@ -1468,7 +1457,7 @@ public class InterfaceTUI implements Serializable {
                                 } else {
                                     secondRow = secondRow.concat(downLeftColor + "__                 " + rst);
                                     thirdRow = thirdRow.concat(downLeftColor + "   |" + rst);
-                                    fourthRow = fourthRow.concat(downLeftColor + "   |" + rst + cardColor + "_______________" + rst); //@TODO sistemare angoli coperti ma ABSENT
+                                    fourthRow = fourthRow.concat(downLeftColor + "   |" + rst + cardColor + "_______________" + rst);
                                 }
                             } else {
                                 if (!downLeftCard.get_back_up_right().equals(AngleType.ABSENT)) {

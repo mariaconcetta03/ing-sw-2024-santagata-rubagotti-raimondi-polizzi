@@ -8,31 +8,34 @@ import CODEX.org.model.PlayableCard;
 import java.rmi.RemoteException;
 
 
-
 /**
- * This event is useful to communicate that resource card 1 has changed
+ * This event is useful to communicate that the player deck has changed
  */
-public class updateResourceCard1Event implements Event {
-    private PlayableCard card;
+public class UpdatePlayerDeckEvent implements Event {
+    private String playerNickname;
+    private PlayableCard[] playerDeck;
 
-    public updateResourceCard1Event(PlayableCard card) {
-        this.card = card;
+
+    public UpdatePlayerDeckEvent(String playerNickname, PlayableCard[] playerDeck) {
+        this.playerNickname = playerNickname;
+        this.playerDeck = playerDeck;
     }
+
 
     @Override
     public boolean execute(ClientGeneralInterface client, WrappedObserver wrappedObserver) throws RemoteException {
-        client.updateResourceCard1(card);
+        client.updatePlayerDeck(playerNickname, playerDeck);
         return false;
     }
     @Override
     public void executeSCK(ClientSCK client) {
 
-            client.updateResourceCard1(card);
+            client.updatePlayerDeck(playerNickname, playerDeck);
 
     }
 
     @Override
-    public boolean executeSCKServerSide() { //returns true when we are considering updateGameState and the new state is 'STARTED'
+    public boolean executeSCKServerSide() {
         return false;
 
     }

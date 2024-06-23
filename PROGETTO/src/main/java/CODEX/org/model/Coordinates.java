@@ -10,9 +10,9 @@ public class Coordinates implements Serializable {
     private int y;
 
 
-
     /**
      * Class constructor
+     *
      * @param x coordinate x
      * @param y coordinate y
      */
@@ -25,8 +25,8 @@ public class Coordinates implements Serializable {
     /**
      * Class constructor default
      */
-    public Coordinates() {}
-
+    public Coordinates() {
+    }
 
 
     @Override
@@ -38,7 +38,7 @@ public class Coordinates implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         Coordinates other = (Coordinates) obj;
-        if ( this.getX()!= other.getX()) {
+        if (this.getX() != other.getX()) {
             return false;
         }
         if (this.getY() != other.getY()) {
@@ -48,20 +48,19 @@ public class Coordinates implements Serializable {
     }
 
 
-
     @Override
     public int hashCode() {
-        final int start=17;
-        int res=1;
-        res=start*res+this.getX();
-        res=start*res+this.getY();
+        final int start = 17;
+        int res = 1;
+        res = start * res + this.getX();
+        res = start * res + this.getY();
         return res;
     }
 
 
-
     /**
      * Getter method
+     *
      * @return x
      */
     public int getX() {
@@ -69,9 +68,9 @@ public class Coordinates implements Serializable {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return y
      */
     public int getY() {
@@ -79,9 +78,9 @@ public class Coordinates implements Serializable {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param x is the coordinate x
      */
     public void setX(int x) {
@@ -89,9 +88,9 @@ public class Coordinates implements Serializable {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param y is the coordinate y
      */
     public void setY(int y) {
@@ -99,40 +98,40 @@ public class Coordinates implements Serializable {
     }
 
 
-
     /**
      * These function returns the coordinates which surround the current Coordinate object (up right)
-     * @return Coordinates(x,y)
+     *
+     * @return Coordinates(x, y)
      */
     public Coordinates findUpRight() {
         return new Coordinates(this.x + 1, this.y + 1);
     }
 
 
-
     /**
      * These function returns the coordinates which surround the current Coordinate object (up left)
-     * @return Coordinates(x,y)
+     *
+     * @return Coordinates(x, y)
      */
     public Coordinates findUpLeft() {
         return new Coordinates(this.x - 1, this.y + 1);
     }
 
 
-
     /**
      * These function returns the coordinates which surround the current Coordinate object (down right)
-     * @return Coordinates(x,y)
+     *
+     * @return Coordinates(x, y)
      */
     public Coordinates findDownRight() {
         return new Coordinates(this.x + 1, this.y - 1);
     }
 
 
-
     /**
      * These function returns the coordinates which surround the current Coordinate object (down left)
-     * @return Coordinates(x,y)
+     *
+     * @return Coordinates(x, y)
      */
     public Coordinates findDownLeft() {
         return new Coordinates(this.x - 1, this.y - 1);

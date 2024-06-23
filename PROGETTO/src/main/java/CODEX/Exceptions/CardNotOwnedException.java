@@ -8,6 +8,7 @@ import CODEX.utils.ErrorsAssociatedWithExceptions;
 public class CardNotOwnedException extends Exception implements ExceptionAssociatedWithAnEvent {
     /**
      * Class constructor
+     *
      * @param errormessage is the message we want to give
      */
     public CardNotOwnedException(String errormessage) {
@@ -15,9 +16,9 @@ public class CardNotOwnedException extends Exception implements ExceptionAssocia
     }
 
 
-
     /**
      * Getter method
+     *
      * @return associatedEvent
      */
     @Override

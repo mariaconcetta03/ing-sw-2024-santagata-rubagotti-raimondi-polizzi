@@ -8,9 +8,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.*;
 
-import java.rmi.RemoteException;
-import java.sql.SQLOutput;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -68,14 +65,14 @@ public class GUIWinnersController {
     private Map<Integer, List<String>> winners;
 
 
-
     /**
      * This method sets the label on "YOU WON" or "YOU LOST"
      */
-    private void setTitleLabel(){
+    private void setTitleLabel() {
         // CHECKING IF I WON THE MATCH OR NOT
         boolean iWon = false;
-        for (String s : winners.get(1)) { // if the player is in the 1st position -> he won
+        for (String s : winners.get(1)) {
+            // if the player is in the 1st position -> he won
             if (s.equals(personalPlayer.getNickname())) {
                 iWon = true;
                 break;
@@ -83,14 +80,12 @@ public class GUIWinnersController {
         }
 
         // SETTING THE LABEL ON TOP OF THE SCREEN
-        if(iWon){
+        if (iWon) {
             titleLabel.setText("Y O U    W O N !");
-        }else{
+        } else {
             titleLabel.setText("Y O U    L O S T !");
         }
     }
-
-
 
 
     /**
@@ -140,7 +135,7 @@ public class GUIWinnersController {
 
 
                 if (winners.get(1).size() > 1) {
-                    player2.setText(winners.get(1).get(1)); //reading the other players who have reached the first place
+                    player2.setText(winners.get(1).get(1));
                     for (Player p : rmiClient.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(1))) {
                             points2.setText(p.getPoints() + " pt");
@@ -200,7 +195,7 @@ public class GUIWinnersController {
                 obj3.setOpacity(1);
                 obj4.setOpacity(0);
 
-                if (winners.get(1).size() == 1) { //just 1 winner
+                if (winners.get(1).size() == 1) { // just 1 winner
                     player1.setText(winners.get(1).get(0));
                     for (Player p : rmiClient.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(0))) {
@@ -302,7 +297,7 @@ public class GUIWinnersController {
                         }
                     }
 
-                } else if (winners.get(1).size() == 2) { //2 first position
+                } else if (winners.get(1).size() == 2) { // 2 first position
                     player1.setText(winners.get(1).get(0));
                     for (Player p : rmiClient.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(0))) {
@@ -322,7 +317,7 @@ public class GUIWinnersController {
                             pawn1.setImage(image);
                         }
                     }
-                    player2.setText(winners.get(1).get(1)); //reading the other players who have reached the first place
+                    player2.setText(winners.get(1).get(1));
                     for (Player p : rmiClient.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(1))) {
                             points2.setText(p.getPoints() + " pt");
@@ -343,28 +338,28 @@ public class GUIWinnersController {
                     }
 
 
-                        player3.setText(winners.get(3).get(0)); //reading the other players who have reached the first place
-                        for (Player p : rmiClient.getPlayersInTheGame()) {
-                            if (p.getNickname().equals(winners.get(3).get(0))) {
-                                points3.setText(p.getPoints() + " pt");
-                                obj3.setText(String.valueOf(p.getNumObjectivesReached()));
-                                String path = null;
-                                if (p.getChosenColor().equals(Pawn.YELLOW)) {
-                                    path = "/images/pawns/Yellow_Pawn.png";
-                                } else if (p.getChosenColor().equals(Pawn.RED)) {
-                                    path = "/images/pawns/Red_Pawn.png";
-                                } else if (p.getChosenColor().equals(Pawn.BLUE)) {
-                                    path = "/images/pawns/Blue_Pawn.png";
-                                } else if (p.getChosenColor().equals(Pawn.GREEN)) {
-                                    path = "/images/pawns/Green_Pawn.png";
-                                }
-                                Image image = new Image(getClass().getResourceAsStream(path));
-                                pawn3.setImage(image);
+                    player3.setText(winners.get(3).get(0));
+                    for (Player p : rmiClient.getPlayersInTheGame()) {
+                        if (p.getNickname().equals(winners.get(3).get(0))) {
+                            points3.setText(p.getPoints() + " pt");
+                            obj3.setText(String.valueOf(p.getNumObjectivesReached()));
+                            String path = null;
+                            if (p.getChosenColor().equals(Pawn.YELLOW)) {
+                                path = "/images/pawns/Yellow_Pawn.png";
+                            } else if (p.getChosenColor().equals(Pawn.RED)) {
+                                path = "/images/pawns/Red_Pawn.png";
+                            } else if (p.getChosenColor().equals(Pawn.BLUE)) {
+                                path = "/images/pawns/Blue_Pawn.png";
+                            } else if (p.getChosenColor().equals(Pawn.GREEN)) {
+                                path = "/images/pawns/Green_Pawn.png";
                             }
+                            Image image = new Image(getClass().getResourceAsStream(path));
+                            pawn3.setImage(image);
                         }
+                    }
 
 
-                }else if (winners.get(1).size() == 3){ //3 first position
+                } else if (winners.get(1).size() == 3) { //3 first position
                     player1.setText(winners.get(1).get(0));
                     for (Player p : rmiClient.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(0))) {
@@ -384,7 +379,7 @@ public class GUIWinnersController {
                             pawn1.setImage(image);
                         }
                     }
-                    player2.setText(winners.get(1).get(1)); //reading the other players who have reached the first place
+                    player2.setText(winners.get(1).get(1));
                     for (Player p : rmiClient.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(1))) {
                             points2.setText(p.getPoints() + " pt");
@@ -404,7 +399,7 @@ public class GUIWinnersController {
                         }
                     }
 
-                    player3.setText(winners.get(1).get(2)); //reading the other players who have reached the first place
+                    player3.setText(winners.get(1).get(2));
                     for (Player p : rmiClient.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(2))) {
                             points3.setText(p.getPoints() + " pt");
@@ -528,7 +523,7 @@ public class GUIWinnersController {
                                 }
                             }
 
-                        }else{ // 2 players in third position
+                        } else { // 2 players in third position
                             player3.setText(winners.get(3).get(0));
                             for (Player p : rmiClient.getPlayersInTheGame()) {
                                 if (p.getNickname().equals(winners.get(3).get(0))) {
@@ -549,27 +544,26 @@ public class GUIWinnersController {
                                 }
                             }
 
-                                player4.setText(winners.get(3).get(1));
-                                for (Player p : rmiClient.getPlayersInTheGame()) {
-                                    if (p.getNickname().equals(winners.get(3).get(1))) {
-                                        points4.setText(p.getPoints() + " pt");
-                                        obj4.setText(String.valueOf(p.getNumObjectivesReached()));
-                                        String path = null;
-                                        if (p.getChosenColor().equals(Pawn.YELLOW)) {
-                                            path = "/images/pawns/Yellow_Pawn.png";
-                                        } else if (p.getChosenColor().equals(Pawn.RED)) {
-                                            path = "/images/pawns/Red_Pawn.png";
-                                        } else if (p.getChosenColor().equals(Pawn.BLUE)) {
-                                            path = "/images/pawns/Blue_Pawn.png";
-                                        } else if (p.getChosenColor().equals(Pawn.GREEN)) {
-                                            path = "/images/pawns/Green_Pawn.png";
-                                        }
-                                        Image image = new Image(getClass().getResourceAsStream(path));
-                                        pawn4.setImage(image);
+                            player4.setText(winners.get(3).get(1));
+                            for (Player p : rmiClient.getPlayersInTheGame()) {
+                                if (p.getNickname().equals(winners.get(3).get(1))) {
+                                    points4.setText(p.getPoints() + " pt");
+                                    obj4.setText(String.valueOf(p.getNumObjectivesReached()));
+                                    String path = null;
+                                    if (p.getChosenColor().equals(Pawn.YELLOW)) {
+                                        path = "/images/pawns/Yellow_Pawn.png";
+                                    } else if (p.getChosenColor().equals(Pawn.RED)) {
+                                        path = "/images/pawns/Red_Pawn.png";
+                                    } else if (p.getChosenColor().equals(Pawn.BLUE)) {
+                                        path = "/images/pawns/Blue_Pawn.png";
+                                    } else if (p.getChosenColor().equals(Pawn.GREEN)) {
+                                        path = "/images/pawns/Green_Pawn.png";
                                     }
+                                    Image image = new Image(getClass().getResourceAsStream(path));
+                                    pawn4.setImage(image);
                                 }
                             }
-
+                        }
 
 
                     } else if (winners.get(2).size() == 2) { // 2 second position
@@ -716,7 +710,7 @@ public class GUIWinnersController {
                             pawn1.setImage(image);
                         }
                     }
-                    player2.setText(winners.get(1).get(1)); //reading the other players who have reached the first place
+                    player2.setText(winners.get(1).get(1));
                     for (Player p : rmiClient.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(1))) {
                             points2.setText(p.getPoints() + " pt");
@@ -737,7 +731,7 @@ public class GUIWinnersController {
                     }
                     //how many players in 2 position?
                     if (winners.get(3).size() == 2) { //2 players in second position
-                        player3.setText(winners.get(3).get(0)); //reading the other players who have reached the first place
+                        player3.setText(winners.get(3).get(0));
                         for (Player p : rmiClient.getPlayersInTheGame()) {
                             if (p.getNickname().equals(winners.get(3).get(0))) {
                                 points3.setText(p.getPoints() + " pt");
@@ -757,7 +751,7 @@ public class GUIWinnersController {
                             }
                         }
 
-                        player4.setText(winners.get(3).get(1)); //reading the other players who have reached the first place
+                        player4.setText(winners.get(3).get(1));
                         for (Player p : rmiClient.getPlayersInTheGame()) {
                             if (p.getNickname().equals(winners.get(3).get(1))) {
                                 points4.setText(p.getPoints() + " pt");
@@ -777,7 +771,7 @@ public class GUIWinnersController {
                             }
                         }
                     } else { // 1 player in 3 position
-                        player3.setText(winners.get(3).get(0)); //reading the other players who have reached the first place
+                        player3.setText(winners.get(3).get(0));
                         for (Player p : rmiClient.getPlayersInTheGame()) {
                             if (p.getNickname().equals(winners.get(3).get(0))) {
                                 points3.setText(p.getPoints() + " pt");
@@ -796,7 +790,7 @@ public class GUIWinnersController {
                                 pawn3.setImage(image);
                             }
                         }
-                        player4.setText(winners.get(4).get(0)); //reading the other players who have reached the first place
+                        player4.setText(winners.get(4).get(0));
                         for (Player p : rmiClient.getPlayersInTheGame()) {
                             if (p.getNickname().equals(winners.get(4).get(0))) {
                                 points4.setText(p.getPoints() + " pt");
@@ -817,7 +811,7 @@ public class GUIWinnersController {
                         }
                     }
 
-                }else if (winners.get(1).size() == 3){ //3 first position
+                } else if (winners.get(1).size() == 3) { //3 first position
                     player1.setText(winners.get(1).get(0));
                     for (Player p : rmiClient.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(0))) {
@@ -837,7 +831,7 @@ public class GUIWinnersController {
                             pawn1.setImage(image);
                         }
                     }
-                    player2.setText(winners.get(1).get(1)); //reading the other players who have reached the first place
+                    player2.setText(winners.get(1).get(1));
                     for (Player p : rmiClient.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(1))) {
                             points2.setText(p.getPoints() + " pt");
@@ -856,86 +850,7 @@ public class GUIWinnersController {
                             pawn2.setImage(image);
                         }
                     }
-                        player3.setText(winners.get(1).get(2)); //reading the other players who have reached the first place
-                        for (Player p : rmiClient.getPlayersInTheGame()) {
-                            if (p.getNickname().equals(winners.get(1).get(2))) {
-                                points3.setText(p.getPoints() + " pt");
-                                obj3.setText(String.valueOf(p.getNumObjectivesReached()));
-                                String path = null;
-                                if (p.getChosenColor().equals(Pawn.YELLOW)) {
-                                    path = "/images/pawns/Yellow_Pawn.png";
-                                } else if (p.getChosenColor().equals(Pawn.RED)) {
-                                    path = "/images/pawns/Red_Pawn.png";
-                                } else if (p.getChosenColor().equals(Pawn.BLUE)) {
-                                    path = "/images/pawns/Blue_Pawn.png";
-                                } else if (p.getChosenColor().equals(Pawn.GREEN)) {
-                                    path = "/images/pawns/Green_Pawn.png";
-                                }
-                                Image image = new Image(getClass().getResourceAsStream(path));
-                                pawn3.setImage(image);
-                            }
-                    }
-
-                    player4.setText(winners.get(4).get(0)); //reading the other players who have reached the first place
-                    for (Player p : rmiClient.getPlayersInTheGame()) {
-                        if (p.getNickname().equals(winners.get(4).get(0))) {
-                            points4.setText(p.getPoints() + " pt");
-                            obj4.setText(String.valueOf(p.getNumObjectivesReached()));
-                            String path = null;
-                            if (p.getChosenColor().equals(Pawn.YELLOW)) {
-                                path = "/images/pawns/Yellow_Pawn.png";
-                            } else if (p.getChosenColor().equals(Pawn.RED)) {
-                                path = "/images/pawns/Red_Pawn.png";
-                            } else if (p.getChosenColor().equals(Pawn.BLUE)) {
-                                path = "/images/pawns/Blue_Pawn.png";
-                            } else if (p.getChosenColor().equals(Pawn.GREEN)) {
-                                path = "/images/pawns/Green_Pawn.png";
-                            }
-                            Image image = new Image(getClass().getResourceAsStream(path));
-                            pawn4.setImage(image);
-                        }
-                    }
-
-                }else if(winners.get(1).size() == 4){ //4 first position
-                    player1.setText(winners.get(1).get(0));
-                    for (Player p : rmiClient.getPlayersInTheGame()) {
-                        if (p.getNickname().equals(winners.get(1).get(0))) {
-                            points1.setText(p.getPoints() + " pt");
-                            obj1.setText(String.valueOf(p.getNumObjectivesReached()));
-                            String path = null;
-                            if (p.getChosenColor().equals(Pawn.YELLOW)) {
-                                path = "/images/pawns/Yellow_Pawn.png";
-                            } else if (p.getChosenColor().equals(Pawn.RED)) {
-                                path = "/images/pawns/Red_Pawn.png";
-                            } else if (p.getChosenColor().equals(Pawn.BLUE)) {
-                                path = "/images/pawns/Blue_Pawn.png";
-                            } else if (p.getChosenColor().equals(Pawn.GREEN)) {
-                                path = "/images/pawns/Green_Pawn.png";
-                            }
-                            Image image = new Image(getClass().getResourceAsStream(path));
-                            pawn1.setImage(image);
-                        }
-                    }
-                    player2.setText(winners.get(1).get(1)); //reading the other players who have reached the first place
-                    for (Player p : rmiClient.getPlayersInTheGame()) {
-                        if (p.getNickname().equals(winners.get(1).get(1))) {
-                            points2.setText(p.getPoints() + " pt");
-                            obj2.setText(String.valueOf(p.getNumObjectivesReached()));
-                            String path = null;
-                            if (p.getChosenColor().equals(Pawn.YELLOW)) {
-                                path = "/images/pawns/Yellow_Pawn.png";
-                            } else if (p.getChosenColor().equals(Pawn.RED)) {
-                                path = "/images/pawns/Red_Pawn.png";
-                            } else if (p.getChosenColor().equals(Pawn.BLUE)) {
-                                path = "/images/pawns/Blue_Pawn.png";
-                            } else if (p.getChosenColor().equals(Pawn.GREEN)) {
-                                path = "/images/pawns/Green_Pawn.png";
-                            }
-                            Image image = new Image(getClass().getResourceAsStream(path));
-                            pawn2.setImage(image);
-                        }
-                    }
-                    player3.setText(winners.get(1).get(2)); //reading the other players who have reached the first place
+                    player3.setText(winners.get(1).get(2));
                     for (Player p : rmiClient.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(2))) {
                             points3.setText(p.getPoints() + " pt");
@@ -955,7 +870,86 @@ public class GUIWinnersController {
                         }
                     }
 
-                    player4.setText(winners.get(1).get(3)); //reading the other players who have reached the first place
+                    player4.setText(winners.get(4).get(0));
+                    for (Player p : rmiClient.getPlayersInTheGame()) {
+                        if (p.getNickname().equals(winners.get(4).get(0))) {
+                            points4.setText(p.getPoints() + " pt");
+                            obj4.setText(String.valueOf(p.getNumObjectivesReached()));
+                            String path = null;
+                            if (p.getChosenColor().equals(Pawn.YELLOW)) {
+                                path = "/images/pawns/Yellow_Pawn.png";
+                            } else if (p.getChosenColor().equals(Pawn.RED)) {
+                                path = "/images/pawns/Red_Pawn.png";
+                            } else if (p.getChosenColor().equals(Pawn.BLUE)) {
+                                path = "/images/pawns/Blue_Pawn.png";
+                            } else if (p.getChosenColor().equals(Pawn.GREEN)) {
+                                path = "/images/pawns/Green_Pawn.png";
+                            }
+                            Image image = new Image(getClass().getResourceAsStream(path));
+                            pawn4.setImage(image);
+                        }
+                    }
+
+                } else if (winners.get(1).size() == 4) { //4 first position
+                    player1.setText(winners.get(1).get(0));
+                    for (Player p : rmiClient.getPlayersInTheGame()) {
+                        if (p.getNickname().equals(winners.get(1).get(0))) {
+                            points1.setText(p.getPoints() + " pt");
+                            obj1.setText(String.valueOf(p.getNumObjectivesReached()));
+                            String path = null;
+                            if (p.getChosenColor().equals(Pawn.YELLOW)) {
+                                path = "/images/pawns/Yellow_Pawn.png";
+                            } else if (p.getChosenColor().equals(Pawn.RED)) {
+                                path = "/images/pawns/Red_Pawn.png";
+                            } else if (p.getChosenColor().equals(Pawn.BLUE)) {
+                                path = "/images/pawns/Blue_Pawn.png";
+                            } else if (p.getChosenColor().equals(Pawn.GREEN)) {
+                                path = "/images/pawns/Green_Pawn.png";
+                            }
+                            Image image = new Image(getClass().getResourceAsStream(path));
+                            pawn1.setImage(image);
+                        }
+                    }
+                    player2.setText(winners.get(1).get(1));
+                    for (Player p : rmiClient.getPlayersInTheGame()) {
+                        if (p.getNickname().equals(winners.get(1).get(1))) {
+                            points2.setText(p.getPoints() + " pt");
+                            obj2.setText(String.valueOf(p.getNumObjectivesReached()));
+                            String path = null;
+                            if (p.getChosenColor().equals(Pawn.YELLOW)) {
+                                path = "/images/pawns/Yellow_Pawn.png";
+                            } else if (p.getChosenColor().equals(Pawn.RED)) {
+                                path = "/images/pawns/Red_Pawn.png";
+                            } else if (p.getChosenColor().equals(Pawn.BLUE)) {
+                                path = "/images/pawns/Blue_Pawn.png";
+                            } else if (p.getChosenColor().equals(Pawn.GREEN)) {
+                                path = "/images/pawns/Green_Pawn.png";
+                            }
+                            Image image = new Image(getClass().getResourceAsStream(path));
+                            pawn2.setImage(image);
+                        }
+                    }
+                    player3.setText(winners.get(1).get(2));
+                    for (Player p : rmiClient.getPlayersInTheGame()) {
+                        if (p.getNickname().equals(winners.get(1).get(2))) {
+                            points3.setText(p.getPoints() + " pt");
+                            obj3.setText(String.valueOf(p.getNumObjectivesReached()));
+                            String path = null;
+                            if (p.getChosenColor().equals(Pawn.YELLOW)) {
+                                path = "/images/pawns/Yellow_Pawn.png";
+                            } else if (p.getChosenColor().equals(Pawn.RED)) {
+                                path = "/images/pawns/Red_Pawn.png";
+                            } else if (p.getChosenColor().equals(Pawn.BLUE)) {
+                                path = "/images/pawns/Blue_Pawn.png";
+                            } else if (p.getChosenColor().equals(Pawn.GREEN)) {
+                                path = "/images/pawns/Green_Pawn.png";
+                            }
+                            Image image = new Image(getClass().getResourceAsStream(path));
+                            pawn3.setImage(image);
+                        }
+                    }
+
+                    player4.setText(winners.get(1).get(3));
                     for (Player p : rmiClient.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(3))) {
                             points4.setText(p.getPoints() + " pt");
@@ -1018,7 +1012,7 @@ public class GUIWinnersController {
 
 
                 if (winners.get(1).size() > 1) {
-                    player2.setText(winners.get(1).get(1)); //reading the other players who have reached the first place
+                    player2.setText(winners.get(1).get(1));
                     for (Player p : clientSCK.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(1))) {
                             points2.setText(p.getPoints() + " pt");
@@ -1200,7 +1194,7 @@ public class GUIWinnersController {
                             pawn1.setImage(image);
                         }
                     }
-                    player2.setText(winners.get(1).get(1)); //reading the other players who have reached the first place
+                    player2.setText(winners.get(1).get(1));
                     for (Player p : clientSCK.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(1))) {
                             points2.setText(p.getPoints() + " pt");
@@ -1221,7 +1215,7 @@ public class GUIWinnersController {
                     }
 
 
-                    player3.setText(winners.get(3).get(0)); //reading the other players who have reached the first place
+                    player3.setText(winners.get(3).get(0));
                     for (Player p : clientSCK.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(3).get(0))) {
                             points3.setText(p.getPoints() + " pt");
@@ -1242,7 +1236,7 @@ public class GUIWinnersController {
                     }
 
 
-                }else if (winners.get(1).size() == 3){ //3 first position
+                } else if (winners.get(1).size() == 3) { //3 first position
                     player1.setText(winners.get(1).get(0));
                     for (Player p : clientSCK.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(0))) {
@@ -1262,7 +1256,7 @@ public class GUIWinnersController {
                             pawn1.setImage(image);
                         }
                     }
-                    player2.setText(winners.get(1).get(1)); //reading the other players who have reached the first place
+                    player2.setText(winners.get(1).get(1));
                     for (Player p : clientSCK.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(1))) {
                             points2.setText(p.getPoints() + " pt");
@@ -1282,7 +1276,7 @@ public class GUIWinnersController {
                         }
                     }
 
-                    player3.setText(winners.get(1).get(2)); //reading the other players who have reached the first place
+                    player3.setText(winners.get(1).get(2));
                     for (Player p : clientSCK.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(2))) {
                             points3.setText(p.getPoints() + " pt");
@@ -1406,7 +1400,7 @@ public class GUIWinnersController {
                                 }
                             }
 
-                        }else{ // 2 players in third position
+                        } else { // 2 players in third position
                             player3.setText(winners.get(3).get(0));
                             for (Player p : clientSCK.getPlayersInTheGame()) {
                                 if (p.getNickname().equals(winners.get(3).get(0))) {
@@ -1447,7 +1441,6 @@ public class GUIWinnersController {
                                 }
                             }
                         }
-
 
 
                     } else if (winners.get(2).size() == 2) { // 2 second position
@@ -1594,7 +1587,7 @@ public class GUIWinnersController {
                             pawn1.setImage(image);
                         }
                     }
-                    player2.setText(winners.get(1).get(1)); //reading the other players who have reached the first place
+                    player2.setText(winners.get(1).get(1));
                     for (Player p : clientSCK.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(1))) {
                             points2.setText(p.getPoints() + " pt");
@@ -1615,7 +1608,7 @@ public class GUIWinnersController {
                     }
                     //how many players in 2 position?
                     if (winners.get(3).size() == 2) { //2 players in second position
-                        player3.setText(winners.get(3).get(0)); //reading the other players who have reached the first place
+                        player3.setText(winners.get(3).get(0));
                         for (Player p : clientSCK.getPlayersInTheGame()) {
                             if (p.getNickname().equals(winners.get(3).get(0))) {
                                 points3.setText(p.getPoints() + " pt");
@@ -1635,7 +1628,7 @@ public class GUIWinnersController {
                             }
                         }
 
-                        player4.setText(winners.get(3).get(1)); //reading the other players who have reached the first place
+                        player4.setText(winners.get(3).get(1));
                         for (Player p : clientSCK.getPlayersInTheGame()) {
                             if (p.getNickname().equals(winners.get(3).get(1))) {
                                 points4.setText(p.getPoints() + " pt");
@@ -1655,7 +1648,7 @@ public class GUIWinnersController {
                             }
                         }
                     } else { // 1 player in 3 position
-                        player3.setText(winners.get(3).get(0)); //reading the other players who have reached the first place
+                        player3.setText(winners.get(3).get(0));
                         for (Player p : clientSCK.getPlayersInTheGame()) {
                             if (p.getNickname().equals(winners.get(3).get(0))) {
                                 points3.setText(p.getPoints() + " pt");
@@ -1674,7 +1667,7 @@ public class GUIWinnersController {
                                 pawn3.setImage(image);
                             }
                         }
-                        player4.setText(winners.get(4).get(0)); //reading the other players who have reached the first place
+                        player4.setText(winners.get(4).get(0));
                         for (Player p : clientSCK.getPlayersInTheGame()) {
                             if (p.getNickname().equals(winners.get(4).get(0))) {
                                 points4.setText(p.getPoints() + " pt");
@@ -1695,7 +1688,7 @@ public class GUIWinnersController {
                         }
                     }
 
-                }else if (winners.get(1).size() == 3){ //3 first position
+                } else if (winners.get(1).size() == 3) { //3 first position
                     player1.setText(winners.get(1).get(0));
                     for (Player p : clientSCK.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(0))) {
@@ -1715,7 +1708,7 @@ public class GUIWinnersController {
                             pawn1.setImage(image);
                         }
                     }
-                    player2.setText(winners.get(1).get(1)); //reading the other players who have reached the first place
+                    player2.setText(winners.get(1).get(1));
                     for (Player p : clientSCK.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(1))) {
                             points2.setText(p.getPoints() + " pt");
@@ -1734,7 +1727,7 @@ public class GUIWinnersController {
                             pawn2.setImage(image);
                         }
                     }
-                    player3.setText(winners.get(1).get(2)); //reading the other players who have reached the first place
+                    player3.setText(winners.get(1).get(2));
                     for (Player p : clientSCK.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(2))) {
                             points3.setText(p.getPoints() + " pt");
@@ -1754,7 +1747,7 @@ public class GUIWinnersController {
                         }
                     }
 
-                    player4.setText(winners.get(4).get(0)); //reading the other players who have reached the first place
+                    player4.setText(winners.get(4).get(0));
                     for (Player p : clientSCK.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(4).get(0))) {
                             points4.setText(p.getPoints() + " pt");
@@ -1774,7 +1767,7 @@ public class GUIWinnersController {
                         }
                     }
 
-                }else if(winners.get(1).size() == 4){ //4 first position
+                } else if (winners.get(1).size() == 4) { //4 first position
                     player1.setText(winners.get(1).get(0));
                     for (Player p : clientSCK.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(0))) {
@@ -1794,7 +1787,7 @@ public class GUIWinnersController {
                             pawn1.setImage(image);
                         }
                     }
-                    player2.setText(winners.get(1).get(1)); //reading the other players who have reached the first place
+                    player2.setText(winners.get(1).get(1));
                     for (Player p : clientSCK.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(1))) {
                             points2.setText(p.getPoints() + " pt");
@@ -1813,7 +1806,7 @@ public class GUIWinnersController {
                             pawn2.setImage(image);
                         }
                     }
-                    player3.setText(winners.get(1).get(2)); //reading the other players who have reached the first place
+                    player3.setText(winners.get(1).get(2));
                     for (Player p : clientSCK.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(2))) {
                             points3.setText(p.getPoints() + " pt");
@@ -1833,7 +1826,7 @@ public class GUIWinnersController {
                         }
                     }
 
-                    player4.setText(winners.get(1).get(3)); //reading the other players who have reached the first place
+                    player4.setText(winners.get(1).get(3));
                     for (Player p : clientSCK.getPlayersInTheGame()) {
                         if (p.getNickname().equals(winners.get(1).get(3))) {
                             points4.setText(p.getPoints() + " pt");
@@ -1855,7 +1848,6 @@ public class GUIWinnersController {
                 }
             }
         }
-
 
 
         // SETTING THE CORRECT TEXT FOR THE POSITIONS
@@ -1888,7 +1880,7 @@ public class GUIWinnersController {
                 if (winners.get(3) != null && winners.get(3).size() == 1) { // 1 player is #3
                     position3.setText("#3");
                     position4.setText("#4");
-                } else if (winners.get(3) != null && winners.get(3).size() == 2){ // 2 players are #3
+                } else if (winners.get(3) != null && winners.get(3).size() == 2) { // 2 players are #3
                     position3.setText("#3");
                     position4.setText("#3");
                 }
@@ -1902,7 +1894,6 @@ public class GUIWinnersController {
                 position4.setText("#2");
             }
         }
-
 
 
         // HIGHLIGHTING THE POSITION OF THE CURRENT PLAYER: HIS LINE HAS A DIFFERENT COLOUR
@@ -1935,7 +1926,6 @@ public class GUIWinnersController {
     }
 
 
-
     /**
      * This method sets all the features in the winner scene
      */
@@ -1953,19 +1943,19 @@ public class GUIWinnersController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param winners is a map
      */
-    public void setWinners(Map <Integer, List<String>> winners) {
+    public void setWinners(Map<Integer, List<String>> winners) {
         this.winners = winners;
     }
 
 
-
     /**
      * Setter method
+     *
      * @param rmiClient client RMI
      */
     public void setRmiClient(RMIClient rmiClient) {
@@ -1973,9 +1963,9 @@ public class GUIWinnersController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param clientSCK client SCK
      */
     public void setClientSCK(ClientSCK clientSCK) {
@@ -1983,9 +1973,9 @@ public class GUIWinnersController {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param network 1 or 2 (rmi or tcp)
      */
     public void setNetwork(int network) {

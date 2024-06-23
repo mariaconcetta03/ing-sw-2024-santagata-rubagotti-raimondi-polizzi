@@ -4,6 +4,7 @@ import CODEX.distributed.Socket.ClientHandlerThread;
 import CODEX.distributed.messages.SCKMessage;
 import CODEX.utils.executableMessages.serverMessages.ServerAvailableLobbies;
 import CODEX.utils.executableMessages.serverMessages.ServerMessage;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +17,13 @@ public class ClientAvailableLobbies implements ClientMessage {
     /**
      * Default constructor
      */
-    public ClientAvailableLobbies(){}
-
+    public ClientAvailableLobbies() {
+    }
 
 
     /**
      * This method checks what lobbies are available in a specific moment
+     *
      * @param clientHandlerThread thread
      */
     @Override

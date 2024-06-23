@@ -2,7 +2,7 @@ package CODEX.org.model;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -12,13 +12,13 @@ import java.util.*;
  * This class represent a deck which contains a stack of objective cards
  */
 public class ObjectiveDeck extends Deck implements Serializable {
-    private Stack<ObjectiveCard> cards; // contains all the cards in this deck
-
+    private Stack<ObjectiveCard> cards;
 
 
     /**
      * Class constructor
      * creates a new deck, allocating space for a stack
+     *
      * @param stack of cards
      */
     public ObjectiveDeck(Stack<ObjectiveCard> stack) {
@@ -26,25 +26,24 @@ public class ObjectiveDeck extends Deck implements Serializable {
     }
 
 
-
     /**
      * This method creates the objective deck
+     *
      * @return objective deck created
      */
-    public static ObjectiveDeck objectiveDeck(){
+    public static ObjectiveDeck objectiveDeck() {
         Stack<ObjectiveCard> objectiveDeck = new Stack<>();
         ObjectMapper objectMapper = new ObjectMapper();
 
-        InputStream stream= ObjectiveDeck.class.getClassLoader().getResourceAsStream("objectiveCards.json");
+        InputStream stream = ObjectiveDeck.class.getClassLoader().getResourceAsStream("objectiveCards.json");
 
-        try{
-            objectiveDeck=objectMapper.readValue(stream, new TypeReference<Stack<ObjectiveCard>>() {});
-        }catch (IOException e){
-            e.printStackTrace();
+        try {
+            objectiveDeck = objectMapper.readValue(stream, new TypeReference<Stack<ObjectiveCard>>() {
+            });
+        } catch (IOException ignored) {
         }
         return new ObjectiveDeck(objectiveDeck);
     }
-
 
 
     /**
@@ -56,9 +55,9 @@ public class ObjectiveDeck extends Deck implements Serializable {
     }
 
 
-
     /**
      * Check if the deck is finished (contains no more cards)
+     *
      * @return true if the deck is finished, false if it's not
      */
     @Override
@@ -67,10 +66,10 @@ public class ObjectiveDeck extends Deck implements Serializable {
     }
 
 
-
     /**
      * Getter method
      * This method returns the first card in the deck
+     *
      * @return the first card in the deck
      */
     public ObjectiveCard getFirstCard() { // returns the first card on the deck, for example when the player needs to pick it up
@@ -78,12 +77,12 @@ public class ObjectiveDeck extends Deck implements Serializable {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return the whole stack
      */
-    public Stack<ObjectiveCard> getCards(){
+    public Stack<ObjectiveCard> getCards() {
         return cards;
     }
 

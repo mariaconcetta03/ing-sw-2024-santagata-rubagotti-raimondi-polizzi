@@ -12,7 +12,6 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.Executor;
@@ -22,26 +21,26 @@ import java.util.concurrent.Executors;
 /**
  * This class represents the Client who choose TCP as network protocol.
  * It receives SCKMessages sent by the ClientHandlerThread through the socket stream
- * and performs action to update the view. It also sends User input to the ClientHandlerThread
- * through the socket to be processed
+ * and performs action to update the view. It also sends user's input to the ClientHandlerThread
+ * through the socket to be processed.
  */
 public class ClientSCK implements ClientGeneralInterface {
     private List<Pawn> availableColors;
-    private boolean aDisconnectionHappened=false;
-    private final Object disconnectionLock=new Object();
+    private boolean aDisconnectionHappened = false;
+    private final Object disconnectionLock = new Object();
     private boolean errorState = false;
     private HashSet<Integer> lobbyId;
     private final Socket socket;
-    private GUIGameController guiGameController=null;
-    private int lastMoves=10;
-    private final Object guiGamestateLock=new Object();
-    private final Object guiPawnsControllerLock=new Object();
-    private boolean done=false;
-    private GUIPawnsController GUIPawnsController=null;
-    private final Object guiBaseCardControllerLock=new Object();
-    private GUIBaseCardController guiBaseCardController=null;
-    private final Object guiObjectiveControllerLock=new Object();
-    private GUIObjectiveController guiObjectiveController=null;
+    private GUIGameController guiGameController = null;
+    private int lastMoves = 10;
+    private final Object guiGameStateLock = new Object();
+    private final Object guiPawnsControllerLock = new Object();
+    private boolean done = false;
+    private GUIPawnsController GUIPawnsController = null;
+    private final Object guiBaseCardControllerLock = new Object();
+    private GUIBaseCardController guiBaseCardController = null;
+    private final Object guiObjectiveControllerLock = new Object();
+    private GUIObjectiveController guiObjectiveController = null;
     private Player personalPlayer;
     private int selectedView;
     private InterfaceTUI tuiView;
@@ -71,12 +70,14 @@ public class ClientSCK implements ClientGeneralInterface {
     private boolean nicknameSet = false;
     private final Object guiLock;
     private GUILobbyController guiLobbyController;
-    private boolean showWinnerArrived=false;
+    private boolean showWinnerArrived = false;
+    private String SERVER_NAME = "127.0.0.1"; // LOCALHOST
+
 
 
     /*
-    WARNING: if you call a ClientActionsInterface method inside an update method you must necessarily
-    use a thread because the ClientActionsInterface methods wait for the return OK that cannot be read
+    WARNING: if you call a ClientActionsInterface method inside an update method you must use
+    a thread because the ClientActionsInterface methods wait for the return OK that cannot be read
     by the ClientSCK if you are still stuck on the update that called a ClientActionsInterface method.
     This happens because to do the updates in order they are read one at a time.
     */
@@ -85,6 +86,7 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * Class constructor
      * we call this constructor after we ask the IP address and the port of the server
+     *
      * @param serverAddress is the IP address of the server
      * @throws IOException if there is a problem with input stream and output stream
      */
@@ -93,14 +95,14 @@ public class ClientSCK implements ClientGeneralInterface {
         int port = 1085; // server's port
         SocketAddress socketAddress = new InetSocketAddress(serverAddress, port);
         socket.connect(socketAddress);
-        Scanner sc= new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
 
         lobbyId = new HashSet<>();
 
         personalPlayer = new Player();
         this.inputLock = new Object();
 
-        this.guiLock=new Object();
+        this.guiLock = new Object();
 
 
         // in this way the stream is converted into objects
@@ -108,9 +110,9 @@ public class ClientSCK implements ClientGeneralInterface {
         this.inputStream = new ObjectInputStream(socket.getInputStream());
 
         this.running = true;
-        this.inGame=false; // this will become true when the state of the Game will change in STARTED
+        this.inGame = false; // this will become true when the state of the Game will change into STARTED
 
-        // initialized false to enter the while inside every ClientGeneralInterface method
+        // initialized to false for entering the while inside every ClientGeneralInterface method
         this.responseReceived = false;
 
         this.actionLock = new Object();
@@ -125,13 +127,11 @@ public class ClientSCK implements ClientGeneralInterface {
                                 // we are not using a thread because the updates are executed in order
                                 modifyClientSide(sckMessage);
                             }
-                        } catch (IOException e) { // if the server disconnects @TODO non Exception generica
-                            e.printStackTrace();
-                            if(running) {
-                                    handleDisconnection();
+                        } catch (IOException e) { // if the server disconnects
+                            if (running) {
+                                handleDisconnection();
                             }
-                        }catch (ClassNotFoundException e){
-                            e.printStackTrace();
+                        } catch (ClassNotFoundException ignored) {
                         }
                     }
                 }
@@ -140,36 +140,9 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
-    /**
-     * Settings class
-     */
-    public static class Settings {
-        static String SERVER_NAME = "127.0.0.1"; // LOCALHOST
-
-
-        /**
-         * Default constructor
-         */
-        public Settings (){}
-
-
-
-        /**
-         * Setter method
-         * @param serverName server address
-         */
-        public static void setServerName(String serverName) {
-            SERVER_NAME = serverName;
-        }
-    }
-
-
-
-
-
     /**
      * This method is useful for RMI
+     *
      * @param nickname player's nickname
      */
     @Override
@@ -177,14 +150,14 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * This method allows the Client to send, through the socket, a message to be read (using its input stream)
      * by the ClientHandlerThread
+     *
      * @param sckMessage is the message containing objects and Event relative to the action to perform
      */
     public void sendMessage(SCKMessage sckMessage) {
-        // this method is called ONLY inside ClientGeneralInterface methods
+        // this method is called only inside ClientGeneralInterface's methods
         synchronized (outputLock) {
             if (!aDisconnectionHappened) {
                 try {
@@ -194,8 +167,7 @@ public class ClientSCK implements ClientGeneralInterface {
                     outputStream.flush();
                     outputStream.reset();
                 } catch (IOException e) {
-                    e.printStackTrace();
-                    aDisconnectionHappened=true;
+                    aDisconnectionHappened = true;
                     responseReceived = true; // not to start a wait for other answers
                     handleDisconnection();
                 }
@@ -204,24 +176,22 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * If the Event attribute of the sckMessage is not null it is an update,
      * otherwise it is a ServerMessage (ServerMessage attribute of the sckMessage)
      * If the Event attribute of the sckMessage is not null the execute method will modify the local
      * attributes of the client.
+     *
      * @param sckMessage represents an event that has to be executed
      */
     public void modifyClientSide(SCKMessage sckMessage) {
         if (sckMessage.getEvent() != null) { // we have an update
             sckMessage.getEvent().executeSCK(this);
-        }else{ // we have a ServerMessage
+        } else { // we have a ServerMessage
             // here we unlock the client that has been waiting for a server response
             sckMessage.getServerMessage().execute(this);
         }
-
     }
-
 
 
     /**
@@ -229,124 +199,123 @@ public class ClientSCK implements ClientGeneralInterface {
      * his nickname and to choose if he wants to join an already started Game or create a new one.
      */
     public void waitingRoom() {
-        this.isPlaying=false;
-        this.sc=new Scanner(System.in);
+        this.isPlaying = false;
+        this.sc = new Scanner(System.in);
         this.console = new BufferedReader(new InputStreamReader(System.in));
-        boolean ok=false;
+        boolean ok = false;
         if (selectedView == 1) {
             tuiView = new InterfaceTUI();
             tuiView.printWelcome();
-            String nickname=null;
-            while(!ok){
+            String nickname = null;
+            while (!ok) {
                 nickname = tuiView.askNickname(sc);
                 this.chooseNickname(nickname);
-                ok=true;
-                if(errorState&&!aDisconnectionHappened){
-                    System.out.println(ANSIFormatter.ANSI_RED+"Nickname is already taken! Please try again."+ANSIFormatter.ANSI_RESET);
-                    errorState=false;
-                    ok=false;
-                }else if(aDisconnectionHappened){
+                ok = true;
+                if (errorState && !aDisconnectionHappened) {
+                    System.out.println(ANSIFormatter.ANSI_RED + "Nickname is already taken! Please try again." + ANSIFormatter.ANSI_RESET);
+                    errorState = false;
+                    ok = false;
+                } else if (aDisconnectionHappened) {
                     handleDisconnection();
                 }
             }
             personalPlayer.setNickname(nickname);
-            System.out.println(ANSIFormatter.ANSI_GREEN+"Nickname correctly selected!"+ANSIFormatter.ANSI_RESET);
+            System.out.println(ANSIFormatter.ANSI_GREEN + "Nickname correctly selected!" + ANSIFormatter.ANSI_RESET);
 
             this.checkAvailableLobby();
             printLobby(lobbyId);
-            ok=false;
+            ok = false;
 
-            int gameSelection=0;
-                while (!ok) {
-                    System.out.println("Type -1 if you want to create a new lobby, or the lobby id if you want to join it (if there are any available)");
-                    System.out.println("Type -2  to refresh the available lobbies.");
-                    try {
-                        gameSelection = sc.nextInt();
-                        if (gameSelection == -2) {
-                            this.checkAvailableLobby();
-                            if (!(lobbyId.isEmpty())) {
-                                System.out.println("If you want you can join an already created lobby. These are the ones available:");
-                                printLobby(lobbyId);
-                            } else {
-                                System.out.println("There are no lobby available");
-                            }
-                        } else if ((gameSelection != -1) && (!lobbyId.contains(gameSelection))) {
-                            System.out.println("You wrote a wrong ID, try again.");
+            int gameSelection = 0;
+            while (!ok) {
+                System.out.println("Type -1 if you want to create a new lobby, or the lobby id if you want to join it (if there are any available)");
+                System.out.println("Type -2  to refresh the available lobbies.");
+                try {
+                    gameSelection = sc.nextInt();
+                    if (gameSelection == -2) {
+                        this.checkAvailableLobby();
+                        if (!(lobbyId.isEmpty())) {
+                            System.out.println("If you want you can join an already created lobby. These are the ones available:");
+                            printLobby(lobbyId);
                         } else {
-                            ok = true;
+                            System.out.println("There are no lobby available");
                         }
-                    } catch (InputMismatchException e) {
-                        System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
-                        sc.next();
-                    }
-                }
-
-                ok=false;
-                while(!ok){
-                    if (gameSelection == -1) {
-                        System.out.println("How many players would you like to join you in this game?");
-                        while (!ok) {
-                            try {
-                                gameSelection = sc.nextInt();
-                                if((gameSelection<=4)&&(gameSelection>=2)) {
-                                    ok = true;
-                                }else{
-                                    System.out.println("Invalid number of players. Type a number between 2-4.");
-                                }
-                            } catch (InputMismatchException e) {
-                                System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
-                                sc.next();
-                            }
-                        }
-                        createLobby(personalPlayer.getNickname(), gameSelection);
-                        System.out.println(ANSIFormatter.ANSI_GREEN+"Successfully created a new lobby with id: " + this.gameID+ANSIFormatter.ANSI_RESET);
-                    } else if (lobbyId.contains(gameSelection)) {
-                            System.out.println("Joining the " + gameSelection + " lobby...");
-                            addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
-                            if (errorState&&!aDisconnectionHappened) {
-                                System.out.println(ANSIFormatter.ANSI_RED + "The game you want to join is inaccessible, try again" + ANSIFormatter.ANSI_RESET);
-                                errorState = false;
-                            }else if(aDisconnectionHappened){
-                                handleDisconnection();
-                            } else {
-                                System.out.println(ANSIFormatter.ANSI_GREEN+"Successfully joined the lobby with id: " + this.gameID+ANSIFormatter.ANSI_RESET);
-                                ok=true;
-                                checkNPlayers(); // this method in the server side makes the game start
-                            }
+                    } else if ((gameSelection != -1) && (!lobbyId.contains(gameSelection))) {
+                        System.out.println("You wrote a wrong ID, try again.");
                     } else {
-                        System.out.println("You wrote a wrong id, try again!");
+                        ok = true;
                     }
+                } catch (InputMismatchException e) {
+                    System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
+                    sc.next();
+                }
+            }
+
+            ok = false;
+            while (!ok) {
+                if (gameSelection == -1) {
+                    System.out.println("How many players would you like to join you in this game?");
+                    while (!ok) {
+                        try {
+                            gameSelection = sc.nextInt();
+                            if ((gameSelection <= 4) && (gameSelection >= 2)) {
+                                ok = true;
+                            } else {
+                                System.out.println("Invalid number of players. Type a number between 2-4.");
+                            }
+                        } catch (InputMismatchException e) {
+                            System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
+                            sc.next();
+                        }
+                    }
+                    createLobby(personalPlayer.getNickname(), gameSelection);
+                    System.out.println(ANSIFormatter.ANSI_GREEN + "Successfully created a new lobby with id: " + this.gameID + ANSIFormatter.ANSI_RESET);
+                } else if (lobbyId.contains(gameSelection)) {
+                    System.out.println("Joining the " + gameSelection + " lobby...");
+                    addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
+                    if (errorState && !aDisconnectionHappened) {
+                        System.out.println(ANSIFormatter.ANSI_RED + "The game you want to join is inaccessible, try again" + ANSIFormatter.ANSI_RESET);
+                        errorState = false;
+                    } else if (aDisconnectionHappened) {
+                        handleDisconnection();
+                    } else {
+                        System.out.println(ANSIFormatter.ANSI_GREEN + "Successfully joined the lobby with id: " + this.gameID + ANSIFormatter.ANSI_RESET);
+                        ok = true;
+                        checkNPlayers(); // this method in the server side makes the game start
+                    }
+                } else {
+                    System.out.println("You wrote a wrong id, try again!");
+                }
 
             }
         }
     }
 
 
-
     /**
-     * This method let the client know which are the lobbies availables and
-     * it is used in the TUI
+     * This method let the client know which are the available lobbies
+     * and it is used in the TUI
+     *
      * @param ids are the indexes of the available lobbies
      */
-    public void printLobby(HashSet<Integer> ids){
-        if(!ids.isEmpty()) {
+    public void printLobby(HashSet<Integer> ids) {
+        if (!ids.isEmpty()) {
             for (Integer i : ids) {
                 System.out.println("ID: " + i);
             }
-        }else{
+        } else {
             System.out.println("There are no lobby available.");
         }
     }
 
 
-
     /**
      * This method checks the available lobbies at this moment, sending a message to the server
      */
-    public void checkAvailableLobby(){
+    public void checkAvailableLobby() {
         synchronized (actionLock) {
-            lobbyId=new HashSet<>();
-            ClientMessage clientMessage= new ClientAvailableLobbies();
+            lobbyId = new HashSet<>();
+            ClientMessage clientMessage = new ClientAvailableLobbies();
             sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived) {
                 try {
@@ -357,15 +326,14 @@ public class ClientSCK implements ClientGeneralInterface {
             }
         }
     }
-
 
 
     /**
      * This method checks the available colors (pawns) at this moment, sending a message to the server
      */
-    public void checkAvailableColors(){
+    public void checkAvailableColors() {
         synchronized (actionLock) {
-            ClientMessage clientMessage= new ClientAvailableColors();
+            ClientMessage clientMessage = new ClientAvailableColors();
             sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived) {
                 try {
@@ -376,18 +344,17 @@ public class ClientSCK implements ClientGeneralInterface {
             }
         }
     }
-
 
 
     /**
      * This method checks the number of players in a lobby (serverside)
      * if that's complete, then it starts the game.
      */
-    public void checkNPlayers(){
+    public void checkNPlayers() {
         synchronized (actionLock) {
-            ClientMessage clientMessage=new CheckNPlayers();
+            ClientMessage clientMessage = new CheckNPlayers();
             sendMessage(new SCKMessage(clientMessage));
-            while (!responseReceived){ //in realtà qua non avremmo bisogno di aspettare la risposta
+            while (!responseReceived) {
                 try {
                     actionLock.wait();
                 } catch (InterruptedException e) {
@@ -398,22 +365,20 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
-
-
-
     // METHODS OVERRIDDEN FROM clientGeneralInterface
+
     /**
      * This method is used to add a single player to an already created lobby
+     *
      * @param playerNickname is the nickname of the player who wants to join the lobby
-     * @param gameId is the lobby the player wants to join
-    */
+     * @param gameId         is the lobby the player wants to join
+     */
     @Override
-    public void addPlayerToLobby(String playerNickname, int gameId)  {
+    public void addPlayerToLobby(String playerNickname, int gameId) {
         synchronized (actionLock) {
-            ClientMessage clientMessage=new AddPlayerToLobby(playerNickname,gameId);
+            ClientMessage clientMessage = new AddPlayerToLobby(playerNickname, gameId);
             sendMessage(new SCKMessage(clientMessage));
-            while (!responseReceived){
+            while (!responseReceived) {
                 try {
                     actionLock.wait();
                 } catch (InterruptedException e) {
@@ -426,12 +391,13 @@ public class ClientSCK implements ClientGeneralInterface {
 
     /**
      * Once connected the player get to choose his nickname that must be different from all the other presents
+     *
      * @param nickname is the String he wants to put as his nickname
      */
     @Override
-    public void chooseNickname(String nickname)  {
+    public void chooseNickname(String nickname) {
         synchronized (actionLock) {
-            ClientMessage clientMessage=new ChooseNickname(nickname);
+            ClientMessage clientMessage = new ChooseNickname(nickname);
             sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived) {
                 try {
@@ -442,18 +408,18 @@ public class ClientSCK implements ClientGeneralInterface {
             }
         }
     }
-
 
 
     /**
      * This method calls the function into the ServerController
+     *
      * @param creatorNickname is the nickname of the player who wants to create a new lobby
-     * @param numOfPlayers is the number of player the creator decided can play in the lobby
+     * @param numOfPlayers    is the number of player the creator decided can play in the lobby
      */
     @Override
-    public void createLobby(String creatorNickname, int numOfPlayers)  {
+    public void createLobby(String creatorNickname, int numOfPlayers) {
         synchronized (actionLock) {
-            ClientMessage clientMessage=new CreateLobby(creatorNickname,numOfPlayers);
+            ClientMessage clientMessage = new CreateLobby(creatorNickname, numOfPlayers);
             sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived) {
                 try {
@@ -466,17 +432,17 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * This method "plays" the card selected by the Player in his own Board
+     *
      * @param selectedCard the Card the Player wants to play
      * @param position     the position where the Player wants to play the Card
      * @param orientation  the side on which the Player wants to play the Card
      */
     @Override
-    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation)  {
+    public void playCard(String nickname, PlayableCard selectedCard, Coordinates position, boolean orientation) {
         synchronized (actionLock) {
-            ClientMessage clientMessage=new PlayCard(nickname,selectedCard,position,orientation);
+            ClientMessage clientMessage = new PlayCard(nickname, selectedCard, position, orientation);
             sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived) {
                 try {
@@ -487,35 +453,35 @@ public class ClientSCK implements ClientGeneralInterface {
             }
         }
     }
-
 
 
     /**
      * This method let the Player place the baseCard (in an already decided position) and, if all the players
      * have placed their baseCard, it let the game finish the set-up phase giving the last necessary cards
+     *
      * @param nickname    is the nickname of the Player that wants to play a card
      * @param baseCard    is the base card that is played
      * @param orientation the side on which the Player wants to play the Card
-      */
+     */
     @Override
-    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation)  {
+    public void playBaseCard(String nickname, PlayableCard baseCard, boolean orientation) {
         synchronized (actionLock) {
-            ClientMessage clientMessage=new PlayBaseCard(nickname,baseCard,orientation);
+            ClientMessage clientMessage = new PlayBaseCard(nickname, baseCard, orientation);
             sendMessage(new SCKMessage(clientMessage));
         }
     }
-
 
 
     /**
      * This method allows the currentPlayer to draw a card from the decks or from the unveiled ones
+     *
      * @param nickname     is the nickname of the player who wants to draw the card
      * @param selectedCard is the Card the Players wants to draw
      */
     @Override
-    public void drawCard(String nickname, PlayableCard selectedCard)  {
+    public void drawCard(String nickname, PlayableCard selectedCard) {
         synchronized (actionLock) {
-            ClientMessage clientMessage=new DrawCard(nickname,selectedCard);
+            ClientMessage clientMessage = new DrawCard(nickname, selectedCard);
             sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived) {
                 try {
@@ -526,33 +492,33 @@ public class ClientSCK implements ClientGeneralInterface {
             }
         }
     }
-
 
 
     /**
      * This method allows the chooser Player to select his personal ObjectiveCard
+     *
      * @param chooserNickname is the nickname of the player selecting the ObjectiveCard
      * @param selectedCard    is the ObjectiveCard the player selected
      */
     @Override
-    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard)  {
+    public void chooseObjectiveCard(String chooserNickname, ObjectiveCard selectedCard) {
         synchronized (actionLock) {
-            ClientMessage clientMessage=new ChooseObjectiveCard(chooserNickname,selectedCard);
+            ClientMessage clientMessage = new ChooseObjectiveCard(chooserNickname, selectedCard);
             sendMessage(new SCKMessage(clientMessage));
         }
     }
-
 
 
     /**
      * This method allows a player to choose the color of his pawn
+     *
      * @param chooserNickname is the nickname of the player who needs to choose the color
      * @param selectedColor   is the color chosen by the player
-      */
+     */
     @Override
     public void choosePawnColor(String chooserNickname, Pawn selectedColor) {
         synchronized (actionLock) {
-            ClientMessage clientMessage=new ChoosePawnColor(chooserNickname,selectedColor);
+            ClientMessage clientMessage = new ChoosePawnColor(chooserNickname, selectedColor);
             sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived) {
                 try {
@@ -563,19 +529,19 @@ public class ClientSCK implements ClientGeneralInterface {
             }
         }
     }
-
 
 
     /**
      * This method sends a message from the sender to the receiver(s)
-     * @param senderNickname     is the nickname of the player sending the message
+     *
+     * @param senderNickname    is the nickname of the player sending the message
      * @param receiversNickname is the list of nicknames of the players who need to receive this message
-     * @param message            is the string sent by the sender to the receivers
-      */
+     * @param message           is the string sent by the sender to the receivers
+     */
     @Override
-    public void sendMessage(String senderNickname, List<String> receiversNickname, String message)  {
+    public void sendMessage(String senderNickname, List<String> receiversNickname, String message) {
         synchronized (actionLock) {
-            ClientMessage clientMessage=new SendMessage(senderNickname,receiversNickname,message);
+            ClientMessage clientMessage = new SendMessage(senderNickname, receiversNickname, message);
             sendMessage(new SCKMessage(clientMessage));
             while (!responseReceived) {
                 try {
@@ -588,14 +554,14 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * This method lets a player end the game (volontary action or involontary action - connection loss)
+     *
      * @param nickname of the player who is going leave the game
      */
     @Override
     public void leaveGame(String nickname) {
-     synchronized (disconnectionLock) {
+        synchronized (disconnectionLock) {
             if (!aDisconnectionHappened) {
                 try { //we close all we have to close
                     running = false;
@@ -616,20 +582,17 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
-
-
     // METHODS OVERRIDDEN FROM CLIENTGENERALINTERFACE
 
     /**
      * This is an update method
-     * @param board the new board we want to update
+     *
+     * @param board      the new board we want to update
      * @param boardOwner is the player which possesses the board
-     * @param newCard the last card placed
+     * @param newCard    the last card placed
      */
     @Override
-    public void updateBoard(String boardOwner, Board board, PlayableCard newCard)  {
-        // we have to change the view and the local model
+    public void updateBoard(String boardOwner, Board board, PlayableCard newCard) {
         if (boardOwner.equals(personalPlayer.getNickname())) {
             personalPlayer.setBoard(board);
         }
@@ -649,50 +612,47 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * This is an update method
+     *
      * @param resourceDeck the new deck we want to update
      */
     @Override
     public void updateResourceDeck(PlayableDeck resourceDeck) {
-        // we have to change the view and the local model
-        this.resourceDeck=resourceDeck;
-       if (selectedView == 2) {
-            if(guiGameController!=null){
+        this.resourceDeck = resourceDeck;
+        if (selectedView == 2) {
+            if (guiGameController != null) {
                 guiGameController.updateResourceDeck();
             }
         }
     }
 
 
-
     /**
      * This is an update method
+     *
      * @param goldDeck the new deck we want to update
      */
     @Override
-    public void updateGoldDeck(PlayableDeck goldDeck)  {
-        // we have to change the view and the local model
-        this.goldDeck=goldDeck;
+    public void updateGoldDeck(PlayableDeck goldDeck) {
+        this.goldDeck = goldDeck;
         if (selectedView == 2) {
-            if(guiGameController!=null){
+            if (guiGameController != null) {
                 guiGameController.updateGoldDeck();
             }
         }
     }
 
 
-
     /**
      * This is an update method
+     *
      * @param playerNickname the player which deck is updated
      * @param playerDeck     the new deck we want to update
      */
     @Override
-    public void updatePlayerDeck(String playerNickname, PlayableCard[] playerDeck)  {
-        //we have to change the view and the local model
-        if(playerNickname.equals(personalPlayer.getNickname())){
+    public void updatePlayerDeck(String playerNickname, PlayableCard[] playerDeck) {
+        if (playerNickname.equals(personalPlayer.getNickname())) {
             personalPlayer.setPlayerDeck(playerDeck);
         }
 
@@ -702,53 +662,53 @@ public class ClientSCK implements ClientGeneralInterface {
             }
         }
 
-       if (selectedView == 2) {
-            if(!(playerNickname.equals(personalPlayer.getNickname()))){
-                if(guiGameController!=null){
-                    guiGameController.updatePlayerDeck(playerNickname,playerDeck);
+        if (selectedView == 2) {
+            if (!(playerNickname.equals(personalPlayer.getNickname()))) {
+                if (guiGameController != null) {
+                    guiGameController.updatePlayerDeck(playerNickname, playerDeck);
                 }
             }
         }
     }
 
 
-
     /**
      * This is an update method
+     *
      * @param card     is the personal objective card
      * @param nickname is the owner of the personal objective card
      */
     @Override
-    public void updatePersonalObjective(ObjectiveCard card, String nickname)  {
+    public void updatePersonalObjective(ObjectiveCard card, String nickname) {
         if (personalPlayer.getNickname().equals(nickname)) {
             personalPlayer.addPersonalObjective(card);
             if (personalPlayer.getPersonalObjectives().size() == 2) {
-                    if (selectedView == 1) {
-                        new Thread(()->{
-                            boolean ok = false;
-                            while (!ok) {
-                                tuiView.printHand(personalPlayer.getPlayerDeck(), true);
-                                try {
-                                    ObjectiveCard tmp=tuiView.askChoosePersonalObjective(sc, personalPlayer.getPersonalObjectives());
-                                    chooseObjectiveCard(personalPlayer.getNickname(),tmp);
-                                    ok = true;
-                                    personalPlayer.setPersonalObjective(tmp);
-                                    System.out.println("You've correctly chosen your objective card!");
-                                    checkObjectiveCardChosen();
-                                }catch (CardNotOwnedException e){
-                                    System.out.println("You don't own this card.");
-                                }
+                if (selectedView == 1) {
+                    new Thread(() -> {
+                        boolean ok = false;
+                        while (!ok) {
+                            tuiView.printHand(personalPlayer.getPlayerDeck(), true);
+                            try {
+                                ObjectiveCard tmp = tuiView.askChoosePersonalObjective(sc, personalPlayer.getPersonalObjectives());
+                                chooseObjectiveCard(personalPlayer.getNickname(), tmp);
+                                ok = true;
+                                personalPlayer.setPersonalObjective(tmp);
+                                System.out.println("You've correctly chosen your objective card!");
+                                checkObjectiveCardChosen();
+                            } catch (CardNotOwnedException e) {
+                                System.out.println("You don't own this card.");
                             }
+                        }
 
-                        }).start();;
+                    }).start();
+                    ;
 
-                    } else if (selectedView == 2) {
-                        guiBaseCardController.updateGameState();
-                    }
+                } else if (selectedView == 2) {
+                    guiBaseCardController.updateGameState();
+                }
             }
         }
     }
-
 
 
     /**
@@ -761,40 +721,40 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * This method prints the winners of the game in the TUI
+     *
      * @param finalScoreBoard is a Map containing all the players' nicknames as values and as keys their positions
      */
     @Override
-    public void showWinner(Map<Integer, List<String>> finalScoreBoard)  {
-        showWinnerArrived=true;
-        errorState=false;
-        synchronized (actionLock){
+    public void showWinner(Map<Integer, List<String>> finalScoreBoard) {
+        showWinnerArrived = true;
+        errorState = false;
+        synchronized (actionLock) {
             actionLock.notify(); //to stop the waiting of something that will never arrive
         }
-        if(selectedView==1) { //TUI
-            Map<String, Player> players=new HashMap<>();
-            for(Player p: playersInTheGame){
+        if (selectedView == 1) { //TUI
+            Map<String, Player> players = new HashMap<>();
+            for (Player p : playersInTheGame) {
                 players.put(p.getNickname(), p);
             }
-            boolean printed=false;
+            boolean printed = false;
 
-            for(String s: finalScoreBoard.get(1)){
-                if(s.equals(personalPlayer.getNickname())){
+            for (String s : finalScoreBoard.get(1)) {
+                if (s.equals(personalPlayer.getNickname())) {
                     tuiView.printWinner(true);
-                    printed=true;
+                    printed = true;
                 }
             }
-            if(!printed){
+            if (!printed) {
                 tuiView.printWinner(false);
             }
             System.out.println();
-            System.out.println(ANSIFormatter.ANSI_WHITE_BACKGROUND+ANSIFormatter.ANSI_BLACK+"----- This is the final scoreboard -----"+ANSIFormatter.ANSI_RESET);
+            System.out.println(ANSIFormatter.ANSI_WHITE_BACKGROUND + ANSIFormatter.ANSI_BLACK + "----- This is the final scoreboard -----" + ANSIFormatter.ANSI_RESET);
 
-            for(Integer i: finalScoreBoard.keySet()) {
+            for (Integer i : finalScoreBoard.keySet()) {
                 for (String s : finalScoreBoard.get(i)) {
-                    System.out.println(ANSIFormatter.ANSI_RED+i + "_ "+ANSIFormatter.ANSI_RESET + s+" with "+players.get(s).getPoints()+" points and "+players.get(s).getNumObjectivesReached()+" objectives reached.");
+                    System.out.println(ANSIFormatter.ANSI_RED + i + "_ " + ANSIFormatter.ANSI_RESET + s + " with " + players.get(s).getPoints() + " points and " + players.get(s).getNumObjectivesReached() + " objectives reached.");
                 }
             }
             Timer finalTimer = new Timer(true);
@@ -803,121 +763,117 @@ public class ClientSCK implements ClientGeneralInterface {
                 public void run() {
                     System.exit(0); //status 0 -> no errors
                 }
-            },6000); //6 seconds
+            }, 6000); //6 seconds
 
         }
-        if(selectedView==2){ //GUI
-            if(guiGameController!=null){
-                guiGameController.updateWinners(finalScoreBoard );
+        if (selectedView == 2) { //GUI
+            if (guiGameController != null) {
+                guiGameController.updateWinners(finalScoreBoard);
             }
         }
     }
 
 
-
     /**
      * This is an update method
+     *
      * @param lastMoves is the number of turns remaining before the game ends.
      */
     @Override
-    public void updateLastMoves(int lastMoves)  {
-        this.lastMoves=lastMoves;
+    public void updateLastMoves(int lastMoves) {
+        this.lastMoves = lastMoves;
     }
-
 
 
     /**
      * This is an update method
+     *
      * @param card which needs to be updated
      */
     @Override
-    public void updateResourceCard1(PlayableCard card)  {
-        // we have to change the view and the local model
-        this.resourceCard1=card;
+    public void updateResourceCard1(PlayableCard card) {
+        this.resourceCard1 = card;
 
-       if (selectedView == 2) {
-            if(guiGameController!=null){
+        if (selectedView == 2) {
+            if (guiGameController != null) {
                 guiGameController.updateResourceCard1(card);
             }
         }
     }
 
 
-
     /**
      * This is an update method
+     *
      * @param card which needs to be updated
      */
     @Override
-    public void updateResourceCard2(PlayableCard card)  {
-        // we have to change the view and the local model
-        this.resourceCard2=card;
-         if (selectedView == 2) {
-            if(guiGameController!=null){
+    public void updateResourceCard2(PlayableCard card) {
+        this.resourceCard2 = card;
+        if (selectedView == 2) {
+            if (guiGameController != null) {
                 guiGameController.updateResourceCard2(card);
             }
         }
     }
 
 
-
     /**
      * This is an update method
+     *
      * @param card which needs to be updated
      */
     @Override
-    public void updateGoldCard1(PlayableCard card)  {
-        // we have to change the view and the local model
-        this.goldCard1=card;
+    public void updateGoldCard1(PlayableCard card) {
+        this.goldCard1 = card;
         if (selectedView == 2) {
-            if(guiGameController!=null){
+            if (guiGameController != null) {
                 guiGameController.updateGoldCard1(card);
             }
         }
     }
 
 
-
     /**
      * This is an update method
+     *
      * @param card which needs to be updated
      */
     @Override
     public void updateGoldCard2(PlayableCard card) {
-        // we have to change the view and the local model
-        this.goldCard2=card;
+        this.goldCard2 = card;
         if (selectedView == 2) {
-            if(guiGameController!=null){
+            if (guiGameController != null) {
                 guiGameController.updateGoldCard2(card);
             }
         }
     }
 
 
-
     /**
      * This is an update method
+     *
      * @param chatIdentifier ID
-     * @param chat which needs to be updated
+     * @param chat           which needs to be updated
      */
     @Override
     public void updateChat(Integer chatIdentifier, Chat chat) {
     }
 
 
-
     /**
      * This is an update method
+     *
      * @param nickname is the nickname of the player who selected a new pawn color
-     * @param pawn is the selected color
+     * @param pawn     is the selected color
      */
     @Override
     public void updatePawns(String nickname, Pawn pawn) {
-        if(nickname.equals(personalPlayer.getNickname())){
+        if (nickname.equals(personalPlayer.getNickname())) {
             personalPlayer.setColor(pawn);
         }
-        for(Player p: playersInTheGame){
-            if(p.getNickname().equals(nickname)){
+        for (Player p : playersInTheGame) {
+            if (p.getNickname().equals(nickname)) {
                 p.setColor(pawn);
             }
         }
@@ -939,13 +895,13 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * This is an update method
+     *
      * @param newPlayingOrder are the players of the game ordered
      */
     @Override
-    public void updateRound(List<Player> newPlayingOrder)  { //taken from RMIClient
+    public void updateRound(List<Player> newPlayingOrder) { //taken from RMIClient
         playersInTheGame = newPlayingOrder;
         if (selectedView == 1) { //TUI
             // when turnCounter==-1 we have to initialize this list
@@ -954,27 +910,27 @@ public class ClientSCK implements ClientGeneralInterface {
                 // call playBaseCard (see the model server side)
                 new Thread(() -> {
 
-                        boolean choice = tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]);
-                        playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0], choice);
-                        checkBaseCardPlayed();
+                    boolean choice = tuiView.askPlayBaseCard(sc, personalPlayer.getPlayerDeck()[0]);
+                    playBaseCard(personalPlayer.getNickname(), personalPlayer.getPlayerDeck()[0], choice);
+                    checkBaseCardPlayed();
 
                 }).start();
             }
             if (this.turnCounter >= 1) { // we enter here from the third time included that updateRound is called
                 // before starting the thread that prints the menu we communicate which is the player that is playing
-                if(lastMoves>0){
+                if (lastMoves > 0) {
                     if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
                         System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
-                        if(lastMoves<=playersInTheGame.size()){
+                        if (lastMoves <= playersInTheGame.size()) {
                             System.out.println("This is your last turn! You will not draw.");
                         }
                         setIsPlaying(true);
                     } else {
-                        System.out.println(ANSIFormatter.ANSI_BLUE+playersInTheGame.get(0).getNickname() + " is playing!"+ANSIFormatter.ANSI_RESET);
+                        System.out.println(ANSIFormatter.ANSI_BLUE + playersInTheGame.get(0).getNickname() + " is playing!" + ANSIFormatter.ANSI_RESET);
                         setIsPlaying(false);
                     }
-                }else{
-                    inGame=false;
+                } else {
+                    inGame = false;
                 }
                 if (this.turnCounter == 1) { // we enter here the third time (finishedSetupPhase2())
                     // we have to start the thread that prints the menu
@@ -985,30 +941,29 @@ public class ClientSCK implements ClientGeneralInterface {
                     }).start();
                 }
             }
-            if(this.turnCounter==-1){
-                Executor executor= Executors.newSingleThreadExecutor();
+            if (this.turnCounter == -1) {
+                Executor executor = Executors.newSingleThreadExecutor();
                 executor.execute(() -> {
-                    boolean ok=false;
+                    boolean ok = false;
 
-                        while (!ok) {
-                            Pawn selection = tuiView.askPawnSelection(getAvailableColors(),sc);
-                            if (selection != null) {
-                                this.choosePawnColor(personalPlayer.getNickname(), selection);
-                                if(errorState&&!aDisconnectionHappened){
-                                    System.out.println("This color is already taken! Please try again.");
-                                    errorState=false;
-                                }else if(aDisconnectionHappened){
-                                    handleDisconnection();
-                                }
-                                else {
-                                    ok = true;
-                                    System.out.println("Pawn color correctly selected!");
-                                    checkChosenPawnColor();
-                                }
+                    while (!ok) {
+                        Pawn selection = tuiView.askPawnSelection(getAvailableColors(), sc);
+                        if (selection != null) {
+                            this.choosePawnColor(personalPlayer.getNickname(), selection);
+                            if (errorState && !aDisconnectionHappened) {
+                                System.out.println("This color is already taken! Please try again.");
+                                errorState = false;
+                            } else if (aDisconnectionHappened) {
+                                handleDisconnection();
                             } else {
-                                System.out.println("Please insert one of the possible colors!");
+                                ok = true;
+                                System.out.println("Pawn color correctly selected!");
+                                checkChosenPawnColor();
                             }
+                        } else {
+                            System.out.println("Please insert one of the possible colors!");
                         }
+                    }
 
                 });
 
@@ -1016,14 +971,12 @@ public class ClientSCK implements ClientGeneralInterface {
             }
             turnCounter++;
             //first time: -1 -> 0, second time 0 -> 1  so from the second time on we enter if(turnCounter>=1)
-        }
-        else if (selectedView == 2) { //GUI
-            //playersInTheGame = newPlayingOrder;
-            if(this.turnCounter == -1){
-                synchronized (guiGamestateLock) {
+        } else if (selectedView == 2) { //GUI
+            if (this.turnCounter == -1) {
+                synchronized (guiGameStateLock) {
                     while (guiLobbyController == null) {
                         try {
-                            guiGamestateLock.wait();
+                            guiGameStateLock.wait();
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
@@ -1031,28 +984,28 @@ public class ClientSCK implements ClientGeneralInterface {
                 }
                 guiLobbyController.updateGameState();
             }
-            if (this.turnCounter == 0){
+            if (this.turnCounter == 0) {
                 GUIPawnsController.updateGameState();
             }
-            if (this.turnCounter >= 1){
+            if (this.turnCounter >= 1) {
 
-                if(lastMoves>0) {
+                if (lastMoves > 0) {
 
                     if (lastMoves <= playersInTheGame.size()) {
                         if (guiGameController != null) {
                             guiGameController.updatePoints();
                             guiGameController.updateRound(true);
                         }
-                    }else {
+                    } else {
                         if (guiGameController != null) {
                             guiGameController.updatePoints();
                             guiGameController.updateRound(false);
                         }
                     }
-                }else{
-                    inGame=false;
+                } else {
+                    inGame = false;
                 }
-                if (this.turnCounter == 1){ // 3rd turn
+                if (this.turnCounter == 1) { // 3rd turn
                     guiObjectiveController.updateGameState();
                 }
             }
@@ -1061,63 +1014,58 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * This is an update method
+     *
      * @param card1 is the first common Objective
      * @param card2 is the second common Objective
      */
     @Override
-    public void updateCommonObjectives(ObjectiveCard card1, ObjectiveCard card2){
-        this.commonObjective1=card1;
-        this.commonObjective2=card2;
+    public void updateCommonObjectives(ObjectiveCard card1, ObjectiveCard card2) {
+        this.commonObjective1 = card1;
+        this.commonObjective2 = card2;
     }
-
 
 
     /**
      * This is an update method
+     *
      * @param gameState is the new Game state (WAITING_FOR_START -> STARTED -> ENDING -> ENDED)
      */
     @Override
-    public void updateGameState(Game.GameState gameState)  {
-        // we have to change the view and the local model
+    public void updateGameState(Game.GameState gameState) {
         if (selectedView == 1) {
-            if(gameState.equals(Game.GameState.STARTED)) {
-                inGame=true;
+            if (gameState.equals(Game.GameState.STARTED)) {
+                inGame = true;
                 System.out.println("The game has started!");
 
 
                 //to check the connection
-                this.pongReceived=true; // initialization
+                this.pongReceived = true;
                 this.timer = new Timer(true); // isDaemon==true -> maintenance activities performed
                 // as long as the application is running
-                // we need to use ping-pong messages because sometimes the connection seems to
-                // be open (we do not receive any I/O exception) but it is not.
                 timer.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
-                        if(pongReceived) {
-                            pongReceived=false;
-                                ClientMessage clientMessage=new ClientPing();
-                                sendMessage(new SCKMessage(clientMessage));
-                        }else{
-                            //there are no pongs received
-                                handleDisconnection();
+                        if (pongReceived) {
+                            pongReceived = false;
+                            ClientMessage clientMessage = new ClientPing();
+                            sendMessage(new SCKMessage(clientMessage));
+                        } else {
+                            handleDisconnection();
                         }
                     }
                 }, 0, 10000);
 
             } else if (gameState.equals(Game.GameState.ENDED)) {
-            System.out.println(ANSIFormatter.ANSI_RED + "\nThe game has ended.\n" + ANSIFormatter.ANSI_RESET);
-        }
+                System.out.println(ANSIFormatter.ANSI_RED + "\nThe game has ended.\n" + ANSIFormatter.ANSI_RESET);
+            }
         } else if (selectedView == 2) {
-            if(gameState.equals(Game.GameState.STARTED)) {
+            if (gameState.equals(Game.GameState.STARTED)) {
                 inGame = true;
             }
         }
     }
-
 
 
     /**
@@ -1125,20 +1073,20 @@ public class ClientSCK implements ClientGeneralInterface {
      * It closes the application.
      */
     @Override
-    public void handleDisconnection()  {
+    public void handleDisconnection() {
 
         synchronized (disconnectionLock) {
             if (selectedView == 1) { //TUI
-                if(!showWinnerArrived) {
+                if (!showWinnerArrived) {
                     aDisconnectionHappened = true;
                     handleDisconnectionFunction();
                 }
             } else if (selectedView == 2) {
                 aDisconnectionHappened = true;
-                synchronized (actionLock){
-                    actionLock.notify(); //to stop the waiting of something that will never arrive
+                synchronized (actionLock) {
+                    actionLock.notify(); 
                 }
-                if(GUIPawnsController==null){ //the game has not started yet
+                if (GUIPawnsController == null) { //the game has not started yet
                     handleDisconnectionFunction();
                 }
             }
@@ -1147,9 +1095,9 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * This method is used in RMI Client
+     *
      * @throws RemoteException when there's a problem in the communication
      */
     @Override
@@ -1157,9 +1105,9 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * This method is used in RMI Client
+     *
      * @throws RemoteException when there's a problem in the communication
      */
     @Override
@@ -1167,152 +1115,149 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * This method is used in the TUI: it shows the menu and waits for the user to select
      * an option of the actions that he can do (the waiting isn't blocking)
      */
-    private void showMenuAndWaitForSelection(){
-        if(selectedView==1) {
-            int intChoice=tuiView.showMenuAndWaitForSelection(this.getIsPlaying(),this.console);
+    private void showMenuAndWaitForSelection() {
+        if (selectedView == 1) {
+            int intChoice = tuiView.showMenuAndWaitForSelection(this.getIsPlaying(), this.console);
             boolean ok;
             String nickname;
-            if(intChoice!=-1) {
-                    switch (intChoice) {
-                        case 0:
-                            System.out.println("Are you sure to LEAVE the game? Type 1 if you want to leave any other character to return to the game.");
-                            try {
-                                if (sc.nextInt() == 1) {
-                                    inGame = false;
-                                    leaveGame(personalPlayer.getNickname());
-                                }
-                            } catch (InputMismatchException ignored) {
+            if (intChoice != -1) {
+                switch (intChoice) {
+                    case 0:
+                        System.out.println("Are you sure to LEAVE the game? Type 1 if you want to leave any other character to return to the game.");
+                        try {
+                            if (sc.nextInt() == 1) {
+                                inGame = false;
+                                leaveGame(personalPlayer.getNickname());
                             }
-                            break;
-                        case 1:
-                            ok = false;
-                            System.out.println("Which player's hand do you want to see?");
-                            nickname = sc.next();
-                            for (Player player : playersInTheGame) {
-                                if (player.getNickname().equals(nickname)) {
-                                    ok = true;
-                                    tuiView.printHand(player.getPlayerDeck(), nickname.equals(personalPlayer.getNickname()));
-                                }
+                        } catch (InputMismatchException ignored) {
+                        }
+                        break;
+                    case 1:
+                        ok = false;
+                        System.out.println("Which player's hand do you want to see?");
+                        nickname = sc.next();
+                        for (Player player : playersInTheGame) {
+                            if (player.getNickname().equals(nickname)) {
+                                ok = true;
+                                tuiView.printHand(player.getPlayerDeck(), nickname.equals(personalPlayer.getNickname()));
                             }
-                            if (!ok) {
-                                System.out.println("There is no such player in this lobby! Try again.");
+                        }
+                        if (!ok) {
+                            System.out.println("There is no such player in this lobby! Try again.");
+                        }
+                        break;
+                    case 2:
+                        List<ObjectiveCard> list = new ArrayList<>();
+                        list.add(commonObjective1);
+                        list.add(commonObjective2);
+                        list.add(personalPlayer.getPersonalObjective());
+                        tuiView.printObjectiveCard(list);
+                        break;
+                    case 3:
+                        List<PlayableCard> tmp = new ArrayList<>();
+                        tmp.add(resourceCard1);
+                        tmp.add(resourceCard2);
+                        tmp.add(goldCard1);
+                        tmp.add(goldCard2);
+                        tuiView.printDrawableCards(goldDeck, resourceDeck, tmp);
+                        break;
+                    case 4:
+                        ok = false;
+                        System.out.println("Which player's board do you want to see?");
+                        nickname = sc.next();
+                        for (Player player : playersInTheGame) {
+                            if (player.getNickname().equals(nickname)) {
+                                ok = true;
+                                tuiView.printTable(player.getBoard());
                             }
-                            break;
-                        case 2:
-                            List<ObjectiveCard> list = new ArrayList<>();
-                            list.add(commonObjective1);
-                            list.add(commonObjective2);
-                            list.add(personalPlayer.getPersonalObjective());
-                            tuiView.printObjectiveCard(list);
-                            break;
-                        case 3:
-                            List<PlayableCard> tmp = new ArrayList<>();
-                            tmp.add(resourceCard1);
-                            tmp.add(resourceCard2);
-                            tmp.add(goldCard1);
-                            tmp.add(goldCard2);
-                            tuiView.printDrawableCards(goldDeck, resourceDeck, tmp);
-                            break;
-                        case 4:
-                            ok = false;
-                            System.out.println("Which player's board do you want to see?");
-                            nickname = sc.next();
-                            for (Player player : playersInTheGame) {
-                                if (player.getNickname().equals(nickname)) {
-                                    ok = true;
-                                    tuiView.printTable(player.getBoard());
-                                }
-                            }
-                            if (!ok) {
-                                System.out.println("There is no such player in this lobby! Try again.");
-                            }
-                            break;
-                        case 5:
-                            List<Player> tmpList = new ArrayList<>(playersInTheGame);
-                            tuiView.printScoreBoard(tmpList);
-                            break;
-                        case 6: tuiView.printLegend();
-                            break;
-                        case 7: System.out.println(ANSIFormatter.ANSI_BLUE+"It's "+playersInTheGame.get(0).getNickname()+"'s turn!"+ANSIFormatter.ANSI_RESET);
-                            break;
-                        case 8:
-                            boolean orientation = true;
-                            PlayableCard card = null;
-                            Coordinates coordinates;
-                            card = tuiView.askPlayCard(sc, personalPlayer);
-                            if (card != null) {
-                                orientation = tuiView.askCardOrientation(sc);
-                                coordinates = tuiView.askCoordinates(sc, card, personalPlayer.getBoard());
-                                if (coordinates != null) {
-                                    if (coordinates.getX() != -1) {
-                                        this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
-                                        if ((!errorState) && (lastMoves > playersInTheGame.size()) && !aDisconnectionHappened) {
-                                            tmp = new ArrayList<>();
-                                            tmp.add(resourceCard1);
-                                            tmp.add(resourceCard2);
-                                            tmp.add(goldCard1);
-                                            tmp.add(goldCard2);
-                                            card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
-                                            this.drawCard(personalPlayer.getNickname(), card);
-                                        } else if (aDisconnectionHappened && !showWinnerArrived) {
-                                            handleDisconnection();
-                                        } else if (errorState) {
-                                            System.out.println(ANSIFormatter.ANSI_RED + "You can't play this card! Returning to menu..." + ANSIFormatter.ANSI_RESET);
-                                            errorState = false; //to be used the next time
-                                        }
+                        }
+                        if (!ok) {
+                            System.out.println("There is no such player in this lobby! Try again.");
+                        }
+                        break;
+                    case 5:
+                        List<Player> tmpList = new ArrayList<>(playersInTheGame);
+                        tuiView.printScoreBoard(tmpList);
+                        break;
+                    case 6:
+                        tuiView.printLegend();
+                        break;
+                    case 7:
+                        System.out.println(ANSIFormatter.ANSI_BLUE + "It's " + playersInTheGame.get(0).getNickname() + "'s turn!" + ANSIFormatter.ANSI_RESET);
+                        break;
+                    case 8:
+                        boolean orientation = true;
+                        PlayableCard card = null;
+                        Coordinates coordinates;
+                        card = tuiView.askPlayCard(sc, personalPlayer);
+                        if (card != null) {
+                            orientation = tuiView.askCardOrientation(sc);
+                            coordinates = tuiView.askCoordinates(sc, card, personalPlayer.getBoard());
+                            if (coordinates != null) {
+                                if (coordinates.getX() != -1) {
+                                    this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
+                                    if ((!errorState) && (lastMoves > playersInTheGame.size()) && !aDisconnectionHappened) {
+                                        tmp = new ArrayList<>();
+                                        tmp.add(resourceCard1);
+                                        tmp.add(resourceCard2);
+                                        tmp.add(goldCard1);
+                                        tmp.add(goldCard2);
+                                        card = tuiView.askCardToDraw(goldDeck, resourceDeck, tmp, sc);
+                                        this.drawCard(personalPlayer.getNickname(), card);
+                                    } else if (aDisconnectionHappened && !showWinnerArrived) {
+                                        handleDisconnection();
+                                    } else if (errorState) {
+                                        System.out.println(ANSIFormatter.ANSI_RED + "You can't play this card! Returning to menu..." + ANSIFormatter.ANSI_RESET);
+                                        errorState = false; //to be used the next time
                                     }
-                                }else{
-                                    System.out.println(ANSIFormatter.ANSI_RED+"You can't play this card! Returning to menu..."+ANSIFormatter.ANSI_RESET);
                                 }
+                            } else {
+                                System.out.println(ANSIFormatter.ANSI_RED + "You can't play this card! Returning to menu..." + ANSIFormatter.ANSI_RESET);
                             }
-                            break;
-                        default:
-                            System.out.println("Functionality not yet implemented");
-                    }
+                        }
+                        break;
+                    default:
+                        System.out.println("Functionality not yet implemented");
+                }
 
             }
         }
     }
 
 
-
     /**
      * This method manages disconnections
      */
-    public synchronized void handleDisconnectionFunction(){
-        if(selectedView==1){
-            System.out.println(ANSIFormatter.ANSI_RED+"A disconnection happened. Closing the game."+ANSIFormatter.ANSI_RESET);
+    public synchronized void handleDisconnectionFunction() {
+        if (selectedView == 1) {
+            System.out.println(ANSIFormatter.ANSI_RED + "A disconnection happened. Closing the game." + ANSIFormatter.ANSI_RESET);
         }
         // TUI + GUI
-        running=false;
-        inGame=false;
+        running = false;
+        inGame = false;
         try {
-            if(inputStream!=null) {
+            if (inputStream != null) {
                 inputStream.close();
             }
-            if(outputStream!=null){
+            if (outputStream != null) {
                 outputStream.close();
             }
-            if(socket!=null&&!socket.isClosed()) {
+            if (socket != null && !socket.isClosed()) {
                 socket.close();
             }
         } catch (IOException e) { // needed for the close clause
             throw new RuntimeException(e);
         }
         // the TimerTask that checks the connection should end by itself when the application ends
-        if(this.timer!=null) {
+        if (this.timer != null) {
             this.timer.cancel(); //to be sure
         }
         System.exit(0);
     }
-
-
-
 
 
     // STANDARD METHODS OF THE CLASS
@@ -1320,45 +1265,43 @@ public class ClientSCK implements ClientGeneralInterface {
     /**
      * This method checks if everybody has chosen his pawn
      */
-    public void checkChosenPawnColor(){
-        ClientMessage clientMessage=new CheckChosenPawnColor();
+    public void checkChosenPawnColor() {
+        ClientMessage clientMessage = new CheckChosenPawnColor();
         sendMessage(new SCKMessage(clientMessage));
     }
-
 
 
     /**
      * This method checks if everybody has chosen his objective
      */
-    public void checkObjectiveCardChosen(){
-        ClientMessage clientMessage=new CheckObjectiveCardChosen();
+    public void checkObjectiveCardChosen() {
+        ClientMessage clientMessage = new CheckObjectiveCardChosen();
         sendMessage(new SCKMessage(clientMessage));
     }
-
 
 
     /**
      * This method checks if everybody has chosen his base card
      */
-    public void checkBaseCardPlayed(){
-        ClientMessage clientMessage=new CheckBaseCardPlayed();
+    public void checkBaseCardPlayed() {
+        ClientMessage clientMessage = new CheckBaseCardPlayed();
         sendMessage(new SCKMessage(clientMessage));
     }
 
 
-
     /**
      * Getter method
-     * @return guiGamestateLock
+     *
+     * @return guiGameStateLock
      */
-    public Object getGuiGamestateLock() {
-        return guiGamestateLock;
+    public Object getGuiGameStateLock() {
+        return guiGameStateLock;
     }
 
 
-
     /**
      * Getter method
+     *
      * @return true if a disconnection happened, false otherwise
      */
     public boolean getADisconnectionHappened() {
@@ -1366,9 +1309,9 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return guiPawnsControllerLock
      */
     public Object getGuiPawnsControllerLock() {
@@ -1376,9 +1319,9 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return guiBaseCardControllerLock
      */
     public Object getGuiBaseCardControllerLock() {
@@ -1386,9 +1329,9 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return the gui objective controller lock
      */
     public Object getGuiObjectiveControllerLock() {
@@ -1396,40 +1339,40 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return a list of available colors
      */
-    public List<Pawn> getAvailableColors(){
+    public List<Pawn> getAvailableColors() {
         checkAvailableColors();
         return this.availableColors;
     }
 
 
-
     /**
      * Getter method
+     *
      * @return true or false if the player is playing or not
      */
-    public boolean getIsPlaying(){
+    public boolean getIsPlaying() {
         return this.isPlaying;
     }
 
 
-
     /**
      * Getter method
+     *
      * @return error state
      */
-    public boolean getErrorState(){
+    public boolean getErrorState() {
         return this.errorState;
     }
 
 
-
     /**
      * Getter method
+     *
      * @return CommonObjective1
      */
     public ObjectiveCard getCommonObjective1() {
@@ -1437,9 +1380,9 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return CommonObjective2
      */
     public ObjectiveCard getCommonObjective2() {
@@ -1447,9 +1390,9 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return PersonalPlayer
      */
     public Player getPersonalPlayer() {
@@ -1457,9 +1400,9 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return ResourceCard1
      */
     public PlayableCard getResourceCard1() {
@@ -1467,9 +1410,9 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return ResourceCard2
      */
     public PlayableCard getResourceCard2() {
@@ -1477,9 +1420,9 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return goldCard1
      */
     public PlayableCard getGoldCard1() {
@@ -1487,9 +1430,9 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return goldCard2
      */
     public PlayableCard getGoldCard2() {
@@ -1497,9 +1440,9 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return goldDeck
      */
     public PlayableDeck getGoldDeck() {
@@ -1507,9 +1450,9 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return resourceDeck
      */
     public PlayableDeck getResourceDeck() {
@@ -1517,19 +1460,19 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * Getter method
+     *
      * @return playersInTheGame
      */
-    public List<Player> getPlayersInTheGame(){
+    public List<Player> getPlayersInTheGame() {
         return this.playersInTheGame;
     }
 
 
-
     /**
      * Getter method
+     *
      * @return the lobby ids of the available lobbies
      */
     public HashSet<Integer> getAvailableLobbies() {
@@ -1538,69 +1481,69 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param nickname is the nickname we want to set
      * @return true if the nickname is set correctly
      */
     public boolean setNickname(String nickname) {
         this.personalPlayer.setNickname(nickname);
         this.nicknameSet = true;
-        if (errorState&&!aDisconnectionHappened){
+        if (errorState && !aDisconnectionHappened) {
             this.nicknameSet = false;
-        }else if(aDisconnectionHappened){
+        } else if (aDisconnectionHappened) {
 
-                handleDisconnection();
+            handleDisconnection();
 
         }
         return this.nicknameSet;
     }
 
 
-
     /**
      * Setter method
+     *
      * @param received true if it is received, false otherwise
      */
-    public void setPongReceived(Boolean received){ //to be used in ServerPong
-        this.pongReceived=received;
+    public void setPongReceived(Boolean received) {
+        this.pongReceived = received;
     }
 
 
-
     /**
      * Setter method
+     *
      * @param list of available id
      */
-    public void setLobbyId(List<Integer>list){
+    public void setLobbyId(List<Integer> list) {
         lobbyId.addAll(list);
     }
 
 
-
     /**
      * Setter method
+     *
      * @param responseReceived true if it is received, false otherwise
      */
-    public void setResponseReceived(boolean responseReceived){
-        this.responseReceived=responseReceived;
+    public void setResponseReceived(boolean responseReceived) {
+        this.responseReceived = responseReceived;
     }
 
 
-
     /**
      * Setter method
+     *
      * @param guiGameController is the GUI game controller (for the main match window)
      */
     public void setGuiGameController(GUIGameController guiGameController) {
-        this.guiGameController=guiGameController;
+        this.guiGameController = guiGameController;
     }
-
 
 
     /**
      * Setter method
+     *
      * @param guiLobbyController is the lobby controller of the GUI
      */
     public void setGuiLobbyController(GUILobbyController guiLobbyController) {
@@ -1608,9 +1551,9 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param done true if it is received, false otherwise
      */
     public void setDone(boolean done) {
@@ -1618,39 +1561,39 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param ctr controller of the GUI's window of the pawns
      */
     public void setGuiPawnsController(GUIPawnsController ctr) {
-        this.GUIPawnsController=ctr;
+        this.GUIPawnsController = ctr;
     }
-
 
 
     /**
      * Setter method
+     *
      * @param ctr is the GUI controller
      */
     public void setGuiBaseCardController(GUIBaseCardController ctr) {
-        this.guiBaseCardController=ctr;
+        this.guiBaseCardController = ctr;
     }
-
 
 
     /**
      * Setter method
+     *
      * @param ctr is the GUI controller
      */
     public void setGuiObjectiveController(GUIObjectiveController ctr) {
-        this.guiObjectiveController=ctr;
+        this.guiObjectiveController = ctr;
     }
-
 
 
     /**
      * Setter method
+     *
      * @param selectedView the index related to the selected view
      */
     public void setSelectedView(int selectedView) {
@@ -1658,43 +1601,54 @@ public class ClientSCK implements ClientGeneralInterface {
     }
 
 
-
     /**
      * Setter method
+     *
      * @param availableColors tells what colors a player can choose
      */
-    public void setAvailableColors(List<Pawn> availableColors){
-        this.availableColors=availableColors;
+    public void setAvailableColors(List<Pawn> availableColors) {
+        this.availableColors = availableColors;
     }
-
 
 
     /**
      * Setter method
+     *
      * @param isPlaying tells about the status of a player
      */
-    public void setIsPlaying(boolean isPlaying){
-        this.isPlaying=isPlaying;
+    public void setIsPlaying(boolean isPlaying) {
+        this.isPlaying = isPlaying;
     }
-
 
 
     /**
      * Setter method
+     *
      * @param errorState if there's an error, then it is true, false otherwise
      */
-    public void setErrorState (boolean errorState) {
+    public void setErrorState(boolean errorState) {
         this.errorState = errorState;
     }
 
 
+    /**
+     * Setter method
+     *
+     * @param gameID int ID of the game
+     */
+    public void setGameID(Integer gameID) {
+        this.gameID = gameID;
+    }
+
 
     /**
      * Setter method
-     * @param gameID int ID of the game
+     *
+     * @param serverName server address
      */
-    public void setGameID(Integer gameID){
-        this.gameID=gameID;
+    public void setServerName(String serverName) {
+        this.SERVER_NAME = serverName;
     }
+
 
 }

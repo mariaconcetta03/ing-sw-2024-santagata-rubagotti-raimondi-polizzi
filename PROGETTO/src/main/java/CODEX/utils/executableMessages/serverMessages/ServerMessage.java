@@ -1,6 +1,7 @@
 package CODEX.utils.executableMessages.serverMessages;
 
 import CODEX.distributed.Socket.ClientSCK;
+
 import java.io.Serializable;
 
 /**
@@ -10,6 +11,7 @@ public interface ServerMessage extends Serializable {
 
     /**
      * Execute method
+     *
      * @param clientSCK client socket
      */
     void execute(ClientSCK clientSCK);
