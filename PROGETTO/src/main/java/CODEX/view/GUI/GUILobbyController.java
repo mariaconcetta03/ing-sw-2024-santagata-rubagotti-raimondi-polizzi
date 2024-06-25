@@ -65,7 +65,9 @@ public class GUILobbyController {
     private GUIPawnsController ctr;
     private Stage stage;
     private Thread pointsThread = null;
-    boolean lobbyHasStarted = false;
+    private boolean lobbyHasStarted = false;
+    private boolean alreadyCreated = false;
+
 
 
     /**
@@ -224,37 +226,35 @@ public class GUILobbyController {
      * This method adds the players to a specific lobby
      */
     public synchronized void joinLobby() {
-        fullLobby.setOpacity(0);
-        if (availableLobbies.getValue() != null) {
-            if (network == 1) {
-                try {
-                    rmiClient.addPlayerToLobby(rmiClient.getPersonalPlayer().getNickname(), availableLobbies.getValue());
+            fullLobby.setOpacity(0);
+            if (availableLobbies.getValue() != null) {
+                if (network == 1) {
                     try {
-                        rmiClient.getGameController().checkNPlayers(); // starts the game if the number of players is correct
-                    } catch (RemoteException exceptionBeforeTheGameHasStarted) {
-                        rmiClient.handleDisconnectionFunction();
+                        rmiClient.addPlayerToLobby(rmiClient.getPersonalPlayer().getNickname(), availableLobbies.getValue());
+                        try {
+                            rmiClient.getGameController().checkNPlayers(); // starts the game if the number of players is correct
+                        } catch (RemoteException exceptionBeforeTheGameHasStarted) {
+                            rmiClient.handleDisconnectionFunction();
+                        }
+
+                        setWaitingPlayers();
+
+                    } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException e) {
+                        fullLobby.setOpacity(1); // shows the message error "This lobby is full"
+                        updateAvailableLobbies(); // updates the available lobbies
                     }
+                } else if (network == 2) {
+                    clientSCK.addPlayerToLobby(clientSCK.getPersonalPlayer().getNickname(), availableLobbies.getValue());
+                    if (clientSCK.getErrorState()) {
+                        clientSCK.setErrorState(false);
+                        fullLobby.setOpacity(1); // shows the message error "This lobby is full"
+                        updateAvailableLobbies(); // updates the available lobbies
 
-                    setWaitingPlayers();
-
-                } catch (GameAlreadyStartedException | FullLobbyException | GameNotExistsException e) {
-                    fullLobby.setOpacity(1); // shows the message error "This lobby is full"
-                    updateAvailableLobbies(); // updates the available lobbies
+                    } else {
+                        clientSCK.checkNPlayers(); // starts the game if the number of players is correct
+                        setWaitingPlayers();
+                    }
                 }
-            } else if (network == 2) {
-
-                clientSCK.addPlayerToLobby(clientSCK.getPersonalPlayer().getNickname(), availableLobbies.getValue());
-
-                if (clientSCK.getErrorState()) {
-                    clientSCK.setErrorState(false);
-                    fullLobby.setOpacity(1); // shows the message error "This lobby is full"
-                    updateAvailableLobbies(); // updates the available lobbies
-                } else {
-                    clientSCK.checkNPlayers(); // starts the game if the number of players is correct
-
-                    setWaitingPlayers();
-                }
-            }
         }
     }
 
@@ -266,8 +266,9 @@ public class GUILobbyController {
         wrongNumber.setOpacity(0);
         String input = createText.getText();
         if (!input.isBlank() && (input.equals("2") || input.equals("3") || input.equals("4"))) {
-            if (network == 1) {
-
+            createButton.setDisable(true);
+            if (network == 1 && !alreadyCreated) {
+                alreadyCreated = true;
                 rmiClient.createLobby(rmiClient.getPersonalPlayer().getNickname(), Integer.parseInt(input));
             } else if (network == 2 && !alreadyCreated) {
                 alreadyCreated = true;
