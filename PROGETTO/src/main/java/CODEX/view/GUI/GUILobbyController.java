@@ -67,6 +67,7 @@ public class GUILobbyController {
     private Thread pointsThread = null;
     private boolean lobbyHasStarted = false;
     private boolean alreadyCreated = false;
+    private boolean joined = false;
 
 
 
@@ -227,7 +228,9 @@ public class GUILobbyController {
      */
     public synchronized void joinLobby() {
             fullLobby.setOpacity(0);
-            if (availableLobbies.getValue() != null) {
+            if (availableLobbies.getValue() != null && !joined) {
+                joined = true;
+                joinButton.setDisable(true);
                 if (network == 1) {
                     try {
                         rmiClient.addPlayerToLobby(rmiClient.getPersonalPlayer().getNickname(), availableLobbies.getValue());
