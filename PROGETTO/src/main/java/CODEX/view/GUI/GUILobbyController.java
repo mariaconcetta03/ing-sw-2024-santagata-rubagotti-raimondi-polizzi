@@ -269,9 +269,8 @@ public class GUILobbyController {
             if (network == 1) {
 
                 rmiClient.createLobby(rmiClient.getPersonalPlayer().getNickname(), Integer.parseInt(input));
-
-            } else if (network == 2) {
-
+            } else if (network == 2 && !alreadyCreated) {
+                alreadyCreated = true;
                 clientSCK.createLobby(clientSCK.getPersonalPlayer().getNickname(), Integer.parseInt(input));
             }
             updateAvailableLobbies();
