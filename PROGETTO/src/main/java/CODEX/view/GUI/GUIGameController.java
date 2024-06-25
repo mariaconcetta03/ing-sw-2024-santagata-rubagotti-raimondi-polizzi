@@ -507,6 +507,8 @@ public class GUIGameController {
             points2.setOpacity(1);
             points3.setOpacity(0);
             points4.setOpacity(0);
+            buttonP3Board.setDisable(true);
+            buttonP4Board.setDisable(true);
             player1Nickname.setText(playersInOrder.get(0).getNickname());
             if (playersInOrder.get(0).getChosenColor() == Pawn.RED) {
                 player1Nickname.setStyle("-fx-text-fill: red;");
