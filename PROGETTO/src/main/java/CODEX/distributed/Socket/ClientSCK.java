@@ -320,9 +320,7 @@ public class ClientSCK implements ClientGeneralInterface {
             while (!responseReceived) {
                 try {
                     actionLock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch(InterruptedException ignored){}
             }
         }
     }
@@ -338,9 +336,7 @@ public class ClientSCK implements ClientGeneralInterface {
             while (!responseReceived) {
                 try {
                     actionLock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch(InterruptedException ignored){}
             }
         }
     }
@@ -357,9 +353,7 @@ public class ClientSCK implements ClientGeneralInterface {
             while (!responseReceived) {
                 try {
                     actionLock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch(InterruptedException ignored){}
             }
         }
     }
@@ -381,9 +375,7 @@ public class ClientSCK implements ClientGeneralInterface {
             while (!responseReceived) {
                 try {
                     actionLock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch(InterruptedException ignored){}
             }
         }
     }
@@ -402,9 +394,7 @@ public class ClientSCK implements ClientGeneralInterface {
             while (!responseReceived) {
                 try {
                     actionLock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch(InterruptedException ignored){}
             }
         }
     }
@@ -424,9 +414,7 @@ public class ClientSCK implements ClientGeneralInterface {
             while (!responseReceived) {
                 try {
                     actionLock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch(InterruptedException ignored){}
             }
         }
     }
@@ -447,9 +435,7 @@ public class ClientSCK implements ClientGeneralInterface {
             while (!responseReceived) {
                 try {
                     actionLock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch(InterruptedException ignored){}
             }
         }
     }
@@ -486,9 +472,7 @@ public class ClientSCK implements ClientGeneralInterface {
             while (!responseReceived) {
                 try {
                     actionLock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch(InterruptedException ignored){}
             }
         }
     }
@@ -523,9 +507,7 @@ public class ClientSCK implements ClientGeneralInterface {
             while (!responseReceived) {
                 try {
                     actionLock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch(InterruptedException ignored){}
             }
         }
     }
@@ -546,9 +528,7 @@ public class ClientSCK implements ClientGeneralInterface {
             while (!responseReceived) {
                 try {
                     actionLock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch(InterruptedException ignored){}
             }
         }
     }
@@ -569,8 +549,7 @@ public class ClientSCK implements ClientGeneralInterface {
                     inputStream.close();
                     outputStream.close();
                     socket.close();
-                } catch (IOException ex) { //needed for the close clause
-                    throw new RuntimeException(ex);
+                } catch (IOException ignored) { //needed for the close clause
                 }
                 if (timer != null) {
                     timer.cancel(); // Ferma il timer
@@ -884,8 +863,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
                     try {
                         guiPawnsControllerLock.wait();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                    } catch (InterruptedException ignored) {
                     }
                 }
             }
@@ -977,8 +955,7 @@ public class ClientSCK implements ClientGeneralInterface {
                     while (guiLobbyController == null) {
                         try {
                             guiGameStateLock.wait();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                        } catch (InterruptedException ignored) {
                         }
                     }
                 }
@@ -1249,8 +1226,7 @@ public class ClientSCK implements ClientGeneralInterface {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
             }
-        } catch (IOException e) { // needed for the close clause
-            throw new RuntimeException(e);
+        } catch (IOException ignored) { // needed for the close clause
         }
         // the TimerTask that checks the connection should end by itself when the application ends
         if (this.timer != null) {

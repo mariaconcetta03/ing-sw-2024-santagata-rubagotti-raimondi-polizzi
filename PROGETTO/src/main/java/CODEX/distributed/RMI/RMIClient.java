@@ -540,9 +540,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
 
     /**
      * This method is used to execute the player's choice of action during his turn.
-     * @throws InterruptedException if the thread executing this gets interrupted
      */
-    private void gameTurn() throws InterruptedException {
+    private void gameTurn()  {
         boolean ok = false;
         boolean read = false;
         int choice;
@@ -935,13 +934,8 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                     }
                     if (turnCounter == 1) { // when the model does an updateRound for the third time we are in turnCounter==1 and we can start showing the menu
                         executor.execute(() -> {
-                            try {
-                                while (inGame) {
-                                    gameTurn();
-                                }
-                            } catch (InterruptedException e) {
-                                System.out.println("Issues while executing the app. Closing the program.");
-                                System.exit(-1);
+                            while (inGame) {
+                                gameTurn();
                             }
                         });
                     }
@@ -1127,7 +1121,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             finalTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    System.out.println("timer sta facendo exit");
                     System.exit(0); //status 0 -> no errors
                 }
             },6000); //6 seconds
@@ -1204,7 +1197,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    System.out.println("timer sta facendo exit");
                     System.exit(0); //status 0 -> no errors
                 }
 
@@ -1252,7 +1244,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 if (lambdaContext.heartbeatTask != null && !lambdaContext.heartbeatTask.isCancelled()) {
                     lambdaContext.heartbeatTask.cancel(true); //closes schedulerToCheckReceivedHeartBeat
                 }
-                System.out.println("timeout superato");
                 handleDisconnection();
             }
         }, 0, TIMEOUT, TimeUnit.SECONDS);
