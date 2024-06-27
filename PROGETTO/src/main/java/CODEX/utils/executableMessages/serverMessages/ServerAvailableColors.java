@@ -25,10 +25,10 @@ public class ServerAvailableColors implements ServerMessage {
 
     @Override
     public void execute(ClientSCK clientSCK) {
-        synchronized (clientSCK.actionLock) {
+        synchronized (clientSCK.getActionLock()) {
             clientSCK.setAvailableColors(availableColors);
             clientSCK.setResponseReceived(true);
-            clientSCK.actionLock.notify();
+            clientSCK.getActionLock().notify();
         }
     }
 }

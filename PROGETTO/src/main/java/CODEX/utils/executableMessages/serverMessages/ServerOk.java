@@ -29,13 +29,13 @@ public class ServerOk implements ServerMessage {
 
     @Override
     public void execute(ClientSCK clientSCK) {
-        synchronized (clientSCK.actionLock) {
+        synchronized (clientSCK.getActionLock()) {
             if (this.gameId != null) {
                 // here if this ServerOk has been sent after addPlayerToLobby or CreateLobby
                 clientSCK.setGameID(this.gameId);
             }
             clientSCK.setResponseReceived(true);
-            clientSCK.actionLock.notify();
+            clientSCK.getActionLock().notify();
         }
     }
 

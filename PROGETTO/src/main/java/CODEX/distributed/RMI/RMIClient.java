@@ -677,9 +677,7 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                 p.setBoard(board);
             }
         }
-        if (selectedView == 1) {
-            System.out.println("I received the board update.");
-        } else if (selectedView == 2) {
+        if (selectedView == 2) {
             if (guiGameController != null) {
                 guiGameController.updateBoard(boardOwner, newCard);
             }

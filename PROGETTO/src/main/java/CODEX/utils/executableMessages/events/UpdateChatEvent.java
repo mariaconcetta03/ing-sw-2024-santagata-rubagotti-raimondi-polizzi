@@ -11,7 +11,7 @@ import java.rmi.RemoteException;
  * new messages, and so it needs to be updated
  */
 public class UpdateChatEvent implements Event{
-    Chat chatToBeAdded;
+    private Chat chatToBeAdded;
     public UpdateChatEvent(Chat chatToBeAdded){
         this.chatToBeAdded=chatToBeAdded;
     }

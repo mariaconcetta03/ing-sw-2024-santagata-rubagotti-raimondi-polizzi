@@ -24,10 +24,10 @@ public class ServerAvailableLobbies implements ServerMessage {
 
     @Override
     public void execute(ClientSCK clientSCK) {
-        synchronized (clientSCK.actionLock) {
+        synchronized (clientSCK.getActionLock()) {
             clientSCK.setLobbyId(list);
             clientSCK.setResponseReceived(true);
-            clientSCK.actionLock.notify();
+            clientSCK.getActionLock().notify();
         }
 
     }

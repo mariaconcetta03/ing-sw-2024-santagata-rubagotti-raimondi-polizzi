@@ -51,7 +51,7 @@ public class ClientSCK implements ClientGeneralInterface {
     private Integer gameID;
     private Boolean running;
     private Boolean responseReceived;
-    public final Object actionLock;
+    private final Object actionLock;
     private final Object inputLock;
     private boolean isPlaying;
     private boolean inGame;
@@ -1018,7 +1018,7 @@ public class ClientSCK implements ClientGeneralInterface {
         if (selectedView == 1) {
             if (gameState.equals(Game.GameState.STARTED)) {
                 inGame = true;
-                System.out.println("The game has started!");
+                System.out.println(ANSIFormatter.ANSI_RED+"The game has started!"+ANSIFormatter.ANSI_RESET);
 
 
                 //to check the connection
@@ -1461,6 +1461,15 @@ public class ClientSCK implements ClientGeneralInterface {
         return lobbyId;
     }
 
+
+    /**
+     * Getter method
+     *
+     * @return the actionLock
+     */
+    public Object getActionLock() {
+        return actionLock;
+    }
 
     /**
      * Setter method

@@ -23,7 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 public class WrappedObserver implements Observer {
     private GameController gameController;
-    public ScheduledExecutorService scheduler;
+    private ScheduledExecutorService scheduler;
     private static final int HEARTBEAT_INTERVAL = 2; // seconds
     private ClientGeneralInterface remoteClient;
     private String nickname;

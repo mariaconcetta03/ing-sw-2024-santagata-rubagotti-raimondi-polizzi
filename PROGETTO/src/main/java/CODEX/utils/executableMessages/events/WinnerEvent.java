@@ -12,7 +12,7 @@ import java.util.Map;
  * This event is useful to communicate the winners of the game (and the ranking)
  */
 public class WinnerEvent implements Event {
-    Map<Integer, List<String>> finalScoreBoard;
+    private Map<Integer, List<String>> finalScoreBoard;
     public WinnerEvent(Map<Integer, List<String>> finalScoreBoard){
         this.finalScoreBoard=finalScoreBoard;
     }

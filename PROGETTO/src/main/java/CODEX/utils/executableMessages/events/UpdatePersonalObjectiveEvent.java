@@ -10,8 +10,8 @@ import java.rmi.RemoteException;
  * This event is useful to communicate that personal objective has been set
  */
 public class UpdatePersonalObjectiveEvent implements Event {
-    ObjectiveCard personalObjCard;
-    String nickname;
+    private ObjectiveCard personalObjCard;
+    private String nickname;
 
     public UpdatePersonalObjectiveEvent(ObjectiveCard personalObjCard, String nickname) {
         this.personalObjCard = personalObjCard;

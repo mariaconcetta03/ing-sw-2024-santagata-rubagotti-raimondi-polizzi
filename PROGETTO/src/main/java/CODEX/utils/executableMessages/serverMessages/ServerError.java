@@ -23,10 +23,10 @@ public class ServerError implements ServerMessage {
 
     @Override
     public void execute(ClientSCK clientSCK) {
-        synchronized (clientSCK.actionLock) {
+        synchronized (clientSCK.getActionLock()) {
             clientSCK.setErrorState(true);
             clientSCK.setResponseReceived(true);
-            clientSCK.actionLock.notify();
+            clientSCK.getActionLock().notify();
         }
     }
 }
