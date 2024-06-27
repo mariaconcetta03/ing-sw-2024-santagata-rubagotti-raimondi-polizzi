@@ -261,6 +261,8 @@ public class GUILobbyController {
                     setWaitingPlayers();
                 }
             }
+        } else {
+            alreadyInMatch = false;
         }
     }
 
