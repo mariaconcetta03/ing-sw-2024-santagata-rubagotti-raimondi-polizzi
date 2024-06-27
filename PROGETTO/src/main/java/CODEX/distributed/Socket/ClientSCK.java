@@ -225,66 +225,73 @@ public class ClientSCK implements ClientGeneralInterface {
             ok = false;
 
             int gameSelection = 0;
-            while (!ok) {
-                System.out.println("Type -1 if you want to create a new lobby, or the lobby id if you want to join it (if there are any available)");
-                System.out.println("Type -2  to refresh the available lobbies.");
-                try {
-                    gameSelection = sc.nextInt();
-                    if (gameSelection == -2) {
-                        this.checkAvailableLobby();
-                        if (!(lobbyId.isEmpty())) {
-                            System.out.println("If you want you can join an already created lobby. These are the ones available:");
-                            printLobby(lobbyId);
-                        } else {
-                            System.out.println("There are no lobby available");
-                        }
-                    } else if ((gameSelection != -1) && (!lobbyId.contains(gameSelection))) {
-                        System.out.println("You wrote a wrong ID, try again.");
-                    } else {
-                        ok = true;
-                    }
-                } catch (InputMismatchException e) {
-                    System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
-                    sc.next();
-                }
-            }
-
-            ok = false;
-            while (!ok) {
-                if (gameSelection == -1) {
-                    System.out.println("How many players would you like to join you in this game?");
-                    while (!ok) {
-                        try {
-                            gameSelection = sc.nextInt();
-                            if ((gameSelection <= 4) && (gameSelection >= 2)) {
-                                ok = true;
+            boolean selected = false;
+            while (!selected) {
+                ok=false;
+                while (!ok) {
+                    System.out.println("Type -1 if you want to create a new lobby, or the lobby id if you want to join it (if there are any available)");
+                    System.out.println("Type -2  to refresh the available lobbies.");
+                    try {
+                        gameSelection = sc.nextInt();
+                        if (gameSelection == -2) {
+                            this.checkAvailableLobby();
+                            if (!(lobbyId.isEmpty())) {
+                                System.out.println("If you want you can join an already created lobby. These are the ones available:");
+                                printLobby(lobbyId);
                             } else {
-                                System.out.println("Invalid number of players. Type a number between 2-4.");
+                                System.out.println("There are no lobby available");
                             }
-                        } catch (InputMismatchException e) {
-                            System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
-                            sc.next();
+                        } else if ((gameSelection != -1) && (!lobbyId.contains(gameSelection))) {
+                            System.out.println("You wrote a wrong ID, try again.");
+                        } else {
+                            ok = true;
                         }
+                    } catch (InputMismatchException e) {
+                        System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
+                        sc.next();
                     }
-                    createLobby(personalPlayer.getNickname(), gameSelection);
-                    System.out.println(ANSIFormatter.ANSI_GREEN + "Successfully created a new lobby with id: " + this.gameID + ANSIFormatter.ANSI_RESET);
-                } else if (lobbyId.contains(gameSelection)) {
-                    System.out.println("Joining the " + gameSelection + " lobby...");
-                    addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
-                    if (errorState && !aDisconnectionHappened) {
-                        System.out.println(ANSIFormatter.ANSI_RED + "The game you want to join is inaccessible, try again" + ANSIFormatter.ANSI_RESET);
-                        errorState = false;
-                    } else if (aDisconnectionHappened) {
-                        handleDisconnection();
-                    } else {
-                        System.out.println(ANSIFormatter.ANSI_GREEN + "Successfully joined the lobby with id: " + this.gameID + ANSIFormatter.ANSI_RESET);
-                        ok = true;
-                        checkNPlayers(); // this method in the server side makes the game start
-                    }
-                } else {
-                    System.out.println("You wrote a wrong id, try again!");
                 }
 
+                ok = false;
+                while (!ok) {
+                    if (gameSelection == -1) {
+                        System.out.println("How many players would you like to join you in this game?");
+                        while (!ok) {
+                            try {
+                                gameSelection = sc.nextInt();
+                                if ((gameSelection <= 4) && (gameSelection >= 2)) {
+                                    ok = true;
+                                    selected=true;
+                                } else {
+                                    System.out.println("Invalid number of players. Type a number between 2-4.");
+                                }
+                            } catch (InputMismatchException e) {
+                                System.out.println(ANSIFormatter.ANSI_RED + "Please write a number." + ANSIFormatter.ANSI_RESET);
+                                sc.next();
+                            }
+                        }
+                        createLobby(personalPlayer.getNickname(), gameSelection);
+                        System.out.println(ANSIFormatter.ANSI_GREEN + "Successfully created a new lobby with id: " + this.gameID + ANSIFormatter.ANSI_RESET);
+                    } else if (lobbyId.contains(gameSelection)) {
+                        System.out.println("Joining the " + gameSelection + " lobby...");
+                        addPlayerToLobby(personalPlayer.getNickname(), gameSelection);
+                        if (errorState && !aDisconnectionHappened) {
+                            ok=true;
+                            System.out.println(ANSIFormatter.ANSI_RED + "The game you want to join is inaccessible, try again" + ANSIFormatter.ANSI_RESET);
+                            errorState = false;
+                        } else if (aDisconnectionHappened) {
+                            handleDisconnection();
+                        } else {
+                            System.out.println(ANSIFormatter.ANSI_GREEN + "Successfully joined the lobby with id: " + this.gameID + ANSIFormatter.ANSI_RESET);
+                            ok = true;
+                            selected=true;
+                            checkNPlayers(); // this method in the server side makes the game start
+                        }
+                    } else {
+                        System.out.println("You wrote a wrong id, try again!");
+                        ok = true;
+                    }
+                }
             }
         }
     }
