@@ -79,7 +79,7 @@ public class ClientSCK implements ClientGeneralInterface {
     WARNING: if you call a ClientActionsInterface method inside an update method you must use
     a thread because the ClientActionsInterface methods wait for the return OK that cannot be read
     by the ClientSCK if you are still stuck on the update that called a ClientActionsInterface method.
-    This happens because to do the updates in order they are read one at a time.
+    This happens because the updates are read one at a time.
     */
 
 
@@ -92,7 +92,7 @@ public class ClientSCK implements ClientGeneralInterface {
      */
     public ClientSCK(String serverAddress) throws IOException {
         this.socket = new Socket();
-        int port = 1085; // server's port
+        int port = 1085;
         SocketAddress socketAddress = new InetSocketAddress(serverAddress, port);
         socket.connect(socketAddress);
         Scanner sc = new Scanner(System.in);
@@ -105,14 +105,13 @@ public class ClientSCK implements ClientGeneralInterface {
         this.guiLock = new Object();
 
 
-        // in this way the stream is converted into objects
         this.outputStream = new ObjectOutputStream(socket.getOutputStream());
         this.inputStream = new ObjectInputStream(socket.getInputStream());
 
         this.running = true;
-        this.inGame = false; // this will become true when the state of the Game will change into STARTED
+        this.inGame = false;
 
-        // initialized to false for entering the while inside every ClientGeneralInterface method
+
         this.responseReceived = false;
 
         this.actionLock = new Object();
@@ -157,7 +156,6 @@ public class ClientSCK implements ClientGeneralInterface {
      * @param sckMessage is the message containing objects and Event relative to the action to perform
      */
     public void sendMessage(SCKMessage sckMessage) {
-        // this method is called only inside ClientGeneralInterface's methods
         synchronized (outputLock) {
             if (!aDisconnectionHappened) {
                 try {
@@ -168,7 +166,7 @@ public class ClientSCK implements ClientGeneralInterface {
                     outputStream.reset();
                 } catch (IOException e) {
                     aDisconnectionHappened = true;
-                    responseReceived = true; // not to start a wait for other answers
+                    responseReceived = true;
                     handleDisconnection();
                 }
             }
@@ -188,7 +186,7 @@ public class ClientSCK implements ClientGeneralInterface {
         if (sckMessage.getEvent() != null) { // we have an update
             sckMessage.getEvent().executeSCK(this);
         } else { // we have a ServerMessage
-            // here we unlock the client that has been waiting for a server response
+            // here we unlock the client
             sckMessage.getServerMessage().execute(this);
         }
     }
@@ -535,7 +533,7 @@ public class ClientSCK implements ClientGeneralInterface {
 
 
     /**
-     * This method lets a player end the game (volontary action or involontary action - connection loss)
+     * This method lets a player end the game (voluntary action or involuntary action - connection loss)
      *
      * @param nickname of the player who is going leave the game
      */
@@ -549,12 +547,12 @@ public class ClientSCK implements ClientGeneralInterface {
                     inputStream.close();
                     outputStream.close();
                     socket.close();
-                } catch (IOException ignored) { //needed for the close clause
+                } catch (IOException ignored) {
                 }
                 if (timer != null) {
-                    timer.cancel(); // Ferma il timer
+                    timer.cancel();
                 }
-                System.exit(0); //status 0 -> no errors
+                System.exit(0);
             }
 
         }
@@ -680,7 +678,6 @@ public class ClientSCK implements ClientGeneralInterface {
                         }
 
                     }).start();
-                    ;
 
                 } else if (selectedView == 2) {
                     guiBaseCardController.updateGameState();
@@ -710,7 +707,7 @@ public class ClientSCK implements ClientGeneralInterface {
         showWinnerArrived = true;
         errorState = false;
         synchronized (actionLock) {
-            actionLock.notify(); //to stop the waiting of something that will never arrive
+            actionLock.notify();
         }
         if (selectedView == 1) { //TUI
             Map<String, Player> players = new HashMap<>();
@@ -740,9 +737,9 @@ public class ClientSCK implements ClientGeneralInterface {
             finalTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    System.exit(0); //status 0 -> no errors
+                    System.exit(0);
                 }
-            }, 6000); //6 seconds
+            }, 6000);
 
         }
         if (selectedView == 2) { //GUI
@@ -895,12 +892,12 @@ public class ClientSCK implements ClientGeneralInterface {
                 }).start();
             }
             if (this.turnCounter >= 1) { // we enter here from the third time included that updateRound is called
-                // before starting the thread that prints the menu we communicate which is the player that is playing
+                // before starting the thread that prints the menu, we communicate who is playing
                 if (lastMoves > 0) {
                     if (playersInTheGame.get(0).getNickname().equals(personalPlayer.getNickname())) {
                         System.out.println(ANSIFormatter.ANSI_GREEN + "It's your turn!" + ANSIFormatter.ANSI_RESET);
                         if (lastMoves <= playersInTheGame.size()) {
-                            System.out.println("This is your last turn! You will not draw.");
+                            System.out.println(ANSIFormatter.ANSI_YELLOW+"This is your last turn! You will not draw."+ANSIFormatter.ANSI_RESET);
                         }
                         setIsPlaying(true);
                     } else {
@@ -1100,6 +1097,7 @@ public class ClientSCK implements ClientGeneralInterface {
         if (selectedView == 1) {
             int intChoice = tuiView.showMenuAndWaitForSelection(this.getIsPlaying(), this.console);
             boolean ok;
+            List<PlayableCard> tmp;
             String nickname;
             if (intChoice != -1) {
                 switch (intChoice) {
@@ -1135,7 +1133,7 @@ public class ClientSCK implements ClientGeneralInterface {
                         tuiView.printObjectiveCard(list);
                         break;
                     case 3:
-                        List<PlayableCard> tmp = new ArrayList<>();
+                        tmp = new ArrayList<>();
                         tmp.add(resourceCard1);
                         tmp.add(resourceCard2);
                         tmp.add(goldCard1);
@@ -1173,7 +1171,7 @@ public class ClientSCK implements ClientGeneralInterface {
                         card = tuiView.askPlayCard(sc, personalPlayer);
                         if (card != null) {
                             orientation = tuiView.askCardOrientation(sc);
-                            coordinates = tuiView.askCoordinates(sc, card, personalPlayer.getBoard());
+                            coordinates = tuiView.askCoordinates(sc, personalPlayer.getBoard());
                             if (coordinates != null) {
                                 if (coordinates.getX() != -1) {
                                     this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
@@ -1226,11 +1224,10 @@ public class ClientSCK implements ClientGeneralInterface {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
             }
-        } catch (IOException ignored) { // needed for the close clause
+        } catch (IOException ignored) {
         }
-        // the TimerTask that checks the connection should end by itself when the application ends
         if (this.timer != null) {
-            this.timer.cancel(); //to be sure
+            this.timer.cancel();
         }
         System.exit(0);
     }
@@ -1452,7 +1449,7 @@ public class ClientSCK implements ClientGeneralInterface {
      * @return the lobby ids of the available lobbies
      */
     public HashSet<Integer> getAvailableLobbies() {
-        checkAvailableLobby(); // update in the clientsck
+        checkAvailableLobby();
         return lobbyId;
     }
 

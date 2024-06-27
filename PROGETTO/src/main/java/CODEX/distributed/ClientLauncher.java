@@ -49,7 +49,7 @@ public class ClientLauncher {
                         System.setProperty("java.rmi.server.hostname", clientAddress);
                     }
                     RMIClient rmiClient = new RMIClient();
-                    rmiClient.setSERVER_NAME(serverAddress); //setting the Server Address
+                    rmiClient.setSERVER_NAME(serverAddress);
                     rmiClient.setSelectedView(1); //TUI
                     rmiClient.SRMIInterfaceFromRegistry();
                     InterfaceTUI.clearScreen();
@@ -66,7 +66,7 @@ public class ClientLauncher {
                         System.setProperty("java.rmi.server.hostname", clientAddress);
                     }
                     rmiClient = new RMIClient();
-                    rmiClient.setSERVER_NAME(serverAddress); //setting the Server Address
+                    rmiClient.setSERVER_NAME(serverAddress);
                     rmiClient.setSelectedView(2); //GUI
                     rmiClient.SRMIInterfaceFromRegistry();
 
@@ -78,7 +78,7 @@ public class ClientLauncher {
                     selected = true;
                     try {
                         ClientSCK clientSCK = null;
-                        if (serverAddress.equals("")) { // if string is empty then it uses localhost
+                        if (serverAddress.equals("")) {
                             clientSCK = new ClientSCK("127.0.0.1");
                             clientSCK.setServerName("127.0.0.1");
 
@@ -96,7 +96,7 @@ public class ClientLauncher {
                 } else if (selection == 4) {
                     ClientSCK clientSCK = null;
                     try {
-                        if (serverAddress.equals("")) { // if string is empty then it uses localhost
+                        if (serverAddress.equals("")) {
                             clientSCK = new ClientSCK("127.0.0.1");
                             clientSCK.setServerName("127.0.0.1");
                         } else {

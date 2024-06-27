@@ -324,7 +324,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
                 return;
             }
         }
-        if (receiversNicknames.size() == game.getnPlayers()) {
+        if (receiversNicknames.size() == game.getNPlayers()) {
             receiversNicknames.remove(senderNickname);
             tmp = game.startGeneralChat();
             for (Observer obs : clientsConnected.values()) {
@@ -377,9 +377,9 @@ public class GameController extends UnicastRemoteObject implements GameControlle
      */
     private void calculateLastMoves() {
         int firstPlayer = 0;
-        lastRounds = game.getnPlayers();
+        lastRounds = game.getNPlayers();
 
-        for (int i = 0; i < game.getnPlayers(); i++) {
+        for (int i = 0; i < game.getNPlayers(); i++) {
             if (game.getPlayers().get(i).isFirst()) {
                 firstPlayer = i;
             }
@@ -388,8 +388,8 @@ public class GameController extends UnicastRemoteObject implements GameControlle
             lastRounds = lastRounds + firstPlayer;
             lastDrawingRounds = firstPlayer;
         } else if (firstPlayer == 0) {
-            lastRounds = game.getnPlayers() * 2;
-            lastDrawingRounds = game.getnPlayers();
+            lastRounds = game.getNPlayers() * 2;
+            lastDrawingRounds = game.getNPlayers();
         }
         game.setLastMoves(lastRounds);
     }
@@ -409,7 +409,7 @@ public class GameController extends UnicastRemoteObject implements GameControlle
         ObjectiveCard commonObj1 = game.getObjectiveCard1();
         ObjectiveCard commonObj2 = game.getObjectiveCard2();
         ObjectiveCard personalObjective;
-        for (int i = 0; i < game.getnPlayers(); i++) {
+        for (int i = 0; i < game.getNPlayers(); i++) {
             personalObjective = game.getPlayers().get(i).getPersonalObjective();
             commonObj1.addPointsToPlayer(game.getPlayers().get(i));
             commonObj2.addPointsToPlayer(game.getPlayers().get(i));

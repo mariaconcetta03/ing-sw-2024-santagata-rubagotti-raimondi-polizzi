@@ -24,7 +24,7 @@ public class ServerController implements Serializable {
      * Class constructor
      */
     public ServerController() {
-        allNicknames = new ArrayList();
+        allNicknames = new ArrayList<>();
         allGameControllers = new HashMap<>();
     }
 
@@ -36,7 +36,7 @@ public class ServerController implements Serializable {
      * @param numOfPlayers    is the number of player the creator decided can play in the lobby
      * @return gameController is the game controller of this match, we need to pass this to the client
      * @throws IllegalArgumentException when the number of players is wrong
-     * @throws RemoteException
+     * @throws RemoteException if an exception happens while communicating with the remote
      */
     public synchronized GameController startLobby(String creatorNickname, int numOfPlayers) throws IllegalArgumentException, RemoteException {
         // Creating the specific GameController
@@ -140,7 +140,7 @@ public class ServerController implements Serializable {
      * Getter method
      *
      * @return available ids of the different game controllers
-     * @throws RemoteException
+     * @throws RemoteException if an exception happens while communicating with the remote
      */
     public Set<Integer> getAvailableGameControllersId() throws RemoteException {
         Set<Integer> tmp = new HashSet<>();

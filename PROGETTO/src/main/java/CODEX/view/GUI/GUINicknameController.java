@@ -73,9 +73,9 @@ public class GUINicknameController {
                 Scene scene = new Scene(fxmlLoader.load());
                 GUILobbyController ctr = fxmlLoader.getController();
                 if (network == 1) {
-                    synchronized (rmiClient.getGuiGamestateLock()) {
+                    synchronized (rmiClient.getGuiGameStateLock()) {
                         rmiClient.setGuiLobbyController(ctr);
-                        rmiClient.getGuiGamestateLock().notify();
+                        rmiClient.getGuiGameStateLock().notify();
                     }
                 }
                 if (network == 2) {

@@ -301,11 +301,10 @@ public class InterfaceTUI implements Serializable {
      * This method is used to ask the user where he wants to play his card
      *
      * @param sc           is the player' Scanner
-     * @param playableCard is the card he is playing
      * @param board        is its board
      * @return the coordinates where the player wants to play the card, null if he inserted an invalid position
      */
-    public Coordinates askCoordinates(Scanner sc, PlayableCard playableCard, Board board) {
+    public Coordinates askCoordinates(Scanner sc, Board board) {
         String coordinates;
         System.out.println("In which coordinates do you want to play the card? Type in (x,y) format.");
         coordinates = sc.nextLine();

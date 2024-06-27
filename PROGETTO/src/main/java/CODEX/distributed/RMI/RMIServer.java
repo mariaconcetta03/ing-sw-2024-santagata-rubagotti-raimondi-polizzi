@@ -114,7 +114,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * Getter method
      *
      * @return serverController.getAllGameControllers() which are the available game controllers
-     * @throws RemoteException
+     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public Map<Integer, GameController> getAllGameControllers() throws RemoteException {
@@ -126,7 +126,7 @@ public class RMIServer extends UnicastRemoteObject implements ServerRMIInterface
      * Getter method
      *
      * @return serverController.getAvailableGameControllersId() which are the id of available game controllers
-     * @throws RemoteException
+     * @throws RemoteException if an exception happens while communicating with the remote
      */
     @Override
     public Set<Integer> getAvailableGameControllersId() throws RemoteException {

@@ -85,7 +85,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                         input.close();
                         output.close();
                         socket.close();
-                    } catch (IOException ignored) { // needed for the close clauses
+                    } catch (IOException ignored) {
                     }
                     timer.cancel();
 
@@ -116,7 +116,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     public void update(Observable obs, Event e) {
         boolean check = e.executeSCKServerSide();
         if (check) { // true if the gameState has changed to 'STARTED'
-            this.pongReceived = true; // initialization
+            this.pongReceived = true;
             // isDaemon==true -> maintenance activities performed as long as the application is running
             this.timer = new Timer(true);
             timer.scheduleAtFixedRate(new TimerTask() {
@@ -139,7 +139,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                             input.close();
                             output.close();
                             socket.close();
-                        } catch (IOException e) { // needed for the close clause
+                        } catch (IOException ignored) {
                         }
                         timer.cancel();
                         if (gameController != null) {
@@ -173,7 +173,6 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
     public void setADisconnectionHappened(boolean aDisconnectionHappened) {
         this.aDisconnectionHappened = aDisconnectionHappened;
     }
-
 
 
 // METHODS OVERRIDDEN FROM ClientActionsInterface
@@ -392,7 +391,7 @@ public class ClientHandlerThread implements Runnable, Observer, ClientActionsInt
                     input.close();
                     output.close();
                     socket.close();
-                } catch (IOException ex) { // needed for the close clause
+                } catch (IOException ignored) {
                 }
                 timer.cancel();
                 if (gameController != null) {

@@ -74,7 +74,7 @@ public class GameTest extends TestCase {
         p3.setGame(game);
         p4.setGame(game);
 
-        int numPlayers = game.getnPlayers();
+        int numPlayers = game.getNPlayers();
         p1.setGame(game);
 
         p1.setNickname("Paperino");
@@ -115,7 +115,7 @@ public class GameTest extends TestCase {
 
         game.setNPlayers(2);
 
-        int numPlayers = game.getnPlayers();
+        int numPlayers = game.getNPlayers();
         p1.setGame(game);
 
         p1.setNickname("Paperino");
@@ -137,7 +137,7 @@ public class GameTest extends TestCase {
         game.setNPlayers(2);
         game.addPlayer(p);
 
-        int nPlayers = game.getnPlayers();
+        int nPlayers = game.getNPlayers();
         p1.setGame(game);
         p.setGame(game);
 
@@ -166,7 +166,7 @@ public class GameTest extends TestCase {
         game.setNPlayers(2);
         game.addPlayer(p);
 
-        int nPlayers = game.getnPlayers();
+        int nPlayers = game.getNPlayers();
         p1.setGame(game);
         p.setGame(game);
 
@@ -237,7 +237,7 @@ public class GameTest extends TestCase {
         game.setNPlayers(2);
         game.addPlayer(p);
 
-        int nPlayers = game.getnPlayers();
+        int nPlayers = game.getNPlayers();
         p1.setGame(game);
         p.setGame(game);
 
@@ -275,7 +275,7 @@ public class GameTest extends TestCase {
         game.setNPlayers(2);
         game.addPlayer(p);
 
-        int nPlayers = game.getnPlayers();
+        int nPlayers = game.getNPlayers();
         p1.setGame(game);
         p.setGame(game);
 
@@ -312,7 +312,7 @@ public class GameTest extends TestCase {
         game.setNPlayers(2);
         game.addPlayer(p);
 
-        int nPlayers = game.getnPlayers();
+        int nPlayers = game.getNPlayers();
         p1.setGame(game);
         p.setGame(game);
         System.out.println("Starting chat between P1 and P2");
@@ -402,7 +402,7 @@ public class GameTest extends TestCase {
         p3.setGame(game);
         p4.setGame(game);
 
-        int nPlayers = game.getnPlayers();
+        int nPlayers = game.getNPlayers();
         p1.setGame(game);
 
         p1.setNickname("Paperino");
@@ -441,7 +441,7 @@ public class GameTest extends TestCase {
         p3.setGame(game);
         p4.setGame(game);
 
-        int nPlayers = game.getnPlayers();
+        int nPlayers = game.getNPlayers();
         p1.setGame(game);
 
         p1.setNickname("Paperino");
@@ -474,7 +474,7 @@ public class GameTest extends TestCase {
         p3.setGame(game);
         p4.setGame(game);
 
-        int nPlayers = game.getnPlayers();
+        int nPlayers = game.getNPlayers();
         p1.setGame(game);
 
         p1.setNickname("Paperino");
@@ -507,7 +507,7 @@ public class GameTest extends TestCase {
         p3.setGame(game);
         p4.setGame(game);
 
-        int nPlayers = game.getnPlayers();
+        int nPlayers = game.getNPlayers();
         p1.setGame(game);
 
         p1.setNickname("Paperino");
@@ -540,7 +540,7 @@ public class GameTest extends TestCase {
         p3.setGame(game);
         p4.setGame(game);
 
-        int nPlayers = game.getnPlayers();
+        int nPlayers = game.getNPlayers();
         p1.setGame(game);
 
         p1.setNickname("Paperino");

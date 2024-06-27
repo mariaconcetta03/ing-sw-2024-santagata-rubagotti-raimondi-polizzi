@@ -17,7 +17,7 @@ public class ChatMessage implements Serializable {
 
 
     /**
-     * Class contructor
+     * Class constructor
      *
      * @param message            is a text message
      * @param senderNickname     is who is sending a message

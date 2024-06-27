@@ -176,7 +176,7 @@ public class Game extends Observable implements Serializable {
         for (int i=0; i<this.players.size(); i++) {
             try {
                 this.players.get(i).drawCard(this.baseDeck.getFirstCard());
-            }catch(CardNotDrawableException | EmptyStackException ignored) {}//it will never happen here
+            }catch(CardNotDrawableException | EmptyStackException ignored) {}
             }
 
 
@@ -356,7 +356,6 @@ public class Game extends Observable implements Serializable {
      */
     public Chat startGeneralChat() {
         // the General Chat includes all the players in the game
-        String generalChatString="";
         List<String> playerNicknames=new ArrayList<>();
         for(Player p: this.players){
             playerNicknames.add(p.getNickname());
@@ -614,7 +613,7 @@ public class Game extends Observable implements Serializable {
      * Getter method
      * @return nPlayers is the number of the players
      */
-    public int getnPlayers() {
+    public int getNPlayers() {
         return nPlayers;
     }
 
