@@ -387,7 +387,7 @@ public class InterfaceTUI implements Serializable {
 
     /**
      * This method is used to print some playableCard (player Hand, drawable cards...)
-     *
+     * @param hideCards true if the front of the cards has to be hidden, false otherwise
      * @param cardsToPrint are the cards that have to be printed
      */
     public void printPlayableCards(List<PlayableCard> cardsToPrint, boolean hideCards) {
@@ -720,7 +720,7 @@ public class InterfaceTUI implements Serializable {
 
     /**
      * This method is used to print the cards a Player is keeping in is hands
-     *
+     * @param isOwner true if it's player's deck, false otherwise
      * @param playerDeck is the collection of cards the Player has in his hands
      */
     public void printHand(PlayableCard[] playerDeck, boolean isOwner) {

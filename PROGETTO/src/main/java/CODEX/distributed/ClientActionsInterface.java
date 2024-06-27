@@ -11,7 +11,7 @@ import java.util.List;
 
 
 /**
- * This interface represents the actions which the clients (RMI && TCP) can perform.
+ * This interface represents the actions which the clients (RMI and TCP) can perform.
  */
 public interface ClientActionsInterface {
 

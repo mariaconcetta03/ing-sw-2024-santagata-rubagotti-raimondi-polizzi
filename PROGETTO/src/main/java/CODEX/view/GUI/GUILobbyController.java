@@ -119,7 +119,6 @@ public class GUILobbyController {
             availableLobbies.getItems().clear();
             clientSCK.checkAvailableLobby();
             setAvailableLobbies(clientSCK.getAvailableLobbies().stream().toList());
-            clientSCK.printLobby(clientSCK.getAvailableLobbies());
             if (clientSCK.getAvailableLobbies().isEmpty()) {
                 showNoLobbyError();
             } else {
@@ -261,6 +260,8 @@ public class GUILobbyController {
                     setWaitingPlayers();
                 }
             }
+        } else {
+            alreadyInMatch = false;
         }
     }
 

@@ -1,0 +1,14 @@
+module:CODEX
+CODEX.controller
+CODEX.distributed
+CODEX.distributed.messages
+CODEX.distributed.RMI
+CODEX.distributed.Socket
+CODEX.Exceptions
+CODEX.org.model
+CODEX.utils
+CODEX.utils.executableMessages.clientMessages
+CODEX.utils.executableMessages.events
+CODEX.utils.executableMessages.serverMessages
+CODEX.view.GUI
+CODEX.view.TUI
