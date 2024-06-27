@@ -32,7 +32,7 @@ public class UpdateGameStateEvent implements Event{
                 scheduler.scheduleAtFixedRate(() -> { // equivalent to the schedulerToSendHeartbeat (but in the server-side)
                     if (!wrappedObserver.getADisconnectionHappened()){
                         try {
-                            client.heartbeat(); //in gameController però la prima volta che viene scritta la variabile lastHeartbeatTime è in startHeartbeat
+                            client.heartbeat();
                         } catch (RemoteException e) {
                             wrappedObserver.setADisconnectionHappened(true);
                         }
