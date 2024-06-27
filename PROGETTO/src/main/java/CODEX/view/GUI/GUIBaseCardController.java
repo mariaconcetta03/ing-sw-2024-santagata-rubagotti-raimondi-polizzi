@@ -256,7 +256,7 @@ public class GUIBaseCardController {
      *
      * @param client which is the client of the player
      */
-    void setRmiClient(RMIClient client) {
+    public void setRmiClient(RMIClient client) {
         this.rmiClient = client;
     }
 
@@ -266,7 +266,7 @@ public class GUIBaseCardController {
      *
      * @param client which is the client of the player
      */
-    void setClientSCK(ClientSCK client) {
+    public void setClientSCK(ClientSCK client) {
         this.clientSCK = client;
     }
 
@@ -276,7 +276,7 @@ public class GUIBaseCardController {
      *
      * @param network which is the type of client of the player
      */
-    void setNetwork(int network) {
+    public void setNetwork(int network) {
         this.network = network;
     }
 
