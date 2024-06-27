@@ -29,10 +29,12 @@ You can check up our JUnit test coverage [here](Deliverables%2FTEST%20COVERAGE%2
 ### UML
 Here you can check our UML diagrams:
 - [First Peer Review UML](Deliverables%2FFILES%20CONSEGNATI%2026-03%2FUML_v3.jpg)
-- [Second Peer Review UML](Deliverables%2FFILES%20CONSEGNATI%2006-05%2022_45)
+- [Second Peer Review UMLs](Deliverables%2FFILES%20CONSEGNATI%2006-05%2022_45)
 - [High level UML Server-Client](Deliverables%2FUMLs%2FUML%20ALTO%20LIVELLO.png)
 - [Detailed UML Server-Client](Deliverables%2FUMLs%2FUML%20DETTAGLIO.png)
 - [Communication Protocol Diagrams](Deliverables%2FNETWORK%20SEQUENCE%20DIAGRAMS)
+### JavaDoc
+You can read the JavaDoc [here](Deliverables%2FJavaDoc).
 ### Jar
 You can download the Jar to launch the game [here](Deliverables%2FJAR).
 ## How to run
