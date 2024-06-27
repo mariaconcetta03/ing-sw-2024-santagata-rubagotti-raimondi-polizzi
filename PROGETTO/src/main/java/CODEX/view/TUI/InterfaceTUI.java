@@ -317,11 +317,11 @@ public class InterfaceTUI implements Serializable {
             if (board.getPlayablePositions().contains(coordinates1)) {
                 return coordinates1;
             } else {
-                System.out.println(ANSIFormatter.ANSI_RED + "You can't play a card here!" + ANSIFormatter.ANSI_RESET);
+                System.out.println(ANSIFormatter.ANSI_RED + "You can't play a card here!" + rst);
                 return null;
             }
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException e) {
-            System.out.println("Not valid coordinates, returning to menu.");
+            System.out.println(ANSIFormatter.ANSI_RED+"Not valid coordinates, returning to menu."+rst);
             return new Coordinates(-1, -1);
         }
     }

@@ -1115,7 +1115,8 @@ public class ClientSCK implements ClientGeneralInterface {
                                 inGame = false;
                                 leaveGame(personalPlayer.getNickname());
                             }
-                        } catch (InputMismatchException ignored) {
+                        } catch (InputMismatchException e) {
+                            sc.next();
                         }
                         break;
                     case 1:
