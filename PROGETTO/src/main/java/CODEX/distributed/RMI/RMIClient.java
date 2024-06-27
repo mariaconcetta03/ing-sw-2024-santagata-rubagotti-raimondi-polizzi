@@ -618,7 +618,6 @@ public class RMIClient extends UnicastRemoteObject implements ClientGeneralInter
                             if (coordinates != null) {
                                 if (coordinates.getX() != -1) {
                                     try {
-                                        System.out.println("chiamo playCard");
                                         this.playCard(personalPlayer.getNickname(), card, coordinates, orientation);
                                         if (lastMoves > playersInTheGame.size()) {
                                             tmp = new ArrayList<>();
