@@ -34,7 +34,7 @@ Here you can check our UML diagrams:
 - [Detailed UML Server-Client](Deliverables%2FUMLs%2FUML%20DETTAGLIO.png)
 - [Communication Protocol Diagrams](Deliverables%2FNETWORK%20SEQUENCE%20DIAGRAMS)
 ### Jar
-You can download the Jar to launch the game [here]().
+You can download the Jar to launch the game [here](Deliverables%2FJAR).
 ## How to run
 ### Server
 1. Open the prompt as **administrator**.
